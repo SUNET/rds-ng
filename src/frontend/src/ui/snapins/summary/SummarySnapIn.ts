@@ -5,9 +5,9 @@ export class SummarySnapIn extends SnapIn {
 
     public constructor() {
         super(SummarySnapIn.SnapInID, {
-            name: "Summary",
+            name: "Overview",
             tabPanel: {
-                label: "Summary",
+                label: "Overview",
                 loader: () => import("./SummaryPanel.vue")
             }
         });
