@@ -24,10 +24,10 @@ export function registerSnapIns(): void {
     }
 
     // New snap-ins go here; the order in which they are added also define the order of their panels
+    registerSnapIn(SummarySnapIn);
     registerSnapIn(ProjectMetadataSnapIn);
     registerSnapIn(ResourcesMetadataSnapIn);
     registerSnapIn(DataManagementPlanSnapIn);
-    registerSnapIn(SummarySnapIn);
 
     // Print all available snap-ins for debugging purposes
     const names = Object.keys(SnapInsCatalog.items).map((item) => `${SnapInsCatalog.items[item].options.name} (${item})`);

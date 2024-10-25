@@ -137,7 +137,11 @@ const toggleRemoveProperty = (e: Event) => {
                 <span :title="propertyClass.label" class="min-w-fit">
                     <span class="text-lg"> {{ propertyClass.label }} </span>
                     <span v-if="propertyClass.required" v-for="p in profiles">
-                        <MandatoryMark class="pl-1" :color="colorsStore.color(p[0], 70, 100)" :title="`This field is required by ${p[0]}`" />
+                        <MandatoryMark
+                            class="pl-1"
+                            :color="colorsStore.color(p[0], 70, 100)"
+                            :title="`This field is required by ${projectProfiles.getProfileLabelById(p)}`"
+                        />
                     </span>
                     <Button v-if="propertyClass.description" unstyled @click="toggleRemoveDeadLink">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem; color: gray" />

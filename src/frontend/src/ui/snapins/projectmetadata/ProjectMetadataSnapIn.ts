@@ -7,13 +7,13 @@ export class ProjectMetadataSnapIn extends SnapIn {
 
     public constructor() {
         super(ProjectMetadataSnapIn.SnapInID, {
-            name: "Project Metadata",
+            name: "Publication Metadata",
             optional: {
-                label: "Project Metadata",
+                label: "Publication Metadata",
                 feature: ProjectMetadataFeature.FeatureID
             },
             tabPanel: {
-                label: "Project Metadata",
+                label: "Publication Metadata",
                 loader: () => import("./ProjectMetadataPanel.vue")
             }
         });
