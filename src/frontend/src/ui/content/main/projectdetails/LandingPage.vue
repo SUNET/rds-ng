@@ -5,33 +5,35 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
 </script>
 
 <template>
-    <div class="bg-slate-50">
+    <div>
         <div class="content-center r-shade-text m-10">
-            <div class="grid grid-cols-2 min-w-full min-h-full place-content-center">
+            <div class="grid grid-cols-2 min-w-full min-h-full place-content-start gap-24">
                 <div class="space-y-8">
                     <div>
                         <div class="text font-light uppercase">Sciebo Research Data Services</div>
                         <div class="text-[3rem] font-black uppercase leading-none">Research data made easy</div>
                     </div>
-                    <div class="text-[1.2rem] font-light mb-10">
+                    <div class="text-xl font-light mb-10">
                         Your flexible solution for research data managing and publishing. The services are designed to make data management effortless and
                         collaborative, so you can focus on what matters most: your research.
-                        <div class="pl-2">
+                        <div class="pt-2 text-lg">
                             Learn more:
                             <ExternalLink link="https://github.com/Sciebo-RDS" text="GitHub repository" />
                         </div>
                     </div>
                     <Card>
                         <template #content>
-                            <img src="@assets/img/rds-steps-web.png" class="justify-self-center" />
+                            <img src="@assets/img/rds-steps-web.png" class="justify-self-center w-[75%]" alt="Steps" />
                         </template>
                     </Card>
                 </div>
                 <!-- ... -->
-                <div class="grid place-items-center space-y-7">
-                    <img src="@assets/img/image.png" class="w-[25rem]" />
+                <div class="grid place-items-start space-y-7">
+                    <img src="@assets/img/landing_image.png" class="w-[25rem]" alt="Image" />
                     <Card class="w-[30rem]">
-                        <template #title><div class="">Here's how we support you</div></template>
+                        <template #title>
+                            <div class="">Here's how we support you</div>
+                        </template>
                         <template #content>
                             <ul class="pl-6 list-outside list-disc">
                                 <li class="">
@@ -40,7 +42,7 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                                 </li>
                                 <li class="">
                                     <strong>Project Workflow Integration -</strong> A research data tool that connects existing research data services according
-                                    to your needs
+                                    to your needs.
                                 </li>
                                 <li class="">
                                     <strong>User Control -</strong> Full control over your data, with clear options to manage access, set metadata and
