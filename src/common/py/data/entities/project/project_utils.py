@@ -48,9 +48,6 @@ def apply_project_features_update(
         project.features.project_metadata.metadata = (
             updated_features.project_metadata.metadata
         )
-        project.features.project_metadata.shared_objects = (
-            updated_features.project_metadata.shared_objects
-        )
 
     if apply_to is None or ResourcesMetadataFeature.feature_id in apply_to:
         project.features.resources_metadata.metadata = (

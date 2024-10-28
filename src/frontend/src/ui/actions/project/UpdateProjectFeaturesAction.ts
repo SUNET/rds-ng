@@ -32,9 +32,9 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
             new ProjectFeatures(
                 this.getFeatureFromArray<ProjectMetadataFeature>(updatedFeatures, ProjectMetadataFeature.FeatureID),
                 this.getFeatureFromArray<ResourcesMetadataFeature>(updatedFeatures, ResourcesMetadataFeature.FeatureID),
-                this.getFeatureFromArray<DataManagementPlanFeature>(updatedFeatures, DataManagementPlanFeature.FeatureID),
-                sharedObjects
-            )
+                this.getFeatureFromArray<DataManagementPlanFeature>(updatedFeatures, DataManagementPlanFeature.FeatureID)
+            ),
+            sharedObjects
         );
         return this._composer;
     }
