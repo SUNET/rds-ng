@@ -201,7 +201,7 @@ for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadata
                             </div>
                             <PropertyEditor
                                 v-model="resourcesData"
-                                v-model:shared-objects="project!.features.project_metadata.shared_objects"
+                                v-model:shared-objects="project!.features.shared_objects"
                                 :projectProfiles="projectProfiles as PropertyProfileStore"
                                 class="w-full"
                             />
