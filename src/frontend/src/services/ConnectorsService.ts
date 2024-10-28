@@ -21,13 +21,13 @@ export default function (comp: FrontendComponent): Service {
         return JSON.stringify(shortenDataStrings(obj));
     }
 
+    const colorsStore = useColorsStore();
+
     return comp.createService(
         "Connectors service",
         (svc: Service) => {
             svc.messageHandler(ListConnectorsReply, (msg: ListConnectorsReply, ctx: FrontendServiceContext) => {
                 if (msg.success) {
-                    const colorsStore = useColorsStore();
-
                     ctx.logger.debug("Retrieved connectors list", "connectors", { connectors: msg.connectors.map(printableConnector) });
 
                     // @ts-ignore
@@ -45,7 +45,7 @@ export default function (comp: FrontendComponent): Service {
                 // @ts-ignore
                 ctx.connectorsStore.connectors = msg.connectors;
 
-                assignConnectorProfileColors(msg.connectors);
+                colorsStore.populateFromConnectorsList(msg.connectors);
             });
         },
         FrontendServiceContext

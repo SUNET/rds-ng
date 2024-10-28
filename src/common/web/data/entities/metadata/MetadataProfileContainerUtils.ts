@@ -1,4 +1,4 @@
-import { MetadataProfileContainerList, MetadataProfileContainerRole } from "./MetadataProfileContainer";
+import { type MetadataProfileContainerList, MetadataProfileContainerRole } from "./MetadataProfileContainer";
 
 /**
  * Gets all containers from a list matching the specified category.
@@ -9,7 +9,7 @@ import { MetadataProfileContainerList, MetadataProfileContainerRole } from "./Me
  * @returns - List of all matching containers.
  */
 export function filterContainersByCategory(containers: MetadataProfileContainerList, category: string): MetadataProfileContainerList {
-    return containers.filter((container) => container.category == container);
+    return containers.filter((container) => container.category == category);
 }
 
 /**

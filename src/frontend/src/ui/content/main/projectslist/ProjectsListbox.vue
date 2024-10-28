@@ -72,7 +72,7 @@ function isProjectDeleted(project: Project): boolean {
             :pt="{
                 root: 'projects-listbox',
                 list: 'projects-listbox-list',
-                item: 'projects-listbox-item',
+                item: 'projects-listbox-item'
             }"
         >
             <template #option="projectEntry">

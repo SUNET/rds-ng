@@ -12,7 +12,7 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                 publishing. The services are designed to make data management effortless and collaborative, so you can focus on what matters most: your
                 research.
             </div>
-            <div>Here's how we support you:</div>
+            <div class="text-lg">Here's how we support you:</div>
             <div>
                 <ul class="pl-6">
                     <li class="flex items-center gap-1">
@@ -37,51 +37,55 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                     </li>
                 </ul>
             </div>
-            <div>
+            <div class="pl-6">
                 Learn more:
                 <ExternalLink link="https://github.com/Sciebo-RDS" text="GitHub repository" />
             </div>
-            <div>To get started immediately: Click on <strong>New project</strong>!</div>
-            <div class="flex items-center gap-4 pt-8 place-self-center">
-                <Card :pt="{ root: 'bg-slate-100 text-center w-64 h-48', content: 'pt-1 place-self-center' }">
-                    <template #title>Step 1</template>
-                    <template #content>
-                        <span class="!text-4xl material-icons-outlined mi-hub pb-2" />
-                        <p class="flex items-center gap-1 r-text-gray">Add repository connections.</p>
-                    </template>
-                </Card>
+            <div class="pt-4 text-lg">To get started, simply follow these steps:</div>
+            <div>
+                <div class="flex items-center gap-4 pt-8 place-self-center">
+                    <Card :pt="{ root: 'bg-slate-100 text-center w-64 h-48', content: 'pt-1 place-self-center' }">
+                        <template #title>Initial setup</template>
+                        <template #content>
+                            <span class="!text-4xl material-icons-outlined mi-settings pb-2" />
+                            <p class="flex items-center gap-1 r-text-gray">Add repository connections</p>
+                        </template>
+                    </Card>
+                </div>
 
-                <Card :pt="{ root: 'bg-slate-100 text-center w-64 h-48', content: 'pt-1 place-self-center' }">
-                    <template #title>Step 2</template>
-                    <template #content>
-                        <span class="!text-4xl material-icons-outlined mi-add-circle-outline pb-2" />
-                        <p class="flex items-center gap-1 r-text-gray">Create a new project.</p>
-                    </template>
-                </Card>
+                <div class="flex items-center gap-4 pt-2 place-self-center">
+                    <Card :pt="{ root: 'bg-slate-200 text-center w-64 h-48', content: 'pt-1 place-self-center' }">
+                        <template #title>Step 1</template>
+                        <template #content>
+                            <span class="!text-4xl material-icons-outlined mi-add-circle-outline pb-2" />
+                            <p class="flex items-center gap-1 r-text-gray">Create new project</p>
+                        </template>
+                    </Card>
 
-                <Card :pt="{ root: 'bg-slate-100 text-center w-64 h-48', content: 'pt-1 place-self-center' }">
-                    <template #title>Step 3</template>
-                    <template #content>
-                        <span class="!text-4xl material-icons-outlined mi-file-copy pb-2" />
-                        <p class="flex items-center gap-1 r-text-gray">Collect and manage data.</p>
-                    </template>
-                </Card>
+                    <Card :pt="{ root: 'bg-slate-200 text-center w-64 h-48', content: 'pt-1 place-self-center' }">
+                        <template #title>Step 2</template>
+                        <template #content>
+                            <span class="!text-4xl material-icons-outlined mi-file-copy pb-2" />
+                            <p class="flex items-center gap-1 r-text-gray">Collect &amp; manage data</p>
+                        </template>
+                    </Card>
 
-                <Card :pt="{ root: 'bg-slate-100 text-center w-64 h-48', content: 'pt-1 place-self-center' }">
-                    <template #title>Step 4</template>
-                    <template #content>
-                        <span class="!text-4xl material-icons-outlined mi-edit pb-2" />
-                        <p class="flex items-center gap-1 r-text-gray">Edit metadata and annotations.</p>
-                    </template>
-                </Card>
+                    <Card :pt="{ root: 'bg-slate-200 text-center w-64 h-48', content: 'pt-1 place-self-center' }">
+                        <template #title>Step 3</template>
+                        <template #content>
+                            <span class="!text-4xl material-icons-outlined mi-edit pb-2" />
+                            <p class="flex items-center gap-1 r-text-gray">Edit metadata &amp; annotations</p>
+                        </template>
+                    </Card>
 
-                <Card :pt="{ root: 'bg-slate-100 text-center w-64 h-48', content: 'pt-1 place-self-center' }">
-                    <template #title>Step 5</template>
-                    <template #content>
-                        <span class="!text-4xl material-icons-outlined mi-move-down pb-2" />
-                        <p class="flex items-center gap-1 r-text-gray">Finish project and transfer data to other services.</p>
-                    </template>
-                </Card>
+                    <Card :pt="{ root: 'bg-slate-200 text-center w-64 h-48', content: 'pt-1 place-self-center' }">
+                        <template #title>Step 4</template>
+                        <template #content>
+                            <span class="!text-4xl material-icons-outlined mi-rocket-launch pb-2" />
+                            <p class="flex items-center gap-1 r-text-gray">Finish project &amp; submit data</p>
+                        </template>
+                    </Card>
+                </div>
             </div>
         </div>
     </div>

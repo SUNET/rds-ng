@@ -11,8 +11,8 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     tabData: {
         type: Object as PropType<UserSettings>,
-        required: true,
-    },
+        required: true
+    }
 });
 const propRefs = toRefs(props);
 const userSettings = propRefs.tabData!;
@@ -20,7 +20,7 @@ const userSettings = propRefs.tabData!;
 
 <template>
     <div class="grid grid-rows-[auto_auto_1fr_auto] grid-cols-1 gap-1.5 w-full h-full">
-        <div class="r-text-title">Help &amp; About</div>
+        <div class="r-text-title">About</div>
         <div class="r-text-caption">Welcome to {{ comp.data.title }}!</div>
         <div class="grid grid-cols-[max-content_1fr] gap-1.5 items-center w-full">
             <a href="https://www.research-data-services.org" target="_blank">
