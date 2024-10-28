@@ -16,22 +16,22 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
             <div>
                 <ul class="pl-6">
                     <li class="flex items-center gap-1">
-                        <span class="material-icons-outlined mi-hdr-strong" />
+                        &#x2022;
                         <strong>Configure research processes -</strong> A research data tool in your cloud that flexibly adapts to your individual research
                         workflows.
                     </li>
                     <li class="flex items-center gap-1">
-                        <span class="material-icons-outlined mi-hdr-strong" />
+                        &#x2022;
                         <strong>Project Workflow Integration -</strong> A research data tool that connects existing research data services according to your
                         needs
                     </li>
                     <li class="flex items-center gap-1">
-                        <span class="material-icons-outlined mi-hdr-strong" />
+                        &#x2022;
                         <strong>User Control -</strong> Full control over your data, with clear options to manage access, set metadata and conditions for
                         sharing.
                     </li>
                     <li class="flex items-center gap-1">
-                        <span class="material-icons-outlined mi-hdr-strong" />
+                        &#x2022;
                         <strong>Ease of Use -</strong> Intuitive services that integrate smoothly into your daily research activities, saving you time and
                         effort.
                     </li>
