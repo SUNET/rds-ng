@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 
 import { ProjectObject } from "../../../../ui/components/propertyeditor/ProjectObjectStore";
-import { MetadataObjects } from "../../metadata/Types";
+import { type MetadataObjects } from "../../metadata/Types";
 import { DataManagementPlanFeature } from "./DataManagementPlanFeature";
 import { ProjectMetadataFeature } from "./ProjectMetadataFeature";
 import { ResourcesMetadataFeature } from "./ResourcesMetadataFeature";

@@ -1,5 +1,6 @@
 import { UpdateProjectFeaturesCommand } from "@common/api/project/ProjectFeaturesCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
+import type { MetadataObjects } from "@common/data/entities/metadata/Types";
 import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { ProjectFeature, type ProjectFeatureID } from "@common/data/entities/project/features/ProjectFeature";
@@ -17,7 +18,11 @@ import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
  * Action to update the features of a project.
  */
 export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdateProjectFeaturesCommand, CommandComposer<UpdateProjectFeaturesCommand>> {
-    public prepare(project: Project, updatedFeatures: ProjectFeature[]): CommandComposer<UpdateProjectFeaturesCommand> {
+    public prepare(
+        project: Project,
+        updatedFeatures: ProjectFeature[],
+        sharedObjects: MetadataObjects | undefined = undefined
+    ): CommandComposer<UpdateProjectFeaturesCommand> {
         this.prepareNotifiers(project.title);
 
         this._composer = UpdateProjectFeaturesCommand.build(
@@ -27,7 +32,8 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
             new ProjectFeatures(
                 this.getFeatureFromArray<ProjectMetadataFeature>(updatedFeatures, ProjectMetadataFeature.FeatureID),
                 this.getFeatureFromArray<ResourcesMetadataFeature>(updatedFeatures, ResourcesMetadataFeature.FeatureID),
-                this.getFeatureFromArray<DataManagementPlanFeature>(updatedFeatures, DataManagementPlanFeature.FeatureID)
+                this.getFeatureFromArray<DataManagementPlanFeature>(updatedFeatures, DataManagementPlanFeature.FeatureID),
+                sharedObjects
             )
         );
         return this._composer;

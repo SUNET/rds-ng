@@ -75,7 +75,7 @@ watch(
         console.log("update");
         debounce(() => {
             const action = new UpdateProjectFeaturesAction(comp);
-            action.prepare(project!.value, [new ProjectMetadataFeature(metadata as ProjectMetadata, project!.value.features.project_metadata.shared_objects)]);
+            action.prepare(project!.value, [new ProjectMetadataFeature(metadata as ProjectMetadata)], project!.value.features.shared_objects);
             action.execute();
         });
     },

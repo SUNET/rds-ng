@@ -6,7 +6,7 @@ import { CommandComposer } from "../../core/messaging/composers/CommandComposer"
 import { CommandReplyComposer } from "../../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
-import { MetadataObjects } from "../../data/entities/metadata/Types";
+import { type MetadataObjects } from "../../data/entities/metadata/Types";
 import { type ProjectFeatureID } from "../../data/entities/project/features/ProjectFeature";
 import { ProjectFeatures } from "../../data/entities/project/features/ProjectFeatures";
 import { type ProjectID } from "../../data/entities/project/Project";
