@@ -6,9 +6,11 @@ import { CommandComposer } from "../../core/messaging/composers/CommandComposer"
 import { CommandReplyComposer } from "../../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
+import { MetadataObjects } from "../../data/entities/metadata/Types";
 import { type ProjectFeatureID } from "../../data/entities/project/features/ProjectFeature";
 import { ProjectFeatures } from "../../data/entities/project/features/ProjectFeatures";
 import { type ProjectID } from "../../data/entities/project/Project";
+import { ProjectObject } from "../../ui/components/propertyeditor/ProjectObjectStore";
 
 /**
  * Command to update the features (data) of a project.
@@ -16,6 +18,7 @@ import { type ProjectID } from "../../data/entities/project/Project";
  * @param project_id - The ID of the project to update.
  * @param updated_features - List of all features (using their ID) to update.
  * @param features - The new features data.
+ * @param shared_objects - Optionally updated project-wide shared objects.
  */
 @Message.define("command/project/features/update")
 export class UpdateProjectFeaturesCommand extends Command {
@@ -28,6 +31,10 @@ export class UpdateProjectFeaturesCommand extends Command {
     @Type(() => ProjectFeatures)
     public readonly features: ProjectFeatures = new ProjectFeatures();
 
+    // @ts-ignore
+    @Type(() => ProjectObject)
+    public readonly shared_objects: MetadataObjects | undefined = undefined;
+
     /**
      * Helper function to easily build this message.
      */
@@ -36,13 +43,19 @@ export class UpdateProjectFeaturesCommand extends Command {
         project_id: ProjectID,
         updatedFeatures: ProjectFeatureID[],
         features: ProjectFeatures,
+        sharedObjects: MetadataObjects | undefined = undefined,
         chain: Message | null = null
     ): CommandComposer<UpdateProjectFeaturesCommand> {
-        return messageBuilder.buildCommand(UpdateProjectFeaturesCommand, {
-            project_id: project_id,
-            updated_features: updatedFeatures,
-            features: features
-        }, chain);
+        return messageBuilder.buildCommand(
+            UpdateProjectFeaturesCommand,
+            {
+                project_id: project_id,
+                updated_features: updatedFeatures,
+                features: features,
+                shared_objects: sharedObjects
+            },
+            chain
+        );
     }
 }
 
@@ -71,6 +84,9 @@ export class UpdateProjectFeaturesReply extends CommandReply {
         success: boolean = true,
         message: string = ""
     ): CommandReplyComposer<UpdateProjectFeaturesReply> {
-        return messageBuilder.buildCommandReply(UpdateProjectFeaturesReply, cmd, success, message, { project_id: project_id, updated_features: updated_features });
+        return messageBuilder.buildCommandReply(UpdateProjectFeaturesReply, cmd, success, message, {
+            project_id: project_id,
+            updated_features: updated_features
+        });
     }
 }

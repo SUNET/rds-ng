@@ -8,3 +8,4 @@ from .metadata_profile_container_utils import (
     filter_containers,
     containers_from_folder,
 )
+from .types import MetadataObjects

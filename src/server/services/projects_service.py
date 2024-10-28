@@ -155,7 +155,10 @@ def create_projects_service(comp: ServerComponent) -> Service:
                 )
 
                 apply_project_features_update(
-                    project, msg.features, msg.updated_features
+                    project,
+                    msg.features,
+                    msg.updated_features,
+                    shared_objects=msg.shared_objects,
                 )
                 success = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
