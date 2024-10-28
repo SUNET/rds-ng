@@ -21,9 +21,11 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                             <ExternalLink link="https://github.com/Sciebo-RDS" text="GitHub repository" />
                         </div>
                     </div>
-                    <Card>
+                    <Card class="p-6">
                         <template #content>
-                            <img src="@assets/img/rds-steps-web.png" class="justify-self-center w-[75%]" alt="Steps" />
+                            <div class="grid justify-items-center">
+                                <img src="@assets/img/rds-steps-web.png" class="w-full" alt="Steps"/>
+                            </div>
                         </template>
                     </Card>
                 </div>
