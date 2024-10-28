@@ -6,7 +6,7 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
 
 <template>
     <div>
-        <div class="content-center r-shade-text m-10">
+        <div class="r-shade-text m-10">
             <div class="grid grid-cols-2 min-w-full min-h-full place-content-start gap-24">
                 <div class="space-y-8">
                     <div>
