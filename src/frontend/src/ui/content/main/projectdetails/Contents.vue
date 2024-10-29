@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { computed, defineAsyncComponent, type PropType, reactive, ref, toRefs, unref, watch } from "vue";
+import { computed, defineAsyncComponent, ref, toRefs, unref, watch, type PropType } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/ui/UIOptions";
@@ -10,7 +10,6 @@ import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
 import { ProjectMetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
-import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 const comp = FrontendComponent.inject();
@@ -38,8 +37,6 @@ const panels = computed(() => {
         return { title: snapIn.options.tabPanel!.label, component: defineAsyncComponent(snapIn.options.tabPanel!.loader) };
     });
 });
-
-const sharedObjectStore = reactive(new ProjectObjectStore());
 
 const debounce = makeDebounce();
 watch(
@@ -75,7 +72,7 @@ watch(
                     content: 'h-full'
                 }"
             >
-                <component :is="panel.component" :project="project" :sharedObjectStore="sharedObjectStore" />
+                <component :is="panel.component" :project="project"/>
             </TabPanel>
         </TabView>
     </div>

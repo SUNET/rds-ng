@@ -1,4 +1,5 @@
-import { ProjectObject } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { LayoutObject } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { Type } from "class-transformer";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
@@ -6,7 +7,7 @@ import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
  *
  * TODO: Use proper type
  */
-export type DataManagementPlan = ProjectObject[];
+export type DataManagementPlan = LayoutObject[];
 
 /**
  * Data class for the data management plan project feature.
@@ -14,6 +15,8 @@ export type DataManagementPlan = ProjectObject[];
 export class DataManagementPlanFeature extends ProjectFeature {
     public static readonly FeatureID: ProjectFeatureID = "dmp";
 
+    // @ts-ignore
+    @Type(() => LayoutObject)
     public readonly plan: DataManagementPlan;
 
     public constructor(plan: DataManagementPlan = []) {
