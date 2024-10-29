@@ -8,29 +8,31 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
     <div>
         <div class="r-shade-text m-10">
             <div class="grid grid-cols-2 min-w-full min-h-full place-content-start gap-24">
-                <div class="space-y-8">
+                <div class="space-y-4">
                     <div>
                         <div class="text font-light uppercase">Sciebo Research Data Services</div>
-                        <div class="text-5xl font-black uppercase leading-none">Research data <span class="font-thin text-nowrap">made easy</span></div>
+                        <div class="text-4xl font-black uppercase leading-none">
+                            Research data <span class="font-thin text-nowrap text-3xl">made easy</span>
+                        </div>
                     </div>
-                    <div class="text-xl font-light mb-10">
+                    <div class="text-lg font-light mb-2">
                         Your flexible solution for research data managing and publishing. The services are designed to make data management effortless and
-                        collaborative, so you can focus on what matters most: your research.
+                        collaborative, so you can focus on what matters most: <span class="italic">your research</span>.
                         <div class="pt-2 text-lg">
                             Learn more:
                             <ExternalLink link="https://github.com/Sciebo-RDS" text="GitHub repository" />
                         </div>
                     </div>
-                    <Card class="p-6">
+                    <Card class="p-3">
                         <template #content>
                             <div class="grid justify-items-center">
-                                <img src="@assets/img/rds-steps-web.png" class="w-full" alt="Steps"/>
+                                <img src="@assets/img/rds-steps-web.png" class="w-full lg:w-[85%]" alt="Steps" />
                             </div>
                         </template>
                     </Card>
                 </div>
                 <!-- ... -->
-                <div class="grid place-items-start space-y-7">
+                <div class="grid place-items-start space-y-4">
                     <img src="@assets/img/landing_image.png" class="w-[25rem]" alt="Image" />
                     <Card class="w-[30rem]">
                         <template #title>
