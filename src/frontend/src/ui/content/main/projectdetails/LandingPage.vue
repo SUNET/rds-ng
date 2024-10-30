@@ -15,7 +15,7 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                             Research data <span class="font-thin text-nowrap text-3xl">made easy</span>
                         </div>
                     </div>
-                    <div class="text-lg font-light mb-2">
+                    <div class="text-lg font-light mb-1">
                         Your flexible solution for research data managing and publishing. The services are designed to make data management effortless and
                         collaborative, so you can focus on what matters most: <span class="italic">your research</span>.
                         <div class="pt-2 text-lg">
@@ -23,10 +23,10 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                             <ExternalLink link="https://github.com/Sciebo-RDS" text="GitHub repository" />
                         </div>
                     </div>
-                    <Card class="p-3">
+                    <Card class="p-2 h-fit" :pt="{ body: 'pb-0' }">
                         <template #content>
                             <div class="grid justify-items-center">
-                                <img src="@assets/img/rds-steps-web.png" class="w-full lg:w-[85%]" alt="Steps" />
+                                <img src="@assets/img/rds-steps-web.png" class="h-full max-h-[calc(100vh-30rem)]" alt="Steps" />
                             </div>
                         </template>
                     </Card>
