@@ -32,11 +32,11 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                     </Card>
                 </div>
                 <!-- ... -->
-                <div class="grid place-items-start space-y-4">
+                <div class="grid place-items-center max-w-fit space-y-4">
                     <img src="@assets/img/landing_image.png" class="w-[25rem]" alt="Image" />
                     <Card class="w-[30rem]">
                         <template #title>
-                            <div class="">Here's how we support you</div>
+                            <div class="">Here's how we support you:</div>
                         </template>
                         <template #content>
                             <ul class="pl-6 list-outside list-disc">
