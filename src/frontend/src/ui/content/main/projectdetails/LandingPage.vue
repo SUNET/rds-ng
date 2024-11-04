@@ -6,9 +6,9 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
 
 <template>
     <div>
-        <div class="r-shade-text m-10">
-            <div class="grid grid-cols-2 min-w-full min-h-full place-content-start gap-24">
-                <div class="space-y-4">
+        <div class="r-shade-text m-10 !mb-0 !pb-0">
+            <div class="grid grid-cols-2 min-w-full min-h-full place-content-start gap-24 !pb-0">
+                <div class="space-y-4 !pb-0">
                     <div>
                         <div class="text font-light uppercase">Sciebo Research Data Services</div>
                         <div class="text-4xl font-black uppercase leading-none">
@@ -31,7 +31,7 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                         </template>
                     </Card>
                 </div>
-                <!-- ... -->
+
                 <div class="grid place-items-center max-w-fit space-y-4">
                     <img src="@assets/img/landing_image.png" class="w-[25rem]" alt="Image" />
                     <Card class="w-[30rem]">
