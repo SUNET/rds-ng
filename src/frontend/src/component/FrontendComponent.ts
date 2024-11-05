@@ -1,5 +1,7 @@
+import Aura from "@primevue/themes/aura";
+
 import { ComponentType, ComponentUnit } from "@common/component/ComponentIDs";
-import { WebComponent } from "@common/component/WebComponent";
+import { WebComponent, type WebComponentTheme } from "@common/component/WebComponent";
 import { debug, error } from "@common/core/logging/Logging";
 import { Service } from "@common/services/Service";
 import { UnitID } from "@common/utils/UnitID";
@@ -42,9 +44,23 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     private _projectExportersService: Service | null = null;
 
     public constructor() {
-        super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend, FrontendUserInterface);
+        super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend, FrontendComponent.getFrontendTheme(), FrontendUserInterface);
 
         this.addFrontendSettings();
+    }
+
+    private static getFrontendTheme(): WebComponentTheme {
+        return {
+            preset: Aura,
+            options: {
+                prefix: "p",
+                darkModeSelector: false,
+                cssLayer: {
+                    name: "primevuew",
+                    order: "tailwind-base, primevue, tailwind-utilities"
+                }
+            }
+        };
     }
 
     public run(): void {
@@ -159,6 +175,16 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
             throw new Error("Tried to access the jobs service before its creation");
         }
         return this._projectJobsService;
+    }
+
+    /**
+     * The project exporters service.
+     */
+    public get projectExportersService(): Service {
+        if (!this._projectExportersService) {
+            throw new Error("Tried to access the exporters service before its creation");
+        }
+        return this._projectExportersService;
     }
 
     /**

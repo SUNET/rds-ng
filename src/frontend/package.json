@@ -10,6 +10,7 @@
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
     },
     "dependencies": {
+        "@primevue/themes": "^4.2.1",
         "@types/file-saver": "^2.0.7",
         "@vee-validate/yup": "^4.14.6",
         "@vueuse/core": "^11.2.0",
@@ -23,9 +24,10 @@
         "material-icons": "^1.13.12",
         "pinia": "^2.2.6",
         "postcss": "^8.4.47",
-        "primevue": "^3.52.0",
+        "primevue": "^4.2.1",
         "sanitize-filename": "^1.6.3",
         "tailwindcss": "^3.4.14",
+        "tailwindcss-primeui": "^0.3.4",
         "vee-validate": "^4.14.6",
         "vue": "^3.5.12",
         "vue-router": "^4.4.5",

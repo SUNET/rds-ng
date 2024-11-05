@@ -40,6 +40,8 @@ import "primeicons/primeicons.css";
 // Necessary to make the entire API known
 import "../api/API";
 
+export type WebComponentTheme = Record<string, any>;
+
 /**
  * Introduce a global type for Vue components.
  */
@@ -71,12 +73,14 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
      * @param env - The global environment variables.
      * @param compID - The identifier of this component.
      * @param appRoot - The root (main) application component.
+     * @param theme - The PrimeVue theme configuration.
      * @param userInterfaceType - The type of the user interface class.
      */
     public constructor(
         env: SettingsContainer,
         compID: UnitID,
         appRoot: VueComponent,
+        theme: WebComponentTheme,
         userInterfaceType: Constructable<UserInterfaceType> = UserInterface as Constructable<UserInterfaceType>
     ) {
         if (WebComponent._instance) {
@@ -98,7 +102,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         this._router = this.createRouter();
 
         this._userInterface = this.createUserInterface(userInterfaceType, appRoot);
-        this._vueApp = this.createVueApp();
+        this._vueApp = this.createVueApp(theme);
     }
 
     private createConfig(env: SettingsContainer): Configuration {
@@ -125,7 +129,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         return new userInterfaceType(this._router, appRoot);
     }
 
-    private createVueApp(): App {
+    private createVueApp(theme: WebComponentTheme): App {
         logging.info("Creating Vue application");
 
         const app = createApp(MainContainer);
@@ -142,7 +146,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         // Register various plugins
         app.use(createPinia());
         app.use(this._router);
-        app.use(PrimeVue);
+        app.use(PrimeVue, { theme: theme });
         app.use(ConfirmationService);
         app.use(DialogService);
         app.use(ToastService);
