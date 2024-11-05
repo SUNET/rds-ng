@@ -3,8 +3,8 @@
  */
 :root {
     --r-border-color: rgb(209 213 219);
-    --r-shade: color-mix(in srgb, var(--p-highlight-bg), #fff 50%);
-    --r-shade-dark: color-mix(in srgb, var(--p-highlight-bg), #fff 25%);
+    --r-shade: color-mix(in srgb, var(--p-highlight-background), #fff 50%);
+    --r-shade-dark: color-mix(in srgb, var(--p-highlight-background), #fff 25%);
 }
 
 /*
@@ -27,27 +27,27 @@ html {
 }
 
 .r-primary-text {
-    color: var(--p-primary-color-text);
+    color: var(--p-primary-contrast-color);
 }
 
 .r-highlight-fg {
-    color: var(--p-highlight-bg);
+    color: var(--p-highlight-background);
 }
 
 .r-highlight-bg {
-    background-color: var(--p-highlight-bg);
+    background-color: var(--p-highlight-background);
 }
 
 .r-highlight-text {
-    color: var(--p-highlight-text-color);
+    color: var(--p-primary-contrast-color);
 }
 
 .r-border {
-    border-radius: var(--p-border-radius);
+    border-radius: var(--p-border-radius-sm);
 }
 
 .r-border-bg {
-    background-color: var(--p-surface-border);
+    background-color: var(--p-surface-300);
 }
 
 /*
@@ -75,8 +75,7 @@ html {
 }
 
 .r-text-caption-big {
-    @apply font-bold;
-    @apply text-lg;
+    @apply font-bold text-lg;
 }
 
 .r-text-title {
