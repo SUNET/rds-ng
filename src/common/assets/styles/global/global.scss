@@ -2,7 +2,7 @@
  * Global colors.
  */
 :root {
-    --r-border-color: rgb(209 213 219);
+    --r-border-color: var(--p-surface-200);
     --r-shade: color-mix(in srgb, var(--p-highlight-background), #fff 50%);
     --r-shade-dark: color-mix(in srgb, var(--p-highlight-background), #fff 25%);
 }
