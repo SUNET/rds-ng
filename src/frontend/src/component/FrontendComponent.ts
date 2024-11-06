@@ -56,7 +56,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
                 prefix: "p",
                 darkModeSelector: false,
                 cssLayer: {
-                    name: "primevuew",
+                    name: "primevue",
                     order: "tailwind-base, primevue, tailwind-utilities"
                 }
             }

@@ -27,7 +27,7 @@ const { editUserSettings } = useUserTools(comp);
 const jobsPanel = ref();
 const jobsPanelIcon = computed(() => (unref(jobs).length ? "material-icons-outlined mi-rocket-launch -rotate-45" : "material-icons-outlined mi-rocket"));
 const jobsPanelBadgeVisible = computed(
-    () => unref(projects).find((project) => getUnseenProjectJobHistoryRecords(project).length > 0) || unref(jobs).length > 0,
+    () => unref(projects).find((project) => getUnseenProjectJobHistoryRecords(project).length > 0) || unref(jobs).length > 0
 );
 
 function onShowJobsPanel(event: Event): void {
