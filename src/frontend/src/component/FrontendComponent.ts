@@ -1,5 +1,3 @@
-import Aura from "@primevue/themes/aura";
-
 import { ComponentType, ComponentUnit } from "@common/component/ComponentIDs";
 import { WebComponent, type WebComponentTheme } from "@common/component/WebComponent";
 import { debug, error } from "@common/core/logging/Logging";
@@ -28,6 +26,8 @@ import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
 import { registerSnapIns } from "@/ui/snapins/SnapIns";
 
 import Frontend from "@/ui/Frontend.vue";
+
+import Aura from "@primevue/themes/aura";
 
 /**
  * The main frontend component class.

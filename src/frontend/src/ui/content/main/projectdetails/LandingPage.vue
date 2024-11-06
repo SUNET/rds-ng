@@ -23,7 +23,7 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                             <ExternalLink link="https://github.com/Sciebo-RDS" text="GitHub repository" />
                         </div>
                     </div>
-                    <Card class="p-2 h-fit" :pt="{ body: 'pb-0' }">
+                    <Card class="p-2 h-fit" :pt="{ body: '!pb-0' }">
                         <template #content>
                             <div class="grid justify-items-center">
                                 <img src="@assets/img/rds-steps-web.png" class="h-full max-h-[calc(100vh-30rem)]" alt="Steps" />

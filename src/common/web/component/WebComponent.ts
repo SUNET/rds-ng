@@ -134,12 +134,6 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
 
         const app = createApp(MainContainer);
 
-        // Register some global components
-        app.component("ConfirmDialog", ConfirmDialog);
-        app.component("ConfirmPopup", ConfirmPopup);
-        app.component("DynamicDialog", DynamicDialog);
-        app.component("Toast", Toast);
-
         // And some directives
         app.directive("badge", BadgeDirective);
 
@@ -151,6 +145,13 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         app.use(DialogService);
         app.use(ToastService);
 
+        // Register some global components
+        app.component("ConfirmDialog", ConfirmDialog);
+        app.component("ConfirmPopup", ConfirmPopup);
+        app.component("DynamicDialog", DynamicDialog);
+        app.component("Toast", Toast);
+
+        // Inject this component
         app.provide(WebComponent._injectionKey, this);
 
         return app;
