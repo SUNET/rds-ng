@@ -14,7 +14,7 @@ watch(
     () => compStore.componentState,
     (state: ComponentState, prevState: ComponentState) => {
         activeState.value = state;
-    },
+    }
 );
 
 onMounted(() => {
@@ -24,8 +24,8 @@ onMounted(() => {
 
 <template>
     <!-- Dialogs -->
-    <ConfirmDialog />
-    <ConfirmPopup />
+    <ConfirmDialog :pt="{ icon: '!text-3xl', message: 'pt-1' }" group="confirm" />
+    <ConfirmPopup :pt="{ icon: '!text-3xl', message: 'pt-1' }" group="confirmPopup" />
     <DynamicDialog />
 
     <MessageDialog />

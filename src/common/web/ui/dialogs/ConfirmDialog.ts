@@ -18,6 +18,9 @@ export function confirmDialog(comp: WebComponent, options: ConfirmationOptions, 
     const confirm = comp.vue.config.globalProperties.$confirm;
 
     return new Promise<void>((resolve, reject) => {
+        options.modal = true;
+        options.group = "confirm";
+
         options.accept = () => {
             resolve();
         };
