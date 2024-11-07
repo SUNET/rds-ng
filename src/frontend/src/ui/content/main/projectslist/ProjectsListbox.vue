@@ -72,7 +72,7 @@ function isProjectDeleted(project: Project): boolean {
             :pt="{
                 root: 'projects-listbox',
                 list: 'projects-listbox-list',
-                item: 'projects-listbox-item'
+                option: 'projects-listbox-option'
             }"
         >
             <template #option="projectEntry">
@@ -107,11 +107,11 @@ function isProjectDeleted(project: Project): boolean {
     @apply p-0 #{!important};
 }
 
-:deep(.projects-listbox-item) {
+:deep(.projects-listbox-option) {
     @apply pr-2 border-solid border-b border-[--r-border-color] #{!important};
 }
 
-:deep(.projects-listbox-item:hover) {
+:deep(.projects-listbox-option:hover) {
     @apply bg-[--r-shade-dark] #{!important};
 }
 </style>
