@@ -29,17 +29,21 @@ const unwatchProjects = watch(projects, () => {
     unwatchProjects();
 });
 
-watch(activeProject, (newProj, oldProj) => {
-    // Prevent deselecting the currently selected project item
-    if (newProj === null && oldProj) {
-        activeProject.value = oldProj;
-    }
+watch(
+    activeProject,
+    (newProj, oldProj) => {
+        // Prevent deselecting the currently selected project item
+        if (newProj === null && !!oldProj) {
+            activeProject.value = oldProj;
+        }
 
-    // Update the shown URL to reflect the selected project
-    if (activeProject.value !== oldProj) {
-        comp.userInterface.frontendView.navigateTo(true, undefined, { project_id: activeProject.value });
-    }
-});
+        // Update the shown URL to reflect the selected project
+        if (activeProject.value !== oldProj) {
+            comp.userInterface.frontendView.navigateTo(true, undefined, { project_id: activeProject.value });
+        }
+    },
+    { flush: "post" }
+);
 
 function selectProject(projectID: ProjectID | undefined, autoNavigateOnMissing: boolean = false): void {
     if (!projects.value.find((proj) => proj.project_id === projectID)) {

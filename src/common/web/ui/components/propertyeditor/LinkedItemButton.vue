@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { confirmDialog } from "@common/ui/dialogs/ConfirmDialog";
 import Button from "primevue/button";
 import Menu from "primevue/menu";
-import OverlayPanel from "primevue/overlaypanel";
+import Popover from "primevue/popover";
 import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
 import { computed, ref } from "vue";
+import { WebComponent } from "../../../component/WebComponent";
+import { confirmDialog } from "../../dialogs/ConfirmDialog";
 import { SharedObject } from "./ProjectObjectStore";
 import PropertyDialog from "./PropertyDialog.vue";
 import { calcBgColor, calcBorderColor, calcObjLabel } from "./utils/ObjectUtils";
 
 // @ts-ignore
 SplitButton.components.PVSMenu = Menu;
-const comp = FrontendComponent.inject();
+const comp = WebComponent.instance;
 const dialog = useDialog();
 const props = defineProps(["itemId", "parentId", "projectObjects", "sharedObjectStore", "projectProfiles", "mode"]);
 
@@ -81,6 +81,7 @@ const linkedItemActions = computed(() => [
 ]);
 
 const emit = defineEmits(["loadObject"]);
+
 function handleClick() {
     if (props.mode == "dialog") {
         emit("loadObject", object.value["id"]);
@@ -144,14 +145,14 @@ const toggle = (event: Event) => {
             </span>
         </SplitButton>
 
-        <OverlayPanel ref="op" class="border-red-400">
+        <Popover ref="op" class="border-red-400">
             <div class="m-2 gap-3 w-25rem">
                 <div>
                     <span class="font-medium text-900 block mb-2">The linked object is missing.</span>
                 </div>
                 <div>Do you want to remove all links to the missing object?</div>
                 <div class="min-w-full flex justify-end mt-5 space-x-2">
-                    <Button text class="min-w-fit" size="small" @click="toggle"> cancel </Button>
+                    <Button text class="min-w-fit" size="small" @click="toggle"> cancel</Button>
                     <Button
                         class="min-w-fit"
                         size="small"
@@ -168,7 +169,7 @@ const toggle = (event: Event) => {
                     </Button>
                 </div>
             </div>
-        </OverlayPanel>
+        </Popover>
     </div>
 </template>
 
@@ -176,6 +177,7 @@ const toggle = (event: Event) => {
 .p-splitbutton {
     @apply h-8 text-gray-600 border border-[var(--p-border-color)];
 }
+
 :deep(.p-splitbutton-defaultbutton) {
     @apply bg-[var(--p-color)] bg-opacity-30 border-0 px-2 text-inherit;
 }

@@ -5,7 +5,7 @@ import Breadcrumb from "primevue/breadcrumb";
 import Button from "primevue/button";
 import Card from "primevue/card";
 import type { MenuItem } from "primevue/menuitem";
-import OverlayPanel from "primevue/overlaypanel";
+import Popover from "primevue/popover";
 import { History } from "./Breadcrumbs";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
@@ -83,10 +83,10 @@ selectActiveObject(id);
                     <Button v-if="objectClass.description" unstyled @click="toggle">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem" />
                     </Button>
-                    <OverlayPanel ref="op" class="max-w-lg">
+                    <Popover ref="op" class="max-w-lg">
                         {{ objectClass.description }}
                         <span v-if="objectClass.example" v-html="`<br/>Example: ${objectClass.example}`" />
-                    </OverlayPanel>
+                    </Popover>
                 </span>
 
                 <span class="mr-auto ml-5 flex gap-1 flex-wrap">

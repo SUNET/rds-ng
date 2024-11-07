@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import Badge from "primevue/badge";
 import Button from "primevue/button";
-import OverlayPanel from "primevue/overlaypanel";
+import Popover from "primevue/popover";
 import { computed, ref, unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -85,9 +85,9 @@ function onEditUserSettings(): void {
             />
         </div>
 
-        <OverlayPanel ref="jobsPanel">
+        <Popover ref="jobsPanel">
             <ProjectJobsPanel :projects="projects" :jobs="jobs" />
-        </OverlayPanel>
+        </Popover>
     </div>
 </template>
 
