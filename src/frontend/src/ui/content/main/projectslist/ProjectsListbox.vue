@@ -72,9 +72,10 @@ function isProjectDeleted(project: Project): boolean {
             :options="projects"
             option-value="project_id"
             :option-disabled="isProjectDeleted"
-            class="w-full"
+            class="w-full h-full"
             :pt="{
                 root: 'projects-listbox',
+                listContainer: 'projects-listbox-container',
                 list: 'projects-listbox-list',
                 option: 'projects-listbox-option'
             }"
@@ -105,6 +106,10 @@ function isProjectDeleted(project: Project): boolean {
 
 :deep(.projects-listbox.p-focus) {
     @apply shadow-none #{!important};
+}
+
+:deep(.projects-listbox-container) {
+    @apply max-h-full #{!important};
 }
 
 :deep(.projects-listbox-list) {
