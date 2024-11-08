@@ -24,8 +24,8 @@ const { userSettings } = storeToRefs(userStore);
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 
@@ -38,8 +38,8 @@ const timeline = computed(() => {
             text: "The project has been created",
             color: "r-bg-info",
             icon: "material-icons mi-flag",
-            links: {},
-        },
+            links: {}
+        }
     ];
 
     unref(project)!.logbook.job_history.forEach((record) => {
@@ -64,7 +64,7 @@ const timeline = computed(() => {
             text: record.message,
             color: record.success ? "r-bg-success" : "r-bg-error",
             icon: "material-icons " + (record.success ? "mi-rocket-launch" : "mi-error"),
-            links: links,
+            links: links
         });
     });
 
@@ -74,7 +74,7 @@ const timeline = computed(() => {
 
 <template>
     <ScrollPanel class="w-full h-full">
-        <Timeline :value="timeline" :pt="{ opposite: 'max-w-fit', separator: 'pt-1', content: 'pt-0.5' }">
+        <Timeline :value="timeline" :pt="{ eventOpposite: 'max-w-fit', eventSeparator: 'pt-1', eventContent: 'pt-0.5' }">
             <template #marker="entry">
                 <span class="flex w-8 h-8 items-center justify-center text-white rounded-full z-1" :class="entry.item.color">
                     <i :class="entry.item.icon"></i>
