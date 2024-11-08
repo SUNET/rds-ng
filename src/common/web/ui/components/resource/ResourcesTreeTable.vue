@@ -15,12 +15,12 @@ import { humanReadableFileSize } from "../../../utils/Strings";
 const props = defineProps({
     data: {
         type: Object as PropType<Object[]>,
-        required: true,
+        required: true
     },
     refreshable: {
         type: Boolean,
-        default: false,
-    },
+        default: false
+    }
 });
 const { data, refreshable } = toRefs(props);
 const selectedNodes = defineModel<Object>("selectedNodes", { default: {} });
@@ -77,9 +77,9 @@ watch(selectedNodes, () => {
         auto-layout
         class="grid content-start border-0 border-t-2 border-slate-50"
         :pt="{
-            header: 'r-shade-gray h-fit',
+            header: 'r-shade-gray h-fit p-3',
             footer: 'r-shade-dark-gray sticky top-[100vh] border-0',
-            wrapper: '!overflow-auto',
+            tableContainer: '!overflow-auto'
         }"
     >
         <template #header>
@@ -93,19 +93,31 @@ watch(selectedNodes, () => {
             </div>
         </template>
 
-        <Column field="basename" header="Name" class="p-0 pl-2 truncate" expander :pt="{ rowToggler: 'mb-1', headerCell: 'r-shade-gray' }">
+        <Column field="basename" header="Name" class="p-0 pl-2 truncate" expander header-class="r-shade-gray" :pt="{ rowToggler: 'mb-1' }">
             <template #body="entry">
-                <span :class="entry.node.icon" class="opacity-75 relative top-1.5 mr-1" /><span>{{ entry.node.data.basename }}</span>
+                <div class="flex gap-1 items-center">
+                    <span :class="entry.node.icon" class="opacity-75" /><span class="pt-0.5">{{ entry.node.data.basename }}</span>
+                </div>
             </template>
         </Column>
 
-        <Column header="Size" class="w-48 text-right truncate" :pt="{ headerCell: 'r-shade-gray' }">
+        <Column
+            header="Size"
+            class="w-48"
+            header-class="r-shade-gray"
+            :pt="{ columnHeaderContent: 'place-self-end truncate', bodyCellContent: 'place-self-end truncate' }"
+        >
             <template #body="entry">
                 {{ humanReadableFileSize(entry.node.data.size) }}
             </template>
         </Column>
 
-        <Column header="Elements in folder" class="w-32 text-right truncate" :pt="{ headerCell: 'r-shade-gray' }">
+        <Column
+            header="Elements in folder"
+            class="w-32"
+            header-class="r-shade-gray"
+            :pt="{ columnHeaderContent: 'place-self-end truncate', bodyCellContent: 'place-self-end truncate' }"
+        >
             <template #body="entry">
                 <span v-if="entry.node.data.type === ResourceType.Folder">{{ entry.node.children.length }}</span>
             </template>
@@ -115,7 +127,7 @@ watch(selectedNodes, () => {
             <div class="flex justify-end gap-2">
                 <Button icon="material-icons-outlined mi-keyboard-arrow-down" label="Expand all" size="small" text @click="expandAll" />
                 <Button icon="material-icons-outlined mi-keyboard-arrow-right" label="Collapse all" size="small" text @click="collapseAll" />
-                <Button v-if="refreshable" icon="material-icons-outlined mi-refresh" label="Refresh" size="small" text severity="warning" @click="refresh" />
+                <Button v-if="refreshable" icon="material-icons-outlined mi-refresh" label="Refresh" size="small" text severity="warn" @click="refresh" />
             </div>
         </template>
     </TreeTable>

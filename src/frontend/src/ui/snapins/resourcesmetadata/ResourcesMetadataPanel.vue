@@ -49,7 +49,7 @@ const showObjects = ref(true);
 const propertyHeader = computed(() => {
     switch (Object.keys(selectedNodes.value).length) {
         case 0:
-            return "Object Metadata";
+            return "Object metadata";
         case 1:
             return Object.keys(selectedNodes.value)[0];
         default:
