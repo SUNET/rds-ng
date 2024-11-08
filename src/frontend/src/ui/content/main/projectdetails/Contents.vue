@@ -69,29 +69,6 @@ watch(
                 </TabPanel>
             </TabPanels>
         </Tabs>
-        <!--
-        <TabView
-            v-model:active-index="activePanelIndex"
-            class="h-full"
-            :pt="{
-                nav: 'tab-view',
-                panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full' // TODO: Hacky height
-            }"
-        >
-            <TabPanel
-                v-for="panel in panels"
-                :key="panel.title"
-                :header="panel.title"
-                :pt="{
-                    header: 'tab-view-panel',
-                    headerAction: 'tab-view-panel-action',
-                    content: 'h-full'
-                }"
-            >
-                <component :is="panel.component" :project="project" :sharedObjectStore="sharedObjectStore" />
-            </TabPanel>
-        </TabView>
-        -->
     </div>
 </template>
 
@@ -105,6 +82,6 @@ watch(
 }
 
 :deep(.tab) {
-    @apply border-e border-inherit;
+    @apply border-e border-inherit p-3;
 }
 </style>
