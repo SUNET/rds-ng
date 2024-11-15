@@ -1,9 +1,14 @@
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-import { type ProfileID } from "./PropertyProfile";
 
 /**
  * Represents a project object.
+ */
+/**
+ * Represents a project object with an ID, value, and references.
+ *
+ * @abstract
+ * @class ProjectObject
  */
 export abstract class ProjectObject {
     id: string;
@@ -21,23 +26,83 @@ export abstract class ProjectObject {
         this.value = value;
         this.refs = refs;
     }
-}
 
-export class LayoutObject extends ProjectObject {
-    profiles: ProfileID[];
+    /**
+     * Retrieves the unique identifier of the project object.
+     *
+     * @returns {string} The unique identifier of the project object.
+     */
+    getId(): string {
+        return this.id;
+    }
 
-    constructor(profiles: ProfileID[], id?: string, value: any = {}, refs: string[] = []) {
-        super(id, value, refs);
-        this.profiles = profiles;
+    /**
+     * Retrieves the current values stored in the ProjectObject.
+     *
+     * @returns An object where the keys are strings and the values can be of any type.
+     */
+    getValues(): { [key: string]: any } {
+        return this.value;
+    }
+
+    /**
+     * Retrieves the list of the references that the object holds.
+     *
+     * @returns {string[]} An array of reference strings.
+     */
+    getReferences(): string[] {
+        return this.refs;
+    }
+
+    /**
+     * Sets the references for the project object.
+     *
+     * @param refs - An array of reference strings to be set.
+     */
+    setReferences(refs: string[]): void {
+        this.refs = refs;
+    }
+
+    /**
+     * Adds a reference string to the list of references.
+     *
+     * @param ref - The reference string to be added.
+     */
+    pushReference(ref: string): void {
+        this.refs.push(ref);
     }
 }
 
+/**
+ * Represents a layout object within a Profile.
+ * Extends the `ProjectObject` class.
+ */
+export class LayoutObject extends ProjectObject {
+    constructor(id?: string, value: any = {}, refs: string[] = []) {
+        super(id, value, refs);
+    }
+}
+
+/**
+ * Represents a shared object that extends the `ProjectObject` class.
+ * 
+
+ */
 export class SharedObject extends ProjectObject {
     type: string;
 
     constructor(type: string, id?: string, value: any = {}, refs: string[] = []) {
         super(id, value, refs);
         this.type = type;
+    }
+
+    /**
+     * Retrieves the type of the shared object.
+     *
+     * @returns {string} The type of the shared object.
+     */
+    public getType(): string {
+        return this.type;
     }
 }
 
@@ -114,7 +179,8 @@ export class ProjectObjectStore {
             return;
         }
         this._objects.forEach((object) => {
-            object.refs = object.refs.filter((ref) => ref !== id);
+            let matches = object.getReferences().filter((ref) => ref !== id);
+            object.setReferences(matches);
         });
     }
 
@@ -125,14 +191,10 @@ export class ProjectObjectStore {
      * @param id - The ID of the project object.
      * @param value - The new value for the project object.
      */
-    public update(profileId: ProfileID[] = [], inputId: string, id: string, value: any): void {
+    public update(inputId: string, id: string, value: any): void {
         var object: ProjectObject;
 
-        if (profileId.length > 0) {
-            object = this.add(new LayoutObject(profileId, id)) as LayoutObject;
-        } else {
-            object = this.get(id)!;
-        }
+        object = this.get(id)!;
         if (object !== undefined) {
             object["value"][inputId] = value;
         }
@@ -148,7 +210,7 @@ export class ProjectObjectStore {
     public addRef(id: string, ref: string): ProjectObject | undefined {
         const object = this.get(id);
         if (object) {
-            object.refs.push(ref);
+            object.pushReference(ref);
         } else {
             return undefined;
         }
@@ -162,7 +224,8 @@ export class ProjectObjectStore {
     public removeRef(id: string, ref: string): void {
         const object = this.get(id);
         if (object) {
-            object.refs = object.refs.filter((r) => r !== ref);
+            let matches = object.refs.filter((r) => r !== ref);
+            object.setReferences(matches);
         }
     }
 
@@ -174,7 +237,7 @@ export class ProjectObjectStore {
      */
     public getReferencedObjects(id: string): string[] {
         const object = this.get(id);
-        return object ? object["refs"] : [];
+        return object ? object.getReferences() : [];
     }
 
     /**
@@ -184,6 +247,6 @@ export class ProjectObjectStore {
      * @returns An array of project objects of the specified type.
      */
     public getObjectsByType(type: string): SharedObject[] {
-        return this._objects.filter((obj) => !!obj.type && obj.type === type);
+        return this._objects.filter((obj) => obj instanceof SharedObject && obj.type === type) as SharedObject[];
     }
 }

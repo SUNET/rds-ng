@@ -41,6 +41,9 @@ class ProfileMetadata {
     }
 }
 
+/**
+ * Represents an input for a profile class.
+ */
 class ProfileClassInput {
     /**
      * Creates an instance of `ProfileClassInput`.
@@ -72,7 +75,9 @@ class ProfileClassInput {
     }
 }
 
-// make inputs its own class, distinguish inputs that have options
+/**
+ * Represents a profile with various properties and inputs.
+ */
 export class ProfileClass {
     public readonly id: string;
     public readonly label: string;
@@ -81,11 +86,11 @@ export class ProfileClass {
     public required?: boolean;
     public readonly multiple?: boolean;
     public readonly example?: string;
-    public readonly type?: string[];
+    public readonly type: string[];
 
     // @ts-ignore
     @Type(() => ProfileClassInput)
-    public readonly input?: ProfileClassInput[];
+    public readonly input: ProfileClassInput[];
 
     public constructor(
         id: string,
@@ -95,8 +100,8 @@ export class ProfileClass {
         required?: boolean,
         multiple?: boolean,
         example?: string,
-        type?: string[],
-        input?: ProfileClassInput[]
+        type: string[] = [],
+        input: ProfileClassInput[] = []
     ) {
         this.id = id;
         this.label = label;
@@ -108,27 +113,67 @@ export class ProfileClass {
         this.type = type;
         this.input = input;
     }
+
+    /**
+     * Retrieves the inputs of the PropertyProfileClass.
+     *
+     * @returns The input property.
+     */
+    public getInputs() {
+        return this.input;
+    }
+
+    /**
+     * Retrieves the types that the PropertyProfileClass can reference.
+     *
+     * @returns The types of the PropertyProfileClass.
+     */
+    public getTypes() {
+        return this.type;
+    }
+
+    /**
+     * Retrieves the unique identifier of the PropertyProfileClass.
+     *
+     * @returns {string} The unique identifier of the PropertyProfileClass.
+     */
+    public getId() {
+        return this.id;
+    }
 }
 
+/**
+ * Represents a layout class for profiles, extending the ProfileClass.
+ * This class maintains an array of profile IDs.
+ */
 export class ProfileLayoutClass extends ProfileClass {
-    profiles?: ProfileID[] = [];
+    profiles: ProfileID[] = [];
 
+    /**
+     * Adds a profile to the profiles array of the ProfileLayoutClass.
+     *
+     * @param profile - The profile ID to be added.
+     */
     addProfile(profile: ProfileID) {
         this.profiles!.push(profile);
     }
 }
 
+/**
+ * A dictionary that maps string keys to instances of `ProfileClass`.
+ * This can be used to store and retrieve `ProfileClass` objects by their associated string identifiers.
+ */
 class ProfileClassDictionary {
     [key: string]: ProfileClass;
 }
 
 /**
  * Represents a property profile with metadata, layout, and classes.
- * 
+ *
  * @remarks
  * This class is used to encapsulate the profile metadata, layout, and class dictionary
  * for a property editor component.
- * 
+ *
  * @public
  */
 export class PropertyProfile {
@@ -189,8 +234,33 @@ export class PropertyProfile {
     getVersion(): string {
         return this.metadata.id[1];
     }
+
+    /**
+     * Retrieves the display label from the metadata.
+     *
+     * @returns {string} The display label.
+     */
+    getDisplayLabel(): string {
+        return this.metadata.displayLabel;
+    }
 }
 
+/**
+ * Enum representing various property data types.
+ *
+ * @enum {string}
+ * @property {string} STRING - Represents a string data type.
+ * @property {string} NUMBER - Represents a number data type.
+ * @property {string} BOOLEAN - Represents a boolean data type.
+ * @property {string} SELECTION - Represents a selection data type.
+ * @property {string} TEXTAREA - Represents a textarea data type.
+ * @property {string} MULTISELECT - Represents a multiselect data type.
+ * @property {string} STRINGLIST - Represents a string list data type.
+ * @property {string} RADIOBUTTONS - Represents a radio buttons data type.
+ * @property {string} DATE - Represents a date data type.
+ * @property {string} DROPDOWN - Represents a dropdown data type.
+ * @property {string} CHECKBOX - Represents a checkbox data type.
+ */
 export enum PropertyDataType {
     STRING = "string",
     NUMBER = "number",
@@ -205,6 +275,24 @@ export enum PropertyDataType {
     CHECKBOX = "checkbox"
 }
 
+/**
+ * A mapping of `PropertyDataType` to their corresponding form components.
+ * This object is used to dynamically render the appropriate form component
+ * based on the type of property data.
+ *
+ * @typeParam PropertyDataType - The type of property data.
+ * @typeParam Component - The form component associated with the property data type.
+ *
+ * @property {Component} [PropertyDataType.STRING] - Component for string data type.
+ * @property {Component} [PropertyDataType.NUMBER] - Component for number data type.
+ * @property {Component} [PropertyDataType.TEXTAREA] - Component for textarea data type.
+ * @property {Component} [PropertyDataType.MULTISELECT] - Component for multiselect data type.
+ * @property {Component} [PropertyDataType.STRINGLIST] - Component for string list data type.
+ * @property {Component} [PropertyDataType.RADIOBUTTONS] - Component for radio buttons data type.
+ * @property {Component} [PropertyDataType.DATE] - Component for date data type.
+ * @property {Component} [PropertyDataType.DROPDOWN] - Component for dropdown data type.
+ * @property {Component} [PropertyDataType.CHECKBOX] - Component for checkbox data type.
+ */
 export const propertyDataForms: { [key in PropertyDataType]?: Component } = {
     [PropertyDataType.STRING]: StringForm,
     [PropertyDataType.NUMBER]: NumberForm,

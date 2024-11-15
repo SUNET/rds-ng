@@ -1,10 +1,12 @@
-import { type ProfileID } from "../PropertyProfile";
+import { type ProfileID, ProfileLayoutClass, PropertyProfile } from "../PropertyProfile";
+import { PropertyProfileStore } from "../PropertyProfileStore";
 
 /**
  * Checks whether two profile IDs are the same.
  *
- * @param id1 - The first ID.
- * @param id2 - The second ID.
+ * @param id1 - The first ProfileID.
+ * @param id2 - The second ProfileID.
+ * @returns - Whether the ProfileIDs are the same
  */
 export function compareProfileIDs(id1: ProfileID, id2: ProfileID): boolean {
     return id1[0].toLowerCase().localeCompare(id2[0].toLowerCase()) == 0 && id1[1].toLowerCase().localeCompare(id2[1].toLowerCase()) == 0;
@@ -63,4 +65,27 @@ export function makeDebounce(waitFor: number = 1000) {
 
             t = window.setTimeout(() => resolve(func()), waitFor);
         });
+}
+
+/**
+ * Builds a layout from a given PropertyProfileStore.
+ *
+ * @param projectProfiles The PropertyProfileStore that the layout is to be calculated for.
+ * @returns the layout (profileLayoutClass[]).
+ */
+export function calculateLayout(projectProfiles: PropertyProfileStore): ProfileLayoutClass[] {
+    const layout: ProfileLayoutClass[] = [];
+    for (const profile of projectProfiles.list() as PropertyProfile[]) {
+        for (const p of profile.getLayout()) {
+            const x: ProfileLayoutClass | undefined = layout.find((xd: ProfileLayoutClass) => p.id == xd.id);
+            if (x !== undefined) {
+                x.addProfile(profile.getId());
+                if (p.required) x["required"] = true;
+            } else {
+                p["profiles"] = [profile.getId()];
+                layout.push(p);
+            }
+        }
+    }
+    return layout;
 }

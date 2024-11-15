@@ -5,7 +5,7 @@ import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 /**
  * The DMP metadata type.
  *
- * TODO: Use proper type
+ *
  */
 export type DataManagementPlan = LayoutObject[];
 

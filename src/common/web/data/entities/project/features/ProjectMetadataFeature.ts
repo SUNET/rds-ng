@@ -6,14 +6,14 @@ import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 /**
  * The project metadata type.
  *
- * TODO: Use proper type
+ *
  */
 export type ProjectMetadata = LayoutObject[];
 
 /**
  * The metadata objects type.
  *
- * TODO: Use proper type
+ *
  */
 export type MetadataObjects = SharedObject[];
 
@@ -25,7 +25,7 @@ export class ProjectMetadataFeature extends ProjectFeature {
     // @ts-ignore
     @Type(() => LayoutObject)
     public readonly metadata: ProjectMetadata;
-    
+
     // @ts-ignore
     @Type(() => SharedObject)
     public readonly shared_objects: MetadataObjects;

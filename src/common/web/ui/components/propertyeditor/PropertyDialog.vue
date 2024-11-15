@@ -24,12 +24,12 @@ const {
 
 // selected object
 const object = ref(sharedObjectStore.get(id)!) as Ref<SharedObject>;
-let objectClass = reactive(projectProfiles.getClassById(object.value["type"]!)!) as ProfileClass;
+let objectClass = reactive(projectProfiles.getClassById(object.value.getType())!) as ProfileClass;
 
-const displayableInputs = ref(objectClass["input"] || []);
-const addableTypes = ref(objectClass["type"] || []);
+const displayableInputs = ref(objectClass.getInputs());
+const addableTypes = ref(objectClass.getTypes());
 
-const linkedObjects = computed(() => sharedObjectStore.getReferencedObjects(object.value.id));
+const linkedObjects = computed(() => sharedObjectStore.getReferencedObjects(object.value.getId()));
 
 // History for Breadcrumbs
 const history = new History();
@@ -42,18 +42,18 @@ const toggle = (event: Event) => {
 };
 
 function selectActiveObject(id: string) {
-    object.value = sharedObjectStore.get(id)! as SharedObject;
-    objectClass = projectProfiles.getClassById(object.value["type"]!)! as ProfileClass;
-    addableTypes.value = objectClass["type"] || [];
-    displayableInputs.value = objectClass["input"] || [];
+    object.value = sharedObjectStore.get(id) as SharedObject;
+    objectClass = projectProfiles.getClassById(object.value.getType())! as ProfileClass;
+    addableTypes.value = objectClass.getTypes();
+    displayableInputs.value = objectClass.getInputs();
     history.navigateTo(object.value);
     // TODO optimize by only updating necessary elements
     menuPath.value = history.list().map((item: SharedObject) => {
-        const obj = sharedObjectStore.get(item.id) as SharedObject;
+        const obj = sharedObjectStore.get(item.getId()) as SharedObject;
 
         return {
-            label: `${projectProfiles.getClassLabelById(item.type!)}:  ${calcObjLabel(obj!, projectProfiles)}`,
-            command: () => selectActiveObject(item.id)
+            label: `${projectProfiles.getClassLabelById(item.getType())}:  ${calcObjLabel(obj!, projectProfiles)}`,
+            command: () => selectActiveObject(item.getId())
         };
     });
 }
@@ -94,7 +94,7 @@ selectActiveObject(id);
                         v-for="t in addableTypes"
                         :key="t"
                         :type="t"
-                        :parentId="object.id"
+                        :parentId="object.getId()"
                         :projectObjects="projectObjects"
                         :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                         :projectProfiles="projectProfiles"
@@ -132,7 +132,7 @@ selectActiveObject(id);
                             :key="i"
                             class="m-1 max-w-full"
                             :item-id="i"
-                            :parentId="object.id"
+                            :parentId="object.getId()"
                             :projectObjects="projectObjects"
                             :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                             :projectProfiles="projectProfiles"
@@ -161,7 +161,7 @@ selectActiveObject(id);
                             <component
                                 :is="propertyDataForms[input['type'] as PropertyDataType]"
                                 class="w-full"
-                                :propertyObjectId="object['id']"
+                                :propertyObjectId="object.getId()"
                                 :projectObjects="sharedObjectStore"
                                 :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                                 :inputId="input['id']"

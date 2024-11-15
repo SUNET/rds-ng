@@ -4,16 +4,25 @@ import { LayoutObject } from "../../../../ui/components/propertyeditor/ProjectOb
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
+ * @typedef {ResourcesMetadataKey}
+ *
+ * Represents the keys of the ResourcesMetadata object.
+ */
+export type ResourcesMetadataKey = keyof typeof ResourcesMetadata;
+
+/**
  * The resources metadata type.
  *
- * TODO: Use proper type
+ *
  */
 export class ResourcesMetadata {
+    [key: string]: LayoutObject;
+
     public constructor(metadata: { [key: string]: LayoutObject[] } = {}) {
         if (metadata.value === undefined) return;
 
-        Object.entries(metadata.value).forEach(([key, value]) => {
-            if (value !== undefined) this[key] = plainToInstance(LayoutObject, value);
+        Object.entries(metadata.value).forEach(([key, value]: [ResourcesMetadataKey, LayoutObject]) => {
+            if (value !== undefined) this[key as ResourcesMetadataKey] = plainToInstance(LayoutObject, value);
         });
     }
 }

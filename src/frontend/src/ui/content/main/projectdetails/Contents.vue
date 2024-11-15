@@ -8,7 +8,7 @@ import { type UIOptions } from "@/data/entities/ui/UIOptions";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
-import { ProjectMetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/ProjectMetadataFeature";
+import { ProjectMetadataFeature, type MetadataObjects } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
@@ -44,7 +44,7 @@ watch(
     (shared_objects) => {
         debounce(() => {
             const action = new UpdateProjectFeaturesAction(comp);
-            action.prepare(project!.value, [new ProjectMetadataFeature(project!.value.features.project_metadata.metadata, shared_objects as ProjectMetadata)]);
+            action.prepare(project!.value, [new ProjectMetadataFeature(project!.value.features.project_metadata.metadata, shared_objects as MetadataObjects)]);
             action.execute();
         });
     },
@@ -72,7 +72,7 @@ watch(
                     content: 'h-full'
                 }"
             >
-                <component :is="panel.component" :project="project"/>
+                <component :is="panel.component" :project="project" />
             </TabPanel>
         </TabView>
     </div>

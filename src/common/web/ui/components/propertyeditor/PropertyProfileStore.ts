@@ -1,3 +1,4 @@
+import { plainToInstance } from "class-transformer";
 import { ProfileClass, PropertyProfile, type ProfileID } from "./PropertyProfile";
 
 const isProfile = (profile: any): profile is PropertyProfile => {
@@ -35,10 +36,11 @@ export class PropertyProfileStore {
         this._profiles = this._profiles.filter((profile) => profile.metadata.id !== profileId);
     }
 
+    // HACK FIXME return actual type without class-transformer
     public getClassById(classId: string): ProfileClass | undefined {
         let classes = {} as { [key: string]: ProfileClass };
         this._profiles.forEach((profile) => (classes = { ...classes, ...profile.classes }));
-        return classes[classId];
+        return classes[classId] !== undefined ? plainToInstance(ProfileClass, classes[classId]) : undefined;
     }
 
     public getLabelTemplateById(classId: string): string | undefined {

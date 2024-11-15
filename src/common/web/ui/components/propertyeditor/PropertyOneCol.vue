@@ -5,7 +5,7 @@ import { useColorsStore } from "../../../data/stores/ColorsStore";
 import MandatoryMark from "../misc/MandatoryMark.vue";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
-import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
+import { ProfileClass, ProfileLayoutClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
 import Chip from "primevue/chip";
@@ -13,17 +13,13 @@ import OverlayPanel from "primevue/overlaypanel";
 import { LayoutObject, ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
 
 const emit = defineEmits(["hide"]);
-const { index, propertyClass, profileId, projectObjects, projectProfiles, sharedObjectStore, layoutProfiles } = defineProps({
+const { index, propertyClass, projectObjects, projectProfiles, sharedObjectStore, layoutProfiles } = defineProps({
     index: {
         type: Number,
         required: true
     },
     propertyClass: {
         type: Object as PropType<ProfileClass & { profiles: ProfileID[] }>,
-        required: true
-    },
-    profileId: {
-        type: Object as PropType<ProfileID>,
         required: true
     },
     projectObjects: {
@@ -39,22 +35,20 @@ const { index, propertyClass, profileId, projectObjects, projectProfiles, shared
         required: true
     },
     layoutProfiles: {
-        type: Object as PropType<Array<ProfileClass & { profiles: [] }>>,
+        type: Object as PropType<Array<ProfileLayoutClass>>,
         required: true
     }
 });
 const colorsStore = useColorsStore();
 
-projectObjects.add(new LayoutObject(propertyClass.profiles, propertyClass.id));
+projectObjects.add(new LayoutObject(propertyClass.id));
 
-const propertyObject = computed(
-    () => projectObjects.get(propertyClass.id) || projectObjects.add(new LayoutObject(propertyClass.profiles, propertyClass.id))
-) as Ref<ProjectObject>;
+const propertyObject = computed(() => projectObjects.get(propertyClass.id) || projectObjects.add(new LayoutObject(propertyClass.id))) as Ref<ProjectObject>;
 
 watch(
     () => projectObjects.get(propertyClass.id),
     (obj) => {
-        if (!obj) projectObjects.add(new LayoutObject(propertyClass.profiles, propertyClass.id));
+        if (!obj) projectObjects.add(new LayoutObject(propertyClass.id));
     }
 );
 
@@ -153,7 +147,6 @@ const toggleRemoveProperty = (e: Event) => {
                         :key="t"
                         :type="t"
                         :parentId="propertyObject['id']"
-                        :profileId="profileId"
                         :projectObjects="projectObjects as ProjectObjectStore"
                         :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                         :projectProfiles="projectProfiles"
@@ -192,7 +185,6 @@ const toggleRemoveProperty = (e: Event) => {
                     v-for="i in linkedObjects"
                     :key="i"
                     class="m-1 max-w-full"
-                    :profileId="profileId"
                     :item-id="i"
                     :parentId="propertyClass.id"
                     :projectObjects="projectObjects"
@@ -220,7 +212,6 @@ const toggleRemoveProperty = (e: Event) => {
                         :is="propertyDataForms[input['type'] as PropertyDataType]"
                         class="w-full"
                         :propertyObjectId="propertyObject['id']"
-                        :profileId="profileId"
                         :projectObjects="projectObjects"
                         :inputId="input['id']"
                         :inputOptions="input['options'] ? input['options'] : []"

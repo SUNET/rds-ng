@@ -8,33 +8,16 @@ import OrderList from "primevue/orderlist";
 
 import { computed, ref, type Ref } from "vue";
 import { useColorsStore } from "../../../data/stores/ColorsStore";
+import { calculateLayout as makeLayout } from "./utils/PropertyEditorUtils";
 
 import { ProjectObjectStore } from "./ProjectObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
-import { ProfileLayoutClass, PropertyProfile } from "./PropertyProfile";
+import { ProfileLayoutClass } from "./PropertyProfile";
 
 const props = defineProps(["controller", "project", "projectProfiles", "projectObjects", "sharedObjectStore"]);
 const colorsStore = useColorsStore();
 
-const getLayout = () => {
-    let layout: ProfileLayoutClass[] = [];
-    for (const profile of props.projectProfiles.list() as PropertyProfile[]) {
-
-        for (const p of profile.getLayout()) {
-            const x: ProfileLayoutClass | undefined = layout.find((xd: ProfileLayoutClass) => p.id == xd.id);
-            if (x !== undefined) {
-                x.addProfile(profile.getId());
-                if (p.required) x["required"] = true;
-            } else {
-                p["profiles"] = [profile.getId()];
-                layout.push(p);
-            }
-        }
-    }
-    return layout;
-};
-
-const layout = getLayout();
+var layout = makeLayout(props.projectProfiles);
 
 const propsToShow = ref<ProfileLayoutClass[]>(
     layout
@@ -46,13 +29,14 @@ const selectedProperties = ref([]) as Ref<ProfileLayoutClass[]>;
 const unselectProperties = () => (selectedProperties.value = []);
 const selectProperties = (selection: ProfileLayoutClass[]) => (selectedProperties.value = selection);
 
-// TODO FIXME this
 const hideProperty = (id: string) => {
-    propsToShow.value = propsToShow.value.filter((e: ProfileLayoutClass) => e.id != id);
+    layout = layout.filter((e: ProfileLayoutClass) => e.getId() != id);
 };
 
 const showAddProperties = ref(false);
-const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.id).includes(e.id)));
+const hiddenPropertys = computed(() =>
+    layout.filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.getId()).includes(e.getId()))
+);
 
 const filteredProperties = computed(() =>
     hiddenPropertys.value.filter(
@@ -65,28 +49,6 @@ const searchString = ref("");
 </script>
 
 <template>
-    <!--     <Toolbar :pt="{ root: { class: '!py-2 border-0 border-y-4 rounded-none' } }">
-        <template #start>
-            <div class="text-xl font-bold truncate text-clip" :title="profile['metadata']['name'] + ' v' + profile['metadata']['version']">
-                {{ `${profile["metadata"]["name"]} v${profile["metadata"]["version"]}` }}
-            </div>
-        </template>
-        <template #center class="flex grow"> </template>
-        <template #end>
-            <Button
-                text
-                :disabled="!items.length"
-                iconPos="right"
-                size="small"
-                type="button"
-                icon="pi pi-ellipsis-v"
-                @click="toggle"
-                aria-haspopup="true"
-                aria-controls="overlay_menu"
-            />
-            <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
-        </template>
-    </Toolbar> -->
     <div class="w-full max-w-full">
         <PropertyOneCol
             v-for="(p, i) in propsToShow"
@@ -94,7 +56,6 @@ const searchString = ref("");
             :index="i"
             class="my-5 w-full max-w-full"
             :propertyClass="p"
-            :profileId="layout.filter((e) => e.id == p.id)[0].profiles"
             :projectObjects="projectObjects"
             :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
             :projectProfiles="projectProfiles"
@@ -131,14 +92,14 @@ const searchString = ref("");
                 >
                     <template #item="slotProps">
                         <div class="flex flex-col">
-                            <span class="font-semibold flex gap-4" :title="slotProps.item.label"
-                                >{{ slotProps.item.label }}
+                            <span class="font-semibold flex gap-2" :title="slotProps.item.label">
+                                <span class="grow"> {{ slotProps.item.label }} </span>
                                 <Chip
                                     v-for="p in slotProps.item.profiles"
                                     :label="p[0]"
                                     size="small"
                                     :style="`background-color: ${colorsStore.color(p[0])}`"
-                                    class="h-4 !rounded p-2.5 text-sm self-center bg-opacity-40"
+                                    class="h-4 !rounded py-3 text-sm bg-opacity-40"
                             /></span>
                             <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.item.description">{{ slotProps.item.description }}</span>
                         </div>
@@ -182,7 +143,7 @@ const searchString = ref("");
     @apply border-l-2 border-solid border-transparent;
 }
 
-:deep(.p-highlight) {
+:deep(.p-orderlist-item.p-highlight) {
     @apply bg-emerald-50  border-l-2 border-emerald-600 text-slate-700;
 }
 </style>

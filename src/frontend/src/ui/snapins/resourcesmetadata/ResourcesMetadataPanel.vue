@@ -18,7 +18,7 @@ import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vu
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
 import { filterContainers } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
-import { ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
+import { ResourcesMetadata, ResourcesMetadataFeature, type ResourcesMetadataKey } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
 import { Resource } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
@@ -93,8 +93,8 @@ watch(
             const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.metadata);
 
             const selectedPaths = Object.keys(selectedNodes.value);
-            selectedPaths.forEach((path) => {
-                updatedData[path] = resourcesSet;
+            selectedPaths.forEach((path: ResourcesMetadataKey) => {
+                updatedData[path as ResourcesMetadataKey] = resourcesSet;
             });
             const action = new UpdateProjectFeaturesAction(comp);
             console.log(resourcesSet);
