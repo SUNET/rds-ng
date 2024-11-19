@@ -1,7 +1,7 @@
 import json
 import typing
 
-from sqlalchemy import TypeDecorator, Text
+from sqlalchemy import Text, TypeDecorator
 
 ArrayValueType = typing.TypeVar("ArrayValueType")
 DataclassType = typing.TypeVar("DataclassType")
@@ -75,3 +75,36 @@ class DataclassDataType(TypeDecorator, typing.Generic[DataclassType]):
 
     def process_result_value(self, value: str | None, dialect) -> DataclassType | None:
         return self._dataclass_type.schema().loads(value) if value is not None else None
+
+class DataClassArrayType(TypeDecorator, typing.Generic[DataclassType]):
+    """
+    Dataclass array type. (De)Serializes arrays of dataclasses.
+    Uses JSON to serialize Arrays to avoid having to use a delimiter that might appear in user input.
+    """
+
+    impl = Text
+
+    cache_ok = False
+
+    def __init__(self,
+                *args,
+                dataclass_type: type[DataclassType],
+                separator: str = ";",
+                **kwargs):
+        
+        super().__init__(*args, **kwargs)
+
+        self._dataclass_type = dataclass_type
+
+        self._separator = separator
+
+    def process_bind_param(self, value: DataclassType, dialect) -> str:
+        return json.dumps({i: v.to_json() for i, v in enumerate(value)})
+    
+    def process_result_value(self, value: str | None, dialect) -> typing.List[DataclassType]:
+        if value is None or value == "":
+            return []
+        
+        value = list(json.loads(value).values())
+        
+        return list(map(self._dataclass_type.schema().loads, value))

@@ -1,31 +1,18 @@
 import uuid
 from dataclasses import dataclass
 
-from sqlalchemy import (
-    MetaData,
-    Table,
-    Column,
-    Integer,
-    Text,
-    Boolean,
-    ForeignKey,
-    String,
-    Uuid,
-    Numeric,
-)
-from sqlalchemy.orm import registry, composite, relationship
+from sqlalchemy import (Boolean, Column, ForeignKey, Integer, MetaData,
+                        Numeric, String, Table, Text, Uuid)
+from sqlalchemy.orm import composite, registry, relationship
 
 from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
 from common.py.data.entities.project.features import (
-    ProjectFeatureID,
-    ProjectMetadataFeature,
-    ResourcesMetadataFeature,
-    DataManagementPlanFeature,
-)
+    DataManagementPlanFeature, ProjectFeatureID, ProjectMetadataFeature,
+    ProjectObject, ResourcesMetadataFeature)
 from common.py.data.entities.project.logbook import ProjectJobHistoryRecord
 
-from .types import JSONEncodedDataType, ArrayType
+from .types import ArrayType, DataClassArrayType, JSONEncodedDataType
 
 
 @dataclass(kw_only=True)
@@ -122,7 +109,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("plan", JSONEncodedDataType),
+        Column("plan", DataClassArrayType[ProjectObject](dataclass_type=ProjectObject)),
     )
 
     # -- Logbook

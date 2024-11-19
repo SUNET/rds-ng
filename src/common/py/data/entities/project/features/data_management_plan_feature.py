@@ -3,9 +3,10 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
+from ...properties.properties_object import ProjectObject
 from .project_feature import ProjectFeature, ProjectFeatureID
 
-DataManagementPlan = typing.List[typing.Dict[str, typing.Any]]  # TODO: Use proper type
+DataManagementPlan = typing.List[ProjectObject]
 
 
 @dataclass_json
