@@ -12,7 +12,8 @@ from common.py.data.entities.project.features import (
     ProjectObject, ResourcesMetadataFeature)
 from common.py.data.entities.project.logbook import ProjectJobHistoryRecord
 
-from .types import ArrayType, DataClassArrayType, JSONEncodedDataType
+from .types import (ArrayType, DataclassArrayDictType, DataclassArrayType,
+                    JSONEncodedDataType)
 
 
 @dataclass(kw_only=True)
@@ -84,8 +85,8 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("metadata", JSONEncodedDataType),
-        Column("shared_objects", JSONEncodedDataType),
+        Column("metadata", DataclassArrayType[ProjectObject](dataclass_type=ProjectObject)),
+        Column("shared_objects", DataclassArrayType[ProjectObject](dataclass_type=ProjectObject)),
     )
 
     table_feature_resources_metadata = Table(
@@ -97,7 +98,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("metadata", JSONEncodedDataType),
+        Column("metadata", DataclassArrayDictType[ProjectObject](dataclass_type=ProjectObject)),
     )
 
     table_feature_dmp = Table(
@@ -109,7 +110,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("plan", DataClassArrayType[ProjectObject](dataclass_type=ProjectObject)),
+        Column("plan", DataclassArrayType[ProjectObject](dataclass_type=ProjectObject)),
     )
 
     # -- Logbook
