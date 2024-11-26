@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Select } from "primevue";
+import Select from "primevue/select";
 import { computed, nextTick, type PropType, ref, toRefs } from "vue";
 
 import { Connector } from "@common/data/entities/connector/Connector";

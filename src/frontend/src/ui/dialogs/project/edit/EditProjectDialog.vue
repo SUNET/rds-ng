@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import Checkbox from "primevue/checkbox";
 import Fieldset from "primevue/fieldset";
-import InputSwitch from "primevue/inputswitch";
 import InputText from "primevue/inputtext";
 import Stepper from "primevue/stepper";
-import StepperPanel from "primevue/stepperpanel";
+import StepList from "primevue/steplist";
+import StepPanels from "primevue/steppanels";
+import Step from "primevue/step";
+import StepPanel from "primevue/steppanel";
 import Textarea from "primevue/textarea";
+import ToggleSwitch from "primevue/toggleswitch";
 import { computed, onMounted, ref, unref, watch } from "vue";
 import { string as ystring } from "yup";
 
@@ -16,7 +19,7 @@ import { useDirectives } from "@common/ui/Directives";
 
 import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
 import ResourcesTreeSelect from "@common/ui/components/resource/ResourcesTreeSelect.vue";
-import StepperIconHeader from "@common/ui/components/stepper/StepperIconHeader.vue";
+import StepIconHeader from "@common/ui/components/stepper/StepIconHeader.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/ui/UIOptions";
@@ -129,17 +132,34 @@ function onNextStep() {
 
 <template>
     <form @submit.prevent="!newProject ? acceptDialog : undefined" :class="[{ 'h-[calc(100%-4rem)]': newProject }, 'r-form']">
-        <Stepper v-model:activeStep="activeStep" :linear="newProject" :pt="{ panelContainer: newProject ? 'h-full' : '' }">
-            <StepperPanel header="Main settings" :pt="{ root: 'h-full', separator: !newProject ? 'r-border-bg' : '' }">
-                <template #header="{ index, clickCallback }">
-                    <StepperIconHeader
-                        :active="newProject ? index <= activeStep : index == activeStep"
-                        :click-callback="(event: Event) => onClickStep(event, clickCallback)"
+        <Stepper v-model:value="activeStep" :linear="newProject" :pt="{ panelContainer: newProject ? 'h-full' : '' }">
+            <StepList>
+                <Step v-slot="{ activateCallback }" :value="stepIndices.main" :pt="{ number: 'hidden' }" :dt="{ separator: 'hidden' }">
+                    <StepIconHeader
+                        :active="newProject ? stepIndices.main <= activeStep : stepIndices.main == activeStep"
+                        :click-callback="(event: Event) => onClickStep(event, activateCallback)"
                         icon="mi-edit"
                     />
-                </template>
+                </Step>
 
-                <template #content>
+                <Step v-slot="{ activateCallback }" :value="stepIndices.features" :pt="{ number: 'hidden' }">
+                    <StepIconHeader
+                        :active="newProject ? stepIndices.features <= activeStep : stepIndices.features == activeStep"
+                        :click-callback="(event: Event) => onClickStep(event, activateCallback)"
+                        icon="mi-checklist"
+                    />
+                </Step>
+
+                <Step v-slot="{ activateCallback }" :value="stepIndices.connections" :pt="{ number: 'hidden' }">
+                    <StepIconHeader
+                        :active="newProject ? stepIndices.connections <= activeStep : stepIndices.connections == activeStep"
+                        :click-callback="(event: Event) => onClickStep(event, activateCallback)"
+                        icon="mi-hub"
+                    />
+                </Step>
+            </StepList>
+            <StepPanels>
+                <StepPanel :value="stepIndices.main">
                     <div class="mb-2">
                         Set your main project settings, like its title, here. Note that the data path cannot be changed once the project has been created.
                     </div>
@@ -189,19 +209,9 @@ function onNextStep() {
                             </span>
                         </span>
                     </Fieldset>
-                </template>
-            </StepperPanel>
+                </StepPanel>
 
-            <StepperPanel header="Features" :pt="{ root: 'h-full', separator: !newProject ? 'r-border-bg' : '' }">
-                <template #header="{ index, clickCallback }">
-                    <StepperIconHeader
-                        :active="newProject ? index <= activeStep : index == activeStep"
-                        :click-callback="(event: Event) => onClickStep(event, clickCallback)"
-                        icon="mi-checklist"
-                    />
-                </template>
-
-                <template #content>
+                <StepPanel :value="stepIndices.features">
                     <div class="mb-2">
                         Select the features you want to use in this project. You can always turn additional features on or existing ones off later.
                     </div>
@@ -212,19 +222,9 @@ function onNextStep() {
                             <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.options.optional!.label }}</label>
                         </div>
                     </Fieldset>
-                </template>
-            </StepperPanel>
+                </StepPanel>
 
-            <StepperPanel header="Connections" :pt="{ root: 'h-full', separator: !newProject ? 'r-border-bg' : '' }">
-                <template #header="{ index, clickCallback }">
-                    <StepperIconHeader
-                        :active="newProject ? index <= activeStep : index == activeStep"
-                        :click-callback="(event: Event) => onClickStep(event, clickCallback)"
-                        icon="mi-hub"
-                    />
-                </template>
-
-                <template #content>
+                <StepPanel :value="stepIndices.connections">
                     <div class="mb-2">
                         Here you can select which connections - all or only specific ones - to make available for publishing or exporting your project. You can
                         always change this selection later.
@@ -234,7 +234,7 @@ function onNextStep() {
                         <div class="r-form-field">
                             <div class="grid grid-flow-row">
                                 <div class="flex align-items-center">
-                                    <InputSwitch
+                                    <ToggleSwitch
                                         v-model="dialogData.userData.options.use_all_connector_instances"
                                         inputId="useSelectConnectorInstances"
                                         :true-value="false"
@@ -255,8 +255,8 @@ function onNextStep() {
                             </div>
                         </div>
                     </Fieldset>
-                </template>
-            </StepperPanel>
+                </StepPanel>
+            </StepPanels>
         </Stepper>
     </form>
 
@@ -271,8 +271,4 @@ function onNextStep() {
     />
 </template>
 
-<style scoped lang="scss">
-.fixed-border-color {
-    background-color: var(--r-border-color);
-}
-</style>
+<style scoped lang="scss"></style>
