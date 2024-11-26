@@ -132,9 +132,9 @@ function onNextStep() {
 
 <template>
     <form @submit.prevent="!newProject ? acceptDialog : undefined" :class="[{ 'h-[calc(100%-4rem)]': newProject }, 'r-form']">
-        <Stepper v-model:value="activeStep" :linear="newProject" :pt="{ panelContainer: newProject ? 'h-full' : '' }">
+        <Stepper v-model:value="activeStep" :linear="newProject" :dt="!newProject ? { 'separator.activeBackground': '{content.border.color}' } : {}">
             <StepList>
-                <Step v-slot="{ activateCallback }" :value="stepIndices.main" :pt="{ number: 'hidden' }" :dt="{ separator: 'hidden' }">
+                <Step v-slot="{ activateCallback }" :value="stepIndices.main" :pt="{ number: 'hidden' }">
                     <StepIconHeader
                         :active="newProject ? stepIndices.main <= activeStep : stepIndices.main == activeStep"
                         :click-callback="(event: Event) => onClickStep(event, activateCallback)"
