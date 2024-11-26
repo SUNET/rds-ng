@@ -70,7 +70,7 @@ function onDeleteKey() {
         option-value="instance_id"
         class="w-full"
         :pt="{
-            root: 'coninst-listbox',
+            listContainer: 'coninst-listbox-container',
             list: 'coninst-listbox-list',
             option: 'coninst-listbox-option',
             optionGroup: 'coninst-listbox-option-group'
@@ -104,7 +104,7 @@ function onDeleteKey() {
 </template>
 
 <style scoped lang="scss">
-:deep(.coninst-listbox) {
+:deep(.coninst-listbox-container) {
     @apply overflow-y-auto max-h-[27rem] #{!important};
 }
 
