@@ -72,8 +72,8 @@ function onDeleteKey() {
         :pt="{
             root: 'coninst-listbox',
             list: 'coninst-listbox-list',
-            item: 'coninst-listbox-item',
-            itemGroup: 'coninst-listbox-item-group'
+            option: 'coninst-listbox-option',
+            optionGroup: 'coninst-listbox-option-group'
         }"
         @keydown="
             (event: KeyboardEvent) => {
@@ -112,11 +112,11 @@ function onDeleteKey() {
     @apply p-0 #{!important};
 }
 
-:deep(.coninst-listbox-item) {
+:deep(.coninst-listbox-option) {
     @apply border-solid border-b border-[--r-border-color] #{!important};
 }
 
-:deep(.coninst-listbox-item-group) {
+:deep(.coninst-listbox-option-group) {
     @apply bg-[var(--r-shade-dark)] p-2 #{!important};
 }
 </style>

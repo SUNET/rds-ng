@@ -12,8 +12,8 @@ const consStore = useConnectorsStore();
 const props = defineProps({
     connectorId: {
         type: String,
-        required: true,
-    },
+        required: true
+    }
 });
 const { connectorId } = toRefs(props);
 const connector = computed(() => findConnectorByID(consStore.connectors, connectorId!.value));

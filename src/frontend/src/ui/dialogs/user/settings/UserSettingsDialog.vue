@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import { markRaw, ref, watch } from "vue";
 import { array as yarray } from "yup";
 
-import VerticalTabView from "@common/ui/components/verticaltabview/VerticalTabView.vue";
+import VerticalTabs from "@common/ui/components/verticaltabview/VerticalTabs.vue";
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
@@ -62,7 +62,7 @@ watch(userSettings.value.connector_instances, (newConInsts) => {
 <template>
     <BlockUI :blocked="userSettingsUpdating">
         <form @submit.prevent="acceptDialog">
-            <VerticalTabView v-model:active-tab="activeTab" :tabs="tabs" :tab-data="userSettings" />
+            <VerticalTabs v-model:active-tab="activeTab" :tabs="tabs" :tab-data="userSettings" />
         </form>
     </BlockUI>
 </template>
