@@ -14,7 +14,7 @@ const props = defineProps({
 <template>
     <span :title="title">
         <span v-if="!!color" class="font-bold" :style="`color: ${color} !important;`">*</span>
-        <span v-else class="p-error font-bold">*</span>
+        <span v-else class="r-text-error font-bold">*</span>
     </span>
 </template>
 
