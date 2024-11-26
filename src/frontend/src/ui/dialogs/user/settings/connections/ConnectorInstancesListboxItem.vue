@@ -140,7 +140,7 @@ watch(userAuthorizations, () => {
             <Button
                 v-if="isAuthorized"
                 :label="isUnAuthorizing ? 'Disconnecting...' : 'Disconnect'"
-                severity="warning"
+                severity="warn"
                 size="small"
                 rounded
                 icon="material-icons-outlined mi-link-off"
