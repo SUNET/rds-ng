@@ -26,23 +26,23 @@ const object = computed(() => {
 const instanceLabel = computed(() => calcObjLabel(object.value, props.projectProfiles));
 const linkedItemActions = computed(() => [
     {
-        label: `${instanceLabel.value}`,
+        label: `Edit ${instanceLabel.value}`,
         hasSubmenu: false,
         items: [
             {
-                label: "Edit",
-                icon: "pi pi-pencil",
+                label: "Edit item",
+                icon: "material-icons-outlined mi-edit",
                 command: () => {
                     handleClick();
                 }
             },
             {
-                label: `Unlink`,
-                icon: "pi pi-minus",
+                label: `Unlink item`,
+                icon: "material-icons-outlined mi-link-off",
                 command: () => {
                     confirmDialog(comp, {
                         header: `Unlink "${instanceLabel.value}?"`,
-                        message: "Are you sure you want to unlink this property? The object will not be deleted, you can relink at any time.",
+                        message: "Are you sure you want to unlink this item? The object will not be deleted, you can relink at any time.",
                         acceptLabel: "Unlink",
                         acceptIcon: "pi pi-minus",
                         acceptClass: "p-button-danger",
@@ -56,13 +56,15 @@ const linkedItemActions = computed(() => [
                     });
                 }
             },
+            { separator: true },
             {
-                label: "Delete",
-                icon: "pi pi-trash",
+                label: "Delete item",
+                icon: "material-icons-outlined mi-delete-forever",
+                class: "r-text-error",
                 command: () => {
                     confirmDialog(comp, {
                         header: `Delete "${instanceLabel.value}"?`,
-                        message: "Are you sure you want to delete this object? It will not be recoverable.",
+                        message: "Are you sure you want to delete this item? It will not be recoverable.",
                         acceptLabel: "Delete",
                         acceptIcon: "pi pi-trash",
                         acceptClass: "p-button-danger",
@@ -117,13 +119,14 @@ const toggle = (event: Event) => {
 </script>
 
 <template>
-    <div :title="JSON.stringify(object, null, 4)" @contextmenu="(e: Event) => e.preventDefault()">
+    <div @contextmenu="(e: Event) => e.preventDefault()">
         <SplitButton
             ref="button"
             menuButtonIcon="pi pi-ellipsis-v"
             :model="linkedItemActions"
             menuitemicon="pi pi-link"
             class="min-h-full py-0 my-0 mb-2 space-y-0 w-full"
+            title="Edit item"
             @click="handleClick"
             @contextmenu="
                 () => {
@@ -133,6 +136,7 @@ const toggle = (event: Event) => {
                     button.onDropdownButtonClick();
                 }
             "
+            :pt="{ root: 'splitbutton' }"
             :style="`--p-color: ${calcBgColor(object, props.projectProfiles)}; --p-border-color: ${calcBorderColor(object, props.projectProfiles)};`"
         >
             <span class="mx-2 truncate flex items-center space-x-2">
@@ -174,15 +178,15 @@ const toggle = (event: Event) => {
 </template>
 
 <style scoped lang="scss">
-.p-splitbutton {
-    @apply h-8 text-gray-600 border border-[var(--p-border-color)];
+.splitbutton {
+    @apply h-8 border border-[var(--p-border-color)] text-gray-600;
 }
 
-:deep(.p-splitbutton-defaultbutton) {
-    @apply bg-[var(--p-color)] bg-opacity-30 border-0 px-2 text-inherit;
+.splitbutton > *:first-child {
+    @apply bg-[var(--p-color)] [&:hover]:brightness-95 border-0 px-2 text-inherit;
 }
 
-:deep(.p-splitbutton-menubutton) {
-    @apply bg-[var(--p-color)] bg-opacity-50 border-0 border-l border-[var(--p-border-color)] text-inherit;
+.splitbutton > *:not(:first-child) {
+    @apply bg-[var(--p-color)] [&:hover]:brightness-95 border-0 border-l border-[var(--p-border-color)] text-inherit;
 }
 </style>

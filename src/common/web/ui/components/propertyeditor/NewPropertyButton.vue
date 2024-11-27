@@ -66,24 +66,28 @@ function createObject() {
         @click="() => createObject()"
         @contextmenu="(e: Event) => e.preventDefault()"
         :model="linkableItems.length ? linkableItems : [{ label: `No linkable ${label}(s) available`, disabled: true }]"
+        :pt="{ root: 'splitbutton' }"
     >
         <span :title="'Add new ' + label" class="capitalize text-nowrap">
             <i class="pi pi-plus text-xs capitalize"> </i>
             {{ label }}
         </span>
-        <template #menubuttonicon title="test"><i class="pi pi-link" :title="'Link existing ' + label"></i> </template>
+        <template #dropdownicon>
+            <i class="pi pi-link" :title="'Link existing ' + label" />
+        </template>
     </SplitButton>
 </template>
 
 <style scoped lang="scss">
-.p-splitbutton {
-    @apply h-6 text-gray-600 border border-[#608f00];
+.splitbutton {
+    @apply h-6 border border-[#608f00] text-gray-600;
 }
-:deep(.p-splitbutton-defaultbutton.p-button) {
+
+.splitbutton > *:first-child {
     @apply bg-[#eaffbe] [&:not(:hover)]:bg-opacity-50 border-0 px-2 text-inherit;
 }
 
-:deep(.p-splitbutton-menubutton) {
+.splitbutton > *:not(:first-child) {
     @apply bg-[#eaffbe] [&:not(:hover)]:bg-opacity-50 border-0 border-l border-[#608f00] text-inherit;
 }
 </style>
