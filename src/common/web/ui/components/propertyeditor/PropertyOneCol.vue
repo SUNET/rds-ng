@@ -143,7 +143,7 @@ const toggleRemoveProperty = (e: Event) => {
                             :title="`This field is required by ${projectProfiles.getProfileLabelById(p)}`"
                         />
                     </span>
-                    <Button v-if="propertyClass.description" unstyled @click="toggleRemoveDeadLink">
+                    <Button v-if="propertyClass.description" unstyled @click="toggleRemoveDeadLink" :title="propertyClass.description">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem; color: gray" />
                     </Button>
                     <Popover ref="op" class="max-w-lg">

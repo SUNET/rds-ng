@@ -80,7 +80,7 @@ selectActiveObject(id);
             <div class="row-span-1 text-gray-800 justify-between flex items-start">
                 <span :title="objectClass.label" class="flex-none">
                     <span class="text-xl"> {{ objectClass.label }}</span>
-                    <Button v-if="objectClass.description" unstyled @click="toggle">
+                    <Button v-if="objectClass.description" unstyled @click="toggle" :title="objectClass.description">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem" />
                     </Button>
                     <Popover ref="op" class="max-w-lg">
