@@ -84,10 +84,10 @@ function createObject() {
 }
 
 .splitbutton > *:first-child {
-    @apply bg-[#eaffbe] [&:not(:hover)]:bg-opacity-50 border-0 px-2 text-inherit;
+    @apply bg-[#eaffbe] [&:not(:hover)]:bg-opacity-40 border-0 px-2 text-inherit;
 }
 
 .splitbutton > *:not(:first-child) {
-    @apply bg-[#eaffbe] [&:not(:hover)]:bg-opacity-50 border-0 border-l border-[#608f00] text-inherit;
+    @apply bg-[#eaffbe] [&:not(:hover)]:bg-opacity-40 border-0 border-l border-[#608f00] text-inherit;
 }
 </style>
