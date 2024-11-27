@@ -49,14 +49,14 @@ const editMenuItems = computed(() => {
     if (unref(requiresAuthorization)) {
         if (unref(isAuthorized)) {
             menuItems.items.push({
-                label: () => (unref(isUnAuthorizing) ? "Disconnecting from ${unref(instance).name}..." : "Disconnect from ${unref(instance).name}"),
+                label: () => (unref(isUnAuthorizing) ? `Disconnecting from ${unref(instance).name}...` : `Disconnect from ${unref(instance).name}`),
                 icon: "material-icons-outlined mi-link-off",
                 disabled: () => unref(isUnAuthorizing),
                 command: onUnauthorize
             });
         } else {
             menuItems.items.push({
-                label: () => (unref(isUnAuthorizing) ? "Connecting to ${unref(instance).name}..." : `Connect to ${unref(instance).name}`),
+                label: () => (unref(isUnAuthorizing) ? `Connecting to ${unref(instance).name}...` : `Connect to ${unref(instance).name}`),
                 icon: "material-icons-outlined mi-link",
                 disabled: () => unref(isUnAuthorizing),
                 command: onAuthorize
