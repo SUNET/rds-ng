@@ -37,7 +37,7 @@ function createObject() {
     } else {
         dialog.open(PropertyDialog, {
             props: {
-                header: "New Property",
+                header: "New item",
                 style: {
                     "min-width": "50vw",
                     "max-width": "50vw",

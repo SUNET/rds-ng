@@ -69,10 +69,10 @@ selectActiveObject(id);
                 class="max-w-full w-full grid grid-cols-1"
                 :pt="{
                     root: { class: 'px-0 pt-0' },
-                    menu: { class: ' flex flex-wrap ' },
+                    list: { class: ' flex flex-wrap ' },
                     separator: { class: 'mb-2' },
-                    menuItem: { class: 'max-w-full' },
-                    label: { class: 'text-red-900 opacity-80 hover:opacity-100 cursor-pointer truncate pb-2 ' }
+                    item: { class: 'max-w-full breadcrumbs-item' },
+                    itemLabel: { class: 'text-red-900 opacity-80 hover:opacity-100 cursor-pointer truncate pb-2' }
                 }"
             />
         </template>
@@ -176,7 +176,7 @@ selectActiveObject(id);
 </template>
 
 <style scoped lang="scss">
-:deep(.p-menuitem:last-child) {
+:deep(.breadcrumbs-item:last-child) {
     @apply font-bold;
 }
 </style>
