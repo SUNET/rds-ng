@@ -128,7 +128,7 @@ const toggleRemoveProperty = (e: Event) => {
                 :class="propertyClass.required ? 'invisible' : 'invisible group-hover:visible'"
                 class="pt-0 mt-0 h-9"
                 @click="toggleRemoveProperty($event)"
-                :pt="{ root: { class: 'text-gray-400 hover:text-red-600 bg-transparent' } }"
+                :pt="{ root: 'text-gray-400 hover:text-red-600 bg-transparent' }"
             />
         </div>
         <div class="w-full grid grid-cols-1">

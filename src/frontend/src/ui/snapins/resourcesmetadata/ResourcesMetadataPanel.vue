@@ -168,7 +168,7 @@ for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadata
                                 <Panel
                                     class="mx-5 mt-5"
                                     :pt="{
-                                        toggleableContent: () => {
+                                        content: () => {
                                             return showObjects ? '' : 'h-0';
                                         }
                                     }"

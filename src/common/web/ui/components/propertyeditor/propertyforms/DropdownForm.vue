@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Dropdown from "primevue/dropdown";
+import Select from "primevue/select";
 import { computed, type PropType } from "vue";
 
 import { ProjectObjectStore } from "../ProjectObjectStore";
@@ -18,18 +18,15 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
 
 <template>
     <div class="flex">
-        <Dropdown
+        <Select
             :modelValue="value[inputId]"
             @update:modelValue="(value: String[]) => projectObjects.update(profileId || [], inputId, propertyObjectId, value)"
+            filter-placeholder="Search entry"
             :options="inputOptions"
             class="grow"
             placeholder="Select"
             filter
-            :pt="{
-                panel: {
-                    class: 'w-0'
-                }
-            }"
+            :pt="{ overlay: 'w-0' }"
         />
     </div>
 </template>

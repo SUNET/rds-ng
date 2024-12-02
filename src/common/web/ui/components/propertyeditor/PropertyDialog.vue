@@ -62,7 +62,7 @@ selectActiveObject(id);
 </script>
 
 <template>
-    <Card :pt="{ root: { class: 'shadow-none' }, body: { class: 'pl-1 p-0 overflow-hidden' } }">
+    <Card :pt="{ root: 'shadow-none', body: 'pl-1 p-0 overflow-hidden' }">
         <template #header>
             <Breadcrumb
                 :model="menuPath as MenuItem[]"
