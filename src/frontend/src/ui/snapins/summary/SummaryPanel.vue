@@ -11,8 +11,8 @@ import TimelinePanel from "@/ui/snapins/summary/TimelinePanel.vue";
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 </script>
@@ -28,7 +28,7 @@ const { project } = toRefs(props);
                 <Panel
                     header="Timeline"
                     class="panel-container-content r-shade-gray"
-                    :pt="{ title: 'text-xl', toggleableContent: 'h-[calc(100%-4rem)]', content: 'h-full' }"
+                    :pt="{ title: 'text-xl', contentContainer: 'h-[calc(100%-4rem)]', content: 'h-full' }"
                 >
                     <TimelinePanel :project="project" />
                 </Panel>
@@ -38,7 +38,7 @@ const { project } = toRefs(props);
                 <Panel
                     header="Statistics"
                     class="panel-container-content r-shade-gray"
-                    :pt="{ title: 'text-xl', toggleableContent: 'h-[calc(100%-4rem)]', content: 'h-full' }"
+                    :pt="{ title: 'text-xl', contentContainer: 'h-[calc(100%-4rem)]', content: 'h-full' }"
                 >
                     <StatisticsPanel :project="project" />
                 </Panel>

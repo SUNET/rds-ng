@@ -2,9 +2,9 @@
  * Global colors.
  */
 :root {
-    --r-border-color: rgb(209 213 219);
-    --r-shade: color-mix(in srgb, var(--highlight-bg), #fff 50%);
-    --r-shade-dark: color-mix(in srgb, var(--highlight-bg), #fff 25%);
+    --r-border-color: var(--p-surface-200);
+    --r-shade: color-mix(in srgb, var(--p-highlight-background), #fff 50%);
+    --r-shade-dark: color-mix(in srgb, var(--p-highlight-background), #fff 25%);
 }
 
 /*
@@ -15,39 +15,39 @@ html {
 }
 
 .r-text {
-    color: var(--text-color);
+    color: var(--p-text-color);
 }
 
 .r-primary-fg {
-    color: var(--primary-color);
+    color: var(--p-primary-color);
 }
 
 .r-primary-bg {
-    background-color: var(--primary-color);
+    background-color: var(--p-primary-color);
 }
 
 .r-primary-text {
-    color: var(--primary-color-text);
+    color: var(--p-primary-contrast-color);
 }
 
 .r-highlight-fg {
-    color: var(--highlight-bg);
+    color: var(--p-highlight-background);
 }
 
 .r-highlight-bg {
-    background-color: var(--highlight-bg);
+    background-color: var(--p-highlight-background);
 }
 
 .r-highlight-text {
-    color: var(--highlight-text-color);
+    color: var(--p-highlight-color);
 }
 
 .r-border {
-    border-radius: var(--border-radius);
+    border-radius: var(--p-border-radius-sm);
 }
 
 .r-border-bg {
-    background-color: var(--surface-border);
+    background-color: var(--p-surface-300);
 }
 
 /*
@@ -58,7 +58,7 @@ html {
 }
 
 .r-text-light {
-    color: color-mix(in srgb, var(--text-color), #fff 30%);
+    color: color-mix(in srgb, var(--p-text-color), #fff 30%);
     opacity: 0.7;
 }
 
@@ -75,8 +75,7 @@ html {
 }
 
 .r-text-caption-big {
-    @apply font-bold;
-    @apply text-lg;
+    @apply font-bold text-lg;
 }
 
 .r-text-title {
@@ -140,7 +139,7 @@ html {
 }
 
 .r-shade-text {
-    color: var(--text-color);
+    color: var(--p-text-color);
 }
 
 .r-shade-gray {

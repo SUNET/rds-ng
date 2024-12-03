@@ -11,12 +11,13 @@ const { newProject } = useProjectTools(comp);
 <template>
     <div class="place-self-stretch self-end m-4">
         <Button
-            class="w-full !p-1.5 !text-xl"
+            class="w-full p-1.5 text-xl"
             label="New Project"
             icon="material-icons-outlined mi-add-circle-outline"
-            icon-class="!text-4xl"
-            severity="warning"
+            icon-class="!text-4xl mr-auto"
+            severity="warn"
             @click="newProject"
+            :pt="{ label: 'mr-auto' }"
         />
     </div>
 </template>

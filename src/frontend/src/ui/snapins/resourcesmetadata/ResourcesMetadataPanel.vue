@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
-import InputSwitch from "primevue/inputswitch";
 import Panel from "primevue/panel";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
+import ToggleSwitch from "primevue/toggleswitch";
 import { computed, nextTick, type PropType, reactive, ref, toRefs, unref, watch } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -49,7 +49,7 @@ const showObjects = ref(true);
 const propertyHeader = computed(() => {
     switch (Object.keys(selectedNodes.value).length) {
         case 0:
-            return "Object Metadata";
+            return "Object metadata";
         case 1:
             return Object.keys(selectedNodes.value)[0];
         default:
@@ -168,7 +168,7 @@ for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadata
                                 <Panel
                                     class="mx-5 mt-5"
                                     :pt="{
-                                        toggleableContent: () => {
+                                        content: () => {
                                             return showObjects ? '' : 'h-0';
                                         }
                                     }"
@@ -179,7 +179,7 @@ for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadata
                                                 <i class="pi pi-exclamation-circle mr-2" /> Changes will be applied to
                                                 {{ Object.keys(selectedNodes).length }} objects.
                                             </span>
-                                            <label for="switch1">Show objects</label> <InputSwitch v-model="showObjects" />
+                                            <label for="switch1">Show objects</label> <ToggleSwitch v-model="showObjects" />
                                         </span>
                                     </template>
                                     <div v-if="showObjects">

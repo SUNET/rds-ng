@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Button from "primevue/button";
-import InlineMessage from "primevue/inlinemessage";
+import Message from "primevue/message";
 import ProgressBar from "primevue/progressbar";
-import { type PropType, toRefs } from "vue";
+import { computed, type PropType, toRefs, unref } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
 import { Project } from "@common/data/entities/project/Project";
@@ -13,60 +13,84 @@ import { ConnectorCategory } from "@/data/entities/connector/categories/Connecto
 const props = defineProps({
     index: {
         type: Number,
-        required: true,
+        required: true
     },
     timestamp: {
         type: Number,
-        required: true,
+        required: true
     },
     message: {
         type: String,
-        required: true,
+        required: true
     },
     resultMessage: {
         type: String,
-        required: true,
+        required: true
     },
     project: {
-        type: Object as PropType<Project>,
+        type: Object as PropType<Project>
     },
     connectorInstance: {
-        type: Object as PropType<ConnectorInstance>,
+        type: Object as PropType<ConnectorInstance>
     },
     connectorCategory: {
-        type: Object as PropType<ConnectorCategory>,
+        type: Object as PropType<ConnectorCategory>
     },
     severity: {
         type: String,
-        default: "info",
+        default: "info"
     },
     progress: {
         type: Number,
-        default: -1.0,
+        default: -1.0
     },
     elapsed: {
         type: String,
-        default: "",
+        default: ""
     },
     closable: {
         type: Boolean,
-        default: false,
+        default: false
     },
     record: {
         type: Number,
-        default: 0,
-    },
+        default: 0
+    }
 });
 const { index, timestamp, message, resultMessage, project, connectorInstance, connectorCategory, severity, progress, elapsed, closable, record } =
     toRefs(props);
 const emits = defineEmits<{
     (e: "dismiss", record: number): void;
 }>();
+
+const icon = computed(() => {
+    switch (unref(severity)) {
+        case "info":
+            return "mi-info";
+
+        case "warn":
+            return "mi-warning-amber";
+
+        case "error":
+            return "mi-error-outline";
+
+        case "success":
+            return "mi-done";
+
+        default:
+            return "";
+    }
+});
 </script>
 
 <template>
-    <div class="grid grid-cols-[1fr_min-content]" :class="{ 'pt-2': index != 0 }">
-        <InlineMessage :severity="severity" class="flex w-full justify-start group" :pt="{ text: '!w-full !text-sm', icon: 'place-self-start mt-3' }">
+    <div class="grid grid-cols-[1fr_min-content] w-full px-0.5" :class="{ 'pt-2': index != 0 }">
+        <Message
+            :severity="severity"
+            class="flex w-full justify-start group"
+            :icon="`material-icons-outlined ${icon}`"
+            :pt="{ content: 'w-full', text: '!w-full !text-sm', icon: 'place-self-start mt-2 !text-lg' }"
+        >
             <div>
                 <div class="grid grid-cols-[1fr_min-content] grid-flow-col gap-2 w-full">
                     <div>
@@ -104,7 +128,7 @@ const emits = defineEmits<{
                     <div v-else class="w-0" />
                 </div>
             </div>
-        </InlineMessage>
+        </Message>
     </div>
 </template>
 

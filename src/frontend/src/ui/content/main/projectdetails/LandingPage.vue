@@ -7,7 +7,7 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
 <template>
     <div>
         <div class="r-shade-text m-10 !mb-0 !pb-0">
-            <div class="grid grid-cols-2 min-w-full min-h-full place-content-start gap-24 !pb-0">
+            <div class="grid grid-cols-2 min-w-full min-h-full place-content-start gap-24 pb-0">
                 <div class="space-y-4 !pb-0">
                     <div>
                         <div class="text font-light uppercase">Sciebo Research Data Services</div>
@@ -23,7 +23,7 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                             <ExternalLink link="https://github.com/Sciebo-RDS" text="GitHub repository" />
                         </div>
                     </div>
-                    <Card class="p-2 h-fit" :pt="{ body: 'pb-0' }">
+                    <Card class="p-2 h-fit" :pt="{ body: '!pb-0' }">
                         <template #content>
                             <div class="grid justify-items-center">
                                 <img src="@assets/img/rds-steps-web.png" class="h-full max-h-[calc(100vh-30rem)]" alt="Steps" />

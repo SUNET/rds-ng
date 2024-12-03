@@ -29,11 +29,12 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
             <div class="fixed inset-0 flex justify-center items-center z-50 w-full flex-col h-full">
                 <Button
                     @click="$emit('close')"
-                    class="absolute right-5 top-2 opacity-50 hover:opacity-100"
+                    class="absolute right-3 top-3 opacity-50 hover:opacity-100 [&:not(:hover)]:text-white"
                     size="large"
-                    style="color: white"
                     icon="pi pi-times"
                     text
+                    rounded
+                    severity="secondary"
                 ></Button>
                 <div class="w-[80%] max-h-full flex flex-col divide-y divide-slate-800/25" @click="(e) => e.stopPropagation()">
                     <div v-if="!!header" :innerText="header" class="p-2 font-bold bg-gray-200" />

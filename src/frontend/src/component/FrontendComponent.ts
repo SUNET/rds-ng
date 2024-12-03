@@ -162,6 +162,16 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     }
 
     /**
+     * The project exporters service.
+     */
+    public get projectExportersService(): Service {
+        if (!this._projectExportersService) {
+            throw new Error("Tried to access the exporters service before its creation");
+        }
+        return this._projectExportersService;
+    }
+
+    /**
      * The global ``FrontendComponent`` instance via Vue's injection mechanism.
      *
      * @throws Error - If no instance has been created.

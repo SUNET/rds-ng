@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import Badge from "primevue/badge";
 import Button from "primevue/button";
-import OverlayPanel from "primevue/overlaypanel";
+import Popover from "primevue/popover";
 import { computed, ref, unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -27,7 +27,7 @@ const { editUserSettings } = useUserTools(comp);
 const jobsPanel = ref();
 const jobsPanelIcon = computed(() => (unref(jobs).length ? "material-icons-outlined mi-rocket-launch -rotate-45" : "material-icons-outlined mi-rocket"));
 const jobsPanelBadgeVisible = computed(
-    () => unref(projects).find((project) => getUnseenProjectJobHistoryRecords(project).length > 0) || unref(jobs).length > 0,
+    () => unref(projects).find((project) => getUnseenProjectJobHistoryRecords(project).length > 0) || unref(jobs).length > 0
 );
 
 function onShowJobsPanel(event: Event): void {
@@ -85,9 +85,9 @@ function onEditUserSettings(): void {
             />
         </div>
 
-        <OverlayPanel ref="jobsPanel">
+        <Popover ref="jobsPanel">
             <ProjectJobsPanel :projects="projects" :jobs="jobs" />
-        </OverlayPanel>
+        </Popover>
     </div>
 </template>
 

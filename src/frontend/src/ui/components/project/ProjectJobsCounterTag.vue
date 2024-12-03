@@ -7,27 +7,22 @@ import { ConnectorCategory } from "@/data/entities/connector/categories/Connecto
 const props = defineProps({
     category: {
         type: Object as PropType<ConnectorCategory>,
-        required: true,
+        required: true
     },
     value: {
         type: Number,
-        required: true,
+        required: true
     },
     instanceNames: {
         type: Object as PropType<String[]>,
-        default: [],
-    },
+        default: []
+    }
 });
 const { category, value, instanceNames } = toRefs(props);
 </script>
 
 <template>
-    <Tag
-        :title="category.verbStatusDone + ' to: ' + instanceNames.join(', ')"
-        :pt="{
-            root: category!.tagClass,
-        }"
-    >
+    <Tag :title="category.verbStatusDone + ' to: ' + instanceNames.join(', ')" :pt="{ root: category!.tagClass }">
         <span>{{ category.verbNounPlural }}:&nbsp;</span><span class="font-normal">{{ value }}</span>
     </Tag>
 </template>

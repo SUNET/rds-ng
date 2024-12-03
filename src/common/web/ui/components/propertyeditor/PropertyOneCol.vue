@@ -9,7 +9,7 @@ import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } fro
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
 import Chip from "primevue/chip";
-import OverlayPanel from "primevue/overlaypanel";
+import Popover from "primevue/popover";
 import { LayoutObject, ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
 
 const emit = defineEmits(["hide"]);
@@ -91,7 +91,7 @@ const toggleRemoveProperty = (e: Event) => {
     <div class="flex flex-row <!--hover:bg-gray-100--> px-2 pl-0 rounded group max-w-full w-full">
         <div class="grid w-16 justify-center shrink-0">
             <div class="text-gray-400 mt-0 pt-0 text-lg ml-auto mr-2" :class="propertyClass.required ? '' : 'group-hover:hidden'">{{ index + 1 }}.</div>
-            <OverlayPanel ref="removeProperty" class="py-2 px-5">
+            <Popover ref="removeProperty" class="py-2 px-5">
                 <div class="flex flex-col gap-4">
                     <h3 class="text-lg font-bold">Remove "{{ propertyClass.label }}"?</h3>
                     <p>The data for property "{{ propertyClass.label }}" will be lost.</p>
@@ -118,7 +118,7 @@ const toggleRemoveProperty = (e: Event) => {
                         </Button>
                     </div>
                 </div>
-            </OverlayPanel>
+            </Popover>
             <Button
                 :disabled="propertyClass.required"
                 text
@@ -128,7 +128,7 @@ const toggleRemoveProperty = (e: Event) => {
                 :class="propertyClass.required ? 'invisible' : 'invisible group-hover:visible'"
                 class="pt-0 mt-0 h-9"
                 @click="toggleRemoveProperty($event)"
-                :pt="{ root: { class: 'text-gray-400 hover:text-red-600 bg-transparent' } }"
+                :pt="{ root: 'text-gray-400 hover:text-red-600 bg-transparent' }"
             />
         </div>
         <div class="w-full grid grid-cols-1">
@@ -143,13 +143,13 @@ const toggleRemoveProperty = (e: Event) => {
                             :title="`This field is required by ${projectProfiles.getProfileLabelById(p)}`"
                         />
                     </span>
-                    <Button v-if="propertyClass.description" unstyled @click="toggleRemoveDeadLink">
+                    <Button v-if="propertyClass.description" unstyled @click="toggleRemoveDeadLink" :title="propertyClass.description">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem; color: gray" />
                     </Button>
-                    <OverlayPanel ref="op" class="max-w-lg">
+                    <Popover ref="op" class="max-w-lg">
                         {{ propertyClass.description }}
                         <p v-if="propertyClass.example" class="mt-2" v-html="`<b>Example</b>: ${propertyClass.example}`" />
-                    </OverlayPanel>
+                    </Popover>
                 </span>
                 <span class="mr-auto ml-5 flex gap-1 flex-wrap">
                     <NewPropertyButton

@@ -11,8 +11,8 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 const { editProject, publishProject } = useProjectTools(comp);
@@ -20,7 +20,7 @@ const { editProject, publishProject } = useProjectTools(comp);
 
 <template>
     <div class="flex gap-2">
-        <Button label="Project settings" icon="material-icons-outlined mi-engineering" icon-class="!text-3xl" @click="editProject(project)" />
+        <Button label="Project settings" icon="material-icons-outlined mi-settings" icon-class="!text-3xl" @click="editProject(project)" />
         <Button
             severity="contrast"
             label="Publish &amp; Export"

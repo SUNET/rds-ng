@@ -49,14 +49,14 @@ const editMenuItems = computed(() => {
     if (unref(requiresAuthorization)) {
         if (unref(isAuthorized)) {
             menuItems.items.push({
-                label: () => (unref(isUnAuthorizing) ? "Disconnecting..." : "Disconnect"),
+                label: () => (unref(isUnAuthorizing) ? `Disconnecting from ${unref(instance).name}...` : `Disconnect from ${unref(instance).name}`),
                 icon: "material-icons-outlined mi-link-off",
                 disabled: () => unref(isUnAuthorizing),
                 command: onUnauthorize
             });
         } else {
             menuItems.items.push({
-                label: () => (unref(isUnAuthorizing) ? "Connecting..." : "Connect"),
+                label: () => (unref(isUnAuthorizing) ? `Connecting to ${unref(instance).name}...` : `Connect to ${unref(instance).name}`),
                 icon: "material-icons-outlined mi-link",
                 disabled: () => unref(isUnAuthorizing),
                 command: onAuthorize
@@ -66,13 +66,13 @@ const editMenuItems = computed(() => {
 
     menuItems.items.push(
         {
-            label: "Settings",
-            icon: "material-icons-outlined mi-engineering",
+            label: "Connection settings",
+            icon: "material-icons-outlined mi-settings",
             command: () => emits("edit-instance", unref(instance)!)
         },
         { separator: true },
         {
-            label: "Delete",
+            label: "Delete connection",
             icon: "material-icons-outlined mi-delete-forever",
             class: "r-text-error",
             command: () => emits("delete-instance", unref(instance)!)
@@ -100,9 +100,9 @@ watch(userAuthorizations, () => {
 </script>
 
 <template>
-    <div class="grid grid-rows-auto grid-cols-[min-content_1fr_min-content] grid-flow-row gap-0 place-content-start group">
+    <div class="grid grid-rows-auto grid-cols-[min-content_1fr_min-content] grid-flow-row gap-0 place-content-start group w-full">
         <div v-if="requiresAuthorization" class="row-span-3 pt-1 pr-2.5">
-            <Tag rounded :severity="isAuthorized ? 'success' : 'danger'" :title="isAuthorized ? 'Connected' : 'Not connected'" class="w-10 h-10">
+            <Tag :severity="isAuthorized ? 'success' : 'danger'" :title="isAuthorized ? 'Connected' : 'Not connected'" class="w-10 h-10 rounded-full">
                 <span class="material-icons-outlined" :class="isAuthorized ? 'mi-power' : 'mi-power-off'" />
             </Tag>
         </div>
@@ -136,15 +136,15 @@ watch(userAuthorizations, () => {
 
         <div class="truncate" :title="instance!.description">{{ instance!.description }}</div>
 
-        <div v-if="requiresAuthorization" class="col-span-3 place-self-end">
+        <div v-if="requiresAuthorization" class="col-span-3 place-self-end mt-1">
             <Button
                 v-if="isAuthorized"
                 :label="isUnAuthorizing ? 'Disconnecting...' : 'Disconnect'"
-                severity="warning"
+                severity="warn"
                 size="small"
                 rounded
                 icon="material-icons-outlined mi-link-off"
-                class="r-button-small"
+                class="r-button-small !min-h-10"
                 :loading="isUnAuthorizing"
                 @click="onUnauthorize"
             />
@@ -155,7 +155,7 @@ watch(userAuthorizations, () => {
                 size="small"
                 rounded
                 icon="material-icons-outlined mi-link"
-                class="r-button-small"
+                class="r-button-small !min-h-10"
                 :loading="isUnAuthorizing"
                 @click="onAuthorize"
             />

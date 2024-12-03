@@ -1,7 +1,5 @@
 /**
  * Calculates the color for a property class based on the given parameters.
- * @param projectProfiles - The property profile store.
- * @param profileId - The profile ID.
  * @param type - The class type.
  * @param brightness - The brightness value.
  * @param chroma - The chroma value.
@@ -28,7 +26,7 @@ export function stringToColor(str: any, alpha: number = 1) {
 
 function _stringToHue(str: any) {
     const chars = [...str];
-    var num = 0;
+    let num = 0;
     chars.forEach((char, i) => {
         num += str.charCodeAt(i) * i + 57;
     });
