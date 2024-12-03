@@ -1,5 +1,5 @@
 import { ComponentType, ComponentUnit } from "@common/component/ComponentIDs";
-import { WebComponent, type WebComponentTheme } from "@common/component/WebComponent";
+import { WebComponent } from "@common/component/WebComponent";
 import { debug, error } from "@common/core/logging/Logging";
 import { Service } from "@common/services/Service";
 import { UnitID } from "@common/utils/UnitID";
@@ -27,8 +27,6 @@ import { registerSnapIns } from "@/ui/snapins/SnapIns";
 
 import Frontend from "@/ui/Frontend.vue";
 
-import Aura from "@primevue/themes/aura";
-
 /**
  * The main frontend component class.
  */
@@ -44,23 +42,9 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     private _projectExportersService: Service | null = null;
 
     public constructor() {
-        super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend, FrontendComponent.getFrontendTheme(), FrontendUserInterface);
+        super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend, FrontendUserInterface);
 
         this.addFrontendSettings();
-    }
-
-    private static getFrontendTheme(): WebComponentTheme {
-        return {
-            preset: Aura,
-            options: {
-                prefix: "p",
-                darkModeSelector: false,
-                cssLayer: {
-                    name: "primevue",
-                    order: "tailwind-base, primevue, tailwind-utilities"
-                }
-            }
-        };
     }
 
     public run(): void {

@@ -29,6 +29,7 @@ import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
 import createWebService from "../services/WebService";
 
+import { theme } from "../ui/theme/Theme";
 import MainContainer from "../ui/views/main/MainViewContainer.vue";
 
 // Load various icons
@@ -39,8 +40,6 @@ import "primeicons/primeicons.css";
 
 // Necessary to make the entire API known
 import "../api/API";
-
-export type WebComponentTheme = Record<string, any>;
 
 /**
  * Introduce a global type for Vue components.
@@ -73,14 +72,12 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
      * @param env - The global environment variables.
      * @param compID - The identifier of this component.
      * @param appRoot - The root (main) application component.
-     * @param theme - The PrimeVue theme configuration.
      * @param userInterfaceType - The type of the user interface class.
      */
     public constructor(
         env: SettingsContainer,
         compID: UnitID,
         appRoot: VueComponent,
-        theme: WebComponentTheme,
         userInterfaceType: Constructable<UserInterfaceType> = UserInterface as Constructable<UserInterfaceType>
     ) {
         if (WebComponent._instance) {
@@ -102,7 +99,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         this._router = this.createRouter();
 
         this._userInterface = this.createUserInterface(userInterfaceType, appRoot);
-        this._vueApp = this.createVueApp(theme);
+        this._vueApp = this.createVueApp();
     }
 
     private createConfig(env: SettingsContainer): Configuration {
@@ -129,7 +126,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         return new userInterfaceType(this._router, appRoot);
     }
 
-    private createVueApp(theme: WebComponentTheme): App {
+    private createVueApp(): App {
         logging.info("Creating Vue application");
 
         const app = createApp(MainContainer);
@@ -140,7 +137,19 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         // Register various plugins
         app.use(createPinia());
         app.use(this._router);
-        app.use(PrimeVue, { theme: theme });
+        app.use(PrimeVue, {
+            theme: {
+                preset: theme(this._data.config),
+                options: {
+                    prefix: "p",
+                    darkModeSelector: false,
+                    cssLayer: {
+                        name: "primevue",
+                        order: "tailwind-base, primevue, tailwind-utilities"
+                    }
+                }
+            }
+        });
         app.use(ConfirmationService);
         app.use(DialogService);
         app.use(ToastService);
