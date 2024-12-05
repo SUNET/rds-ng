@@ -33,7 +33,7 @@ export async function editProjectDialog(comp: FrontendComponent, project?: Proje
         {
             header: project ? "Project settings" : "New project",
             modal: true,
-            contentClass: newProject ? "w-[46rem] h-[44rem] pb-0" : "w-[46rem] h-[39rem] pb-0"
+            contentClass: newProject ? "w-[46rem] h-[33rem] pb-0" : "w-[46rem] h-[28rem] pb-0"
         },
         {
             newProject: newProject,

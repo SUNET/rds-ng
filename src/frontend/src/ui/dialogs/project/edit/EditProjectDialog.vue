@@ -40,8 +40,9 @@ const newProject = dialogData.userData.newProject;
 
 const stepIndices = {
     main: 0,
-    features: 1,
-    connections: 2
+    datapath: 1,
+    features: 2,
+    connections: 3
 };
 const lastStepIndex = Object.entries(stepIndices).length - 1;
 const activeStep = ref(stepIndices.main);
@@ -98,7 +99,11 @@ const nextCallback = computed(() => {
 
         // Verify each step to prevent advancing to the next one
         if (unref(activeStep) == stepIndices.main) {
-            if ("title" in validator.errors || "datapath" in validator.errors) {
+            if ("title" in validator.errors) {
+                return undefined;
+            }
+        } else if (unref(activeStep) == stepIndices.datapath) {
+            if ("datapath" in validator.errors) {
                 return undefined;
             }
         }
@@ -139,6 +144,16 @@ function onNextStep() {
                         :active="newProject ? stepIndices.main <= activeStep : stepIndices.main == activeStep"
                         :click-callback="(event: Event) => onClickStep(event, activateCallback)"
                         icon="mi-edit"
+                        title="Main settings"
+                    />
+                </Step>
+
+                <Step v-slot="{ activateCallback }" :value="stepIndices.datapath" :pt="{ number: 'hidden' }">
+                    <StepIconHeader
+                        :active="newProject ? stepIndices.datapath <= activeStep : stepIndices.datapath == activeStep"
+                        :click-callback="(event: Event) => onClickStep(event, activateCallback)"
+                        icon="mi-folder"
+                        title="Data path"
                     />
                 </Step>
 
@@ -147,6 +162,7 @@ function onNextStep() {
                         :active="newProject ? stepIndices.features <= activeStep : stepIndices.features == activeStep"
                         :click-callback="(event: Event) => onClickStep(event, activateCallback)"
                         icon="mi-checklist"
+                        title="Features"
                     />
                 </Step>
 
@@ -155,16 +171,15 @@ function onNextStep() {
                         :active="newProject ? stepIndices.connections <= activeStep : stepIndices.connections == activeStep"
                         :click-callback="(event: Event) => onClickStep(event, activateCallback)"
                         icon="mi-hub"
+                        title="Connections"
                     />
                 </Step>
             </StepList>
             <StepPanels>
                 <StepPanel :value="stepIndices.main">
-                    <div class="mb-2">
-                        Set your main project settings, like its title, here. Note that the data path cannot be changed once the project has been created.
-                    </div>
+                    <div class="mb-2">Set your main project settings, like its title, here. You can always change these later.</div>
 
-                    <Fieldset legend="General">
+                    <Fieldset legend="General settings">
                         <span class="r-form-field">
                             <label>Title <MandatoryMark /></label>
                             <InputText
@@ -184,6 +199,12 @@ function onNextStep() {
                             <small>An (optional) project description.</small>
                         </span>
                     </Fieldset>
+                </StepPanel>
+
+                <StepPanel :value="stepIndices.datapath">
+                    <div class="mb-2">
+                        Select the root data path for your project here. Note that this path cannot be changed once the project has been created.
+                    </div>
 
                     <Fieldset legend="Data" class="h-fit">
                         <span class="r-form-field">
@@ -205,7 +226,6 @@ function onNextStep() {
                                     <span class="material-icons-outlined mi-folder opacity-75 pr-2" />
                                     <span>{{ dialogData.userData.datapath }}</span>
                                 </span>
-                                <small class="pt-1"><b>Note:</b> This path cannot be changed anymore after project creation.</small>
                             </span>
                         </span>
                     </Fieldset>
