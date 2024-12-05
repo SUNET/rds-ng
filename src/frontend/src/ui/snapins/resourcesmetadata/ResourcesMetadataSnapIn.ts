@@ -14,7 +14,8 @@ export class ResourcesMetadataSnapIn extends SnapIn {
             },
             tabPanel: {
                 label: "Annotation",
-                loader: () => import("./ResourcesMetadataPanel.vue")
+                loader: () => import("./ResourcesMetadataPanel.vue"),
+                description: "Annotate individual file objects with metadata."
             }
         });
     }

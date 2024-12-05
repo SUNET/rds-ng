@@ -14,7 +14,8 @@ export class ProjectMetadataSnapIn extends SnapIn {
             },
             tabPanel: {
                 label: "Publication Metadata",
-                loader: () => import("./ProjectMetadataPanel.vue")
+                loader: () => import("./ProjectMetadataPanel.vue"),
+                description: "Add metadata describing your project."
             }
         });
     }

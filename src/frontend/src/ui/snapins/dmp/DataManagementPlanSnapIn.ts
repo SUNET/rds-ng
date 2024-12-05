@@ -14,7 +14,8 @@ export class DataManagementPlanSnapIn extends SnapIn {
             },
             tabPanel: {
                 label: "Data Management Plan",
-                loader: () => import("./DataManagementPlanPanel.vue")
+                loader: () => import("./DataManagementPlanPanel.vue"),
+                description: "Write a data management plan (DMP) about your project."
             }
         });
     }

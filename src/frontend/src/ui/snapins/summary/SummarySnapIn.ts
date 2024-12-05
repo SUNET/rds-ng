@@ -8,7 +8,8 @@ export class SummarySnapIn extends SnapIn {
             name: "Overview",
             tabPanel: {
                 label: "Overview",
-                loader: () => import("./SummaryPanel.vue")
+                loader: () => import("./SummaryPanel.vue"),
+                description: "An overview and general statistics about your project."
             }
         });
     }
