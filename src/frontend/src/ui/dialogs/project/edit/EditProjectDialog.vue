@@ -18,7 +18,7 @@ import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
 
 import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
-import ResourcesTreeSelect from "@common/ui/components/resource/ResourcesTreeSelect.vue";
+import ResourcesTree from "@common/ui/components/resource/ResourcesTree.vue";
 import StepIconHeader from "@common/ui/components/stepper/StepIconHeader.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -206,25 +206,30 @@ function onNextStep() {
                         Select the root data path for your project here. Note that this path cannot be changed once the project has been created.
                     </div>
 
-                    <Fieldset legend="Data" class="h-fit">
+                    <Fieldset legend="Data path" class="h-fit" :class="{ 'border-[var(--p-inputtext-invalid-border-color)]': !!validator.errors.datapath }">
+                        <template #legend>
+                            <span class="p-fieldset-legend-label">Data path <MandatoryMark /></span>
+                        </template>
+
                         <span class="r-form-field">
-                            <label>Data path <MandatoryMark /></label>
                             <span v-if="showDataPathSelector" class="grid grid-flow-row">
-                                <ResourcesTreeSelect
+                                <ResourcesTree
                                     v-bind="datapath"
                                     v-model="dialogData.userData.datapath"
                                     :options="resourcesNodes"
                                     :loading-error="resourcesError"
-                                    placeholder="Select where the data of this project is stored"
                                     loading
-                                    :class="{ 'p-invalid': validator.errors.datapath }"
+                                    class="w-full"
                                 />
-                                <small class="pt-1"><b>Important:</b> This path cannot be changed after the project has been created!</small>
+                                <small class="pt-3"><b>Important:</b> This path cannot be changed after the project has been created!</small>
                             </span>
                             <span v-else class="grid grid-flow-row">
                                 <span class="flex border border-solid rounded p-2">
                                     <span class="material-icons-outlined mi-folder opacity-75 pr-2" />
                                     <span>{{ dialogData.userData.datapath }}</span>
+                                </span>
+                                <span>
+                                    <small class="pt-3"><b>Project already created:</b> The data path cannot be changed anymore.</small>
                                 </span>
                             </span>
                         </span>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TreeNode } from "primevue/treenode";
+import { type TreeNode } from "primevue/treenode";
 import TreeSelect from "primevue/treeselect";
 import { type PropType, ref, toRefs, watch } from "vue";
 
@@ -12,24 +12,24 @@ function pathToSelectedResources(path: string): Record<string, boolean> {
 const props = defineProps({
     options: {
         type: Object as PropType<Object[]>,
-        required: true,
+        required: true
     },
     placeholder: {
         type: String,
-        default: "Select a value",
+        default: "Select a value"
     },
     loading: {
         type: Boolean,
-        default: false,
+        default: false
     },
     loadingError: {
         type: String,
-        default: "",
+        default: ""
     },
     loadingLabel: {
         type: String,
-        default: "Loading data...",
-    },
+        default: "Loading data..."
+    }
 });
 const { options, placeholder, loading, loadingError, loadingLabel } = toRefs(props);
 const model = defineModel<string>({ default: "" });
@@ -58,7 +58,7 @@ watch(model, (newPath) => {
         selection-mode="single"
         :placeholder="placeholder"
         :pt="{
-            panel: 'r-z-index-toplevel',
+            panel: 'r-z-index-toplevel'
         }"
         :disabled="isLoading || !!loadingError"
     >
