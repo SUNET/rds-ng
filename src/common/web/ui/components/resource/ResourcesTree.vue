@@ -17,13 +17,9 @@ const props = defineProps({
     loading: {
         type: Boolean,
         default: false
-    },
-    loadingError: {
-        type: String,
-        default: ""
     }
 });
-const { options, loading, loadingError } = toRefs(props);
+const { options, loading } = toRefs(props);
 const model = defineModel<string>({ default: "" });
 
 const isLoading = ref(loading.value);
@@ -67,8 +63,11 @@ const expandNode = (node: TreeNode) => {
         :expanded-keys="expandedKeys"
         v-model:selection-keys="selectedResources"
         selection-mode="single"
-        :loading="isLoading || !!loadingError"
+        :loading="isLoading"
         class="p-0 m-0 bg-transparent rounded"
+        :class="{ 'h-full': isLoading }"
+        :pt="{ root: 'text-sm', nodeIcon: '!text-xl' }"
+        :dt="{ 'node.padding': '0' }"
     />
 </template>
 

@@ -2,6 +2,7 @@
 import Checkbox from "primevue/checkbox";
 import Fieldset from "primevue/fieldset";
 import InputText from "primevue/inputtext";
+import ScrollPanel from "primevue/scrollpanel";
 import Stepper from "primevue/stepper";
 import StepList from "primevue/steplist";
 import StepPanels from "primevue/steppanels";
@@ -65,6 +66,7 @@ onMounted(() => {
             .done((reply: ListResourcesReply, success, msg) => {
                 if (success) {
                     resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true);
+                    //resourcesError.value = "Unable to load resources";
                 }
             })
             .failed((_, msg) => {
@@ -211,19 +213,25 @@ function onNextStep() {
                             <span class="p-fieldset-legend-label">Data path <MandatoryMark /></span>
                         </template>
 
-                        <span class="r-form-field">
-                            <span v-if="showDataPathSelector" class="grid grid-flow-row">
-                                <ResourcesTree
-                                    v-bind="datapath"
-                                    v-model="dialogData.userData.datapath"
-                                    :options="resourcesNodes"
-                                    :loading-error="resourcesError"
-                                    loading
-                                    class="w-full"
-                                />
-                                <small class="pt-3"><b>Important:</b> This path cannot be changed after the project has been created!</small>
-                            </span>
-                            <span v-else class="grid grid-flow-row">
+                        <div class="r-form-field">
+                            <div v-if="showDataPathSelector" class="grid grid-flow-row">
+                                <div v-if="!resourcesError" class="w-full">
+                                    <small class="px-2 py-1.5 r-shade-gray rounded-lg truncated inline-block w-full">
+                                        <b class="pr-1">Selected path:</b> {{ dialogData.userData.datapath || "(None)" }}
+                                    </small>
+                                    <ScrollPanel class="h-48">
+                                        <ResourcesTree
+                                            v-bind="datapath"
+                                            v-model="dialogData.userData.datapath"
+                                            :options="resourcesNodes"
+                                            loading
+                                            class="w-full h-fit"
+                                        />
+                                    </ScrollPanel>
+                                </div>
+                                <div v-else class="h-fit"><b>Unable to load resources:</b> {{ resourcesError }}</div>
+                            </div>
+                            <div v-else class="grid grid-flow-row">
                                 <span class="flex border border-solid rounded p-2">
                                     <span class="material-icons-outlined mi-folder opacity-75 pr-2" />
                                     <span>{{ dialogData.userData.datapath }}</span>
@@ -231,9 +239,10 @@ function onNextStep() {
                                 <span>
                                     <small class="pt-3"><b>Project already created:</b> The data path cannot be changed anymore.</small>
                                 </span>
-                            </span>
-                        </span>
+                            </div>
+                        </div>
                     </Fieldset>
+                    <small class="pt-3"><b>Important:</b> This path cannot be changed after the project has been created!</small>
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.features">
