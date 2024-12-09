@@ -9,7 +9,7 @@ import TreeTable from "primevue/treetable";
 import { onMounted, type PropType, ref, toRefs, unref, watch } from "vue";
 
 import { Resource, ResourceType } from "../../../data/entities/resource/Resource";
-import { filterResourcesTreeNodes, flattenResourcesTreeNodes } from "../../../data/entities/resource/ResourceUtils";
+import { filterResourcesTreeNodes } from "../../../data/entities/resource/ResourceUtils";
 import { humanReadableFileSize } from "../../../utils/Strings";
 import { useResourceTreeTools } from "./ResourceTreeTools";
 
