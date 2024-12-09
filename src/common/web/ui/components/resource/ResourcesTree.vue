@@ -3,6 +3,8 @@ import { type TreeNode } from "primevue/treenode";
 import Tree from "primevue/tree";
 import { type PropType, ref, toRefs, unref, watch } from "vue";
 
+import { useResourceTreeTools } from "./ResourceTreeTools";
+
 function pathToSelectedResources(path: string): Record<string, boolean> {
     const selectedResources: Record<string, boolean> = {};
     selectedResources[path] = true;
@@ -21,6 +23,7 @@ const props = defineProps({
 });
 const { options, loading } = toRefs(props);
 const model = defineModel<string>({ default: "" });
+const { expandAllNodes } = useResourceTreeTools();
 
 const isLoading = ref(loading.value);
 if (isLoading.value) {
@@ -39,28 +42,19 @@ watch(model, (newPath) => {
     selectedResources.value = pathToSelectedResources(newPath);
 });
 
-const expandedKeys = ref<Record<string, boolean>>({});
-const expandAll = () => {
-    for (let node of unref(options)) {
-        expandNode(node as TreeNode);
-    }
-    expandedKeys.value = { ...expandedKeys.value };
-};
-const expandNode = (node: TreeNode) => {
-    if (node.children && node.children.length) {
-        expandedKeys.value[node.key] = true;
+const expandedNodes = ref<Record<string, boolean>>({});
 
-        for (let child of node.children) {
-            expandNode(child);
-        }
+function expandAll(): void {
+    if (options!.value) {
+        expandAllNodes(unref(options) as TreeNode[], expandedNodes);
     }
-};
+}
 </script>
 
 <template>
     <Tree
         :value="options as TreeNode[]"
-        :expanded-keys="expandedKeys"
+        :expanded-keys="expandedNodes"
         v-model:selection-keys="selectedResources"
         selection-mode="single"
         :loading="isLoading"
