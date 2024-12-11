@@ -10,7 +10,7 @@ export const enum OverlayNotificationType {
     Info = "info",
     Success = "success",
     Warning = "warn",
-    Error = "error",
+    Error = "error"
 }
 
 /**
@@ -83,10 +83,46 @@ export class OverlayNotifications {
      */
     public notify(type: OverlayNotificationType, caption: string, message: string, sticky: boolean): void {
         this._toast.add({
+            group: "default",
             severity: type,
             summary: caption,
             detail: message,
-            life: sticky ? 0 : this._timeout,
+            life: sticky ? 0 : this._timeout
         });
+    }
+
+    /**
+     * Display a status notification.
+     *
+     * @param type - The notification type.
+     * @param message - The notification message.
+     * @param icon - The notification icon.
+     * @param sticky - Whether the notification will be sticky.
+     */
+    public notifyStatus(type: OverlayNotificationType, message: string, icon: string | undefined = undefined, sticky: boolean = true): any {
+        const options = {
+            group: "status",
+            severity: type,
+            summary: message,
+            // @ts-ignore
+            icon: icon,
+            life: sticky ? 0 : this._timeout,
+            closable: false
+        };
+        this._toast.add(options);
+        return options;
+    }
+
+    /**
+     * Clear any status notifications.
+     *
+     * @param options - An optional message to clear.
+     */
+    public clearStatus(options: any = undefined): void {
+        if (!!options) {
+            this._toast.remove(options);
+        } else {
+            this._toast.removeGroup("status");
+        }
     }
 }
