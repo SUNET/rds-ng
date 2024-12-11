@@ -33,7 +33,7 @@ onMounted(() => {
     <!-- Notifications -->
     <Toast position="bottom-right" class="opacity-75" group="default" />
     <Toast
-        position="bottom-right"
+        position="bottom-center"
         class="opacity-75"
         group="status"
         :dt="{ width: 'auto', 'content.padding': '0.25rem', 'text.gap': '0' }"

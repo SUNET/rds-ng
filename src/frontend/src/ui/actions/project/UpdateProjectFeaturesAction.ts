@@ -10,6 +10,7 @@ import { Project } from "@common/data/entities/project/Project";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
+import { StatusNotifier } from "@common/ui/actions/notifiers/StatusNotifier.ts";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
@@ -42,13 +43,11 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
     protected addDefaultNotifiers(title: string): void {
         this.addNotifier(
             ActionState.Executing,
-            new OverlayNotifier(OverlayNotificationType.Info, "Updating project", `Project '${title}' is being updated...`),
-            true
+            new StatusNotifier(OverlayNotificationType.Info, `Saving project '${title}'...`, "material-icons-outlined mi-save")
         );
         this.addNotifier(
             ActionState.Done,
-            new OverlayNotifier(OverlayNotificationType.Success, "Updating project", `Project '${title}' has been updated.`),
-            true
+            new StatusNotifier(OverlayNotificationType.Success, `Project '${title}' has been saved.`, "material-icons-outlined mi-save")
         );
         this.addNotifier(
             ActionState.Failed,

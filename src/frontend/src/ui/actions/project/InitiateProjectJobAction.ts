@@ -6,6 +6,7 @@ import { Project } from "@common/data/entities/project/Project";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
+import { StatusNotifier } from "@common/ui/actions/notifiers/StatusNotifier.ts";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
 import { findConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
@@ -27,20 +28,19 @@ export class InitiateProjectJobAction extends FrontendCommandAction<InitiateProj
 
         this.addNotifier(
             ActionState.Executing,
-            new OverlayNotifier(
+            new StatusNotifier(
                 OverlayNotificationType.Info,
-                "Initiating job",
                 `${category?.verbNoun} of project '${project.title}' through connection ${connectorInstance.name} is being started...`,
-            ),
-            true,
+                "material-icons-outlined mi-rocket-launch"
+            )
         );
         this.addNotifier(
             ActionState.Done,
-            new OverlayNotifier(
+            new StatusNotifier(
                 OverlayNotificationType.Success,
-                "Initiating job",
                 `${category?.verbNoun} of project '${project.title}' through connection ${connectorInstance.name} has been started`,
-            ),
+                "material-icons-outlined mi-rocket-launch"
+            )
         );
         this.addNotifier(
             ActionState.Failed,
@@ -48,8 +48,8 @@ export class InitiateProjectJobAction extends FrontendCommandAction<InitiateProj
                 OverlayNotificationType.Error,
                 "Error initiating job",
                 `An error occurred while starting the ${category?.verbNoun.toLowerCase()} of project '${project.title}': ${ActionNotifier.MessagePlaceholder}.`,
-                true,
-            ),
+                true
+            )
         );
     }
 }
