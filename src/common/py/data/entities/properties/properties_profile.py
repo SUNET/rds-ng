@@ -1,22 +1,22 @@
+import json
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 ### should probably be in a separate folder, is this is not specific to metadata but to general properties
 
 ProfileID = Tuple[str, str]
 
-@dataclass_json
+
 @dataclass
-class ProfileMetadata:
+class ProfileMetadata(DataClassJsonMixin):
     id: ProfileID
     displayLabel: str
     description: str
 
-@dataclass_json
 @dataclass
-class ProfileClassInput:
+class ProfileClassInput(DataClassJsonMixin):
     id: str
     label: str
     type: str
@@ -25,25 +25,26 @@ class ProfileClassInput:
     options: Optional[List[str]] = field(default_factory=list)
     required: Optional[bool] = None
 
-@dataclass_json
+
 @dataclass
-class ProfileClass:
+class ProfileClass(DataClassJsonMixin):
     id: str
-    displayLabel: str
-    type: List[str]
+    type: List[str] = field(default_factory=list)
+    displayLabel: str = ""
     description: Optional[str] = None
-    labelTemplate: Optional[str] = None
+    labelTemplate: str = ""
     required: Optional[bool] = False
     multiple: Optional[bool] = False
     example: Optional[str] = None
-    input: Optional[List[ProfileClassInput]] = field(default_factory=list)
+    input: List[ProfileClassInput] = field(default_factory=list)
 
-ProfileClassDictionary = dict[str, ProfileClass]
+ProfileClassDictionary = Dict[str, ProfileClass]
+ProfileLayout = List[ProfileClass]
 
-@dataclass_json
+
 @dataclass
-class PropertyProfile:
+class PropertyProfile(DataClassJsonMixin):
     metadata: ProfileMetadata
-    layout: ProfileClass
-    classes: Optional[ProfileClassDictionary] = field(default_factory=Dict)
+    layout: ProfileLayout
+    classes: ProfileClassDictionary = field(default_factory=dict)
     

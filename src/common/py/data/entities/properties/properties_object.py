@@ -1,15 +1,14 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 from .properties_profile import ProfileID
 
 PropertyValues = dict[str, Any]
 
-@dataclass_json
 @dataclass
-class ProjectObject:
+class ProjectObject(DataClassJsonMixin):
     """
     A project object.
 
@@ -20,6 +19,6 @@ class ProjectObject:
     """
 
     id: str
-    value: Dict[str, Any]
+    value: PropertyValues
     refs: List[str]
-    type: Optional[str] = ""
+    type: str = ""

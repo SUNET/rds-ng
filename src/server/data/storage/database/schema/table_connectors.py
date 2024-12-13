@@ -1,13 +1,14 @@
 from dataclasses import dataclass
 
-from sqlalchemy import Table, MetaData, Column, Text, String, Integer, Numeric
-from sqlalchemy.orm import registry, composite
+from sqlalchemy import Column, Integer, MetaData, Numeric, String, Table, Text
+from sqlalchemy.orm import composite, registry
 
 from common.py.data.entities.authorization import AuthorizationSettings
 from common.py.data.entities.connector import Connector
+from common.py.data.entities.properties import PropertyProfile
 from common.py.utils import UnitID
 
-from .types import JSONEncodedDataType, DataclassDataType
+from .types import DataclassDataType, JSONEncodedDataType
 
 
 @dataclass(kw_only=True)
@@ -48,7 +49,7 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
         Column("logos__default", Text),
         Column("logos__horizontal", Text),
         # Metadata
-        Column("metadata_profile", JSONEncodedDataType),
+        Column("metadata_profile", DataclassDataType[PropertyProfile](dataclass_type=PropertyProfile)),
         # Miscellaneous
         Column("announce_timestamp", Numeric(32, 8, asdecimal=False)),
     )

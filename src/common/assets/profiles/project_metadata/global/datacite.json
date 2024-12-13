@@ -10,7 +10,7 @@
     "layout": [
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
-            "label": "Title",
+            "displayLabel": "Title",
             "description": "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
             "input": [
                 {
@@ -24,7 +24,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
-            "label": "Creator",
+            "displayLabel": "Creator",
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             "type": [
                 "creator"
@@ -34,7 +34,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publisher/",
-            "label": "Publisher",
+            "displayLabel": "Publisher",
             "description": "The name of the entity that holds, archives, publishes, prints, distributes, releases, issues, or produces the resource. This property will be used to formulate the citation, so consider the prominence of the role.",
             "type": [
                 "publisher"
@@ -44,7 +44,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publicationyear/",
-            "label": "Publication Year",
+            "displayLabel": "Publication Year",
             "description": "The year when the data was or will be made publicly available. Format: YYYY.",
             "example": "2018",
             "input": [
@@ -59,7 +59,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject/",
-            "label": "Subject",
+            "displayLabel": "Subject",
             "description": "Subject, keyword, classification code, or key phrase describing the resource.",
             "example": "",
             "type": [
@@ -70,7 +70,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/",
-            "label": "Contributor",
+            "displayLabel": "Contributor",
             "description": "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource. To supply multiple contributors, repeat this property.",
             "example": "Charpy, Antoine; Foo Data Center",
             "type": [
@@ -81,7 +81,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date/",
-            "label": "Date",
+            "displayLabel": "Date",
             "description": "Different dates relevant to the work.",
             "type": [
                 "date"
@@ -91,7 +91,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/language/",
-            "label": "Language",
+            "displayLabel": "Language",
             "description": "The primary language of the resource.",
             "example": "en, fr",
             "input": [
@@ -106,7 +106,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/resourcetype/",
-            "label": "Resource Type",
+            "displayLabel": "Resource Type",
             "description": "A description of the resource. The recommended content is a single term of some detail so that a pair can be formed with the resourceTypeGeneral sub-property. For example, a resourceType of “Census Data” paired with a resourceTypeGeneral of “Dataset” yields “Dataset/Census Data”.",
             "example": "Census Data",
             "input": [
@@ -158,7 +158,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/alternateidentifier/",
-            "label": "Alternate Identifier",
+            "displayLabel": "Alternate Identifier",
             "description": "An identifier other than the primary Identifier applied to the resource being registered. This may be any alphanumeric string which is unique within its domain of issue. May be used for local identifiers, a serial number of an instrument or an inventory number. The AlternateIdentifier should be an additional identifier for the same instance of the resource (i.e., same location, same file).",
             "example": "E-GEOD-34814",
             "type": [
@@ -169,7 +169,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/relatedidentifier/",
-            "label": "Related Identifier",
+            "displayLabel": "Related Identifier",
             "description": "Identifiers of related resources. These must be globally unique identifiers.",
             "type": [
                 "relatedIdentifier"
@@ -179,7 +179,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/size/",
-            "label": "Size",
+            "displayLabel": "Size",
             "description": "Size (e.g., bytes, pages, inches, etc.) or duration (extent), e.g., hours, minutes, days, etc., of a resource.",
             "example": "“15 pages”, “6 MB”, “45 minutes”",
             "input": [
@@ -194,7 +194,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/format/",
-            "label": "Format",
+            "displayLabel": "Format",
             "description": "Technical format of the resource. Use file extension or MIME type where possible.",
             "example": "PDF, XML, MPG or application/pdf, text/xml, video/mpeg.",
             "input": [
@@ -209,7 +209,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/version/",
-            "label": "Version",
+            "displayLabel": "Version",
             "description": "The version number of the resource. Suggested practice: track major_version.minor_version. Register a new identifier for a major version change.",
             "example": "2.1",
             "input": [
@@ -224,7 +224,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/rights/",
-            "label": "Rights",
+            "displayLabel": "Rights",
             "description": "Rights information for the resource.",
             "type": [
                 "rights"
@@ -234,7 +234,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/",
-            "label": "Description (Abstract)",
+            "displayLabel": "Description (Abstract)",
             "description": "All additional information that does not fit in any of the other categories. May be used for technical information or detailed information associated with a scientific instrument.",
             "input": [
                 {
@@ -248,7 +248,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/geolocation/",
-            "label": "Geolocation",
+            "displayLabel": "Geolocation",
             "description": "Spatial region or named place where the data was gathered or about which the data is focused.",
             "type": [
                 "geoLocation"
@@ -258,7 +258,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference/",
-            "label": "Funding Reference",
+            "displayLabel": "Funding Reference",
             "description": "Information about financial support (funding) for the resource being registered.",
             "type": [
                 "fundingReference"
@@ -270,7 +270,7 @@
     "classes": {
         "creator": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
-            "label": "Creator",
+            "displayLabel": "Creator",
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             "labelTemplate": "${name}",
             "type": [
@@ -289,7 +289,7 @@
         },
         "nameIdentifier": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#nameidentifier",
-            "label": "Name Identifier",
+            "displayLabel": "Name Identifier",
             "description": "Uniquely identifies an individual or legal entity, according to various schemes.",
             "example": "Jane Doe",
             "labelTemplate": "${nameIdentifier} (${nameIdentifierScheme})",
@@ -316,7 +316,7 @@
         },
         "affiliation": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#affiliation",
-            "label": "Affiliation",
+            "displayLabel": "Affiliation",
             "labelTemplate": "${affiliation}",
             "input": [
                 {
@@ -347,7 +347,7 @@
         },
         "title": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title",
-            "label": "Title",
+            "displayLabel": "Title",
             "description": "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
             "labelTemplate": "${title}",
             "input": [
@@ -372,7 +372,7 @@
         },
         "publisher": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publisher",
-            "label": "Publisher",
+            "displayLabel": "Publisher",
             "description": "The name of the entity that holds, archives, publishes, prints, distributes, releases, issues, or produces the resource. This property will be used to formulate the citation, so consider the prominence of the role.",
             "labelTemplate": "${publisher}",
             "example": "World Data Center for Climate (WDCC), GeoForschungsZentrum Potsdam (GFZ), Consejo Superior de Investigaciones Científicas, University of Tokyo, GitHub",
@@ -407,7 +407,7 @@
         },
         "subject": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject",
-            "label": "Subject",
+            "displayLabel": "Subject",
             "description": "Subject, keyword, classification code, or key phrase describing the resource.",
             "labelTemplate": "${subject}",
             "input": [
@@ -451,7 +451,7 @@
         },
         "contributor": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor",
-            "label": "Contributor",
+            "displayLabel": "Contributor",
             "description": "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource.",
             "labelTemplate": "${contributorName}",
             "example": "Charpy, Antoine; Foo Data Center",
@@ -511,7 +511,7 @@
         },
         "date": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date",
-            "label": "Date",
+            "displayLabel": "Date",
             "description": "Different dates relevant to the work. Formats: YYYY, YYYY-MM-DD, YYYY- MM-DDThh:mm:ssTZD.",
             "labelTemplate": "${dateType}: ${date}",
             "input": [
@@ -549,7 +549,7 @@
         },
         "alternateIdentifier": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/alternateidentifier",
-            "label": "Alternate Identifier",
+            "displayLabel": "Alternate Identifier",
             "description": "An identifier other than the primary Identifier applied to the resource being registered. This may be any alphanumeric string which is unique within its domain of issue. May be used for local identifiers, a serial number of an instrument or an inventory number. The AlternateIdentifier should be an additional identifier for the same instance of the resource (i.e., same location, same file).",
             "labelTemplate": "${alternateIdentifier}",
             "example": "E-GEOD-34814",
@@ -569,7 +569,7 @@
         },
         "relatedIdentifier": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/relatedidentifier",
-            "label": "Related Identifier",
+            "displayLabel": "Related Identifier",
             "description": "Identifiers of related resources. These must be globally unique identifiers.",
             "example": "10.21384/bar",
             "labelTemplate": "${relatedIdentifier}",
@@ -711,7 +711,7 @@
         },
         "rights": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/rights",
-            "label": "Rights",
+            "displayLabel": "Rights",
             "description": "Rights information for the resource.",
             "example": "Creative Commons Attribution 4.0 International; Apache License, Version 2.0",
             "labelTemplate": "${rights}",
@@ -753,7 +753,7 @@
         },
         "description": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description",
-            "label": "Description",
+            "displayLabel": "Description",
             "description": "All additional information that does not fit in any of the other categories. May be used for technical information or detailed information associated with a scientific instrument.",
             "labelTemplate": "${descriptionType}",
             "input": [
@@ -780,7 +780,7 @@
         },
         "geoLocation": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/geolocation",
-            "label": "Geolocation",
+            "displayLabel": "Geolocation",
             "description": "Spatial region or named place where the data was gathered or about which the data is focused.",
             "labelTemplate": "${geoLocationPlace}",
             "type": [
@@ -800,7 +800,7 @@
         },
         "geoLocationPoint": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/geolocation/#geolocationpoint",
-            "label": "Geolocation Point",
+            "displayLabel": "Geolocation Point",
             "description": "A point location in space.",
             "labelTemplate": "${pointLongitude}, ${pointLatitude}",
             "input": [
@@ -820,7 +820,7 @@
         },
         "geoLocationBox": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/geolocation/#geolocationbox",
-            "label": "Geolocation Box",
+            "displayLabel": "Geolocation Box",
             "description": "The spatial limits of a box. A box is defined by two geographic points. Left low corner and right upper corner. Each point is defined by its longitude and latitude.",
             "labelTemplate": "From ${westLongitude}, ${southLatitude} to ${eastLongitude}, ${northLatitude}",
             "input": [
@@ -852,7 +852,7 @@
         },
         "geoLocationPolygon": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/geolocation/#geolocationpolygon",
-            "label": "Geolocation Polygon",
+            "displayLabel": "Geolocation Polygon",
             "description": "A drawn polygon area, defined by a set of points and lines connecting the points in a closed chain.",
             "labelTemplate": "Polygon with ${polygonPoints} points",
             "type": [
@@ -861,7 +861,7 @@
         },
         "fundingReference": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference",
-            "label": "Funding Reference",
+            "displayLabel": "Funding Reference",
             "description": "Information about financial support (funding) for the resource being registered.",
             "labelTemplate": "${funderName}, ${awardNumber}",
             "input": [

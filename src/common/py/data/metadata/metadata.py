@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, fields
-from typing import Any, Dict, List
+from typing import List
+
+from common.py.data.entities.properties import ProjectObject
 
 
 @dataclass
@@ -13,7 +15,7 @@ class Metadata(ABC):
 class MetadataCreator(ABC):
 
     @abstractmethod
-    def create(self, metadata: List[Dict[str, Any]]) -> Metadata:
+    def create(self, metadata: List[ProjectObject]) -> Metadata:
         pass
 
     def validate(self, metadata: Metadata) -> None:

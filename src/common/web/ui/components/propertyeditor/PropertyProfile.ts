@@ -80,7 +80,7 @@ class ProfileClassInput {
  */
 export class ProfileClass {
     public readonly id: string;
-    public readonly label: string;
+    public readonly displayLabel: string;
     public readonly description?: string;
     public readonly labelTemplate?: string;
     public required?: boolean;
@@ -94,7 +94,7 @@ export class ProfileClass {
 
     public constructor(
         id: string,
-        label: string,
+        displayLabel: string,
         description?: string,
         labelTemplate?: string,
         required?: boolean,
@@ -104,7 +104,7 @@ export class ProfileClass {
         input: ProfileClassInput[] = []
     ) {
         this.id = id;
-        this.label = label;
+        this.displayLabel = displayLabel;
         this.description = description;
         this.labelTemplate = labelTemplate;
         this.required = required;
@@ -115,7 +115,7 @@ export class ProfileClass {
     }
 
     /**
-     * Retrieves the inputs of the PropertyProfileClass.
+     * Retrieves the inputs of the ProfileClass.
      *
      * @returns The input property.
      */
@@ -124,21 +124,30 @@ export class ProfileClass {
     }
 
     /**
-     * Retrieves the types that the PropertyProfileClass can reference.
+     * Retrieves the types that the ProfileClass can reference.
      *
-     * @returns The types of the PropertyProfileClass.
+     * @returns The types of the ProfileClass.
      */
     public getTypes() {
         return this.type;
     }
 
     /**
-     * Retrieves the unique identifier of the PropertyProfileClass.
+     * Retrieves the unique identifier of the ProfileClass.
      *
-     * @returns {string} The unique identifier of the PropertyProfileClass.
+     * @returns {string} The unique identifier of the ProfileClass.
      */
     public getId() {
         return this.id;
+    }
+
+    /**
+     * Retrieves the displayLabel of the ProfileClass.
+     *
+     * @returns {string} The displayLabel of the ProfileClass.
+     */
+    public getDisplayLabel() {
+        return this.displayLabel;
     }
 }
 

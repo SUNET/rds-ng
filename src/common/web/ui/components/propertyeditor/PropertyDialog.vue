@@ -77,9 +77,9 @@ selectActiveObject(id);
             />
         </template>
         <template #title>
-            <div class="row-span-1 text-gray-800 justify-between flex items-start">
-                <span :title="objectClass.label" class="flex-none">
-                    <span class="text-xl"> {{ objectClass.label }}</span>
+            <div class="row-span-1 text-gray-800 justify-between flex items-center">
+                <span :title="objectClass.getDisplayLabel()" class="flex-none">
+                    <span class="text-xl"> {{ objectClass.getDisplayLabel() }}</span> 
                     <Button v-if="objectClass.description" unstyled @click="toggle">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem" />
                     </Button>
@@ -155,7 +155,7 @@ selectActiveObject(id);
                     <!-- Simple Input Row -->
                     <div class="space-y-5">
                         <div v-for="input in displayableInputs" class="row-span-1 space-y-1">
-                            <div v-if="input.label !== objectClass.label" class="font-bold mb-1 font">{{ input.label }}</div>
+                            <div v-if="input.label !== objectClass.getDisplayLabel()" class="font-bold mb-1 font">{{ input.label }}</div>
                             {{ input.description }}
                             <span v-if="input.example" v-html="`<br/>Example: ${input.example}`" />
                             <component

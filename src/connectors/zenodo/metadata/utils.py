@@ -1,7 +1,9 @@
 from typing import Any, Dict, List
 
+from common.py.data.entities.properties import ProjectObject
 
-def parse_creators(creators_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+
+def parse_creators(creators_raw: ProjectObject, shared_objects: List[ProjectObject]) -> List[Dict[str, Any]]:
     """
     Parses a list of datacite creator data and shared objects to extract Zenodo creator information.
     Args:
@@ -12,25 +14,25 @@ def parse_creators(creators_raw: List[Dict[str, Any]], shared_objects: List[Dict
     """
     creators = []
 
-    if creators_raw is None or "refs" not in creators_raw:
+    if not creators_raw.refs:
         return creators
 
-    for creator_id in creators_raw["refs"]:
-        creator_raw = [c for c in shared_objects if c['id'] == creator_id][0]
-
+    for creator_id in creators_raw.refs:
+        creator_raw = [c for c in shared_objects if c.id == creator_id][0]
+        
         creator = {}
-        creator_objects = [e for e in shared_objects if e['id'] in creator_raw['refs']]
+        creator_objects = [e for e in shared_objects if e.id in creator_raw.refs]
 
-        creator["name"] = creator_raw["value"].get("name", '')
-        creator['affiliation'] = '; '.join([a['value'].get("affiliation", '') for a in creator_objects if a["type"] == "affiliation"])
-        creator['orcid'] = '; '.join([a['value'].get("nameIdentifier", '') for a in creator_objects if a["type"] == "nameIdentifier" and a['value'].get("nameIdentifierScheme", '').lower() == "orcid"])
-        creator['gnd'] = '; '.join([a['value'].get("nameIdentifier", '') for a in creator_objects if a["type"] == "nameIdentifier" and a['value'].get("nameIdentifierScheme", '').lower() == "gnd"])
+        creator["name"] = creator_raw.value.get("name", '')
+        creator['affiliation'] = '; '.join([a.value.get("affiliation", '') for a in creator_objects if a.type == "affiliation"])
+        creator['orcid'] = '; '.join([a.value.get("nameIdentifier", '') for a in creator_objects if a.type == "nameIdentifier" and a.value.get("nameIdentifierScheme", '').lower() == "orcid"])
+        creator['gnd'] = '; '.join([a.value.get("nameIdentifier", '') for a in creator_objects if a.type == "nameIdentifier" and a.value.get("nameIdentifierScheme", '').lower() == "gnd"])
         
         creators.append(creator)
 
     return creators
 
-def parse_contributors(contributors_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def parse_contributors(contributors_raw: ProjectObject, shared_objects: List[ProjectObject]) -> List[Dict[str, Any]]:
     """
     Parses a list of datacite contributor data and shared objects to extract and format contributor information for Zenodo.
     Args:
@@ -42,27 +44,27 @@ def parse_contributors(contributors_raw: List[Dict[str, Any]], shared_objects: L
     """
     contributors = []
 
-    if contributors_raw is None or "refs" not in contributors_raw:
+    if not contributors_raw.refs:
         return contributors
     
-    for contributor_id in contributors_raw["refs"]:
-        contributor_raw = [c for c in shared_objects if c['id'] == contributor_id][0]
-        if contributor_raw["value"].get("nameType", '') == "Personal":
+    for contributor_id in contributors_raw.refs:
+        contributor_raw = [c for c in shared_objects if c.id == contributor_id][0]
+        if contributor_raw.value.get('nameType', '') == "Personal":
 
             contributor = {}
-            contributor_objects = [e for e in shared_objects if e['id'] in contributor_raw['refs']]
+            contributor_objects = [e for e in shared_objects if e.id in contributor_raw.refs]
 
-            contributor["name"] = contributor_raw["value"].get("contributorName", '')
-            contributor["type"] = contributor_raw["value"].get("contributorType", '')
-            contributor['affiliation'] = '; '.join([a['value'].get("affiliation", '') for a in contributor_objects if a["type"] == "affiliation"])
-            contributor['orcid'] = '; '.join([a['value'].get("nameIdentifier", '') for a in contributor_objects if a["type"] == "nameIdentifier" and a['value'].get("nameIdentifierScheme", '').lower() == "orcid"])
-            contributor['gnd'] = '; '.join([a['value'].get("nameIdentifier", '') for a in contributor_objects if a["type"] == "nameIdentifier" and a['value'].get("nameIdentifierScheme", '').lower() == "gnd"])
+            contributor["name"] = contributor_raw.value.get('contributorName', '')
+            contributor["type"] = contributor_raw.value.get('contributorType', '')
+            contributor['affiliation'] = '; '.join([a.value.get('affiliation', '') for a in contributor_objects if a.type == "affiliation"])
+            contributor['orcid'] = '; '.join([a.value.get('nameIdentifier', '') for a in contributor_objects if a.type == "nameIdentifier" and a.value.get('nameIdentifierScheme', '').lower() == "orcid"])
+            contributor['gnd'] = '; '.join([a.value.get('nameIdentifier', '') for a in contributor_objects if a.type == "nameIdentifier" and a.value.get('nameIdentifierScheme', '').lower() == "gnd"])
             
             contributors.append(contributor)
 
     return contributors
 
-def parse_subjects(subjects_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def parse_subjects(subjects_raw: List[ProjectObject], shared_objects: List[ProjectObject]) -> List[Dict[str, Any]]:
     pass
 
 """ FIXME Does not Work, Zenodo API?
@@ -80,7 +82,7 @@ def parse_subjects(subjects_raw: List[Dict[str, Any]], shared_objects: List[Dict
         
     return subjects """
 
-def parse_grants(grants_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def parse_grants(grants_raw: ProjectObject, shared_objects: List[ProjectObject]) -> List[Dict[str, Any]]:
     """
     Parses datacite grant data and returns a list of formatted Zenodo grant dictionaries.
     Args:
@@ -92,7 +94,7 @@ def parse_grants(grants_raw: List[Dict[str, Any]], shared_objects: List[Dict[str
 
     grants = []
 
-    if grants_raw is None or "refs" not in grants_raw:
+    if not grants_raw.refs:
         return grants
 
     funder_ids = [
@@ -124,14 +126,14 @@ def parse_grants(grants_raw: List[Dict[str, Any]], shared_objects: List[Dict[str
     "10.13039/100004440"
     ]
 
-    for grant_id in grants_raw["refs"]:
-        grant_raw = [c for c in shared_objects if c['id'] == grant_id][0]
+    for grant_id in grants_raw.refs:
+        grant_raw = [c for c in shared_objects if c.id == grant_id][0]
         grant = {}
         
-        if (funder_id := grant_raw["value"].get("funderIdentifier", '')) not in funder_ids or not grant_raw["value"].get("awardNumber", ''):
+        if (funder_id := grant_raw.value.get('funderIdentifier', '')) not in funder_ids or not grant_raw.value.get('awardNumber', ''):
             continue
 
-        grant["id"] = f"{funder_id}::{grant_raw['value'].get('awardNumber', '')}"
+        grant["id"] = f"{funder_id}::{grant_raw.value.get('awardNumber', '')}"
 
         grants.append(grant)
 
@@ -140,7 +142,7 @@ def parse_grants(grants_raw: List[Dict[str, Any]], shared_objects: List[Dict[str
 
 
 # Hint: Zenodo API currently only allows date types Collected, Valid, Withdrawn 
-def parse_dates(dates_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def parse_dates(dates_raw: ProjectObject, shared_objects: List[ProjectObject]) -> List[Dict[str, Any]]:
     """
     Parses datacite date information and returns a list of formatted Zenodo date dictionaries.
     Args:
@@ -153,18 +155,18 @@ def parse_dates(dates_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, 
 
     dates = []
 
-    if dates_raw is None or "refs" not in dates_raw:
+    if not dates_raw.refs:
         return dates
 
-    for date_id in dates_raw["refs"]:
-        date_raw = [c for c in shared_objects if c['id'] == date_id][0]
+    for date_id in dates_raw.refs:
+        date_raw = [c for c in shared_objects if c.id == date_id][0]
         
         date = {}
 
-        date["start"] = date_raw["value"].get("date", '')[:10]
-        date["end"] = date_raw["value"].get("date", '')[:10]
-        date["type"] = date_raw["value"].get("dateType", '')
-        date["description"] = date_raw["value"].get("dateInformation", '')
+        date["start"] = date_raw.value.get('date', '')[:10]
+        date["end"] = date_raw.value.get('date', '')[:10]
+        date["type"] = date_raw.value.get('dateType', '')
+        date["description"] = date_raw.value.get('dateInformation', '')
         
         dates.append(date)
         

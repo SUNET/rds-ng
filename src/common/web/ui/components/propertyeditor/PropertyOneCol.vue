@@ -87,8 +87,8 @@ const toggleRemoveProperty = (e: Event) => {
             <div class="text-gray-400 mt-0 pt-0 text-lg ml-auto mr-2" :class="propertyClass.required ? '' : 'group-hover:hidden'">{{ index + 1 }}.</div>
             <OverlayPanel ref="removeProperty" class="py-2 px-5">
                 <div class="flex flex-col gap-4">
-                    <h3 class="text-lg font-bold">Remove "{{ propertyClass.label }}"?</h3>
-                    <p>The data for property "{{ propertyClass.label }}" will be lost.</p>
+                    <h3 class="text-lg font-bold">Remove "{{ propertyClass.getDisplayLabel() }}"?</h3>
+                    <p>The data for property "{{ propertyClass.getDisplayLabel() }}" will be lost.</p>
                     <div class="flex gap-2 ml-auto">
                         <Button
                             severity="danger"
@@ -117,8 +117,8 @@ const toggleRemoveProperty = (e: Event) => {
                 :disabled="propertyClass.required"
                 text
                 icon="pi pi-trash"
-                :aria-label="'Remove ' + propertyClass.label"
-                :title="'Remove ' + propertyClass.label"
+                :aria-label="'Remove ' + propertyClass.getDisplayLabel()"
+                :title="'Remove ' + propertyClass.getDisplayLabel()"
                 :class="propertyClass.required ? 'invisible' : 'invisible group-hover:visible'"
                 class="pt-0 mt-0 h-9"
                 @click="toggleRemoveProperty($event)"
@@ -127,11 +127,15 @@ const toggleRemoveProperty = (e: Event) => {
         </div>
         <div class="w-full grid grid-cols-1">
             <!--  Header Row -->
-            <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4 max-w-full w-full">
-                <span :title="propertyClass.label" class="min-w-fit">
-                    <span class="text-lg"> {{ propertyClass.label }} </span>
+            <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4 max-w-full w-full items-center">
+                <span :title="propertyClass.getDisplayLabel()" class="min-w-fit">
+                    <span class="text-lg"> {{ propertyClass.getDisplayLabel() }} </span>
                     <span v-if="propertyClass.required" v-for="p in profiles">
-                        <MandatoryMark class="pl-1" :color="colorsStore.color(p[0], 70, 100)" :title="`This field is required by ${p[0]}`" />
+                        <MandatoryMark
+                            class="pl-1"
+                            :color="colorsStore.color(p[0], 70, 100)"
+                            :title="`This field is required by ${projectProfiles.getProfileLabelById(p)}`"
+                        />
                     </span>
                     <Button v-if="propertyClass.description" unstyled @click="toggleRemoveDeadLink">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem; color: gray" />
@@ -207,7 +211,7 @@ const toggleRemoveProperty = (e: Event) => {
             <!-- Simple Input Row -->
             <div v-if="displayableInputs.length > 0" class="space-y-2 mt-2">
                 <div v-for="input in displayableInputs" class="row-span-1">
-                    <span v-if="input.label !== propertyClass.label">{{ input.label }}</span>
+                    <span v-if="input.label !== propertyClass.getDisplayLabel()">{{ input.label }}</span>
                     <component
                         :is="propertyDataForms[input['type'] as PropertyDataType]"
                         class="w-full"

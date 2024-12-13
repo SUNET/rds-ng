@@ -3,10 +3,10 @@ import pathlib
 import typing
 from pathlib import PosixPath
 
-from .metadata_profile_container import (
-    MetadataProfileContainer,
-    MetadataProfileContainerList,
-)
+from common.py.data.entities.properties import PropertyProfile
+
+from .metadata_profile_container import (MetadataProfileContainer,
+                                         MetadataProfileContainerList)
 
 
 def filter_containers_by_category(
@@ -107,13 +107,14 @@ def containers_from_folder(folder: pathlib.PosixPath) -> MetadataProfileContaine
                         ):
                             try:
                                 with open(profile_file, "r") as file:
+                                    profile = PropertyProfile.from_dict(json.load(file))
                                     containers.append(
                                         MetadataProfileContainer(
                                             category=category,
                                             role=typing.cast(
                                                 MetadataProfileContainer.Role, role
                                             ),
-                                            profile=json.load(file),
+                                            profile=profile,
                                         )
                                     )
                             except:  # pylint: disable=bare-except

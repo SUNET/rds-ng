@@ -41,7 +41,7 @@ const hiddenPropertys = computed(() =>
 const filteredProperties = computed(() =>
     hiddenPropertys.value.filter(
         (e: ProfileLayoutClass) =>
-            e.label.toLowerCase().includes(searchString.value.toLowerCase()) || e.description?.toLowerCase().includes(searchString.value.toLowerCase())
+            e.getDisplayLabel().toLowerCase().includes(searchString.value.toLowerCase()) || e.description?.toLowerCase().includes(searchString.value.toLowerCase())
     )
 );
 
@@ -93,7 +93,7 @@ const searchString = ref("");
                     <template #item="slotProps">
                         <div class="flex flex-col">
                             <span class="font-semibold flex gap-2" :title="slotProps.item.label">
-                                <span class="grow"> {{ slotProps.item.label }} </span>
+                                <span class="grow"> {{ slotProps.item.getDisplayLabel() }} </span>
                                 <Chip
                                     v-for="p in slotProps.item.profiles"
                                     :label="p[0]"
