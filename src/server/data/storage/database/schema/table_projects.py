@@ -74,6 +74,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         Column(
             "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
         ),
+        Column("shared_objects", DataclassArrayType[ProjectObject](dataclass_type=ProjectObject)),
     )
 
     table_feature_project_metadata = Table(
@@ -86,7 +87,6 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             primary_key=True,
         ),
         Column("metadata", DataclassArrayType[ProjectObject](dataclass_type=ProjectObject)),
-        Column("shared_objects", DataclassArrayType[ProjectObject](dataclass_type=ProjectObject)),
     )
 
     table_feature_resources_metadata = Table(

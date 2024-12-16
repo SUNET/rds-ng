@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Button from "primevue/button";
-import { ref, watch } from "vue";
+import { computed } from "vue";
 
 import { useExtendedDialogTools } from "./ExtendedDialogTools";
 
@@ -8,26 +8,19 @@ import ErrorsMessage from "../components/misc/ErrorsMessage.vue";
 
 const { acceptDialog, rejectDialog, dialogData } = useExtendedDialogTools();
 
-const errors = ref([]);
-// We need this "double watch", as the validator doesn't necessarily exist (yet)
-watch(
-    () => dialogData.validator,
-    (validator) => {
-        if (validator) {
-            watch(
-                () => validator.errors,
-                (err) => {
-                    errors.value = err ? Object.values(err) : [];
-                }
-            );
+const errors = computed<string[]>(() => {
+    if (!!dialogData.validator) {
+        if (!!dialogData.validator.errors) {
+            return Object.values(dialogData.validator.errors);
         }
     }
-);
+    return [];
+});
 </script>
 
 <template>
     <div class="grid grid-rows-1 grid-cols-[1fr_min-content_min-content] w-full items-center !pt-[1.5rem]">
-        <small v-if="errors.length" class="p-error mr-auto text-left">
+        <small v-if="errors.length" class="r-text-error mr-auto text-left">
             <ErrorsMessage :errors="errors" />
         </small>
         <small v-else>&nbsp;</small>

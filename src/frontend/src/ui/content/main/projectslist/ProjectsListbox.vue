@@ -29,17 +29,21 @@ const unwatchProjects = watch(projects, () => {
     unwatchProjects();
 });
 
-watch(activeProject, (newProj, oldProj) => {
-    // Prevent deselecting the currently selected project item
-    if (newProj === null && oldProj) {
-        activeProject.value = oldProj;
-    }
+watch(
+    activeProject,
+    (newProj, oldProj) => {
+        // Prevent deselecting the currently selected project item
+        if (newProj === null && !!oldProj) {
+            activeProject.value = oldProj;
+        }
 
-    // Update the shown URL to reflect the selected project
-    if (activeProject.value !== oldProj) {
-        comp.userInterface.frontendView.navigateTo(true, undefined, { project_id: activeProject.value });
-    }
-});
+        // Update the shown URL to reflect the selected project
+        if (activeProject.value !== oldProj) {
+            comp.userInterface.frontendView.navigateTo(true, undefined, { project_id: activeProject.value });
+        }
+    },
+    { flush: "post" }
+);
 
 function selectProject(projectID: ProjectID | undefined, autoNavigateOnMissing: boolean = false): void {
     if (!projects.value.find((proj) => proj.project_id === projectID)) {
@@ -68,11 +72,12 @@ function isProjectDeleted(project: Project): boolean {
             :options="projects"
             option-value="project_id"
             :option-disabled="isProjectDeleted"
-            class="w-full"
+            class="w-full h-full"
             :pt="{
                 root: 'projects-listbox',
+                listContainer: 'projects-listbox-container',
                 list: 'projects-listbox-list',
-                item: 'projects-listbox-item',
+                option: 'projects-listbox-option'
             }"
         >
             <template #option="projectEntry">
@@ -103,15 +108,19 @@ function isProjectDeleted(project: Project): boolean {
     @apply shadow-none #{!important};
 }
 
+:deep(.projects-listbox-container) {
+    @apply max-h-full #{!important};
+}
+
 :deep(.projects-listbox-list) {
     @apply p-0 #{!important};
 }
 
-:deep(.projects-listbox-item) {
+:deep(.projects-listbox-option) {
     @apply pr-2 border-solid border-b border-[--r-border-color] #{!important};
 }
 
-:deep(.projects-listbox-item:hover) {
+:deep(.projects-listbox-option:hover) {
     @apply bg-[--r-shade-dark] #{!important};
 }
 </style>

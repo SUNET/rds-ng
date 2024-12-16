@@ -80,7 +80,7 @@ class ZenodoClient(RequestsExecutor):
         creator = ZenodoMetadataCreator()
         metadata = creator.create(
             project.features.project_metadata.metadata,
-            project.features.project_metadata.shared_objects,
+            project.features.shared_objects,
         )
         # creator.validate(metadata)
 

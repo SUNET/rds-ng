@@ -12,6 +12,7 @@ from .features import (
 )
 from .logbook import ProjectJobHistoryRecord
 from ..connector import ConnectorInstanceID
+from ..metadata import MetadataObjects
 from ..user import UserID
 
 ProjectID = int
@@ -56,6 +57,7 @@ class Project:
             project_metadata: The project metadata feature.
             resources_metadata: The resources metadata feature.
             dmp: The data management plan feature.
+            shared_objects: Project-wide shared metadata objects.
         """
 
         project_metadata: ProjectMetadataFeature = field(
@@ -67,6 +69,8 @@ class Project:
         dmp: DataManagementPlanFeature = field(
             default_factory=DataManagementPlanFeature
         )
+
+        shared_objects: MetadataObjects = field(default_factory=list)
 
     @dataclass_json
     @dataclass

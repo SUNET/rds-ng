@@ -65,7 +65,7 @@ if (!!dialogData.validator) {
         />
         <div v-else class="button-width" />
 
-        <small v-if="errors.length" class="p-error text-center">
+        <small v-if="errors.length" class="r-text-error text-center">
             <ErrorsMessage :errors="errors" />
         </small>
         <small v-else>&nbsp;</small>

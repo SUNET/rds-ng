@@ -81,7 +81,24 @@ export class Logger {
     private log(record: LogRecord): void {
         if (record.level >= this._level) {
             let formatter = new Formatter(record);
-            console.log(formatter.formattedText, ...formatter.stylesStack);
+
+            switch (record.level) {
+                case LogLevel.Warning:
+                    console.warn(formatter.formattedText, ...formatter.stylesStack);
+                    break;
+
+                case LogLevel.Error:
+                    console.error(formatter.formattedText, ...formatter.stylesStack);
+                    break;
+
+                case LogLevel.Debug:
+                    console.debug(formatter.formattedText, ...formatter.stylesStack);
+                    break;
+
+                default:
+                    console.log(formatter.formattedText, ...formatter.stylesStack);
+                    break;
+            }
         }
     }
 }

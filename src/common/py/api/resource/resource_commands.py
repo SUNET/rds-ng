@@ -1,6 +1,7 @@
 import base64
 import dataclasses
 import typing
+from fileinput import filename
 
 from ...core.messaging import (
     Command,
@@ -126,7 +127,11 @@ class ListResourcesReply(CommandReply):
         resources: List of all resources.
     """
 
-    resources: ResourcesList = dataclasses.field(default_factory=ResourcesList)
+    resources: ResourcesList = dataclasses.field(
+        default_factory=lambda: ResourcesList(
+            resource=Resource(filename="", basename="", type=Resource.Type.FILE)
+        )
+    )
 
     @staticmethod
     def build(

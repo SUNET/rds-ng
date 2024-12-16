@@ -43,7 +43,7 @@ def render_exporter_template(
             data_params[name] = MetadataParser.list_values(
                 data.profile,
                 data.metadata,
-                project.features.project_metadata.shared_objects,
+                project.features.shared_objects,
             )
 
     return Template(template).render(project=project, **data_params)

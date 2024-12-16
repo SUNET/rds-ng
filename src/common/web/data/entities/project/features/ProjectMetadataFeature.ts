@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 
-import { LayoutObject, SharedObject } from "../../../../ui/components/propertyeditor/ProjectObjectStore";
+import { LayoutObject } from "../../../../ui/components/propertyeditor/ProjectObjectStore";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
@@ -11,13 +11,6 @@ import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 export type ProjectMetadata = LayoutObject[];
 
 /**
- * The metadata objects type.
- *
- *
- */
-export type MetadataObjects = SharedObject[];
-
-/**
  * Data class for the metadata project feature.
  */
 export class ProjectMetadataFeature extends ProjectFeature {
@@ -26,15 +19,10 @@ export class ProjectMetadataFeature extends ProjectFeature {
     @Type(() => LayoutObject)
     public readonly metadata: ProjectMetadata;
 
-    // @ts-ignore
-    @Type(() => SharedObject)
-    public readonly shared_objects: MetadataObjects;
-
-    public constructor(metadata: ProjectMetadata = [], sharedObjects: MetadataObjects = []) {
+    public constructor(metadata: ProjectMetadata = []) {
         super();
 
         this.metadata = metadata;
-        this.shared_objects = sharedObjects;
     }
 
     public get featureID(): ProjectFeatureID {

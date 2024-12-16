@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Calendar from "primevue/calendar";
+import DatePicker from "primevue/datepicker";
 import { computed } from "vue";
 
 import { ProjectObjectStore } from "../ProjectObjectStore";
@@ -15,8 +15,8 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.g
 
 <template>
     <div>
-        <Calendar
-            @date-select="(date: Date) => projectObjects.update(inputId, propertyObjectId, date)"
+        <DatePicker
+            @date-select="(date: Date) => projectObjects.update(profileId || [], inputId, propertyObjectId, date)"
             dateFormat="dd/mm/yy"
             v-model="value[inputId]"
             class="w-full"

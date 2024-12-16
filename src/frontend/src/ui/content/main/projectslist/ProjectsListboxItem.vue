@@ -35,16 +35,16 @@ const { jobs } = storeToRefs(projJobsStore);
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
-        required: true,
+        required: true
     },
     isSelected: {
         type: Boolean,
-        default: false,
+        default: false
     },
     isDeleted: {
         type: Boolean,
-        default: false,
-    },
+        default: false
+    }
 });
 const { project, isSelected, isDeleted } = toRefs(props);
 const emits = defineEmits<{
@@ -55,8 +55,8 @@ const emits = defineEmits<{
 
 const runningJobs = computed(() =>
     getAllProjectJobDetails(unref(projects), unref(jobs), unref(connectors), unref(userSettings).connector_instances).filter(
-        (details) => details.job.project_id == unref(project)!.project_id,
-    ),
+        (details) => details.job.project_id == unref(project)!.project_id
+    )
 );
 
 const finishedJobCategories = computed(() => {
@@ -95,32 +95,34 @@ const editMenuItems = ref([
                 icon: "material-icons-outlined mi-rocket-launch",
                 command: () => {
                     emits("publish-project", project!.value);
-                },
+                }
             },
             {
-                label: "Settings",
-                icon: "material-icons-outlined mi-engineering",
+                label: "Project settings",
+                icon: "material-icons-outlined mi-settings",
                 command: () => {
                     emits("edit-project", project!.value);
-                },
+                }
             },
             { separator: true },
             {
-                label: "Delete",
+                label: "Delete project",
                 icon: "material-icons-outlined mi-delete-forever",
                 class: "r-text-error",
                 command: () => {
                     emits("delete-project", project!.value);
-                },
-            },
-        ],
-    },
+                }
+            }
+        ]
+    }
 ]);
 const editMenuShown = ref(false);
 </script>
 
 <template>
-    <div class="grid grid-rows-[auto_auto_1fr] grid-cols-[1fr_min-content] grid-flow-row gap-0 min-h-24 content-start items-start place-content-start group">
+    <div
+        class="grid grid-rows-[auto_auto_1fr] grid-cols-[1fr_min-content] grid-flow-row w-full gap-0 min-h-24 content-start items-start place-content-start group"
+    >
         <div class="r-text-caption-big h-7 truncate" :title="project!.title">{{ project!.title }}</div>
 
         <div v-if="!isDeleted" class="row-span-2 pl-1">

@@ -39,7 +39,7 @@ onMounted(() => {
             :pt="{ image: 'max-h-[calc(12rem-0.5rem)] rounded' }"
             class="rounded"
         >
-            <template #indicatoricon>
+            <template #previewicon>
                 <i class="pi pi-search"></i>
             </template>
         </Image>

@@ -5,7 +5,7 @@ import Breadcrumb from "primevue/breadcrumb";
 import Button from "primevue/button";
 import Card from "primevue/card";
 import type { MenuItem } from "primevue/menuitem";
-import OverlayPanel from "primevue/overlaypanel";
+import Popover from "primevue/popover";
 import { History } from "./Breadcrumbs";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
@@ -62,17 +62,17 @@ selectActiveObject(id);
 </script>
 
 <template>
-    <Card :pt="{ root: { class: 'shadow-none' }, body: { class: 'pl-1 p-0 overflow-hidden' } }">
+    <Card :pt="{ root: 'shadow-none', body: 'pl-1 p-0 overflow-hidden' }">
         <template #header>
             <Breadcrumb
                 :model="menuPath as MenuItem[]"
                 class="max-w-full w-full grid grid-cols-1"
                 :pt="{
                     root: { class: 'px-0 pt-0' },
-                    menu: { class: ' flex flex-wrap ' },
+                    list: { class: ' flex flex-wrap ' },
                     separator: { class: 'mb-2' },
-                    menuItem: { class: 'max-w-full' },
-                    label: { class: 'text-red-900 opacity-80 hover:opacity-100 cursor-pointer truncate pb-2 ' }
+                    item: { class: 'max-w-full breadcrumbs-item' },
+                    itemLabel: { class: 'text-red-900 opacity-80 hover:opacity-100 cursor-pointer truncate pb-2' }
                 }"
             />
         </template>
@@ -80,13 +80,13 @@ selectActiveObject(id);
             <div class="row-span-1 text-gray-800 justify-between flex items-center">
                 <span :title="objectClass.getDisplayLabel()" class="flex-none">
                     <span class="text-xl"> {{ objectClass.getDisplayLabel() }}</span> 
-                    <Button v-if="objectClass.description" unstyled @click="toggle">
+                    <Button v-if="objectClass.description" unstyled @click="toggle" :title="objectClass.description">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem" />
                     </Button>
-                    <OverlayPanel ref="op" class="max-w-lg">
+                    <Popover ref="op" class="max-w-lg">
                         {{ objectClass.description }}
                         <span v-if="objectClass.example" v-html="`<br/>Example: ${objectClass.example}`" />
-                    </OverlayPanel>
+                    </Popover>
                 </span>
 
                 <span class="mr-auto ml-5 flex gap-1 flex-wrap">
@@ -176,7 +176,7 @@ selectActiveObject(id);
 </template>
 
 <style scoped lang="scss">
-:deep(.p-menuitem:last-child) {
+:deep(.breadcrumbs-item:last-child) {
     @apply font-bold;
 }
 </style>

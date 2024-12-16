@@ -4,6 +4,7 @@ import { ProjectOptions } from "@common/data/entities/project/ProjectOptions";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
+import { StatusNotifier } from "@common/ui/actions/notifiers/StatusNotifier.ts";
 import { type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
@@ -31,18 +32,20 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
     protected addDefaultNotifiers(title: string): void {
         this.addNotifier(
             ActionState.Executing,
-            new OverlayNotifier(OverlayNotificationType.Info, "Creating project", `Project '${title}' is being created...`),
-            true,
+            new StatusNotifier(OverlayNotificationType.Info, `Creating project ${title}...`, "material-icons-outlined mi-description", true)
         );
-        this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Creating project", `Project '${title}' has been created.`));
+        this.addNotifier(
+            ActionState.Done,
+            new StatusNotifier(OverlayNotificationType.Success, `Project '${title}' has been created.`, "material-icons-outlined mi-description")
+        );
         this.addNotifier(
             ActionState.Failed,
             new OverlayNotifier(
                 OverlayNotificationType.Error,
                 "Error creating project",
                 `An error occurred while creating project '${title}': ${ActionNotifier.MessagePlaceholder}.`,
-                true,
-            ),
+                true
+            )
         );
     }
 }

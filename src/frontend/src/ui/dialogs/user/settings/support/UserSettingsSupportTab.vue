@@ -11,8 +11,8 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     tabData: {
         type: Object as PropType<UserSettings>,
-        required: true,
-    },
+        required: true
+    }
 });
 const propRefs = toRefs(props);
 const userSettings = propRefs.tabData!;
@@ -20,7 +20,7 @@ const userSettings = propRefs.tabData!;
 
 <template>
     <div class="grid grid-rows-[auto_auto_1fr_auto] grid-cols-1 gap-1.5 w-full h-full">
-        <div class="r-text-title">Help &amp; About</div>
+        <div class="r-text-title">About</div>
         <div class="r-text-caption">Welcome to {{ comp.data.title }}!</div>
         <div class="grid grid-cols-[max-content_1fr] gap-1.5 items-center w-full">
             <a href="https://www.research-data-services.org" target="_blank">
@@ -28,7 +28,7 @@ const userSettings = propRefs.tabData!;
             </a>
             <div>RDS NG allows researchers to export research data directly from their cloud storage systems to data repositories and external storages.</div>
         </div>
-        <Message severity="warn" :closable="false" class="text-sm">
+        <Message severity="warn" icon="material-icons-outlined mi-warning-amber mr-1 mb-0.5" :closable="false" class="text-sm my-4">
             This is an <em>early preview version</em> of the final application. Even its current name - {{ comp.data.title }} - is only temporary and will
             change in the future.
         </Message>

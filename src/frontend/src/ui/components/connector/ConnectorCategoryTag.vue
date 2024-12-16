@@ -7,20 +7,14 @@ import { ConnectorCategory } from "@/data/entities/connector/categories/Connecto
 const props = defineProps({
     category: {
         type: Object as PropType<ConnectorCategory>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { category } = toRefs(props);
 </script>
 
 <template>
-    <Tag
-        :value="category!.name"
-        :title="category!.description"
-        :pt="{
-            root: category!.tagClass,
-        }"
-    />
+    <Tag :value="category!.name" :title="category!.description" :pt="{ root: category!.tagClass }" />
 </template>
 
 <style scoped lang="scss"></style>

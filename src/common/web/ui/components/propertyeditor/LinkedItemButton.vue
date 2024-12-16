@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { confirmDialog } from "@common/ui/dialogs/ConfirmDialog";
 import Button from "primevue/button";
 import Menu from "primevue/menu";
-import OverlayPanel from "primevue/overlaypanel";
+import Popover from "primevue/popover";
 import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
 import { computed, ref } from "vue";
+import { WebComponent } from "../../../component/WebComponent";
+import { confirmDialog } from "../../dialogs/ConfirmDialog";
 import { SharedObject } from "./ProjectObjectStore";
 import PropertyDialog from "./PropertyDialog.vue";
 import { calcBgColor, calcBorderColor, calcObjLabel } from "./utils/ObjectUtils";
 
 // @ts-ignore
 SplitButton.components.PVSMenu = Menu;
-const comp = FrontendComponent.inject();
+const comp = WebComponent.instance;
 const dialog = useDialog();
 const props = defineProps(["itemId", "parentId", "projectObjects", "sharedObjectStore", "projectProfiles", "mode"]);
 
@@ -26,23 +26,23 @@ const object = computed(() => {
 const instanceLabel = computed(() => calcObjLabel(object.value, props.projectProfiles));
 const linkedItemActions = computed(() => [
     {
-        label: `${instanceLabel.value}`,
+        label: `Edit ${instanceLabel.value}`,
         hasSubmenu: false,
         items: [
             {
-                label: "Edit",
-                icon: "pi pi-pencil",
+                label: "Edit item",
+                icon: "material-icons-outlined mi-edit",
                 command: () => {
                     handleClick();
                 }
             },
             {
-                label: `Unlink`,
-                icon: "pi pi-minus",
+                label: `Unlink item`,
+                icon: "material-icons-outlined mi-link-off",
                 command: () => {
                     confirmDialog(comp, {
                         header: `Unlink "${instanceLabel.value}?"`,
-                        message: "Are you sure you want to unlink this property? The object will not be deleted, you can relink at any time.",
+                        message: "Are you sure you want to unlink this item? The object will not be deleted, you can relink at any time.",
                         acceptLabel: "Unlink",
                         acceptIcon: "pi pi-minus",
                         acceptClass: "p-button-danger",
@@ -56,13 +56,15 @@ const linkedItemActions = computed(() => [
                     });
                 }
             },
+            { separator: true },
             {
-                label: "Delete",
-                icon: "pi pi-trash",
+                label: "Delete item",
+                icon: "material-icons-outlined mi-delete-forever",
+                class: "r-text-error",
                 command: () => {
                     confirmDialog(comp, {
                         header: `Delete "${instanceLabel.value}"?`,
-                        message: "Are you sure you want to delete this object? It will not be recoverable.",
+                        message: "Are you sure you want to delete this item? It will not be recoverable.",
                         acceptLabel: "Delete",
                         acceptIcon: "pi pi-trash",
                         acceptClass: "p-button-danger",
@@ -81,6 +83,7 @@ const linkedItemActions = computed(() => [
 ]);
 
 const emit = defineEmits(["loadObject"]);
+
 function handleClick() {
     if (props.mode == "dialog") {
         emit("loadObject", object.value["id"]);
@@ -116,13 +119,14 @@ const toggle = (event: Event) => {
 </script>
 
 <template>
-    <div :title="JSON.stringify(object, null, 4)" @contextmenu="(e: Event) => e.preventDefault()">
+    <div @contextmenu="(e: Event) => e.preventDefault()">
         <SplitButton
             ref="button"
             menuButtonIcon="pi pi-ellipsis-v"
             :model="linkedItemActions"
             menuitemicon="pi pi-link"
             class="min-h-full py-0 my-0 mb-2 space-y-0 w-full"
+            title="Edit item"
             @click="handleClick"
             @contextmenu="
                 () => {
@@ -132,6 +136,7 @@ const toggle = (event: Event) => {
                     button.onDropdownButtonClick();
                 }
             "
+            :pt="{ root: 'splitbutton' }"
             :style="`--p-color: ${calcBgColor(object, props.projectProfiles)}; --p-border-color: ${calcBorderColor(object, props.projectProfiles)};`"
         >
             <span class="mx-2 truncate flex items-center space-x-2">
@@ -144,14 +149,14 @@ const toggle = (event: Event) => {
             </span>
         </SplitButton>
 
-        <OverlayPanel ref="op" class="border-red-400">
+        <Popover ref="op" class="border-red-400">
             <div class="m-2 gap-3 w-25rem">
                 <div>
                     <span class="font-medium text-900 block mb-2">The linked object is missing.</span>
                 </div>
                 <div>Do you want to remove all links to the missing object?</div>
                 <div class="min-w-full flex justify-end mt-5 space-x-2">
-                    <Button text class="min-w-fit" size="small" @click="toggle"> cancel </Button>
+                    <Button text class="min-w-fit" size="small" @click="toggle"> cancel</Button>
                     <Button
                         class="min-w-fit"
                         size="small"
@@ -168,19 +173,20 @@ const toggle = (event: Event) => {
                     </Button>
                 </div>
             </div>
-        </OverlayPanel>
+        </Popover>
     </div>
 </template>
 
 <style scoped lang="scss">
-.p-splitbutton {
-    @apply h-8 text-gray-600 border border-[var(--p-border-color)];
-}
-:deep(.p-splitbutton-defaultbutton) {
-    @apply bg-[var(--p-color)] bg-opacity-30 border-0 px-2 text-inherit;
+.splitbutton {
+    @apply h-8 border border-[var(--p-border-color)] text-gray-600;
 }
 
-:deep(.p-splitbutton-menubutton) {
-    @apply bg-[var(--p-color)] bg-opacity-50 border-0 border-l border-[var(--p-border-color)] text-inherit;
+.splitbutton > *:first-child {
+    @apply bg-[var(--p-color)] [&:hover]:brightness-95 border-0 px-2 text-inherit;
+}
+
+.splitbutton > *:not(:first-child) {
+    @apply bg-[var(--p-color)] [&:hover]:brightness-95 border-0 border-l border-[var(--p-border-color)] text-inherit;
 }
 </style>

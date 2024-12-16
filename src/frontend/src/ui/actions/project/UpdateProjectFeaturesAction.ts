@@ -1,5 +1,6 @@
 import { UpdateProjectFeaturesCommand } from "@common/api/project/ProjectFeaturesCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
+import type { MetadataObjects } from "@common/data/entities/metadata/Types";
 import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { ProjectFeature, type ProjectFeatureID } from "@common/data/entities/project/features/ProjectFeature";
@@ -9,6 +10,7 @@ import { Project } from "@common/data/entities/project/Project";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
+import { StatusNotifier } from "@common/ui/actions/notifiers/StatusNotifier.ts";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
@@ -17,7 +19,11 @@ import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
  * Action to update the features of a project.
  */
 export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdateProjectFeaturesCommand, CommandComposer<UpdateProjectFeaturesCommand>> {
-    public prepare(project: Project, updatedFeatures: ProjectFeature[]): CommandComposer<UpdateProjectFeaturesCommand> {
+    public prepare(
+        project: Project,
+        updatedFeatures: ProjectFeature[],
+        sharedObjects: MetadataObjects | undefined = undefined
+    ): CommandComposer<UpdateProjectFeaturesCommand> {
         this.prepareNotifiers(project.title);
 
         this._composer = UpdateProjectFeaturesCommand.build(
@@ -28,7 +34,8 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
                 this.getFeatureFromArray<ProjectMetadataFeature>(updatedFeatures, ProjectMetadataFeature.FeatureID),
                 this.getFeatureFromArray<ResourcesMetadataFeature>(updatedFeatures, ResourcesMetadataFeature.FeatureID),
                 this.getFeatureFromArray<DataManagementPlanFeature>(updatedFeatures, DataManagementPlanFeature.FeatureID)
-            )
+            ),
+            sharedObjects
         );
         return this._composer;
     }
@@ -36,13 +43,11 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
     protected addDefaultNotifiers(title: string): void {
         this.addNotifier(
             ActionState.Executing,
-            new OverlayNotifier(OverlayNotificationType.Info, "Updating project", `Project '${title}' is being updated...`),
-            true
+            new StatusNotifier(OverlayNotificationType.Info, `Saving project '${title}'...`, "material-icons-outlined mi-save")
         );
         this.addNotifier(
             ActionState.Done,
-            new OverlayNotifier(OverlayNotificationType.Success, "Updating project", `Project '${title}' has been updated.`),
-            true
+            new StatusNotifier(OverlayNotificationType.Success, `Project '${title}' has been saved.`, "material-icons-outlined mi-save")
         );
         this.addNotifier(
             ActionState.Failed,

@@ -7,7 +7,6 @@ from ...properties.properties_object import ProjectObject
 from .project_feature import ProjectFeature, ProjectFeatureID
 
 ProjectMetadata = typing.List[ProjectObject]
-MetadataObjects = typing.List[ProjectObject]
 
 @dataclass_json
 @dataclass
@@ -19,4 +18,3 @@ class ProjectMetadataFeature(ProjectFeature):
     feature_id: typing.ClassVar[ProjectFeatureID] = "project_metadata"
 
     metadata: ProjectMetadata = field(default_factory=list)
-    shared_objects: MetadataObjects = field(default_factory=list)

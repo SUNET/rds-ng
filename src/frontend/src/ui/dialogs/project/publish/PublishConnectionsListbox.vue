@@ -16,12 +16,12 @@ const consStore = useConnectorsStore();
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
-        required: true,
+        required: true
     },
     userSettings: {
         type: Object as PropType<UserSettings>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { connectors } = storeToRefs(consStore);
 const { project, userSettings } = toRefs(props);
@@ -32,8 +32,8 @@ const groupedInstances = computed(() =>
             const options = unref(project)!.options;
             return options.use_all_connector_instances || options.active_connector_instances.includes(instance.instance_id);
         }),
-        unref(connectors)!,
-    ),
+        unref(connectors)!
+    )
 );
 </script>
 
@@ -45,10 +45,10 @@ const groupedInstances = computed(() =>
         option-value="instance_id"
         class="w-full"
         :pt="{
-            root: 'coninst-listbox',
+            listContainer: 'coninst-listbox-container',
             list: 'coninst-listbox-list',
-            item: 'coninst-listbox-item',
-            itemGroup: 'coninst-listbox-item-group',
+            option: 'coninst-listbox-option',
+            optionGroup: 'coninst-listbox-option-group'
         }"
     >
         <template #optiongroup="groupEntry">
@@ -66,7 +66,7 @@ const groupedInstances = computed(() =>
 </template>
 
 <style scoped lang="scss">
-:deep(.coninst-listbox) {
+:deep(.coninst-listbox-container) {
     @apply overflow-y-auto max-h-[27rem] #{!important};
 }
 
@@ -74,11 +74,11 @@ const groupedInstances = computed(() =>
     @apply p-0 #{!important};
 }
 
-:deep(.coninst-listbox-item) {
+:deep(.coninst-listbox-option) {
     @apply border-solid border-b border-[--r-border-color] bg-inherit cursor-default #{!important};
 }
 
-:deep(.coninst-listbox-item-group) {
+:deep(.coninst-listbox-option-group) {
     @apply bg-[var(--r-shade-dark)] p-2 #{!important};
 }
 </style>

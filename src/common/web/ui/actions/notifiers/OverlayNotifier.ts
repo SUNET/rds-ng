@@ -29,5 +29,9 @@ export class OverlayNotifier extends ActionNotifier {
     public onNotify(message: string): void {
         const notifications = new OverlayNotifications(WebComponent.instance);
         notifications.notify(this._type, this._caption, this.formatMessage(this._message, message), this._sticky);
+
+        if (this._type === OverlayNotificationType.Error) {
+            notifications.clearStatus();
+        }
     }
 }

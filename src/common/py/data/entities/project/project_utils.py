@@ -2,6 +2,7 @@ import typing
 
 from .features import ProjectFeatureID
 from .project import Project, ProjectID
+from ..metadata import MetadataObjects
 
 
 def find_project_by_id(
@@ -25,6 +26,8 @@ def apply_project_features_update(
     project: Project,
     updated_features: Project.Features,
     apply_to: typing.List[ProjectFeatureID] | None = None,
+    *,
+    shared_objects: MetadataObjects | None = None,
 ) -> None:
     """
     Applies updates to project features.
@@ -33,6 +36,7 @@ def apply_project_features_update(
         project: The project to apply the updates to.
         updated_features: The feature updates.
         apply_to: The features to update.
+        shared_objects: Optionally updated project-wide shared objects.
     """
     from common.py.data.entities.project.features import (
         ProjectMetadataFeature,
@@ -44,9 +48,6 @@ def apply_project_features_update(
         project.features.project_metadata.metadata = (
             updated_features.project_metadata.metadata
         )
-        project.features.project_metadata.shared_objects = (
-            updated_features.project_metadata.shared_objects
-        )
 
     if apply_to is None or ResourcesMetadataFeature.feature_id in apply_to:
         project.features.resources_metadata.metadata = (
@@ -55,3 +56,6 @@ def apply_project_features_update(
 
     if apply_to is None or DataManagementPlanFeature.feature_id in apply_to:
         project.features.dmp.plan = updated_features.dmp.plan
+
+    if shared_objects is not None:
+        project.features.shared_objects = shared_objects

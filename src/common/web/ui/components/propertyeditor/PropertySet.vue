@@ -63,13 +63,20 @@ const searchString = ref("");
             @hide="(id) => hideProperty(id)"
         />
     </div>
-    <Button v-if="hiddenPropertys.length !== 0" class="fixed bottom-10 right-10" icon="pi pi-plus" size="large" rounded @click="showAddProperties = true" />
+    <Button
+        v-if="hiddenPropertys.length !== 0"
+        class="fixed bottom-10 right-10"
+        icon="material-icons-outlined mi-add"
+        size="large"
+        rounded
+        @click="showAddProperties = true"
+    />
 
     <Dialog
         v-model:visible="showAddProperties"
         modal
-        header="Add Properties"
-        :pt="{ content: { class: 'h-full' } }"
+        header="Add properties"
+        :pt="{ content: 'h-full' }"
         :style="{ width: '50vw', height: '80vh' }"
         @after-hide="
             unselectProperties();
@@ -87,21 +94,21 @@ const searchString = ref("");
                     @update:selection="(selection: ProfileLayoutClass[]) => selectProperties(selection)"
                     dataKey="id"
                     class="h-full"
-                    :pt="{ list: { class: 'min-h-full' } }"
+                    :pt="{ pcListbox: { listContainer: 'min-h-full' } }"
                     :stripedRows="true"
                 >
-                    <template #item="slotProps">
+                    <template #option="slotProps">
                         <div class="flex flex-col">
                             <span class="font-semibold flex gap-2" :title="slotProps.item.label">
                                 <span class="grow"> {{ slotProps.item.getDisplayLabel() }} </span>
                                 <Chip
-                                    v-for="p in slotProps.item.profiles"
+                                    v-for="p in slotProps.option.profiles"
                                     :label="p[0]"
                                     size="small"
                                     :style="`background-color: ${colorsStore.color(p[0])}`"
                                     class="h-4 !rounded py-3 text-sm bg-opacity-40"
                             /></span>
-                            <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.item.description">{{ slotProps.item.description }}</span>
+                            <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.option.description">{{ slotProps.option.description }}</span>
                         </div>
                     </template>
                 </OrderList>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Message from "primevue/message";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
@@ -18,6 +19,13 @@ const { userSettings } = storeToRefs(userStore);
 
 <template>
     <div class="grid grid-rows-auto grid-flow-row grid-cols-[1fr] gap-1.5 w-full h-full">
+        <Message v-if="userSettings.connector_instances.length == 0" severity="warn" :closable="false" class="pb-1">
+            <div>
+                To publish or export, add at least one connection to an external service in your settings
+                <span class="material-icons-outlined mi-settings relative top-1.5" />.
+            </div>
+        </Message>
+
         <div class="mb-2">To publish or export a project to a service, click on its corresponding button.</div>
 
         <PublishConnectionsListbox :project="project" :user-settings="userSettings" />

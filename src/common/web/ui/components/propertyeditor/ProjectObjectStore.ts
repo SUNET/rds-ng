@@ -21,7 +21,7 @@ export abstract class ProjectObject {
      * @param value The object value.
      * @param refs The object references.
      */
-    constructor(id?: string, value: any = {}, refs: string[] = []) {
+    protected constructor(id?: string, value: any = {}, refs: string[] = []) {
         this.id = id || uuidv4();
         this.value = value;
         this.refs = refs;
@@ -192,7 +192,7 @@ export class ProjectObjectStore {
      * @param value - The new value for the project object.
      */
     public update(inputId: string, id: string, value: any): void {
-        var object: ProjectObject;
+        let object: ProjectObject;
 
         object = this.get(id)!;
         if (object !== undefined) {
@@ -247,6 +247,6 @@ export class ProjectObjectStore {
      * @returns An array of project objects of the specified type.
      */
     public getObjectsByType(type: string): SharedObject[] {
-        return this._objects.filter((obj) => obj instanceof SharedObject && obj.type === type) as SharedObject[];
+        return this._objects.filter((obj: ProjectObject) => obj instanceof SharedObject && obj.type === type) as SharedObject[];
     }
 }

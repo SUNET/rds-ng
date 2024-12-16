@@ -15,7 +15,7 @@ const { errors } = toRefs(props);
     <br />
     <span class="italic">
         {{ errors[0] }}
-        <span v-if="errors.length > 1" :title="errors.join('\n')">
+        <span v-if="errors.length > 1" :title="errors.map((err) => `&bull; ${err}`).join('\n')">
             (+ <b>{{ errors.length - 1 }} more</b>)
         </span>
     </span>

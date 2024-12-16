@@ -1,15 +1,11 @@
 <script setup lang="ts">
-
+import LandingPage from "@/ui/content/main/projectdetails/LandingPage.vue";
 </script>
 
 <template>
-    <div class="r-centered-grid content-center r-shade-text">
-        <div>
-            Select a project in the list on the left or create a new one using the <em>New Project</em> button.
-        </div>
+    <div class="r-centered-grid r-shade-text bg-slate-50 !pb-0 overflow-auto">
+        <LandingPage />
     </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

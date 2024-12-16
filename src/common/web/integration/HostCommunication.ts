@@ -10,15 +10,16 @@ export interface HostCommunicationActionMessage {
  * The various actions.
  */
 export const enum HostCommuncationAction {
-    Redirect = "redirect",
+    Reload = "reload",
+    Redirect = "redirect"
 }
 
 /**
  * Sends an action to the host (parent).
  *
  * @param action - The action to send.
- * @param data - The action data.
+ * @param data - Optional action data.
  */
-export function sendActionToHost(action: HostCommuncationAction, data: any): void {
+export function sendActionToHost(action: HostCommuncationAction, data: any = undefined): void {
     window.parent.postMessage({ action: action, data: data } as HostCommunicationActionMessage, "*");
 }

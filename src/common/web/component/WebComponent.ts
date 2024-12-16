@@ -29,6 +29,7 @@ import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
 import createWebService from "../services/WebService";
 
+import { theme } from "../ui/theme/Theme";
 import MainContainer from "../ui/views/main/MainViewContainer.vue";
 
 // Load various icons
@@ -130,23 +131,36 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
 
         const app = createApp(MainContainer);
 
-        // Register some global components
-        app.component("ConfirmDialog", ConfirmDialog);
-        app.component("ConfirmPopup", ConfirmPopup);
-        app.component("DynamicDialog", DynamicDialog);
-        app.component("Toast", Toast);
-
         // And some directives
         app.directive("badge", BadgeDirective);
 
         // Register various plugins
         app.use(createPinia());
         app.use(this._router);
-        app.use(PrimeVue);
+        app.use(PrimeVue, {
+            theme: {
+                preset: theme(this._data.config),
+                options: {
+                    prefix: "p",
+                    darkModeSelector: false,
+                    cssLayer: {
+                        name: "primevue",
+                        order: "tailwind-base, primevue, tailwind-utilities"
+                    }
+                }
+            }
+        });
         app.use(ConfirmationService);
         app.use(DialogService);
         app.use(ToastService);
 
+        // Register some global components
+        app.component("ConfirmDialog", ConfirmDialog);
+        app.component("ConfirmPopup", ConfirmPopup);
+        app.component("DynamicDialog", DynamicDialog);
+        app.component("Toast", Toast);
+
+        // Inject this component
         app.provide(WebComponent._injectionKey, this);
 
         return app;

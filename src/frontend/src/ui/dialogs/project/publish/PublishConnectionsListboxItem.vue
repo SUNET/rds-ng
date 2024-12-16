@@ -27,12 +27,12 @@ const userStore = useUserStore();
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
-        required: true,
+        required: true
     },
     instance: {
         type: Object as PropType<ConnectorInstance>,
-        required: true,
-    },
+        required: true
+    }
 });
 
 const { project, instance } = toRefs(props);
@@ -96,15 +96,20 @@ function onPublishInitDone(success: boolean, msg: string): void {
 </script>
 
 <template>
-    <div class="grid grid-rows-auto grid-flow-row gap-0 place-content-start group" :class="activeJob ? 'grid-cols-[1fr_33%]' : 'grid-cols-[1fr_min-content]'">
-        <div :id="'connector-instance-' + instance!.instance_id" class="r-text-caption h-6 truncate" :title="instance!.name">{{ instance!.name }}</div>
+    <div
+        class="grid grid-rows-auto grid-flow-row gap-0 place-content-start group w-full min-h-20"
+        :class="activeJob ? 'grid-cols-[1fr_40%]' : 'grid-cols-[1fr_min-content]'"
+    >
+        <div :id="'connector-instance-' + instance!.instance_id" class="r-text-caption r-text h-6 truncate" :title="instance!.name">
+            {{ instance!.name }}
+        </div>
 
-        <div class="row-span-2 pl-1 content-center">
+        <div class="row-span-3 pl-1 content-center w-full">
             <div v-if="activeJob" class="grid grid-flow-row text-sm">
-                <span class="r-text-light italic justify-self-end truncate">
-                    <b>{{ category?.verbStatusProgressing }}:</b> {{ activeJob.message }}
+                <span class="r-text-light italic justify-self-end w-full truncate" :title="activeJob.message">
+                    <b>{{ category?.verbStatusProgressing }}:</b><br />{{ activeJob.message }}
                 </span>
-                <ProgressBar class="h-3" :value="Math.trunc(activeJob.progress * 100)" />
+                <ProgressBar class="h-3" :value="Math.trunc(activeJob.progress * 100)" :title="activeJob.message" />
             </div>
             <div v-else :title="disablePublish ? disableReason : category?.verbAction + ' the project'">
                 <Button
@@ -123,9 +128,11 @@ function onPublishInitDone(success: boolean, msg: string): void {
             </div>
         </div>
 
-        <div class="truncate" :title="instance!.description">{{ instance!.description }}</div>
+        <div class="truncate" :title="instance!.description">{{ instance!.description || "&nbsp;" }}</div>
 
-        <div class="grid grid-cols-[1fr_max-content] grid-flow-col pt-5 col-span-2 text-sm">
+        <div class="h-5">&nbsp;</div>
+
+        <div class="grid grid-cols-[1fr_max-content] grid-flow-col col-span-2 text-sm">
             <div v-if="category" class="grid grid-flow-col auto-cols-max gap-2 r-text-secondary italic">
                 <b>Last {{ category.verbStatusDone }}: </b>
                 <span class="pr-3">{{ jobStats.lastJob > 0 ? formatLocaleTimestamp(jobStats.lastJob) : "Never" }}</span>

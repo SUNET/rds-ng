@@ -31,7 +31,7 @@ def get_default_settings() -> typing.Dict[SettingID, typing.Any]:
         NetworkSettingIDs.REGULAR_COMMAND_TIMEOUT: 10,
         NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT: 15,
         NetworkServerSettingIDs.ALLOWED_ORIGINS: "",
-        NetworkServerSettingIDs.IDLE_TIMEOUT: 30 * 60,
+        NetworkServerSettingIDs.IDLE_TIMEOUT: 60 * 60,
         NetworkClientSettingIDs.SERVER_ADDRESS: "",
         NetworkClientSettingIDs.CONNECTION_TIMEOUT: 10,
         # Integration settings

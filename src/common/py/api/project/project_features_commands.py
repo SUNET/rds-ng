@@ -11,6 +11,7 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
+from ...data.entities.metadata import MetadataObjects
 from ...data.entities.project import (
     ProjectID,
     Project,
@@ -29,6 +30,7 @@ class UpdateProjectFeaturesCommand(Command):
         project_id: The ID of the project to update.
         updated_features: List of all features (using their ID) to update.
         features: The new features data.
+        shared_objects: Optionally updated project-wide shared objects.
 
     Notes:
         Requires an ``UpdateProjectFeaturesReply`` reply.
@@ -41,6 +43,8 @@ class UpdateProjectFeaturesCommand(Command):
     )
     features: Project.Features = dataclasses.field(default_factory=Project.Features)
 
+    shared_objects: MetadataObjects | None = None
+
     @staticmethod
     def build(
         message_builder: MessageBuilder,
@@ -48,6 +52,7 @@ class UpdateProjectFeaturesCommand(Command):
         project_id: ProjectID,
         updated_features: typing.List[ProjectFeatureID],
         features: Project.Features,
+        shared_objects: MetadataObjects | None = None,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -58,6 +63,7 @@ class UpdateProjectFeaturesCommand(Command):
             chain,
             project_id=project_id,
             updated_features=updated_features,
+            shared_objects=shared_objects,
             features=features,
         )
 
