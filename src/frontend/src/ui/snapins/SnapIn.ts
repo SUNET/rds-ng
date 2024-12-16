@@ -33,6 +33,9 @@ export interface SnapInOptions {
 
         /** The panel loader. */
         loader: SnapInPanelLoader;
+
+        /** Description of the panel. */
+        description: string;
     };
 }
 

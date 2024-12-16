@@ -2,6 +2,7 @@
 import Checkbox from "primevue/checkbox";
 import Fieldset from "primevue/fieldset";
 import InputText from "primevue/inputtext";
+import ScrollPanel from "primevue/scrollpanel";
 import Stepper from "primevue/stepper";
 import StepList from "primevue/steplist";
 import StepPanels from "primevue/steppanels";
@@ -18,7 +19,7 @@ import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
 
 import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
-import ResourcesTreeSelect from "@common/ui/components/resource/ResourcesTreeSelect.vue";
+import ResourcesTree from "@common/ui/components/resource/ResourcesTree.vue";
 import StepIconHeader from "@common/ui/components/stepper/StepIconHeader.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -40,8 +41,9 @@ const newProject = dialogData.userData.newProject;
 
 const stepIndices = {
     main: 0,
-    features: 1,
-    connections: 2
+    datapath: 1,
+    features: 2,
+    connections: 3
 };
 const lastStepIndex = Object.entries(stepIndices).length - 1;
 const activeStep = ref(stepIndices.main);
@@ -64,6 +66,7 @@ onMounted(() => {
             .done((reply: ListResourcesReply, success, msg) => {
                 if (success) {
                     resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true);
+                    //resourcesError.value = "Unable to load resources";
                 }
             })
             .failed((_, msg) => {
@@ -98,7 +101,11 @@ const nextCallback = computed(() => {
 
         // Verify each step to prevent advancing to the next one
         if (unref(activeStep) == stepIndices.main) {
-            if ("title" in validator.errors || "datapath" in validator.errors) {
+            if ("title" in validator.errors) {
+                return undefined;
+            }
+        } else if (unref(activeStep) == stepIndices.datapath) {
+            if ("datapath" in validator.errors) {
                 return undefined;
             }
         }
@@ -139,6 +146,16 @@ function onNextStep() {
                         :active="newProject ? stepIndices.main <= activeStep : stepIndices.main == activeStep"
                         :click-callback="(event: Event) => onClickStep(event, activateCallback)"
                         icon="mi-edit"
+                        title="Main settings"
+                    />
+                </Step>
+
+                <Step v-slot="{ activateCallback }" :value="stepIndices.datapath" :pt="{ number: 'hidden' }">
+                    <StepIconHeader
+                        :active="newProject ? stepIndices.datapath <= activeStep : stepIndices.datapath == activeStep"
+                        :click-callback="(event: Event) => onClickStep(event, activateCallback)"
+                        icon="mi-folder"
+                        title="Data path"
                     />
                 </Step>
 
@@ -147,6 +164,7 @@ function onNextStep() {
                         :active="newProject ? stepIndices.features <= activeStep : stepIndices.features == activeStep"
                         :click-callback="(event: Event) => onClickStep(event, activateCallback)"
                         icon="mi-checklist"
+                        title="Features"
                     />
                 </Step>
 
@@ -155,16 +173,15 @@ function onNextStep() {
                         :active="newProject ? stepIndices.connections <= activeStep : stepIndices.connections == activeStep"
                         :click-callback="(event: Event) => onClickStep(event, activateCallback)"
                         icon="mi-hub"
+                        title="Connections"
                     />
                 </Step>
             </StepList>
             <StepPanels>
                 <StepPanel :value="stepIndices.main">
-                    <div class="mb-2">
-                        Set your main project settings, like its title, here. Note that the data path cannot be changed once the project has been created.
-                    </div>
+                    <div class="mb-2">Set your main project settings, like its title, here. You can always change these later.</div>
 
-                    <Fieldset legend="General">
+                    <Fieldset legend="General settings">
                         <span class="r-form-field">
                             <label>Title <MandatoryMark /></label>
                             <InputText
@@ -184,31 +201,48 @@ function onNextStep() {
                             <small>An (optional) project description.</small>
                         </span>
                     </Fieldset>
+                </StepPanel>
 
-                    <Fieldset legend="Data" class="h-fit">
-                        <span class="r-form-field">
-                            <label>Data path <MandatoryMark /></label>
-                            <span v-if="showDataPathSelector" class="grid grid-flow-row">
-                                <ResourcesTreeSelect
-                                    v-bind="datapath"
-                                    v-model="dialogData.userData.datapath"
-                                    :options="resourcesNodes"
-                                    :loading-error="resourcesError"
-                                    placeholder="Select where the data of this project is stored"
-                                    loading
-                                    :class="{ 'p-invalid': validator.errors.datapath }"
-                                />
-                                <small class="pt-1"><b>Important:</b> This path cannot be changed after the project has been created!</small>
-                            </span>
-                            <span v-else class="grid grid-flow-row">
+                <StepPanel :value="stepIndices.datapath">
+                    <div class="mb-2">
+                        Select the root data path for your project here. Note that this path cannot be changed once the project has been created.
+                    </div>
+
+                    <Fieldset legend="Data path" class="h-fit" :class="{ 'border-[var(--p-inputtext-invalid-border-color)]': !!validator.errors.datapath }">
+                        <template #legend>
+                            <span class="p-fieldset-legend-label">Data path <MandatoryMark /></span>
+                        </template>
+
+                        <div class="r-form-field">
+                            <div v-if="showDataPathSelector" class="grid grid-flow-row">
+                                <div v-if="!resourcesError" class="w-full">
+                                    <small class="px-2 py-1.5 r-shade-gray rounded-lg truncated inline-block w-full">
+                                        <b class="pr-1">Selected path:</b> {{ dialogData.userData.datapath || "(None)" }}
+                                    </small>
+                                    <ScrollPanel class="h-48">
+                                        <ResourcesTree
+                                            v-bind="datapath"
+                                            v-model="dialogData.userData.datapath"
+                                            :options="resourcesNodes"
+                                            loading
+                                            class="w-full h-fit"
+                                        />
+                                    </ScrollPanel>
+                                </div>
+                                <div v-else class="h-fit"><b>Unable to load resources:</b> {{ resourcesError }}</div>
+                            </div>
+                            <div v-else class="grid grid-flow-row">
                                 <span class="flex border border-solid rounded p-2">
                                     <span class="material-icons-outlined mi-folder opacity-75 pr-2" />
                                     <span>{{ dialogData.userData.datapath }}</span>
                                 </span>
-                                <small class="pt-1"><b>Note:</b> This path cannot be changed anymore after project creation.</small>
-                            </span>
-                        </span>
+                                <span>
+                                    <small class="pt-3"><b>Project already created:</b> The data path cannot be changed anymore.</small>
+                                </span>
+                            </div>
+                        </div>
                     </Fieldset>
+                    <small class="pt-3"><b>Important:</b> This path cannot be changed after the project has been created!</small>
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.features">

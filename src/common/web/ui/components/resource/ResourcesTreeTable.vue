@@ -4,13 +4,14 @@ import Column from "primevue/column";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
-import type { TreeNode } from "primevue/treenode";
+import { type TreeNode } from "primevue/treenode";
 import TreeTable from "primevue/treetable";
 import { onMounted, type PropType, ref, toRefs, unref, watch } from "vue";
 
 import { Resource, ResourceType } from "../../../data/entities/resource/Resource";
-import { filterResourcesTreeNodes, flattenResourcesTreeNodes } from "../../../data/entities/resource/ResourceUtils";
+import { filterResourcesTreeNodes } from "../../../data/entities/resource/ResourceUtils";
 import { humanReadableFileSize } from "../../../utils/Strings";
+import { useResourceTreeTools } from "./ResourceTreeTools";
 
 const props = defineProps({
     data: {
@@ -28,6 +29,7 @@ const selectedData = defineModel<Resource[]>("selectedData", { default: [] });
 const emits = defineEmits<{
     (e: "refresh"): void;
 }>();
+const { expandAllNodes, collapseAllNodes } = useResourceTreeTools();
 
 const filters = ref({} as Record<string, string>);
 const expandedNodes = ref({} as Record<string, boolean>);
@@ -48,14 +50,12 @@ function refresh(): void {
 
 function expandAll(): void {
     if (data!.value) {
-        const allResources: Record<string, boolean> = {};
-        flattenResourcesTreeNodes(data!.value as TreeNode[]).forEach((resource) => (allResources[resource] = true));
-        expandedNodes.value = allResources;
+        expandAllNodes(unref(data) as TreeNode[], expandedNodes);
     }
 }
 
 function collapseAll(): void {
-    expandedNodes.value = {};
+    collapseAllNodes(expandedNodes);
 }
 
 watch(selectedNodes, () => {

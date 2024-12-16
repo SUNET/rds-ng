@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ContentsTabHeader from "@/ui/content/main/projectdetails/ContentsTabHeader.vue";
 import Tabs from "primevue/tabs";
 import TabList from "primevue/tablist";
 import Tab from "primevue/tab";
@@ -37,12 +38,15 @@ const panels = computed(() => {
     }
 
     return panelSnapIns.map((snapIn) => {
-        return { title: snapIn.options.tabPanel!.label, component: defineAsyncComponent(snapIn.options.tabPanel!.loader) };
+        return {
+            title: snapIn.options.tabPanel!.label,
+            component: defineAsyncComponent(snapIn.options.tabPanel!.loader),
+            description: snapIn.options.tabPanel!.description
+        };
     });
 });
 
 const sharedObjectStore = reactive(new ProjectObjectStore());
-
 const debounce = makeDebounce();
 watch(
     () => project!.value.features.shared_objects,
@@ -61,7 +65,9 @@ watch(
     <div class="h-full">
         <Tabs :value="panels[0].title" class="h-full">
             <TabList :pt="{ tabList: 'tab-list', activeBar: 'tab-list-active-bar' }">
-                <Tab v-for="panel in panels" :value="panel.title" class="tab">{{ panel.title }}</Tab>
+                <Tab v-for="panel in panels" :value="panel.title" class="tab" :title="panel.description">
+                    <ContentsTabHeader :title="panel.title" :description="panel.description" />
+                </Tab>
             </TabList>
             <TabPanels class="overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full">
                 <TabPanel v-for="panel in panels" :value="panel.title" class="h-full">

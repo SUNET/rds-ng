@@ -31,7 +31,20 @@ onMounted(() => {
     <MessageDialog />
 
     <!-- Notifications -->
-    <Toast position="bottom-right" class="opacity-75" />
+    <Toast position="bottom-right" class="opacity-75" group="default" />
+    <Toast
+        position="bottom-center"
+        class="opacity-75"
+        group="status"
+        :dt="{ width: 'auto', 'content.padding': '0.25rem', 'text.gap': '0' }"
+        :pt="{ messageContent: 'items-center pl-2' }"
+    >
+        <template #message="slotProps">
+            <div class="flex gap-1 mr-2">
+                <span v-if="slotProps.message.icon" :class="slotProps.message.icon" /> <span>{{ slotProps.message.summary }}</span>
+            </div>
+        </template>
+    </Toast>
 
     <!-- Main view -->
     <component :is="comp.userInterface.mainView.getStateComponent(activeState)"></component>
