@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import ContentsTabHeader from "@/ui/content/main/projectdetails/ContentsTabHeader.vue";
+import Tab from "primevue/tab";
 import TabList from "primevue/tablist";
+import TabPanel from "primevue/tabpanel";
 import TabPanels from "primevue/tabpanels";
 import Tabs from "primevue/tabs";
 import { computed, defineAsyncComponent, type PropType, reactive, ref, toRefs, unref, watch } from "vue";
