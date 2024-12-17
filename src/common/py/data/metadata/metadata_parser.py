@@ -210,14 +210,10 @@ class MetadataParser:
 
         Returns:
             Dict[str, Any]: The dictionary object with the specified ID.
-
-        Raises:
-            IndexError: If no object with the specified ID is found.
         """
         if (objs := next((e for e in metadata if e.id == oid), None)) != None:
-            #print(f"Found object with ID {oid} {objs}", flush=True)
             return objs
-        print(f"Object with ID {oid} not found", flush=True)
+        
         return None
 
     @staticmethod
@@ -396,13 +392,10 @@ class MetadataParser:
 
         if not obj.refs:
             return values
-        print('##############', obj, flush=True)
-        print('##############', obj.refs, flush=True)
         objs = [
             MetadataParser.getobj(shared_objects, ref) for ref in obj.refs
         ]
         
-        print('##############', objs, flush=True)
         def _replace_template(obj, template, profile):
             import re
 
@@ -424,17 +417,14 @@ class MetadataParser:
                 obj, property_layout.labelTemplate, profile
             )
 
-            if property_layout.displayLabel not in [e.label for e in values if e]:
+            # check if there already is an element with the same label
+            if (elem := next((v for v in values if v.get('label', None) == property_layout.displayLabel), None)) != None:
+                elem["values"].append(replaced_template)
+            else:
                 values.append(
                     {"label": property_layout.displayLabel, "values": [replaced_template]}
                 )
 
-                continue
-
-            for v in values:
-                if v.label == property_layout.displayLabel:
-                    values.append(replaced_template)
-                    break
 
         return values
 
@@ -464,14 +454,10 @@ class MetadataParser:
         if profile is None:
             return []
         
-        try:
-            if (
-                obj := MetadataParser.getobj(metadata, prop_id)
-            ) == []:
-                return []
-            
-        except Exception as e:
-            print(f"Exception: {e}")
+
+        if not (
+            obj := MetadataParser.getobj(metadata, prop_id)
+        ):
             return []
 
         return MetadataParser._transform_simple_values(

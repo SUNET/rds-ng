@@ -211,9 +211,8 @@ export class ProjectObjectStore {
         const object = this.get(id);
         if (object) {
             object.pushReference(ref);
-        } else {
-            return undefined;
         }
+        return object
     }
 
     /**
