@@ -1,3 +1,5 @@
-from typing import Any, Dict, List
+from typing import List
 
-MetadataObjects = List[Dict[str, Any]]  # TODO: Use proper type
+from common.py.data.entities.properties import ProjectObject
+
+MetadataObjects = List[ProjectObject]

@@ -2,7 +2,7 @@
 import { reactive, watch } from "vue";
 import PropertySet from "./PropertySet.vue";
 
-import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
+import { ProjectObject, ProjectObjectStore, SharedObject } from "./ProjectObjectStore";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
 const { projectProfiles } = defineProps({
@@ -27,10 +27,10 @@ watch(
     }
 );
 const sharedObjects = defineModel("sharedObjects");
-sharedObjectStore.setObjects((sharedObjects.value as ProjectObject[]) || []);
+sharedObjectStore.setObjects((sharedObjects.value as SharedObject[]) || []);
 watch(
     () => sharedObjects.value,
-    () => sharedObjectStore.setObjects(sharedObjects.value as ProjectObject[])
+    () => sharedObjectStore.setObjects(sharedObjects.value as SharedObject[])
 );
 watch(
     () => sharedObjectStore.exportObjects(),

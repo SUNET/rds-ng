@@ -18,7 +18,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.g
     <div class="flex">
         <Select
             :modelValue="value[inputId]"
-            @update:modelValue="(value: String[]) => projectObjects.update(profileId || [], inputId, propertyObjectId, value)"
+            @update:modelValue="(value: String[]) => projectObjects.update(inputId, propertyObjectId, value)"
             filter-placeholder="Search entry"
             :options="inputOptions"
             class="grow"

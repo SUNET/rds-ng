@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 
-import { ProjectObject } from "../../../../ui/components/propertyeditor/ProjectObjectStore";
+import { SharedObject } from "../../../../ui/components/propertyeditor/ProjectObjectStore";
 import { type MetadataObjects } from "../../metadata/Types";
 import { DataManagementPlanFeature } from "./DataManagementPlanFeature";
 import { ProjectMetadataFeature } from "./ProjectMetadataFeature";
@@ -26,7 +26,7 @@ export class ProjectFeatures {
     public readonly dmp: DataManagementPlanFeature;
 
     // @ts-ignore
-    @Type(() => ProjectObject)
+    @Type(() => SharedObject)
     public readonly shared_objects: MetadataObjects;
 
     public constructor(

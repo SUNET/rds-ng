@@ -10,7 +10,7 @@ import { type MetadataObjects } from "../../data/entities/metadata/Types";
 import { type ProjectFeatureID } from "../../data/entities/project/features/ProjectFeature";
 import { ProjectFeatures } from "../../data/entities/project/features/ProjectFeatures";
 import { type ProjectID } from "../../data/entities/project/Project";
-import { ProjectObject } from "../../ui/components/propertyeditor/ProjectObjectStore";
+import { SharedObject } from "../../ui/components/propertyeditor/ProjectObjectStore";
 
 /**
  * Command to update the features (data) of a project.
@@ -32,7 +32,7 @@ export class UpdateProjectFeaturesCommand extends Command {
     public readonly features: ProjectFeatures = new ProjectFeatures();
 
     // @ts-ignore
-    @Type(() => ProjectObject)
+    @Type(() => SharedObject)
     public readonly shared_objects: MetadataObjects | undefined = undefined;
 
     /**
