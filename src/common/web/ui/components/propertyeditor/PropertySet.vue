@@ -98,7 +98,7 @@ const searchString = ref("");
                     :stripedRows="true"
                 >
                     <template #option="slotProps">
-                        <div class="flex flex-col">
+                        <div class="flex flex-col w-full p-1">
                             <span class="font-semibold flex gap-2" :title="slotProps.item.label">
                                 <span class="grow"> {{ slotProps.item.getDisplayLabel() }} </span>
                                 <Chip
