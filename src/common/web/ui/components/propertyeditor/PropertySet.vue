@@ -30,7 +30,7 @@ const unselectProperties = () => (selectedProperties.value = []);
 const selectProperties = (selection: ProfileLayoutClass[]) => (selectedProperties.value = selection);
 
 const hideProperty = (id: string) => {
-    layout = layout.filter((e: ProfileLayoutClass) => e.getId() != id);
+    propsToShow.value = propsToShow.value.filter((e: ProfileLayoutClass) => e.getId() != id);
 };
 
 const showAddProperties = ref(false);

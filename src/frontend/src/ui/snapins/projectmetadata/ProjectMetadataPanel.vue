@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Message from "primevue/message";
 import { storeToRefs } from "pinia";
+import Message from "primevue/message";
 import { type PropType, reactive, toRefs, watch } from "vue";
 
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
@@ -71,7 +71,6 @@ const debounce = makeDebounce();
 watch(
     () => project!.value.features.project_metadata.metadata,
     (metadata) => {
-        console.log("update");
         debounce(() => {
             const action = new UpdateProjectFeaturesAction(comp);
             action.prepare(project!.value, [new ProjectMetadataFeature(metadata as ProjectMetadata)]);
