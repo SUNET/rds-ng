@@ -1,4 +1,3 @@
-import json
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
@@ -6,8 +5,7 @@ from common.py.data.entities.properties import ProjectObject
 from common.py.data.metadata import (Metadata, MetadataCreator, MetadataParser,
                                      MetadataParserQuery)
 
-from . import (parse_contributors, parse_creators, parse_dates, parse_grants,
-               parse_subjects)
+from . import parse_contributors, parse_creators, parse_dates, parse_grants
 
 
 @dataclass

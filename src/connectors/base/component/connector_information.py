@@ -1,8 +1,7 @@
 import json
 import typing
 
-from common.py.data.entities.connector import (Connector, ConnectorCategoryID,
-                                               ConnectorMetadataProfile)
+from common.py.data.entities.connector import Connector, ConnectorCategoryID
 from common.py.data.entities.properties import ProfileMetadata, PropertyProfile
 from common.py.utils.img_conversion import convert_image_to_img_source
 

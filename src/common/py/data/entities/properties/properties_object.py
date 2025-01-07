@@ -1,9 +1,7 @@
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass
+from typing import Any, List
 
 from dataclasses_json import DataClassJsonMixin
-
-from .properties_profile import ProfileID
 
 PropertyValues = dict[str, Any]
 
