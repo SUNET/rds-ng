@@ -144,7 +144,8 @@ class Session:
 
     @broker_token.setter
     def broker_token(self, value: ResourcesBrokerToken | None) -> None:
-        self._broker_token = value
+        with self._lock:
+            self._broker_token = value
 
     @property
     def fingerprint(self) -> str:
