@@ -25,7 +25,7 @@ def create_connector_service(comp: BackendComponent) -> Service:
 
     svc.state.last_announce = 0.0
 
-    @svc.message_handler(ComponentProcessEvent)
+    @svc.message_handler(ComponentProcessEvent, is_async=True)
     def announce(msg: ComponentProcessEvent, ctx: ConnectorServiceContext) -> None:
         with EntryGuard("announce") as guard:
             if not guard.can_execute:

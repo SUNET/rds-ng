@@ -54,6 +54,7 @@ class Logger(logging.Logger):
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
+        return
         with self._lock:
             super().debug(msg, extra=self._pack_extra_params(scope, **kwargs))
             self._flush()
@@ -68,6 +69,7 @@ class Logger(logging.Logger):
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
+        return
         with self._lock:
             super().info(msg, extra=self._pack_extra_params(scope, **kwargs))
             self._flush()
@@ -82,6 +84,7 @@ class Logger(logging.Logger):
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
+        return
         with self._lock:
             super().warning(msg, extra=self._pack_extra_params(scope, **kwargs))
             self._flush()
@@ -96,6 +99,7 @@ class Logger(logging.Logger):
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
+        return
         with self._lock:
             super().error(msg, extra=self._pack_extra_params(scope, **kwargs))
             self._flush()

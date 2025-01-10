@@ -70,7 +70,7 @@ def create_project_jobs_service(comp: ServerComponent) -> Service:
             error=message,
         )
 
-    @svc.message_handler(ListProjectJobsCommand)
+    @svc.message_handler(ListProjectJobsCommand, is_async=True)
     def list_jobs(msg: ListProjectJobsCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(msg, ListProjectJobsReply, jobs=[]):
             return
@@ -81,7 +81,7 @@ def create_project_jobs_service(comp: ServerComponent) -> Service:
             jobs=ctx.storage_pool.project_job_storage.filter_by_user(ctx.user.user_id),
         ).emit()
 
-    @svc.message_handler(InitiateProjectJobCommand)
+    @svc.message_handler(InitiateProjectJobCommand, is_async=True)
     def initiate_job(msg: InitiateProjectJobCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(msg, InitiateProjectJobReply):
             return
@@ -187,7 +187,7 @@ def create_project_jobs_service(comp: ServerComponent) -> Service:
         except Exception as exc:  # pylint: disable=broad-exception-caught
             _initiate(False, str(exc))
 
-    @svc.message_handler(StartProjectJobReply)
+    @svc.message_handler(StartProjectJobReply, is_async=True)
     def job_started(msg: StartProjectJobReply, ctx: ServerServiceContext) -> None:
         project = ctx.storage_pool.project_storage.get(msg.project_id)
 
@@ -218,7 +218,7 @@ def create_project_jobs_service(comp: ServerComponent) -> Service:
             notify_callback=notify_job,
         )
 
-    @svc.message_handler(ProjectJobProgressEvent)
+    @svc.message_handler(ProjectJobProgressEvent, is_async=True)
     def job_progress(msg: ProjectJobProgressEvent, ctx: ServerServiceContext) -> None:
         def update_job(job: ProjectJob) -> None:
             if ProjectJobProgressEvent.Contents.PROGRESS in msg.contents:
@@ -234,7 +234,7 @@ def create_project_jobs_service(comp: ServerComponent) -> Service:
             update_callback=update_job,
         )
 
-    @svc.message_handler(ProjectJobCompletionEvent)
+    @svc.message_handler(ProjectJobCompletionEvent, is_async=True)
     def job_completion(
         msg: ProjectJobCompletionEvent, ctx: ServerServiceContext
     ) -> None:
