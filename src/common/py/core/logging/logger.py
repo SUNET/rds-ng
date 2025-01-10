@@ -1,4 +1,5 @@
 import logging
+import threading
 import typing
 
 
@@ -18,6 +19,8 @@ class Logger(logging.Logger):
         """
         super().__init__(name, level)
 
+        self._lock = threading.RLock()
+
         self.addHandler(self._create_default_handler())
 
     def _create_default_handler(self) -> logging.Handler:
@@ -36,9 +39,10 @@ class Logger(logging.Logger):
         Args:
             level: The maximum level for entries to be logged.
         """
-        super().setLevel(level)
-        for handler in self.handlers:
-            handler.setLevel(level)
+        with self._lock:
+            super().setLevel(level)
+            for handler in self.handlers:
+                handler.setLevel(level)
 
     # pylint: disable=arguments-differ
     def debug(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
@@ -50,8 +54,9 @@ class Logger(logging.Logger):
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
-        super().debug(msg, extra=self._pack_extra_params(scope, **kwargs))
-        self._flush()
+        with self._lock:
+            super().debug(msg, extra=self._pack_extra_params(scope, **kwargs))
+            self._flush()
 
     # pylint: disable=arguments-differ
     def info(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
@@ -63,8 +68,9 @@ class Logger(logging.Logger):
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
-        super().info(msg, extra=self._pack_extra_params(scope, **kwargs))
-        self._flush()
+        with self._lock:
+            super().info(msg, extra=self._pack_extra_params(scope, **kwargs))
+            self._flush()
 
     # pylint: disable=arguments-differ
     def warning(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
@@ -76,8 +82,9 @@ class Logger(logging.Logger):
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
-        super().warning(msg, extra=self._pack_extra_params(scope, **kwargs))
-        self._flush()
+        with self._lock:
+            super().warning(msg, extra=self._pack_extra_params(scope, **kwargs))
+            self._flush()
 
     # pylint: disable=arguments-differ
     def error(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
@@ -89,8 +96,9 @@ class Logger(logging.Logger):
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
-        super().error(msg, extra=self._pack_extra_params(scope, **kwargs))
-        self._flush()
+        with self._lock:
+            super().error(msg, extra=self._pack_extra_params(scope, **kwargs))
+            self._flush()
 
     def _pack_extra_params(
         self, scope: str | None, **kwargs
@@ -98,5 +106,6 @@ class Logger(logging.Logger):
         return {"scope": scope, "extra_params": kwargs}
 
     def _flush(self) -> None:
-        for handler in self.handlers:
-            handler.flush()
+        with self._lock:
+            for handler in self.handlers:
+                handler.flush()

@@ -1,3 +1,4 @@
+import threading
 import typing
 
 from .logger import Logger
@@ -11,6 +12,7 @@ class LoggerProxy:
     a new logger instance. It offers the same public interface as an actual ``Logger`` and can thus be used like a
     *real* logger.
     """
+
     def __init__(self, logger: Logger):
         """
         Args:
@@ -20,6 +22,8 @@ class LoggerProxy:
 
         self._auto_params: typing.Dict[str, typing.Any] = {}
 
+        self._lock = threading.RLock()
+
     def add_param(self, name: str, value: typing.Any) -> None:
         """
         Adds a new paramter that is always automatically passed to the logger.
@@ -28,7 +32,8 @@ class LoggerProxy:
             name: The name of the parameter.
             value: Its value.
         """
-        self._auto_params[name] = value
+        with self._lock:
+            self._auto_params[name] = value
 
     def remove_param(self, name: str) -> None:
         """
@@ -37,16 +42,18 @@ class LoggerProxy:
         Args:
             name: The name of the parameter.
         """
-        try:
-            self._auto_params.pop(name)
-        except KeyError:
-            pass
+        with self._lock:
+            try:
+                self._auto_params.pop(name)
+            except KeyError:
+                pass
 
     def clear_params(self) -> None:
         """
         Removes all stored parameters.
         """
-        self._auto_params = {}
+        with self._lock:
+            self._auto_params = {}
 
     def debug(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
         """
@@ -57,7 +64,8 @@ class LoggerProxy:
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
-        self._logger.debug(msg, scope=scope, **(kwargs | self._auto_params))
+        with self._lock:
+            self._logger.debug(msg, scope=scope, **(kwargs | self._auto_params))
 
     def info(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
         """
@@ -68,7 +76,8 @@ class LoggerProxy:
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
-        self._logger.info(msg, scope=scope, **(kwargs | self._auto_params))
+        with self._lock:
+            self._logger.info(msg, scope=scope, **(kwargs | self._auto_params))
 
     def warning(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
         """
@@ -79,7 +88,8 @@ class LoggerProxy:
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
-        self._logger.warning(msg, scope=scope, **(kwargs | self._auto_params))
+        with self._lock:
+            self._logger.warning(msg, scope=scope, **(kwargs | self._auto_params))
 
     def error(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
         """
@@ -90,4 +100,5 @@ class LoggerProxy:
             scope: The scope of the entry.
             **kwargs: Any additional parameters.
         """
-        self._logger.error(msg, scope=scope, **(kwargs | self._auto_params))
+        with self._lock:
+            self._logger.error(msg, scope=scope, **(kwargs | self._auto_params))
