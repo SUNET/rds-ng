@@ -59,7 +59,7 @@ def create_resources_service(comp: ServerComponent) -> Service:
             auth_token=auth_token,
         )
 
-    @svc.message_handler(AssignResourcesBrokerCommand)
+    @svc.message_handler(AssignResourcesBrokerCommand, is_async=True)
     def assign_resources_broker(
         msg: AssignResourcesBrokerCommand, ctx: ServerServiceContext
     ) -> None:
@@ -88,7 +88,7 @@ def create_resources_service(comp: ServerComponent) -> Service:
             ctx.message_builder, msg, success=success, message=message
         ).emit()
 
-    @svc.message_handler(ListResourcesCommand)
+    @svc.message_handler(ListResourcesCommand, is_async=True)
     def list_resources(msg: ListResourcesCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(
             msg, ListResourcesReply, resources=ResourcesList(resource=msg.root)
@@ -127,7 +127,7 @@ def create_resources_service(comp: ServerComponent) -> Service:
             message=message,
         ).emit()
 
-    @svc.message_handler(GetResourceCommand)
+    @svc.message_handler(GetResourceCommand, is_async=True)
     def get_resource(msg: GetResourceCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(
             msg, GetResourceReply, resource=msg.resource, size=0, mime_type="", data=""

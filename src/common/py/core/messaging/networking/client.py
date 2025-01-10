@@ -61,13 +61,15 @@ class Client(socketio.Client):
         Args:
             msg_handler: The message handler to be called.
         """
-        self._message_handler = msg_handler
+        with self._lock:
+            self._message_handler = msg_handler
 
     def run(self) -> None:
         """
         Automatically connects to a server if one was configured.
         """
-        self.connect_to_server()
+        with self._lock:
+            self.connect_to_server()
 
     def process(self) -> None:
         """
@@ -103,7 +105,7 @@ class Client(socketio.Client):
         Args:
             msg: The message to send.
         """
-        if self.connected:
+        if self.is_connected:
             debug(f"Sending message: {msg}", scope="client")
             with self._lock:
                 self.emit(msg.name, data=(msg.to_json(), msg.payload.encode()))
@@ -143,7 +145,8 @@ class Client(socketio.Client):
                 self._message_handler(msg_name, data, payload)
 
     def _get_authentication(self) -> typing.Dict[str, str]:
-        return {"component_id": str(self._comp_id)}
+        with self._lock:
+            return {"component_id": str(self._comp_id)}
 
     @property
     def is_connected(self) -> bool:

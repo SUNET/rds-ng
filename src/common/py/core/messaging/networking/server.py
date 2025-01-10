@@ -85,7 +85,8 @@ class Server(socketio.Server):
         Args:
             msg_handler: The message handler to be called.
         """
-        self._message_handler = msg_handler
+        with self._lock:
+            self._message_handler = msg_handler
 
     def run(self) -> None:
         """
@@ -220,8 +221,9 @@ class Server(socketio.Server):
                 self._message_handler(msg_name, data, payload)
 
     def _timestamp_component(self, comp_id: UnitID) -> None:
-        if comp_id in self._connected_components:
-            self._connected_components[comp_id].last_activity = time.time()
+        with self._lock:
+            if comp_id in self._connected_components:
+                self._connected_components[comp_id].last_activity = time.time()
 
     def _find_timed_out_components(self) -> typing.List[UnitID]:
         """
@@ -230,51 +232,57 @@ class Server(socketio.Server):
         Returns:
             A list of all timed out components.
         """
-        return [
-            comp_id
-            for comp_id, entry in self._connected_components.items()
-            if entry.has_timed_out()
-        ]
+        with self._lock:
+            return [
+                comp_id
+                for comp_id, entry in self._connected_components.items()
+                if entry.has_timed_out()
+            ]
 
     def _purge_client(self, sid: str) -> bool:
-        if (comp_id := self._lookup_client(sid)) is not None:
-            self._connected_components.pop(comp_id)
-            return True
+        with self._lock:
+            if (comp_id := self._lookup_client(sid)) is not None:
+                self._connected_components.pop(comp_id)
+                return True
 
-        return False
+            return False
 
     def _lookup_client(self, sid: str) -> UnitID | None:
-        for comp_id, client_entry in self._connected_components.items():
-            if client_entry.sid == sid:
-                return comp_id
+        with self._lock:
+            for comp_id, client_entry in self._connected_components.items():
+                if client_entry.sid == sid:
+                    return comp_id
 
-        return None
+            return None
 
     def _component_id_to_client(self, comp_id: UnitID) -> str | None:
-        return (
-            self._connected_components[comp_id].sid
-            if comp_id in self._connected_components
-            else None
-        )
+        with self._lock:
+            return (
+                self._connected_components[comp_id].sid
+                if comp_id in self._connected_components
+                else None
+            )
 
     def _component_ids_to_clients(
         self, comp_ids: typing.List[UnitID]
     ) -> typing.List[str] | None:
-        return (
-            [
-                sid
-                for sid in map(self._component_id_to_client, comp_ids)
-                if sid is not None
-            ]
-            if len(comp_ids) > 0
-            else None
-        )
+        with self._lock:
+            return (
+                [
+                    sid
+                    for sid in map(self._component_id_to_client, comp_ids)
+                    if sid is not None
+                ]
+                if len(comp_ids) > 0
+                else None
+            )
 
     def _get_message_recipient(self, msg: Message) -> str | None:
-        if msg.target.is_direct:
-            return self._component_id_to_client(msg.target.target_id)
+        with self._lock:
+            if msg.target.is_direct:
+                return self._component_id_to_client(msg.target.target_id)
 
-        return None
+            return None
 
     def _get_allowed_origins(self) -> str | typing.List[str] | None:
         from ....settings import NetworkServerSettingIDs

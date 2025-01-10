@@ -112,11 +112,6 @@ class ZenodoClient(RequestsExecutor):
                             if metadata.description is not None
                             else "No description provided"
                         ),
-                        "upload_type": (
-                            metadata.upload_type
-                            if metadata.upload_type is not None
-                            else "other"
-                        ),
                         "contributors": (
                             metadata.contributors
                             if metadata.contributors is not None

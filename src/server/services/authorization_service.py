@@ -112,7 +112,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
             message=message,
         ).emit()
 
-    @svc.message_handler(RevokeAuthorizationCommand, is_async=False)
+    @svc.message_handler(RevokeAuthorizationCommand)
     def revoke_authorization(
         msg: RevokeAuthorizationCommand, ctx: ServerServiceContext
     ) -> None:
@@ -155,7 +155,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
             message=message,
         ).emit()
 
-    @svc.message_handler(RevokeAuthorizationReply, is_async=False)
+    @svc.message_handler(RevokeAuthorizationReply)
     def revoke_authorization_reply(
         msg: RevokeAuthorizationReply, ctx: ServerServiceContext
     ) -> None:

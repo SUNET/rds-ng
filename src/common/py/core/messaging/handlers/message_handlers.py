@@ -17,14 +17,14 @@ class MessageHandlers:
     def __init__(self):
         self._handlers: MessageHandlerMappings = []
 
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
     def add_handler(
         self,
         fltr: str,
         handler: MessageHandler,
         message_type: type[MessageType] = Message,
-        is_async: bool = True,
+        is_async: bool = False,
     ) -> None:
         """
         Adds a new message handler mapping.

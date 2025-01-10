@@ -59,7 +59,7 @@ class MessageBus:
             comp_data.comp_id, comp_data.config.value(NetworkSettingIDs.API_KEY)
         )
 
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
     def _create_network_engine(self) -> NetworkEngine:
         return NetworkEngine(self._comp_data, self)
@@ -116,34 +116,38 @@ class MessageBus:
             msg: The message to be dispatched.
             msg_meta: The message meta information.
         """
-        try:
-            self._router.verify_message(msg, msg_meta)
-        except MessageRouter.RoutingError as exc:
-            error(
-                f"A routing error occurred: {str(exc)}", scope="bus", message=str(msg)
-            )
-        else:
-            if self._router.check_remote_routing(msg, msg_meta):
-                self._remote_dispatch(msg, msg_meta)
+        with self._lock:
+            try:
+                self._router.verify_message(msg, msg_meta)
+            except MessageRouter.RoutingError as exc:
+                error(
+                    f"A routing error occurred: {str(exc)}",
+                    scope="bus",
+                    message=str(msg),
+                )
+            else:
+                if self._router.check_remote_routing(msg, msg_meta):
+                    self._remote_dispatch(msg, msg_meta)
 
-            # The local dispatchers are always invoked for their pre- and post-steps
-            self._local_dispatch(msg, msg_meta)
+                # The local dispatchers are always invoked for their pre- and post-steps
+                self._local_dispatch(msg, msg_meta)
 
     def _process(self) -> None:
-        self._network_engine.process()
+        with self._lock:
+            self._network_engine.process()
 
-        for _, dispatcher in self._dispatchers.items():
-            dispatcher.process()
+            for _, dispatcher in self._dispatchers.items():
+                dispatcher.process()
 
-        from ..messaging import Channel
-        from ..messaging.composers import MessageBuilder
-        from ...api.component.component_events import ComponentProcessEvent
+            from ..messaging import Channel
+            from ..messaging.composers import MessageBuilder
+            from ...api.component.component_events import ComponentProcessEvent
 
-        ComponentProcessEvent.build(MessageBuilder(self._comp_data.comp_id, self)).emit(
-            Channel.local(), suppress_logging=True
-        )
+            ComponentProcessEvent.build(
+                MessageBuilder(self._comp_data.comp_id, self)
+            ).emit(Channel.local(), suppress_logging=True)
 
-        threading.Timer(1.0, self._process).start()
+            threading.Timer(1.0, self._process).start()
 
     def _local_dispatch(
         self, msg: Message, msg_meta: MessageMetaInformationType
@@ -223,4 +227,5 @@ class MessageBus:
         """
         The network engine instance.
         """
-        return self._network_engine
+        with self._lock:
+            return self._network_engine

@@ -95,7 +95,7 @@ def create_users_service(comp: ServerComponent) -> Service:
             fingerprint=ctx.session.fingerprint,
         ).emit()
 
-    @svc.message_handler(GetUserSettingsCommand)
+    @svc.message_handler(GetUserSettingsCommand, is_async=True)
     def get_user_settings(
         msg: GetUserSettingsCommand, ctx: ServerServiceContext
     ) -> None:
@@ -108,7 +108,7 @@ def create_users_service(comp: ServerComponent) -> Service:
             settings=ctx.user.user_settings,
         ).emit()
 
-    @svc.message_handler(SetUserSettingsCommand)
+    @svc.message_handler(SetUserSettingsCommand, is_async=True)
     def set_user_settings(
         msg: SetUserSettingsCommand, ctx: ServerServiceContext
     ) -> None:

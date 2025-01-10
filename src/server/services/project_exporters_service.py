@@ -30,7 +30,7 @@ def create_project_exporters_service(comp: ServerComponent) -> Service:
         "Project exporters service", context_type=ServerServiceContext
     )
 
-    @svc.message_handler(ListProjectExportersCommand)
+    @svc.message_handler(ListProjectExportersCommand, is_async=True)
     def list_exporters(
         msg: ListProjectExportersCommand, ctx: ServerServiceContext
     ) -> None:
@@ -42,7 +42,7 @@ def create_project_exporters_service(comp: ServerComponent) -> Service:
             ctx.message_builder, msg, exporters=exporters
         ).emit()
 
-    @svc.message_handler(ExportProjectCommand)
+    @svc.message_handler(ExportProjectCommand, is_async=True)
     def export_project(msg: ExportProjectCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(msg, ExportProjectReply, mimetype="", data=bytes()):
             return
