@@ -33,7 +33,6 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
      * @throws Error - If the meta information type is invalid.
      */
     public preDispatch(msg: Command, msgMeta: CommandMetaInformation): void {
-        logging.debug(`Dispatching command: ${String(msg)}`, "bus");
         super.preDispatch(msg, msgMeta);
 
         MessageDispatcher._metaInformationList.add(msg.unique, msgMeta, msgMeta.timeout);
@@ -56,8 +55,13 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
      * @param failType - The type of the command failure (in case of a timeout or exception).
      * @param failMsg - The failure message.
      */
-    public static invokeReplyCallbacks(unique: Trace, reply: CommandReply | null = null, replyMeta: CommandReplyMetaInformation | null = null,
-                                       failType: CommandFailType = CommandFailType.None, failMsg: string = ""): void {
+    public static invokeReplyCallbacks(
+        unique: Trace,
+        reply: CommandReply | null = null,
+        replyMeta: CommandReplyMetaInformation | null = null,
+        failType: CommandFailType = CommandFailType.None,
+        failMsg: string = ""
+    ): void {
         const invoke = (callbacks: Function[], ...args: any[]): void => {
             for (const callback of callbacks) {
                 try {

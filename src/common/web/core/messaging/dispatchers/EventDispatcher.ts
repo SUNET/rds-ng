@@ -1,4 +1,3 @@
-import logging from "../../logging/Logging";
 import { Event } from "../Event";
 import { EventMetaInformation } from "../meta/EventMetaInformation";
 import { MessageDispatcher } from "./MessageDispatcher";
@@ -18,7 +17,6 @@ export class EventDispatcher extends MessageDispatcher<Event, EventMetaInformati
      * @throws Error - If the meta information type is invalid.
      */
     public preDispatch<MsgType extends Event>(msg: MsgType, msgMeta: EventMetaInformation): void {
-        logging.debug(`Dispatching event: ${String(msg)}`, "bus");
         super.preDispatch(msg, msgMeta);
     }
 }

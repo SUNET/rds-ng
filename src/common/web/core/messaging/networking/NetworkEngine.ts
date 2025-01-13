@@ -97,8 +97,6 @@ export class NetworkEngine {
             let msg = this.unpackMessage(msgName, data, payload);
             let msgMeta = this.createMessageMetaInformation(msg, entrypoint);
 
-            logging.debug(`Received message: ${String(msg)}`, "network", { entrypoint: String(entrypoint) });
-
             if (this._router.checkLocalRouting(NetworkRouterDirection.In, msg, msgMeta)) {
                 this._messageBus.dispatch(msg, msgMeta);
             }
