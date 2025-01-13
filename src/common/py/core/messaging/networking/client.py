@@ -5,7 +5,7 @@ import socketio
 
 from .. import Message, Payload
 from ..composers import MessageBuilder
-from ...logging import info, warning, error, debug
+from ...logging import info, warning, error
 from ....utils import UnitID
 from ....utils.config import Configuration
 
@@ -106,7 +106,6 @@ class Client(socketio.Client):
             msg: The message to send.
         """
         if self.is_connected:
-            debug(f"Sending message: {msg}", scope="network")
             with self._lock:
                 self.emit(msg.name, data=(msg.to_json(), msg.payload.encode()))
 

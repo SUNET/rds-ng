@@ -107,9 +107,7 @@ class CommandComposer(MessageComposer):
                 scope="bus",
             )
 
-    def _create_meta_information(
-        self, suppress_logging: bool
-    ) -> MessageMetaInformation:
+    def _create_meta_information(self) -> MessageMetaInformation:
         from ..meta import CommandMetaInformation
 
         return CommandMetaInformation(
@@ -118,5 +116,4 @@ class CommandComposer(MessageComposer):
             fail_callbacks=self._callbacks.fail_callbacks,
             async_callbacks=self._async_callbacks,
             timeout=self._timeout,
-            suppress_logging=suppress_logging,
         )

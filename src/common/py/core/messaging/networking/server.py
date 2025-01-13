@@ -135,8 +135,6 @@ class Server(socketio.Server):
             skip_components: A list of components (clients) to be excluded from the targets.
         """
         with self._lock:
-            debug(f"Sending message: {msg}", scope="network")
-
             if msg.target.is_direct and msg.target.target_id is not None:
                 self._timestamp_component(msg.target.target_id)
 
