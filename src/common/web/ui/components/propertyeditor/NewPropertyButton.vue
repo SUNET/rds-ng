@@ -2,35 +2,38 @@
 import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
 import { computed } from "vue";
-import { SharedObject } from "./ProjectObjectStore";
 import PropertyDialog from "./PropertyDialog.vue";
+import { SharedPropertyObject } from "./PropertyObjectStore";
 import { injectTemplate } from "./utils/Templates";
 
 const dialog = useDialog();
-const props = defineProps(["type", "parentId", "projectObjects", "sharedObjectStore", "projectProfiles", "mode"]);
+const props = defineProps(["type", "parentId", "propertyObjects", "sharedPropertyObjectStore", "projectProfiles", "mode"]);
 
 const emit = defineEmits(["loadObject"]);
 const label = props.projectProfiles.getClassLabelById(props.type);
 const linkableItems = computed(() => {
-    const linkedItems = [...props.projectObjects.getReferencedObjects(props.parentId), ...props.sharedObjectStore.getReferencedObjects(props.parentId)].flat();
-    const linkable = props.sharedObjectStore
+    const linkedItems = [
+        ...props.propertyObjects.getReferencedObjects(props.parentId),
+        ...props.sharedPropertyObjectStore.getReferencedObjects(props.parentId)
+    ].flat();
+    const linkable = props.sharedPropertyObjectStore
         .getObjectsByType(props.type)
-        .filter((item: SharedObject) => !linkedItems.includes(item.id))
-        .filter((item: SharedObject) => item.id != props.parentId);
+        .filter((item: SharedPropertyObject) => !linkedItems.includes(item.id))
+        .filter((item: SharedPropertyObject) => item.id != props.parentId);
     return linkable.length > 0
-        ? linkable.map((item: SharedObject) => ({
-              label: injectTemplate(props.projectProfiles.getLabelTemplateById(item.type), props.sharedObjectStore.get(item.id)),
+        ? linkable.map((item: SharedPropertyObject) => ({
+              label: injectTemplate(props.projectProfiles.getLabelTemplateById(item.type), props.sharedPropertyObjectStore.get(item.id)),
               command: () => {
-                  props.projectObjects.addRef(props.parentId, item.id) || props.sharedObjectStore.addRef(props.parentId, item.id);
+                  props.propertyObjects.addRef(props.parentId, item.id) || props.sharedPropertyObjectStore.addRef(props.parentId, item.id);
               }
           }))
         : [];
 });
 
 function createObject() {
-    const newObject = new SharedObject(props.type);
-    props.sharedObjectStore.add(newObject);
-    props.projectObjects.addRef(props.parentId, newObject["id"]) || props.sharedObjectStore.addRef(props.parentId, newObject["id"]);
+    const newObject = new SharedPropertyObject(props.type);
+    props.sharedPropertyObjectStore.add(newObject);
+    props.propertyObjects.addRef(props.parentId, newObject["id"]) || props.sharedPropertyObjectStore.addRef(props.parentId, newObject["id"]);
 
     if (props.mode == "dialog") {
         emit("loadObject", newObject["id"]);
@@ -52,8 +55,8 @@ function createObject() {
             },
             data: {
                 id: newObject["id"],
-                projectObjects: props.projectObjects,
-                sharedObjectStore: props.sharedObjectStore,
+                propertyObjects: props.propertyObjects,
+                sharedPropertyObjectStore: props.sharedPropertyObjectStore,
                 projectProfiles: props.projectProfiles
             }
         });

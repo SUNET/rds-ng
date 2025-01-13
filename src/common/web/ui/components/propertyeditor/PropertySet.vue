@@ -8,36 +8,20 @@ import OrderList from "primevue/orderlist";
 
 import { computed, ref, type Ref } from "vue";
 import { useColorsStore } from "../../../data/stores/ColorsStore";
+import { calculateLayout as makeLayout } from "./utils/PropertyEditorUtils";
 
-import { ProjectObjectStore } from "./ProjectObjectStore";
+import { PropertyObjectStore } from "./PropertyObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
 import { ProfileLayoutClass } from "./PropertyProfile";
 
-const props = defineProps(["controller", "project", "projectProfiles", "projectObjects", "sharedObjectStore"]);
+const props = defineProps(["controller", "project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore"]);
 const colorsStore = useColorsStore();
 
-const getLayout = () => {
-    let layout: ProfileLayoutClass[] = [];
-    for (const profile of props.projectProfiles.list()) {
-        for (const p of profile["layout"]) {
-            const x: ProfileLayoutClass | undefined = layout.find((xd: ProfileLayoutClass) => p.id == xd.id);
-            if (x !== undefined) {
-                x["profiles"]!.push(profile["metadata"]["id"]);
-                if (p.required) x["required"] = true;
-            } else {
-                p["profiles"] = [profile["metadata"]["id"]];
-                layout.push(p);
-            }
-        }
-    }
-    return layout;
-};
-
-const layout = getLayout();
+var layout = makeLayout(props.projectProfiles);
 
 const propsToShow = ref<ProfileLayoutClass[]>(
     layout
-        .filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined)
+        .filter((e: ProfileLayoutClass) => e.required || props.propertyObjects.get(e.id) !== undefined)
         .sort((a: ProfileLayoutClass, b: ProfileLayoutClass) => -a.profiles!.length - -b.profiles!.length)
 );
 
@@ -45,18 +29,19 @@ const selectedProperties = ref([]) as Ref<ProfileLayoutClass[]>;
 const unselectProperties = () => (selectedProperties.value = []);
 const selectProperties = (selection: ProfileLayoutClass[]) => (selectedProperties.value = selection);
 
-// TODO FIXME this
 const hideProperty = (id: string) => {
-    propsToShow.value = propsToShow.value.filter((e: ProfileLayoutClass) => e.id != id);
+    propsToShow.value = propsToShow.value.filter((e: ProfileLayoutClass) => e.getId() != id);
 };
 
 const showAddProperties = ref(false);
-const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.id).includes(e.id)));
+const hiddenPropertys = computed(() =>
+    layout.filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.getId()).includes(e.getId()))
+);
 
 const filteredProperties = computed(() =>
     hiddenPropertys.value.filter(
         (e: ProfileLayoutClass) =>
-            e.label.toLowerCase().includes(searchString.value.toLowerCase()) || e.description?.toLowerCase().includes(searchString.value.toLowerCase())
+            e.getDisplayLabel().toLowerCase().includes(searchString.value.toLowerCase()) || e.description?.toLowerCase().includes(searchString.value.toLowerCase())
     )
 );
 
@@ -64,28 +49,6 @@ const searchString = ref("");
 </script>
 
 <template>
-    <!--     <Toolbar :pt="{ root: { class: '!py-2 border-0 border-y-4 rounded-none' } }">
-        <template #start>
-            <div class="text-xl font-bold truncate text-clip" :title="profile['metadata']['name'] + ' v' + profile['metadata']['version']">
-                {{ `${profile["metadata"]["name"]} v${profile["metadata"]["version"]}` }}
-            </div>
-        </template>
-        <template #center class="flex grow"> </template>
-        <template #end>
-            <Button
-                text
-                :disabled="!items.length"
-                iconPos="right"
-                size="small"
-                type="button"
-                icon="pi pi-ellipsis-v"
-                @click="toggle"
-                aria-haspopup="true"
-                aria-controls="overlay_menu"
-            />
-            <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
-        </template>
-    </Toolbar> -->
     <div class="w-full max-w-full">
         <PropertyOneCol
             v-for="(p, i) in propsToShow"
@@ -93,9 +56,8 @@ const searchString = ref("");
             :index="i"
             class="my-5 w-full max-w-full"
             :propertyClass="p"
-            :profileId="layout.filter((e) => e.id == p.id)[0].profiles"
-            :projectObjects="projectObjects"
-            :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+            :propertyObjects="propertyObjects"
+            :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
             :projectProfiles="projectProfiles"
             :layoutProfiles="layout"
             @hide="(id) => hideProperty(id)"
@@ -136,15 +98,15 @@ const searchString = ref("");
                     :stripedRows="true"
                 >
                     <template #option="slotProps">
-                        <div class="flex flex-col">
-                            <span class="font-semibold flex gap-4" :title="slotProps.option.label"
-                                >{{ slotProps.option.label }}
+                        <div class="flex flex-col w-full p-1">
+                            <span class="font-semibold flex gap-2" :title="slotProps.item.label">
+                                <span class="grow"> {{ slotProps.item.getDisplayLabel() }} </span>
                                 <Chip
                                     v-for="p in slotProps.option.profiles"
                                     :label="p[0]"
                                     size="small"
                                     :style="`background-color: ${colorsStore.color(p[0])}`"
-                                    class="h-4 !rounded p-2.5 text-sm self-center bg-opacity-40"
+                                    class="h-4 !rounded py-3 text-sm bg-opacity-40"
                             /></span>
                             <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.option.description">{{ slotProps.option.description }}</span>
                         </div>
@@ -188,7 +150,7 @@ const searchString = ref("");
     @apply border-l-2 border-solid border-transparent;
 }
 
-:deep(.p-highlight) {
+:deep(.p-orderlist-item.p-highlight) {
     @apply bg-emerald-50  border-l-2 border-emerald-600 text-slate-700;
 }
 </style>

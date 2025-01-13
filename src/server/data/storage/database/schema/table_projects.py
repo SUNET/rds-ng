@@ -1,31 +1,19 @@
 import uuid
 from dataclasses import dataclass
 
-from sqlalchemy import (
-    MetaData,
-    Table,
-    Column,
-    Integer,
-    Text,
-    Boolean,
-    ForeignKey,
-    String,
-    Uuid,
-    Numeric,
-)
-from sqlalchemy.orm import registry, composite, relationship
+from sqlalchemy import (Boolean, Column, ForeignKey, Integer, MetaData,
+                        Numeric, String, Table, Text, Uuid)
+from sqlalchemy.orm import composite, registry, relationship
 
 from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
 from common.py.data.entities.project.features import (
-    ProjectFeatureID,
-    ProjectMetadataFeature,
-    ResourcesMetadataFeature,
-    DataManagementPlanFeature,
-)
+    DataManagementPlanFeature, ProjectFeatureID, ProjectMetadataFeature,
+    PropertyObject, ResourcesMetadataFeature)
 from common.py.data.entities.project.logbook import ProjectJobHistoryRecord
 
-from .types import JSONEncodedDataType, ArrayType
+from .types import (ArrayType, DataclassArrayDictType, DataclassArrayType,
+                    JSONEncodedDataType)
 
 
 @dataclass(kw_only=True)
@@ -86,7 +74,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         Column(
             "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
         ),
-        Column("shared_objects", JSONEncodedDataType),
+        Column("shared_objects", DataclassArrayType[PropertyObject](dataclass_type=PropertyObject)),
     )
 
     table_feature_project_metadata = Table(
@@ -98,7 +86,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("metadata", JSONEncodedDataType),
+        Column("metadata", DataclassArrayType[PropertyObject](dataclass_type=PropertyObject)),
     )
 
     table_feature_resources_metadata = Table(
@@ -110,7 +98,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("metadata", JSONEncodedDataType),
+        Column("metadata", DataclassArrayDictType[PropertyObject](dataclass_type=PropertyObject)),
     )
 
     table_feature_dmp = Table(
@@ -122,7 +110,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("plan", JSONEncodedDataType),
+        Column("plan", DataclassArrayType[PropertyObject](dataclass_type=PropertyObject)),
     )
 
     # -- Logbook

@@ -9,7 +9,7 @@ import Popover from "primevue/popover";
 import { History } from "./Breadcrumbs";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
-import { ProjectObjectStore, SharedObject } from "./ProjectObjectStore";
+import { PropertyObjectStore, SharedPropertyObject } from "./PropertyObjectStore";
 import { ProfileClass, PropertyDataType, propertyDataForms } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 import { calcObjLabel } from "./utils/ObjectUtils";
@@ -17,19 +17,20 @@ import { calcObjLabel } from "./utils/ObjectUtils";
 const dialogRef = inject("dialogRef") as any;
 const {
     id,
-    projectObjects,
-    sharedObjectStore,
+    propertyObjects,
+    sharedPropertyObjectStore,
     projectProfiles
-}: { id: string; projectObjects: ProjectObjectStore; sharedObjectStore: ProjectObjectStore; projectProfiles: PropertyProfileStore } = dialogRef.value.data;
+}: { id: string; propertyObjects: PropertyObjectStore; sharedPropertyObjectStore: PropertyObjectStore; projectProfiles: PropertyProfileStore } =
+    dialogRef.value.data;
 
 // selected object
-const object = ref(sharedObjectStore.get(id)!) as Ref<SharedObject>;
-let objectClass = reactive(projectProfiles.getClassById(object.value["type"]!)!) as ProfileClass;
+const object = ref(sharedPropertyObjectStore.get(id)!) as Ref<SharedPropertyObject>;
+let objectClass = reactive(projectProfiles.getClassById(object.value.getType())!) as ProfileClass;
 
-const displayableInputs = ref(objectClass["input"] || []);
-const addableTypes = ref(objectClass["type"] || []);
+const displayableInputs = ref(objectClass.getInputs());
+const addableTypes = ref(objectClass.getTypes());
 
-const linkedObjects = computed(() => sharedObjectStore.getReferencedObjects(object.value.id));
+const linkedObjects = computed(() => sharedPropertyObjectStore.getReferencedObjects(object.value.getId()));
 
 // History for Breadcrumbs
 const history = new History();
@@ -42,18 +43,18 @@ const toggle = (event: Event) => {
 };
 
 function selectActiveObject(id: string) {
-    object.value = sharedObjectStore.get(id)! as SharedObject;
-    objectClass = projectProfiles.getClassById(object.value["type"]!)! as ProfileClass;
-    addableTypes.value = objectClass["type"] || [];
-    displayableInputs.value = objectClass["input"] || [];
+    object.value = sharedPropertyObjectStore.get(id) as SharedPropertyObject;
+    objectClass = projectProfiles.getClassById(object.value.getType())! as ProfileClass;
+    addableTypes.value = objectClass.getTypes();
+    displayableInputs.value = objectClass.getInputs();
     history.navigateTo(object.value);
     // TODO optimize by only updating necessary elements
-    menuPath.value = history.list().map((item: SharedObject) => {
-        const obj = sharedObjectStore.get(item.id) as SharedObject;
+    menuPath.value = history.list().map((item: SharedPropertyObject) => {
+        const obj = sharedPropertyObjectStore.get(item.getId()) as SharedPropertyObject;
 
         return {
-            label: `${projectProfiles.getClassLabelById(item.type!)}:  ${calcObjLabel(obj!, projectProfiles)}`,
-            command: () => selectActiveObject(item.id)
+            label: `${projectProfiles.getClassLabelById(item.getType())}:  ${calcObjLabel(obj!, projectProfiles)}`,
+            command: () => selectActiveObject(item.getId())
         };
     });
 }
@@ -77,9 +78,9 @@ selectActiveObject(id);
             />
         </template>
         <template #title>
-            <div class="row-span-1 text-gray-800 justify-between flex items-start">
-                <span :title="objectClass.label" class="flex-none">
-                    <span class="text-xl"> {{ objectClass.label }}</span>
+            <div class="row-span-1 text-gray-800 justify-between flex items-center">
+                <span :title="objectClass.getDisplayLabel()" class="flex-none">
+                    <span class="text-xl"> {{ objectClass.getDisplayLabel() }}</span>
                     <Button v-if="objectClass.description" unstyled @click="toggle" :title="objectClass.description">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem" />
                     </Button>
@@ -94,9 +95,9 @@ selectActiveObject(id);
                         v-for="t in addableTypes"
                         :key="t"
                         :type="t"
-                        :parentId="object.id"
-                        :projectObjects="projectObjects"
-                        :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+                        :parentId="object.getId()"
+                        :propertyObjects="propertyObjects"
+                        :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                         :projectProfiles="projectProfiles"
                         mode="dialog"
                         @loadObject="(id) => selectActiveObject(id)"
@@ -132,9 +133,9 @@ selectActiveObject(id);
                             :key="i"
                             class="m-1 max-w-full"
                             :item-id="i"
-                            :parentId="object.id"
-                            :projectObjects="projectObjects"
-                            :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+                            :parentId="object.getId()"
+                            :propertyObjects="propertyObjects"
+                            :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                             :projectProfiles="projectProfiles"
                             mode="dialog"
                             @loadObject="(id) => selectActiveObject(id)"
@@ -155,15 +156,15 @@ selectActiveObject(id);
                     <!-- Simple Input Row -->
                     <div class="space-y-5">
                         <div v-for="input in displayableInputs" class="row-span-1 space-y-1">
-                            <div v-if="input.label !== objectClass.label" class="font-bold mb-1 font">{{ input.label }}</div>
+                            <div v-if="input.label !== objectClass.getDisplayLabel()" class="font-bold mb-1 font">{{ input.label }}</div>
                             {{ input.description }}
                             <span v-if="input.example" v-html="`<br/>Example: ${input.example}`" />
                             <component
                                 :is="propertyDataForms[input['type'] as PropertyDataType]"
                                 class="w-full"
-                                :propertyObjectId="object['id']"
-                                :projectObjects="sharedObjectStore"
-                                :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+                                :propertyObjectId="object.getId()"
+                                :propertyObjects="sharedPropertyObjectStore"
+                                :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                                 :inputId="input['id']"
                                 :inputOptions="input['options'] ? input['options'] : []"
                             />

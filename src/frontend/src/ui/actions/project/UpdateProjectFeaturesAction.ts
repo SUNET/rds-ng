@@ -2,9 +2,9 @@ import { UpdateProjectFeaturesCommand } from "@common/api/project/ProjectFeature
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import type { MetadataObjects } from "@common/data/entities/metadata/Types";
 import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
-import { ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { ProjectFeature, type ProjectFeatureID } from "@common/data/entities/project/features/ProjectFeature";
 import { ProjectFeatures } from "@common/data/entities/project/features/ProjectFeatures";
+import { ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
 import { ActionState } from "@common/ui/actions/ActionBase";
@@ -22,7 +22,7 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
     public prepare(
         project: Project,
         updatedFeatures: ProjectFeature[],
-        sharedObjects: MetadataObjects | undefined = undefined
+        sharedPropertyObjects: MetadataObjects | undefined = undefined
     ): CommandComposer<UpdateProjectFeaturesCommand> {
         this.prepareNotifiers(project.title);
 
@@ -35,7 +35,7 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
                 this.getFeatureFromArray<ResourcesMetadataFeature>(updatedFeatures, ResourcesMetadataFeature.FeatureID),
                 this.getFeatureFromArray<DataManagementPlanFeature>(updatedFeatures, DataManagementPlanFeature.FeatureID)
             ),
-            sharedObjects
+            sharedPropertyObjects
         );
         return this._composer;
     }

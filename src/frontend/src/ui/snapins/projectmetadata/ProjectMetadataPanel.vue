@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Message from "primevue/message";
 import { storeToRefs } from "pinia";
+import Message from "primevue/message";
 import { type PropType, reactive, toRefs, watch } from "vue";
 
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
@@ -71,7 +71,6 @@ const debounce = makeDebounce();
 watch(
     () => project!.value.features.project_metadata.metadata,
     (metadata) => {
-        console.log("update");
         debounce(() => {
             const action = new UpdateProjectFeaturesAction(comp);
             action.prepare(project!.value, [new ProjectMetadataFeature(metadata as ProjectMetadata)]);
@@ -96,7 +95,7 @@ watch(
         <ProjectExportersBar :project="project" :scope="ProjectMetadataFeature.FeatureID" class="p-2 grid justify-end" />
         <PropertyEditor
             v-model="project!.features.project_metadata.metadata"
-            v-model:shared-objects="project!.features.shared_objects"
+            v-model:shared-property-objects="project!.features.shared_objects"
             :projectProfiles="projectProfiles as PropertyProfileStore"
         />
     </div>

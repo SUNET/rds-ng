@@ -1,24 +1,22 @@
 <script setup lang="ts">
 import DatePicker from "primevue/datepicker";
-import { computed, type PropType } from "vue";
+import { computed } from "vue";
 
-import { ProjectObjectStore } from "../ProjectObjectStore";
-import { type ProfileID } from "../PropertyProfile";
+import { PropertyObjectStore } from "../PropertyObjectStore";
 
 const props = defineProps({
     propertyObjectId: { type: String, required: true },
     inputId: { type: String, required: true },
-    profileId: { type: Object as PropType<ProfileID[]>, required: false },
-    projectObjects: { type: ProjectObjectStore, required: true }
+    propertyObjects: { type: PropertyObjectStore, required: true }
 });
 
-const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.value as Record<string, any>);
+const value = computed(() => props.propertyObjects.get(props.propertyObjectId)?.getValues() as Record<string, any>);
 </script>
 
 <template>
     <div>
         <DatePicker
-            @date-select="(date: Date) => projectObjects.update(profileId || [], inputId, propertyObjectId, date)"
+            @date-select="(date: Date) => propertyObjects.update(profileId || [], inputId, propertyObjectId, date)"
             dateFormat="dd/mm/yy"
             v-model="value[inputId]"
             class="w-full"

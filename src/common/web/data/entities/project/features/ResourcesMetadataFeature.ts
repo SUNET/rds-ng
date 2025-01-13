@@ -1,12 +1,31 @@
-import { ProjectObject } from "../../../../ui/components/propertyeditor/ProjectObjectStore";
+import { Transform, Type, plainToInstance } from "class-transformer";
+
+import { LayoutPropertyObject } from "../../../../ui/components/propertyeditor/PropertyObjectStore";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
+
+/**
+ * @typedef {ResourcesMetadataKey}
+ *
+ * Represents the keys of the ResourcesMetadata object.
+ */
+export type ResourcesMetadataKey = keyof typeof ResourcesMetadata;
 
 /**
  * The resources metadata type.
  *
- * TODO: Use proper type
+ *
  */
-export type ResourcesMetadata = Record<string, ProjectObject[]>;
+export class ResourcesMetadata {
+    [key: string]: LayoutPropertyObject;
+
+    public constructor(metadata: { [key: string]: LayoutPropertyObject[] } = {}) {
+        if (metadata.value === undefined) return;
+
+        Object.entries(metadata.value).forEach(([key, value]: [ResourcesMetadataKey, LayoutPropertyObject]) => {
+            if (value !== undefined) this[key as ResourcesMetadataKey] = plainToInstance(LayoutPropertyObject, value);
+        });
+    }
+}
 
 /**
  * Data class for the files project feature.
@@ -14,6 +33,10 @@ export type ResourcesMetadata = Record<string, ProjectObject[]>;
 export class ResourcesMetadataFeature extends ProjectFeature {
     public static readonly FeatureID: ProjectFeatureID = "resources_metadata";
 
+    // @ts-ignore
+    @Type(() => ResourcesMetadata)
+    // @ts-ignore
+    @Transform((value) => new ResourcesMetadata(value), { toClassOnly: false })
     public readonly metadata: ResourcesMetadata;
 
     public constructor(resourcesMetadata: ResourcesMetadata = {}) {

@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 from mako.template import Template
 
 from common.py.data.entities.project import Project
+from common.py.data.entities.properties import PropertyObject, PropertyProfile
 from common.py.data.metadata import MetadataParser, MetadataValueList
 
 
@@ -14,8 +15,8 @@ class ExporterTemplateProfileData:
     Additional profile data for rendering exporter templates.
     """
 
-    profile: Dict[str, Dict[str, Any]]
-    metadata: List[Dict[str, Any]]
+    profile: PropertyProfile
+    metadata: List[PropertyObject]
 
 
 def render_exporter_template(

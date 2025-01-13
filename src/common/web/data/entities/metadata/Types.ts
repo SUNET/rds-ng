@@ -1,8 +1,8 @@
-import { ProjectObject } from "../../../ui/components/propertyeditor/ProjectObjectStore";
+import { SharedPropertyObject } from "../../../ui/components/propertyeditor/PropertyObjectStore";
 
 /**
  * The metadata objects type.
  *
  * TODO: Use proper type
  */
-export type MetadataObjects = ProjectObject[];
+export type MetadataObjects = SharedPropertyObject[];

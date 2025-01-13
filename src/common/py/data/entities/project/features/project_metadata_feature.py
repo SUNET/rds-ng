@@ -3,10 +3,10 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
+from ...properties.properties_object import PropertyObject
 from .project_feature import ProjectFeature, ProjectFeatureID
 
-ProjectMetadata = typing.List[typing.Dict[str, typing.Any]]  # TODO: Use proper type
-
+ProjectMetadata = typing.List[PropertyObject]
 
 @dataclass_json
 @dataclass

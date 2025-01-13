@@ -5,15 +5,15 @@ import { useColorsStore } from "../../../data/stores/ColorsStore";
 import MandatoryMark from "../misc/MandatoryMark.vue";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
-import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
+import { ProfileClass, ProfileLayoutClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
 import Chip from "primevue/chip";
 import Popover from "primevue/popover";
-import { LayoutObject, ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
+import { LayoutPropertyObject, PropertyObject, PropertyObjectStore } from "./PropertyObjectStore";
 
 const emit = defineEmits(["hide"]);
-const { index, propertyClass, profileId, projectObjects, projectProfiles, sharedObjectStore, layoutProfiles } = defineProps({
+const { index, propertyClass, propertyObjects, projectProfiles, sharedPropertyObjectStore, layoutProfiles } = defineProps({
     index: {
         type: Number,
         required: true
@@ -22,39 +22,35 @@ const { index, propertyClass, profileId, projectObjects, projectProfiles, shared
         type: Object as PropType<ProfileClass & { profiles: ProfileID[] }>,
         required: true
     },
-    profileId: {
-        type: Object as PropType<ProfileID>,
-        required: true
-    },
-    projectObjects: {
-        type: Object as PropType<ProjectObjectStore>,
+    propertyObjects: {
+        type: Object as PropType<PropertyObjectStore>,
         required: true
     },
     projectProfiles: {
         type: PropertyProfileStore,
         required: true
     },
-    sharedObjectStore: {
-        type: Object as PropType<ProjectObjectStore>,
+    sharedPropertyObjectStore: {
+        type: Object as PropType<PropertyObjectStore>,
         required: true
     },
     layoutProfiles: {
-        type: Object as PropType<Array<ProfileClass & { profiles: [] }>>,
+        type: Object as PropType<Array<ProfileLayoutClass>>,
         required: true
     }
 });
 const colorsStore = useColorsStore();
 
-projectObjects.add(new LayoutObject(propertyClass.profiles, propertyClass.id));
+propertyObjects.add(new LayoutPropertyObject(propertyClass.id));
 
 const propertyObject = computed(
-    () => projectObjects.get(propertyClass.id) || projectObjects.add(new LayoutObject(propertyClass.profiles, propertyClass.id))
-) as Ref<ProjectObject>;
+    () => propertyObjects.get(propertyClass.id) || propertyObjects.add(new LayoutPropertyObject(propertyClass.id))
+) as Ref<PropertyObject>;
 
 watch(
-    () => projectObjects.get(propertyClass.id),
+    () => propertyObjects.get(propertyClass.id),
     (obj) => {
-        if (!obj) projectObjects.add(new LayoutObject(propertyClass.profiles, propertyClass.id));
+        if (!obj) propertyObjects.add(new LayoutPropertyObject(propertyClass.id));
     }
 );
 
@@ -67,7 +63,7 @@ const displayableInputs = propertyClass["input"] || [];
 
 const addableTypes = propertyClass["type"];
 
-const linkedObjects = computed(() => projectObjects.getReferencedObjects(propertyClass.id));
+const linkedObjects = computed(() => propertyObjects.getReferencedObjects(propertyClass.id));
 
 const profiles = computed(() => {
     const profileIDs = layoutProfiles?.find((e) => e.id == propertyObject.value.id)!.profiles as ProfileID[];
@@ -93,14 +89,14 @@ const toggleRemoveProperty = (e: Event) => {
             <div class="text-gray-400 mt-0 pt-0 text-lg ml-auto mr-2" :class="propertyClass.required ? '' : 'group-hover:hidden'">{{ index + 1 }}.</div>
             <Popover ref="removeProperty" class="py-2 px-5">
                 <div class="flex flex-col gap-4">
-                    <h3 class="text-lg font-bold">Remove "{{ propertyClass.label }}"?</h3>
-                    <p>The data for property "{{ propertyClass.label }}" will be lost.</p>
+                    <h3 class="text-lg font-bold">Remove "{{ propertyClass.getDisplayLabel() }}"?</h3>
+                    <p>The data for property "{{ propertyClass.getDisplayLabel() }}" will be lost.</p>
                     <div class="flex gap-2 ml-auto">
                         <Button
                             severity="danger"
                             @click="
                                 () => {
-                                    projectObjects.remove(propertyClass.id);
+                                    propertyObjects.remove(propertyClass.id);
                                     emit('hide', propertyClass.id);
                                 }
                             "
@@ -123,8 +119,8 @@ const toggleRemoveProperty = (e: Event) => {
                 :disabled="propertyClass.required"
                 text
                 icon="pi pi-trash"
-                :aria-label="'Remove ' + propertyClass.label"
-                :title="'Remove ' + propertyClass.label"
+                :aria-label="'Remove ' + propertyClass.getDisplayLabel()"
+                :title="'Remove ' + propertyClass.getDisplayLabel()"
                 :class="propertyClass.required ? 'invisible' : 'invisible group-hover:visible'"
                 class="pt-0 mt-0 h-9"
                 @click="toggleRemoveProperty($event)"
@@ -133,9 +129,9 @@ const toggleRemoveProperty = (e: Event) => {
         </div>
         <div class="w-full grid grid-cols-1">
             <!--  Header Row -->
-            <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4 max-w-full w-full">
-                <span :title="propertyClass.label" class="min-w-fit">
-                    <span class="text-lg"> {{ propertyClass.label }} </span>
+            <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4 max-w-full w-full items-center">
+                <span :title="propertyClass.getDisplayLabel()" class="min-w-fit">
+                    <span class="text-lg"> {{ propertyClass.getDisplayLabel() }} </span>
                     <span v-if="propertyClass.required" v-for="p in profiles">
                         <MandatoryMark
                             class="pl-1"
@@ -157,9 +153,8 @@ const toggleRemoveProperty = (e: Event) => {
                         :key="t"
                         :type="t"
                         :parentId="propertyObject['id']"
-                        :profileId="profileId"
-                        :projectObjects="projectObjects as ProjectObjectStore"
-                        :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+                        :propertyObjects="propertyObjects as PropertyObjectStore"
+                        :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                         :projectProfiles="projectProfiles"
                     />
                 </span>
@@ -196,11 +191,10 @@ const toggleRemoveProperty = (e: Event) => {
                     v-for="i in linkedObjects"
                     :key="i"
                     class="m-1 max-w-full"
-                    :profileId="profileId"
                     :item-id="i"
                     :parentId="propertyClass.id"
-                    :projectObjects="projectObjects"
-                    :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+                    :propertyObjects="propertyObjects"
+                    :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                     :projectProfiles="projectProfiles"
                 />
                 <span v-else class="text-gray-500 m-1 my-3 place-self-center align-middle inline-block"
@@ -219,13 +213,12 @@ const toggleRemoveProperty = (e: Event) => {
             <!-- Simple Input Row -->
             <div v-if="displayableInputs.length > 0" class="space-y-2 mt-2">
                 <div v-for="input in displayableInputs" class="row-span-1">
-                    <span v-if="input.label !== propertyClass.label">{{ input.label }}</span>
+                    <span v-if="input.label !== propertyClass.getDisplayLabel()">{{ input.label }}</span>
                     <component
                         :is="propertyDataForms[input['type'] as PropertyDataType]"
                         class="w-full"
                         :propertyObjectId="propertyObject['id']"
-                        :profileId="profileId"
-                        :projectObjects="projectObjects"
+                        :propertyObjects="propertyObjects"
                         :inputId="input['id']"
                         :inputOptions="input['options'] ? input['options'] : []"
                     />

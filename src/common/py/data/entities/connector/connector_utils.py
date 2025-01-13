@@ -1,7 +1,11 @@
 import typing
+from dataclasses import asdict
 
-from .connector import ConnectorID, Connector
+from common.py.data.entities.properties.properties_profile import \
+    PropertyProfile
+
 from .. import clone_entity
+from .connector import Connector, ConnectorID
 
 
 def find_connector_by_id(
@@ -38,5 +42,5 @@ def apply_connector_update(
     connector.category = updated_connector.category
     connector.options = updated_connector.options
     connector.logos = clone_entity(updated_connector.logos)
-    connector.metadata_profile = updated_connector.metadata_profile.copy()
+    connector.metadata_profile = PropertyProfile(**asdict(updated_connector.metadata_profile))
     connector.announce_timestamp = updated_connector.announce_timestamp

@@ -10,7 +10,7 @@
     "layout": [
         {
             "id": "title",
-            "label": "Title",
+            "displayLabel": "Title",
             "description": "The title of the file object.",
             "input": [
                 {
@@ -23,7 +23,7 @@
         },
         {
             "id": "identifier",
-            "label": "Identifier",
+            "displayLabel": "Identifier",
             "description": "A unique identifier for the file object.",
             "input": [
                 {
@@ -36,7 +36,7 @@
         },
         {
             "id": "description",
-            "label": "Description",
+            "displayLabel": "Description",
             "description": "Description of the file object.",
             "input": [
                 {
@@ -49,7 +49,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
-            "label": "Creator",
+            "displayLabel": "Creator",
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             "type": [
                 "creator"
@@ -61,7 +61,7 @@
     "classes": {
         "creator": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
-            "label": "Creator",
+            "displayLabel": "Creator",
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             "labelTemplate": "${name}",
             "type": [
@@ -79,7 +79,7 @@
         },
         "nameIdentifier": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#nameidentifier",
-            "label": "Name Identifier",
+            "displayLabel": "Name Identifier",
             "description": "Uniquely identifies an individual or legal entity, according to various schemes.",
             "example": "Jane Doe",
             "labelTemplate": "${nameIdentifier}",
@@ -106,7 +106,7 @@
         },
         "affiliation": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#affiliation",
-            "label": "Affiliation",
+            "displayLabel": "Affiliation",
             "labelTemplate": "${affiliation}",
             "input": [
                 {

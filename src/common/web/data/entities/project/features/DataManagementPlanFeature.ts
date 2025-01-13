@@ -1,12 +1,13 @@
-import { ProjectObject } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { LayoutPropertyObject } from "@common/ui/components/propertyeditor/PropertyObjectStore";
+import { Type } from "class-transformer";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
  * The DMP metadata type.
  *
- * TODO: Use proper type
+ *
  */
-export type DataManagementPlan = ProjectObject[];
+export type DataManagementPlan = LayoutPropertyObject[];
 
 /**
  * Data class for the data management plan project feature.
@@ -14,6 +15,8 @@ export type DataManagementPlan = ProjectObject[];
 export class DataManagementPlanFeature extends ProjectFeature {
     public static readonly FeatureID: ProjectFeatureID = "dmp";
 
+    // @ts-ignore
+    @Type(() => LayoutPropertyObject)
     public readonly plan: DataManagementPlan;
 
     public constructor(plan: DataManagementPlan = []) {

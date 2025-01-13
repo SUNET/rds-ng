@@ -2,18 +2,16 @@
 import MultiSelect from "primevue/multiselect";
 import { computed, type PropType } from "vue";
 
-import { ProjectObjectStore } from "../ProjectObjectStore";
-import { type ProfileID } from "../PropertyProfile";
+import { PropertyObjectStore } from "../PropertyObjectStore";
 
 const props = defineProps({
     propertyObjectId: { type: String, required: true },
     inputId: { type: String, required: true },
-    profileId: { type: Object as PropType<ProfileID[]>, required: false },
-    projectObjects: { type: ProjectObjectStore, required: true },
+    propertyObjects: { type: PropertyObjectStore, required: true },
     inputOptions: { type: Array as PropType<string[]>, required: true }
 });
 
-const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.value as Record<string, any>);
+const value = computed(() => props.propertyObjects.get(props.propertyObjectId)?.getValues() as Record<string, any>);
 </script>
 
 <template>
@@ -22,7 +20,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
             v-model="value[inputId]"
             :options="inputOptions"
             class="w-full relative"
-            @update:modelValue="(value: String[]) => projectObjects.update(profileId || [], inputId, propertyObjectId, value)"
+            @update:modelValue="(val: String[]) => propertyObjects.update(inputId, propertyObjectId, val)"
         />
     </div>
 </template>

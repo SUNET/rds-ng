@@ -10,7 +10,7 @@
     "layout": [
         {
             "id": "STUB",
-            "label": "Stub",
+            "displayLabel": "Stub",
             "description": "Stubby stuff",
             "required": true,
             "input": [

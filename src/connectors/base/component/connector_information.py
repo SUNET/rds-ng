@@ -1,11 +1,8 @@
 import json
 import typing
 
-from common.py.data.entities.connector import (
-    Connector,
-    ConnectorMetadataProfile,
-    ConnectorCategoryID,
-)
+from common.py.data.entities.connector import Connector, ConnectorCategoryID
+from common.py.data.entities.properties import ProfileMetadata, PropertyProfile
 from common.py.utils.img_conversion import convert_image_to_img_source
 
 
@@ -108,12 +105,12 @@ class ConnectorInformation:
 
         return Connector.Logos(logo_default, logo_horizontal)
 
-    def _load_metadata_profile(self, data: typing.Any) -> ConnectorMetadataProfile:
+    def _load_metadata_profile(self, data: typing.Any) -> PropertyProfile:
         try:
             with open(data["metadata_profile"], encoding="utf-8") as file:
-                return json.load(file)
+                return PropertyProfile.from_dict(json.load(file))
         except:  # pylint: disable=bare-except
-            return {}
+            return PropertyProfile(ProfileMetadata(('dummy', ''), 'dummy', 'dummy'), [])
 
     @property
     def connector_id(self) -> str:
@@ -158,7 +155,7 @@ class ConnectorInformation:
         return self._logos
 
     @property
-    def metadata_profile(self) -> ConnectorMetadataProfile:
+    def metadata_profile(self) -> PropertyProfile:
         """
         The metadata profile.
         """

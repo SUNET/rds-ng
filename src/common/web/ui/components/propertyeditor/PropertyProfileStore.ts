@@ -22,7 +22,7 @@ export class PropertyProfileStore {
     public mountProfile(profile: PropertyProfile) {
         try {
             if (isProfile(profile)) {
-                this._profiles.push(plainToInstance(PropertyProfile, profile) as PropertyProfile);
+                this._profiles.push(profile as PropertyProfile);
                 console.log("mounted profile: ", profile);
             } else {
                 console.log("Invalid profile: ", profile);
@@ -36,10 +36,11 @@ export class PropertyProfileStore {
         this._profiles = this._profiles.filter((profile) => profile.metadata.id !== profileId);
     }
 
+    // HACK FIXME return actual type without class-transformer
     public getClassById(classId: string): ProfileClass | undefined {
         let classes = {} as { [key: string]: ProfileClass };
         this._profiles.forEach((profile) => (classes = { ...classes, ...profile.classes }));
-        return classes[classId];
+        return classes[classId] !== undefined ? plainToInstance(ProfileClass, classes[classId]) : undefined;
     }
 
     public getLabelTemplateById(classId: string): string | undefined {
@@ -49,7 +50,7 @@ export class PropertyProfileStore {
 
     public getClassLabelById(classId: string): string | undefined {
         const profile = this._profiles.find((profile) => !!profile.classes && !!profile.classes[classId]);
-        return profile?.classes![classId]["label"] || "";
+        return profile?.classes![classId].displayLabel || "";
     }
 
     public getProfileLabelById(profileId: ProfileID): string | undefined {

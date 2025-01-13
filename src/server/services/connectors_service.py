@@ -1,7 +1,8 @@
 import time
 
-from common.py.core.logging import info, debug, warning
+from common.py.core.logging import debug, info, warning
 from common.py.data.entities.connector import Connector
+from common.py.data.entities.properties import PropertyProfile
 from common.py.data.verifiers.connector import ConnectorVerifier
 from common.py.services import Service
 from common.py.utils import EntryGuard
@@ -25,11 +26,9 @@ def create_connectors_service(comp: ServerComponent) -> Service:
     """
 
     from common.py.api.component import ComponentProcessEvent
-    from common.py.api.connector import (
-        ConnectorAnnounceEvent,
-        ListConnectorsCommand,
-        ListConnectorsReply,
-    )
+    from common.py.api.connector import (ConnectorAnnounceEvent,
+                                         ListConnectorsCommand,
+                                         ListConnectorsReply)
 
     from .server_service_context import ServerServiceContext
 
@@ -55,7 +54,7 @@ def create_connectors_service(comp: ServerComponent) -> Service:
             authorization=msg.authorization,
             options=msg.options,
             logos=msg.logos,
-            metadata_profile=msg.metadata_profile,
+            metadata_profile=PropertyProfile.from_dict(msg.metadata_profile),
             announce_timestamp=time.time(),
         )
 
@@ -63,7 +62,8 @@ def create_connectors_service(comp: ServerComponent) -> Service:
             if (
                 ex_connector := ctx.storage_pool.connector_storage.get(msg.connector_id)
             ) is not None:
-                from common.py.data.entities.connector import apply_connector_update
+                from common.py.data.entities.connector import \
+                    apply_connector_update
 
                 ConnectorVerifier(connector).verify_update()
 
