@@ -46,12 +46,14 @@ for (const profile of filterContainers(metadataStore.profiles, DataManagementPla
 </script>
 
 <template>
-    <ProjectExportersBar :project="project" :scope="DataManagementPlanFeature.FeatureID" class="p-2 grid justify-end" />
-    <PropertyEditor
-        v-model="project!.features.dmp.plan"
-        v-model:shared-objects="project!.features.shared_objects"
-        :projectProfiles="projectProfiles as PropertyProfileStore"
-    />
+    <div>
+        <ProjectExportersBar :project="project" :scope="DataManagementPlanFeature.FeatureID" class="p-2 grid justify-end" />
+        <PropertyEditor
+            v-model="project!.features.dmp.plan"
+            v-model:shared-objects="project!.features.shared_objects"
+            :projectProfiles="projectProfiles as PropertyProfileStore"
+        />
+    </div>
 </template>
 
 <style scoped lang="scss"></style>
