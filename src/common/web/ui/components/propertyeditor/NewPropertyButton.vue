@@ -68,7 +68,11 @@ function createObject() {
     <SplitButton
         @click="() => createObject()"
         @contextmenu="(e: Event) => e.preventDefault()"
-        :model="linkableItems.length ? linkableItems : [{ label: `No linkable ${label}(s) available`, disabled: true }]"
+        :model="
+            linkableItems.length
+                ? linkableItems.sort((a: any, b: any) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0))
+                : [{ label: `No linkable ${label}(s) available`, disabled: true }]
+        "
         :pt="{ root: 'splitbutton' }"
     >
         <span :title="'Add new ' + label" class="capitalize text-nowrap">

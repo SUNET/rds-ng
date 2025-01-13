@@ -16,7 +16,7 @@ const value = computed(() => props.propertyObjects.get(props.propertyObjectId)?.
 <template>
     <div>
         <DatePicker
-            @date-select="(date: Date) => propertyObjects.update(profileId || [], inputId, propertyObjectId, date)"
+            @date-select="(date: Date) => propertyObjects.update(inputId, propertyObjectId, date)"
             dateFormat="dd/mm/yy"
             v-model="value[inputId]"
             class="w-full"

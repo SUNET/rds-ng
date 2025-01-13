@@ -36,7 +36,7 @@ const id = getRandomId();
         </div>
         <div class="w-full grid">
             <Button
-                @click="propertyObjects.update(profileId || [], inputId, propertyObjectId, '')"
+                @click="propertyObjects.update(inputId, propertyObjectId, '')"
                 icon="pi pi-times"
                 severity="secondary"
                 aria-label="clear selection"
