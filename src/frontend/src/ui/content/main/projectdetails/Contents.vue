@@ -8,7 +8,7 @@ import Tabs from "primevue/tabs";
 import { computed, defineAsyncComponent, type PropType, reactive, ref, toRefs, unref, watch } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
-import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { PropertyObjectStore } from "@common/ui/components/propertyeditor/PropertyObjectStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -46,7 +46,7 @@ const panels = computed(() => {
     });
 });
 
-const sharedObjectStore = reactive(new ProjectObjectStore());
+const sharedPropertyObjectStore = reactive(new PropertyObjectStore());
 const debounce = makeDebounce();
 watch(
     () => project!.value.features.shared_objects,
@@ -71,7 +71,7 @@ watch(
             </TabList>
             <TabPanels class="overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full">
                 <TabPanel v-for="panel in panels" :value="panel.title" class="h-full">
-                    <component :is="panel.component" :project="project" :sharedObjectStore="sharedObjectStore" />
+                    <component :is="panel.component" :project="project" :sharedPropertyObjectStore="sharedPropertyObjectStore" />
                 </TabPanel>
             </TabPanels>
         </Tabs>

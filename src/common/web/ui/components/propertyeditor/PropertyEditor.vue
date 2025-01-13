@@ -2,7 +2,7 @@
 import { reactive, watch } from "vue";
 import PropertySet from "./PropertySet.vue";
 
-import { ProjectObject, ProjectObjectStore, SharedObject } from "./ProjectObjectStore";
+import { PropertyObject, PropertyObjectStore, SharedPropertyObject } from "./PropertyObjectStore";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
 const { projectProfiles } = defineProps({
@@ -12,37 +12,37 @@ const { projectProfiles } = defineProps({
     }
 });
 
-const projectObjects = reactive(new ProjectObjectStore());
-const sharedObjectStore = reactive(new ProjectObjectStore());
+const propertyObjects = reactive(new PropertyObjectStore());
+const sharedPropertyObjectStore = reactive(new PropertyObjectStore());
 const metadata = defineModel();
-projectObjects.setObjects((metadata.value as ProjectObject[]) || []);
+propertyObjects.setObjects((metadata.value as PropertyObject[]) || []);
 watch(
     () => metadata.value,
-    () => projectObjects.setObjects(metadata.value as ProjectObject[])
+    () => propertyObjects.setObjects(metadata.value as PropertyObject[])
 );
 watch(
-    () => projectObjects.exportObjects(),
+    () => propertyObjects.exportObjects(),
     () => {
-        metadata.value = projectObjects.exportObjects();
+        metadata.value = propertyObjects.exportObjects();
     }
 );
-const sharedObjects = defineModel("sharedObjects");
-sharedObjectStore.setObjects((sharedObjects.value as SharedObject[]) || []);
+const sharedPropertyObjects = defineModel("sharedPropertyObjects");
+sharedPropertyObjectStore.setObjects((sharedPropertyObjects.value as SharedPropertyObject[]) || []);
 watch(
-    () => sharedObjects.value,
-    () => sharedObjectStore.setObjects(sharedObjects.value as SharedObject[])
+    () => sharedPropertyObjects.value,
+    () => sharedPropertyObjectStore.setObjects(sharedPropertyObjects.value as SharedPropertyObject[])
 );
 watch(
-    () => sharedObjectStore.exportObjects(),
-    () => (sharedObjects.value = sharedObjectStore.exportObjects())
+    () => sharedPropertyObjectStore.exportObjects(),
+    () => (sharedPropertyObjects.value = sharedPropertyObjectStore.exportObjects())
 );
 </script>
 
 <template>
     <div class="overflow-hidden mr-4">
         <PropertySet
-            :projectObjects="projectObjects as ProjectObjectStore"
-            :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+            :propertyObjects="propertyObjects as PropertyObjectStore"
+            :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
             :projectProfiles="projectProfiles"
         />
     </div>

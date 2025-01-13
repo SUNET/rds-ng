@@ -50,7 +50,7 @@ for (const profile of filterContainers(metadataStore.profiles, DataManagementPla
         <ProjectExportersBar :project="project" :scope="DataManagementPlanFeature.FeatureID" class="p-2 grid justify-end" />
         <PropertyEditor
             v-model="project!.features.dmp.plan"
-            v-model:shared-objects="project!.features.shared_objects"
+            v-model:shared-property-objects="project!.features.shared_objects"
             :projectProfiles="projectProfiles as PropertyProfileStore"
         />
     </div>

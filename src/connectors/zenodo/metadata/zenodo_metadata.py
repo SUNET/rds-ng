@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
-from common.py.data.entities.properties import ProjectObject
+from common.py.data.entities.properties import PropertyObject
 from common.py.data.metadata import (Metadata, MetadataCreator, MetadataParser,
                                      MetadataParserQuery)
 
@@ -30,7 +30,7 @@ class ZenodoMetadataCreator(MetadataCreator):
         Creates a ZenodoMetadata object from the provided metadata and shared objects.
     """
 
-    def create(self, metadata: List[ProjectObject], shared_objects: List[ProjectObject] = []) -> ZenodoMetadata:
+    def create(self, metadata: List[PropertyObject], shared_objects: List[PropertyObject] = []) -> ZenodoMetadata:
         """
         Create a ZenodoMetadata object from provided metadata and shared objects.
         Args:

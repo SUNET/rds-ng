@@ -9,7 +9,7 @@ import Popover from "primevue/popover";
 import { History } from "./Breadcrumbs";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
-import { ProjectObjectStore, SharedObject } from "./ProjectObjectStore";
+import { PropertyObjectStore, SharedPropertyObject } from "./PropertyObjectStore";
 import { ProfileClass, PropertyDataType, propertyDataForms } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 import { calcObjLabel } from "./utils/ObjectUtils";
@@ -17,19 +17,20 @@ import { calcObjLabel } from "./utils/ObjectUtils";
 const dialogRef = inject("dialogRef") as any;
 const {
     id,
-    projectObjects,
-    sharedObjectStore,
+    propertyObjects,
+    sharedPropertyObjectStore,
     projectProfiles
-}: { id: string; projectObjects: ProjectObjectStore; sharedObjectStore: ProjectObjectStore; projectProfiles: PropertyProfileStore } = dialogRef.value.data;
+}: { id: string; propertyObjects: PropertyObjectStore; sharedPropertyObjectStore: PropertyObjectStore; projectProfiles: PropertyProfileStore } =
+    dialogRef.value.data;
 
 // selected object
-const object = ref(sharedObjectStore.get(id)!) as Ref<SharedObject>;
+const object = ref(sharedPropertyObjectStore.get(id)!) as Ref<SharedPropertyObject>;
 let objectClass = reactive(projectProfiles.getClassById(object.value.getType())!) as ProfileClass;
 
 const displayableInputs = ref(objectClass.getInputs());
 const addableTypes = ref(objectClass.getTypes());
 
-const linkedObjects = computed(() => sharedObjectStore.getReferencedObjects(object.value.getId()));
+const linkedObjects = computed(() => sharedPropertyObjectStore.getReferencedObjects(object.value.getId()));
 
 // History for Breadcrumbs
 const history = new History();
@@ -42,14 +43,14 @@ const toggle = (event: Event) => {
 };
 
 function selectActiveObject(id: string) {
-    object.value = sharedObjectStore.get(id) as SharedObject;
+    object.value = sharedPropertyObjectStore.get(id) as SharedPropertyObject;
     objectClass = projectProfiles.getClassById(object.value.getType())! as ProfileClass;
     addableTypes.value = objectClass.getTypes();
     displayableInputs.value = objectClass.getInputs();
     history.navigateTo(object.value);
     // TODO optimize by only updating necessary elements
-    menuPath.value = history.list().map((item: SharedObject) => {
-        const obj = sharedObjectStore.get(item.getId()) as SharedObject;
+    menuPath.value = history.list().map((item: SharedPropertyObject) => {
+        const obj = sharedPropertyObjectStore.get(item.getId()) as SharedPropertyObject;
 
         return {
             label: `${projectProfiles.getClassLabelById(item.getType())}:  ${calcObjLabel(obj!, projectProfiles)}`,
@@ -79,7 +80,7 @@ selectActiveObject(id);
         <template #title>
             <div class="row-span-1 text-gray-800 justify-between flex items-center">
                 <span :title="objectClass.getDisplayLabel()" class="flex-none">
-                    <span class="text-xl"> {{ objectClass.getDisplayLabel() }}</span> 
+                    <span class="text-xl"> {{ objectClass.getDisplayLabel() }}</span>
                     <Button v-if="objectClass.description" unstyled @click="toggle" :title="objectClass.description">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem" />
                     </Button>
@@ -95,8 +96,8 @@ selectActiveObject(id);
                         :key="t"
                         :type="t"
                         :parentId="object.getId()"
-                        :projectObjects="projectObjects"
-                        :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+                        :propertyObjects="propertyObjects"
+                        :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                         :projectProfiles="projectProfiles"
                         mode="dialog"
                         @loadObject="(id) => selectActiveObject(id)"
@@ -133,8 +134,8 @@ selectActiveObject(id);
                             class="m-1 max-w-full"
                             :item-id="i"
                             :parentId="object.getId()"
-                            :projectObjects="projectObjects"
-                            :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+                            :propertyObjects="propertyObjects"
+                            :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                             :projectProfiles="projectProfiles"
                             mode="dialog"
                             @loadObject="(id) => selectActiveObject(id)"
@@ -162,8 +163,8 @@ selectActiveObject(id);
                                 :is="propertyDataForms[input['type'] as PropertyDataType]"
                                 class="w-full"
                                 :propertyObjectId="object.getId()"
-                                :projectObjects="sharedObjectStore"
-                                :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+                                :propertyObjects="sharedPropertyObjectStore"
+                                :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                                 :inputId="input['id']"
                                 :inputOptions="input['options'] ? input['options'] : []"
                             />

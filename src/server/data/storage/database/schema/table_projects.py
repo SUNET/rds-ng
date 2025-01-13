@@ -9,7 +9,7 @@ from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
 from common.py.data.entities.project.features import (
     DataManagementPlanFeature, ProjectFeatureID, ProjectMetadataFeature,
-    ProjectObject, ResourcesMetadataFeature)
+    PropertyObject, ResourcesMetadataFeature)
 from common.py.data.entities.project.logbook import ProjectJobHistoryRecord
 
 from .types import (ArrayType, DataclassArrayDictType, DataclassArrayType,
@@ -74,7 +74,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         Column(
             "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
         ),
-        Column("shared_objects", DataclassArrayType[ProjectObject](dataclass_type=ProjectObject)),
+        Column("shared_objects", DataclassArrayType[PropertyObject](dataclass_type=PropertyObject)),
     )
 
     table_feature_project_metadata = Table(
@@ -86,7 +86,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("metadata", DataclassArrayType[ProjectObject](dataclass_type=ProjectObject)),
+        Column("metadata", DataclassArrayType[PropertyObject](dataclass_type=PropertyObject)),
     )
 
     table_feature_resources_metadata = Table(
@@ -98,7 +98,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("metadata", DataclassArrayDictType[ProjectObject](dataclass_type=ProjectObject)),
+        Column("metadata", DataclassArrayDictType[PropertyObject](dataclass_type=PropertyObject)),
     )
 
     table_feature_dmp = Table(
@@ -110,7 +110,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("plan", DataclassArrayType[ProjectObject](dataclass_type=ProjectObject)),
+        Column("plan", DataclassArrayType[PropertyObject](dataclass_type=PropertyObject)),
     )
 
     # -- Logbook

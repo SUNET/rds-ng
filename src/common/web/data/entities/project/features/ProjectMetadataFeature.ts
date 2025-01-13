@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 
-import { LayoutObject } from "../../../../ui/components/propertyeditor/ProjectObjectStore";
+import { LayoutPropertyObject } from "../../../../ui/components/propertyeditor/PropertyObjectStore";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
@@ -8,7 +8,7 @@ import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
  *
  *
  */
-export type ProjectMetadata = LayoutObject[];
+export type ProjectMetadata = LayoutPropertyObject[];
 
 /**
  * Data class for the metadata project feature.
@@ -16,7 +16,7 @@ export type ProjectMetadata = LayoutObject[];
 export class ProjectMetadataFeature extends ProjectFeature {
     public static readonly FeatureID: ProjectFeatureID = "project_metadata";
     // @ts-ignore
-    @Type(() => LayoutObject)
+    @Type(() => LayoutPropertyObject)
     public readonly metadata: ProjectMetadata;
 
     public constructor(metadata: ProjectMetadata = []) {

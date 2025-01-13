@@ -2,16 +2,16 @@
 import MultiSelect from "primevue/multiselect";
 import { computed, type PropType } from "vue";
 
-import { ProjectObjectStore } from "../ProjectObjectStore";
+import { PropertyObjectStore } from "../PropertyObjectStore";
 
 const props = defineProps({
     propertyObjectId: { type: String, required: true },
     inputId: { type: String, required: true },
-    projectObjects: { type: ProjectObjectStore, required: true },
+    propertyObjects: { type: PropertyObjectStore, required: true },
     inputOptions: { type: Array as PropType<string[]>, required: true }
 });
 
-const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.getValues() as Record<string, any>);
+const value = computed(() => props.propertyObjects.get(props.propertyObjectId)?.getValues() as Record<string, any>);
 </script>
 
 <template>
@@ -20,7 +20,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.g
             v-model="value[inputId]"
             :options="inputOptions"
             class="w-full relative"
-            @update:modelValue="(val: String[]) => projectObjects.update(inputId, propertyObjectId, val)"
+            @update:modelValue="(val: String[]) => propertyObjects.update(inputId, propertyObjectId, val)"
         />
     </div>
 </template>

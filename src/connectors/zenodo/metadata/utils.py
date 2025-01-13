@@ -1,9 +1,9 @@
 from typing import Any, Dict, List
 
-from common.py.data.entities.properties import ProjectObject
+from common.py.data.entities.properties import PropertyObject
 
 
-def parse_creators(creators_raw: ProjectObject, shared_objects: List[ProjectObject]) -> List[Dict[str, Any]]:
+def parse_creators(creators_raw: PropertyObject, shared_objects: List[PropertyObject]) -> List[Dict[str, Any]]:
     """
     Parses a list of datacite creator data and shared objects to extract Zenodo creator information.
     Args:
@@ -32,7 +32,7 @@ def parse_creators(creators_raw: ProjectObject, shared_objects: List[ProjectObje
 
     return creators
 
-def parse_contributors(contributors_raw: ProjectObject, shared_objects: List[ProjectObject]) -> List[Dict[str, Any]]:
+def parse_contributors(contributors_raw: PropertyObject, shared_objects: List[PropertyObject]) -> List[Dict[str, Any]]:
     """
     Parses a list of datacite contributor data and shared objects to extract and format contributor information for Zenodo.
     Args:
@@ -64,7 +64,7 @@ def parse_contributors(contributors_raw: ProjectObject, shared_objects: List[Pro
 
     return contributors
 
-def parse_subjects(subjects_raw: List[ProjectObject], shared_objects: List[ProjectObject]) -> List[Dict[str, Any]]:
+def parse_subjects(subjects_raw: List[PropertyObject], shared_objects: List[PropertyObject]) -> List[Dict[str, Any]]:
     pass
 
 """ FIXME Does not Work, Zenodo API?
@@ -82,7 +82,7 @@ def parse_subjects(subjects_raw: List[ProjectObject], shared_objects: List[Proje
         
     return subjects """
 
-def parse_grants(grants_raw: ProjectObject, shared_objects: List[ProjectObject]) -> List[Dict[str, Any]]:
+def parse_grants(grants_raw: PropertyObject, shared_objects: List[PropertyObject]) -> List[Dict[str, Any]]:
     """
     Parses datacite grant data and returns a list of formatted Zenodo grant dictionaries.
     Args:
@@ -142,7 +142,7 @@ def parse_grants(grants_raw: ProjectObject, shared_objects: List[ProjectObject])
 
 
 # Hint: Zenodo API currently only allows date types Collected, Valid, Withdrawn 
-def parse_dates(dates_raw: ProjectObject, shared_objects: List[ProjectObject]) -> List[Dict[str, Any]]:
+def parse_dates(dates_raw: PropertyObject, shared_objects: List[PropertyObject]) -> List[Dict[str, Any]]:
     """
     Parses datacite date information and returns a list of formatted Zenodo date dictionaries.
     Args:

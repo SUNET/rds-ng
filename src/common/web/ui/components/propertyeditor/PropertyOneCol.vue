@@ -10,10 +10,10 @@ import { PropertyProfileStore } from "./PropertyProfileStore";
 
 import Chip from "primevue/chip";
 import Popover from "primevue/popover";
-import { LayoutObject, ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
+import { LayoutPropertyObject, PropertyObject, PropertyObjectStore } from "./PropertyObjectStore";
 
 const emit = defineEmits(["hide"]);
-const { index, propertyClass, projectObjects, projectProfiles, sharedObjectStore, layoutProfiles } = defineProps({
+const { index, propertyClass, propertyObjects, projectProfiles, sharedPropertyObjectStore, layoutProfiles } = defineProps({
     index: {
         type: Number,
         required: true
@@ -22,16 +22,16 @@ const { index, propertyClass, projectObjects, projectProfiles, sharedObjectStore
         type: Object as PropType<ProfileClass & { profiles: ProfileID[] }>,
         required: true
     },
-    projectObjects: {
-        type: Object as PropType<ProjectObjectStore>,
+    propertyObjects: {
+        type: Object as PropType<PropertyObjectStore>,
         required: true
     },
     projectProfiles: {
         type: PropertyProfileStore,
         required: true
     },
-    sharedObjectStore: {
-        type: Object as PropType<ProjectObjectStore>,
+    sharedPropertyObjectStore: {
+        type: Object as PropType<PropertyObjectStore>,
         required: true
     },
     layoutProfiles: {
@@ -41,14 +41,16 @@ const { index, propertyClass, projectObjects, projectProfiles, sharedObjectStore
 });
 const colorsStore = useColorsStore();
 
-projectObjects.add(new LayoutObject(propertyClass.id));
+propertyObjects.add(new LayoutPropertyObject(propertyClass.id));
 
-const propertyObject = computed(() => projectObjects.get(propertyClass.id) || projectObjects.add(new LayoutObject(propertyClass.id))) as Ref<ProjectObject>;
+const propertyObject = computed(
+    () => propertyObjects.get(propertyClass.id) || propertyObjects.add(new LayoutPropertyObject(propertyClass.id))
+) as Ref<PropertyObject>;
 
 watch(
-    () => projectObjects.get(propertyClass.id),
+    () => propertyObjects.get(propertyClass.id),
     (obj) => {
-        if (!obj) projectObjects.add(new LayoutObject(propertyClass.id));
+        if (!obj) propertyObjects.add(new LayoutPropertyObject(propertyClass.id));
     }
 );
 
@@ -61,7 +63,7 @@ const displayableInputs = propertyClass["input"] || [];
 
 const addableTypes = propertyClass["type"];
 
-const linkedObjects = computed(() => projectObjects.getReferencedObjects(propertyClass.id));
+const linkedObjects = computed(() => propertyObjects.getReferencedObjects(propertyClass.id));
 
 const profiles = computed(() => {
     const profileIDs = layoutProfiles?.find((e) => e.id == propertyObject.value.id)!.profiles as ProfileID[];
@@ -94,7 +96,7 @@ const toggleRemoveProperty = (e: Event) => {
                             severity="danger"
                             @click="
                                 () => {
-                                    projectObjects.remove(propertyClass.id);
+                                    propertyObjects.remove(propertyClass.id);
                                     emit('hide', propertyClass.id);
                                 }
                             "
@@ -151,8 +153,8 @@ const toggleRemoveProperty = (e: Event) => {
                         :key="t"
                         :type="t"
                         :parentId="propertyObject['id']"
-                        :projectObjects="projectObjects as ProjectObjectStore"
-                        :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+                        :propertyObjects="propertyObjects as PropertyObjectStore"
+                        :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                         :projectProfiles="projectProfiles"
                     />
                 </span>
@@ -191,8 +193,8 @@ const toggleRemoveProperty = (e: Event) => {
                     class="m-1 max-w-full"
                     :item-id="i"
                     :parentId="propertyClass.id"
-                    :projectObjects="projectObjects"
-                    :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+                    :propertyObjects="propertyObjects"
+                    :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                     :projectProfiles="projectProfiles"
                 />
                 <span v-else class="text-gray-500 m-1 my-3 place-self-center align-middle inline-block"
@@ -216,7 +218,7 @@ const toggleRemoveProperty = (e: Event) => {
                         :is="propertyDataForms[input['type'] as PropertyDataType]"
                         class="w-full"
                         :propertyObjectId="propertyObject['id']"
-                        :projectObjects="projectObjects"
+                        :propertyObjects="propertyObjects"
                         :inputId="input['id']"
                         :inputOptions="input['options'] ? input['options'] : []"
                     />

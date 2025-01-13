@@ -4,16 +4,16 @@ import { getRandomId } from "../utils/Ids";
 
 import Checkbox from "primevue/checkbox";
 
-import { ProjectObjectStore } from "../ProjectObjectStore";
+import { PropertyObjectStore } from "../PropertyObjectStore";
 
 const props = defineProps({
     propertyObjectId: { type: String, required: true },
     inputId: { type: String, required: true },
-    projectObjects: { type: ProjectObjectStore, required: true },
+    propertyObjects: { type: PropertyObjectStore, required: true },
     inputOptions: { type: Array as PropType<string[]>, required: true }
 });
 
-const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.getValues() as Record<string, any>);
+const value = computed(() => props.propertyObjects.get(props.propertyObjectId)?.getValues() as Record<string, any>);
 
 const id = getRandomId();
 </script>
@@ -27,7 +27,7 @@ const id = getRandomId();
                 :name="option"
                 :value="option"
                 class="mr-2"
-                @update:modelValue="(val: String[]) => projectObjects.update(inputId, propertyObjectId, val)"
+                @update:modelValue="(val: String[]) => propertyObjects.update(inputId, propertyObjectId, val)"
             />
             <label class="break-all" :for="option + id">{{ option }}</label>
         </div>

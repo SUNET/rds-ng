@@ -1,4 +1,4 @@
-import { ProjectObject } from "../ProjectObjectStore";
+import { PropertyObject } from "../PropertyObjectStore";
 
 /**
  * Replaces placeholders in a string with corresponding values from a given object.
@@ -8,7 +8,7 @@ import { ProjectObject } from "../ProjectObjectStore";
  *
  * @returns The string with replaced placeholders.
  */
-export function injectTemplate(str: String, obj: ProjectObject) {
+export function injectTemplate(str: String, obj: PropertyObject) {
     const label = str.replace(/\${(.*?)}/g, (x, g) => (obj["value"][g] ? obj["value"][g] : `\${${g}\}`));
     return label === str ? `[${obj["id"].slice(0, 6)}]` : str.replace(/\${(.*?)}/g, (x, g) => (obj["value"][g] ? obj["value"][g] : `[${g}]`));
 }

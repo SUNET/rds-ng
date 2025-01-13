@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, fields
 from typing import List
 
-from common.py.data.entities.properties import ProjectObject
+from common.py.data.entities.properties import PropertyObject
 
 
 @dataclass
@@ -15,7 +15,7 @@ class Metadata(ABC):
 class MetadataCreator(ABC):
 
     @abstractmethod
-    def create(self, metadata: List[ProjectObject]) -> Metadata:
+    def create(self, metadata: List[PropertyObject]) -> Metadata:
         pass
 
     def validate(self, metadata: Metadata) -> None:

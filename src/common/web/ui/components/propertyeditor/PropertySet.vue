@@ -10,18 +10,18 @@ import { computed, ref, type Ref } from "vue";
 import { useColorsStore } from "../../../data/stores/ColorsStore";
 import { calculateLayout as makeLayout } from "./utils/PropertyEditorUtils";
 
-import { ProjectObjectStore } from "./ProjectObjectStore";
+import { PropertyObjectStore } from "./PropertyObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
 import { ProfileLayoutClass } from "./PropertyProfile";
 
-const props = defineProps(["controller", "project", "projectProfiles", "projectObjects", "sharedObjectStore"]);
+const props = defineProps(["controller", "project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore"]);
 const colorsStore = useColorsStore();
 
 var layout = makeLayout(props.projectProfiles);
 
 const propsToShow = ref<ProfileLayoutClass[]>(
     layout
-        .filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined)
+        .filter((e: ProfileLayoutClass) => e.required || props.propertyObjects.get(e.id) !== undefined)
         .sort((a: ProfileLayoutClass, b: ProfileLayoutClass) => -a.profiles!.length - -b.profiles!.length)
 );
 
@@ -56,8 +56,8 @@ const searchString = ref("");
             :index="i"
             class="my-5 w-full max-w-full"
             :propertyClass="p"
-            :projectObjects="projectObjects"
-            :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+            :propertyObjects="propertyObjects"
+            :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
             :projectProfiles="projectProfiles"
             :layoutProfiles="layout"
             @hide="(id) => hideProperty(id)"

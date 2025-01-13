@@ -2,15 +2,15 @@
 import InputNumber, { type InputNumberInputEvent } from "primevue/inputnumber";
 import { computed } from "vue";
 
-import { ProjectObjectStore } from "../ProjectObjectStore";
+import { PropertyObjectStore } from "../PropertyObjectStore";
 
 const props = defineProps({
     propertyObjectId: { type: String, required: true },
     inputId: { type: String, required: true },
-    projectObjects: { type: ProjectObjectStore, required: true }
+    propertyObjects: { type: PropertyObjectStore, required: true }
 });
 
-const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.getValues() as Record<string, any>);
+const value = computed(() => props.propertyObjects.get(props.propertyObjectId)?.getValues() as Record<string, any>);
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.g
             v-model="value[inputId]"
             :useGrouping="false"
             class="w-full"
-            @input="(e: InputNumberInputEvent) => projectObjects.update(inputId, propertyObjectId, e.value)"
+            @input="(e: InputNumberInputEvent) => propertyObjects.update(inputId, propertyObjectId, e.value)"
         />
     </div>
 </template>

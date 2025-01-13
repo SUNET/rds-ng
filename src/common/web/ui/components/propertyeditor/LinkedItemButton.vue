@@ -7,19 +7,19 @@ import { useDialog } from "primevue/usedialog";
 import { computed, ref } from "vue";
 import { WebComponent } from "../../../component/WebComponent";
 import { confirmDialog } from "../../dialogs/ConfirmDialog";
-import { SharedObject } from "./ProjectObjectStore";
 import PropertyDialog from "./PropertyDialog.vue";
+import { SharedPropertyObject } from "./PropertyObjectStore";
 import { calcBgColor, calcBorderColor, calcObjLabel } from "./utils/ObjectUtils";
 
 // @ts-ignore
 SplitButton.components.PVSMenu = Menu;
 const comp = WebComponent.instance;
 const dialog = useDialog();
-const props = defineProps(["itemId", "parentId", "projectObjects", "sharedObjectStore", "projectProfiles", "mode"]);
+const props = defineProps(["itemId", "parentId", "propertyObjects", "sharedPropertyObjectStore", "projectProfiles", "mode"]);
 
 const object = computed(() => {
-    const obj = props.sharedObjectStore.get(props.itemId) as SharedObject;
-    if (obj === undefined) props.projectObjects._removeRefs(props.itemId);
+    const obj = props.sharedPropertyObjectStore.get(props.itemId) as SharedPropertyObject;
+    if (obj === undefined) props.propertyObjects._removeRefs(props.itemId);
     return obj;
 });
 
@@ -51,8 +51,8 @@ const linkedItemActions = computed(() => [
                         rejectClass: "p-button-secondary"
                     }).then(() => {
                         console.log("Unlinking " + object.value.id);
-                        props.projectObjects.removeRef(props.parentId, object.value.id);
-                        props.sharedObjectStore.removeRef(props.parentId, object.value.id);
+                        props.propertyObjects.removeRef(props.parentId, object.value.id);
+                        props.sharedPropertyObjectStore.removeRef(props.parentId, object.value.id);
                     });
                 }
             },
@@ -73,8 +73,8 @@ const linkedItemActions = computed(() => [
                         rejectClass: "p-button-secondary"
                     }).then(() => {
                         console.log("Deleting " + object.value.id);
-                        props.projectObjects.remove(object.value.id);
-                        props.sharedObjectStore.remove(object.value.id);
+                        props.propertyObjects.remove(object.value.id);
+                        props.sharedPropertyObjectStore.remove(object.value.id);
                     });
                 }
             }
@@ -104,8 +104,8 @@ function handleClick() {
             },
             data: {
                 id: object.value["id"],
-                projectObjects: props.projectObjects,
-                sharedObjectStore: props.sharedObjectStore,
+                propertyObjects: props.propertyObjects,
+                sharedPropertyObjectStore: props.sharedPropertyObjectStore,
                 projectProfiles: props.projectProfiles
             }
         });
@@ -164,8 +164,8 @@ const toggle = (event: Event) => {
                         icon="pi pi-trash"
                         @click="
                             () => {
-                                props.sharedObjectStore.remove(props.itemId, props.itemId);
-                                props.projectObjects.remove(props.itemId, props.itemId);
+                                props.sharedPropertyObjectStore.remove(props.itemId, props.itemId);
+                                props.propertyObjects.remove(props.itemId, props.itemId);
                             }
                         "
                     >

@@ -2,20 +2,20 @@
 import Chips from "primevue/chips";
 import { computed } from "vue";
 
-import { ProjectObjectStore } from "../ProjectObjectStore";
+import { PropertyObjectStore } from "../PropertyObjectStore";
 
 const props = defineProps({
     propertyObjectId: { type: String, required: true },
     inputId: { type: String, required: true },
-    projectObjects: { type: ProjectObjectStore, required: true }
+    propertyObjects: { type: PropertyObjectStore, required: true }
 });
 
-const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.getValues() as Record<string, any>);
+const value = computed(() => props.propertyObjects.get(props.propertyObjectId)?.getValues() as Record<string, any>);
 </script>
 
 <template>
     <Chips
-        @update:modelValue="(val) => projectObjects.update(inputId, propertyObjectId, val)"
+        @update:modelValue="(val) => propertyObjects.update(inputId, propertyObjectId, val)"
         v-model="value[inputId]"
         separator=","
         class="inline"

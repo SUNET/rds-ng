@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
-from common.py.data.entities.properties import (ProfileLayout, ProjectObject,
+from common.py.data.entities.properties import (ProfileLayout, PropertyObject,
                                                 PropertyProfile)
 
-MetadataSet = List[ProjectObject]
-SharedObjectsSet = List[ProjectObject]
+MetadataSet = List[PropertyObject]
+SharedPropertyObjectsSet = List[PropertyObject]
 
 
 @dataclass(kw_only=True, frozen=True)
@@ -57,7 +57,7 @@ class MetadataParser:
     def list_values(
         profile: PropertyProfile,
         metadata: MetadataSet,
-        shared_objects: SharedObjectsSet | None = None,
+        shared_objects: SharedPropertyObjectsSet | None = None,
     ) -> MetadataValueList:
         """
         Retrieves all (filled out) values from a profile in an easy-to-process format.
@@ -151,7 +151,7 @@ class MetadataParser:
     @staticmethod
     def filter_by_profile(
         profile_name: str | List, metadata: MetadataSet
-    ) -> List[ProjectObject]:
+    ) -> List[PropertyObject]:
         """
         Filters the metadata by the given profile name(s).
 
@@ -200,7 +200,7 @@ class MetadataParser:
         )
 
     @staticmethod
-    def getobj(metadata: MetadataSet, oid: str) -> ProjectObject | None:
+    def getobj(metadata: MetadataSet, oid: str) -> PropertyObject | None:
         """
         Retrieve an object from a list of metadata dictionaries by its ID.
 
@@ -236,7 +236,7 @@ class MetadataParser:
     def is_property_filled_out(
         metadata: MetadataSet,
         prop_id: str,
-        shared_objects: SharedObjectsSet | None = None,
+        shared_objects: SharedPropertyObjectsSet | None = None,
         profile: PropertyProfile | None = None,
     ):
         """
@@ -263,7 +263,7 @@ class MetadataParser:
     def validate_metadata(
         profile: PropertyProfile,
         metadata: MetadataSet,
-        shared_objects: SharedObjectsSet | None = None,
+        shared_objects: SharedPropertyObjectsSet | None = None,
     ) -> None:
         """
         Validates all property values of a filled-out profile.
@@ -289,7 +289,7 @@ class MetadataParser:
         metadata: MetadataSet,
         profile: PropertyProfile,
         prop_id: str,
-        shared_objects: SharedObjectsSet | None = None,
+        shared_objects: SharedPropertyObjectsSet | None = None,
     ) -> bool:
         """
         Checks if a specific property in the metadata is valid according to the given profile.
@@ -432,7 +432,7 @@ class MetadataParser:
     def get_value_list(
         metadata: MetadataSet,
         prop_id: str,
-        shared_objects: SharedObjectsSet | None = None,
+        shared_objects: SharedPropertyObjectsSet | None = None,
         profile: PropertyProfile | None = None,
     ) -> List[Dict[str, str]]:
         """

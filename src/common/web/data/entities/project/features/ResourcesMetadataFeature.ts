@@ -1,6 +1,6 @@
 import { Transform, Type, plainToInstance } from "class-transformer";
 
-import { LayoutObject } from "../../../../ui/components/propertyeditor/ProjectObjectStore";
+import { LayoutPropertyObject } from "../../../../ui/components/propertyeditor/PropertyObjectStore";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
@@ -16,13 +16,13 @@ export type ResourcesMetadataKey = keyof typeof ResourcesMetadata;
  *
  */
 export class ResourcesMetadata {
-    [key: string]: LayoutObject;
+    [key: string]: LayoutPropertyObject;
 
-    public constructor(metadata: { [key: string]: LayoutObject[] } = {}) {
+    public constructor(metadata: { [key: string]: LayoutPropertyObject[] } = {}) {
         if (metadata.value === undefined) return;
 
-        Object.entries(metadata.value).forEach(([key, value]: [ResourcesMetadataKey, LayoutObject]) => {
-            if (value !== undefined) this[key as ResourcesMetadataKey] = plainToInstance(LayoutObject, value);
+        Object.entries(metadata.value).forEach(([key, value]: [ResourcesMetadataKey, LayoutPropertyObject]) => {
+            if (value !== undefined) this[key as ResourcesMetadataKey] = plainToInstance(LayoutPropertyObject, value);
         });
     }
 }

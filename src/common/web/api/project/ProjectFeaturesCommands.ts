@@ -10,7 +10,7 @@ import { type MetadataObjects } from "../../data/entities/metadata/Types";
 import { type ProjectFeatureID } from "../../data/entities/project/features/ProjectFeature";
 import { ProjectFeatures } from "../../data/entities/project/features/ProjectFeatures";
 import { type ProjectID } from "../../data/entities/project/Project";
-import { SharedObject } from "../../ui/components/propertyeditor/ProjectObjectStore";
+import { SharedPropertyObject } from "../../ui/components/propertyeditor/PropertyObjectStore";
 
 /**
  * Command to update the features (data) of a project.
@@ -32,7 +32,7 @@ export class UpdateProjectFeaturesCommand extends Command {
     public readonly features: ProjectFeatures = new ProjectFeatures();
 
     // @ts-ignore
-    @Type(() => SharedObject)
+    @Type(() => SharedPropertyObject)
     public readonly shared_objects: MetadataObjects | undefined = undefined;
 
     /**
@@ -43,7 +43,7 @@ export class UpdateProjectFeaturesCommand extends Command {
         project_id: ProjectID,
         updatedFeatures: ProjectFeatureID[],
         features: ProjectFeatures,
-        sharedObjects: MetadataObjects | undefined = undefined,
+        sharedPropertyObjects: MetadataObjects | undefined = undefined,
         chain: Message | null = null
     ): CommandComposer<UpdateProjectFeaturesCommand> {
         return messageBuilder.buildCommand(
@@ -52,7 +52,7 @@ export class UpdateProjectFeaturesCommand extends Command {
                 project_id: project_id,
                 updated_features: updatedFeatures,
                 features: features,
-                shared_objects: sharedObjects
+                shared_objects: sharedPropertyObjects
             },
             chain
         );

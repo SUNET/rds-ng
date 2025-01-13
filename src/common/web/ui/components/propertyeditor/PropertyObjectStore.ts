@@ -8,15 +8,15 @@ import { v4 as uuidv4 } from "uuid";
  * Represents a project object with an ID, value, and references.
  *
  * @abstract
- * @class ProjectObject
+ * @class PropertyObject
  */
-export abstract class ProjectObject {
+export abstract class PropertyObject {
     id: string;
     value: { [key: string]: any };
     refs: string[];
 
     /**
-     * Creates a new instance of ProjectObject.
+     * Creates a new instance of PropertyObject.
      * @param id The object ID.
      * @param value The object value.
      * @param refs The object references.
@@ -37,7 +37,7 @@ export abstract class ProjectObject {
     }
 
     /**
-     * Retrieves the current values stored in the ProjectObject.
+     * Retrieves the current values stored in the PropertyObject.
      *
      * @returns An object where the keys are strings and the values can be of any type.
      */
@@ -75,20 +75,20 @@ export abstract class ProjectObject {
 
 /**
  * Represents a layout object within a Profile.
- * Extends the `ProjectObject` class.
+ * Extends the `PropertyObject` class.
  */
-export class LayoutObject extends ProjectObject {
+export class LayoutPropertyObject extends PropertyObject {
     constructor(id?: string, value: any = {}, refs: string[] = []) {
         super(id, value, refs);
     }
 }
 
 /**
- * Represents a shared object that extends the `ProjectObject` class.
+ * Represents a shared object that extends the `PropertyObject` class.
  * 
 
  */
-export class SharedObject extends ProjectObject {
+export class SharedPropertyObject extends PropertyObject {
     type: string;
 
     constructor(type: string, id?: string, value: any = {}, refs: string[] = []) {
@@ -109,11 +109,11 @@ export class SharedObject extends ProjectObject {
 /**
  * Represents a store for project objects.
  */
-export class ProjectObjectStore {
-    public _objects: ProjectObject[];
+export class PropertyObjectStore {
+    public _objects: PropertyObject[];
 
     /**
-     * Constructs a new ProjectObjectStore instance.
+     * Constructs a new PropertyObjectStore instance.
      */
     constructor() {
         this._objects = [];
@@ -123,7 +123,7 @@ export class ProjectObjectStore {
      * Sets the objects in the store.
      * @param objects - An array of project objects.
      */
-    public setObjects(objects: ProjectObject[]): void {
+    public setObjects(objects: PropertyObject[]): void {
         this._objects = objects;
     }
 
@@ -131,7 +131,7 @@ export class ProjectObjectStore {
      * Exports the objects from the store.
      * @returns An array of project objects.
      */
-    public exportObjects(): ProjectObject[] {
+    public exportObjects(): PropertyObject[] {
         return this._objects;
     }
 
@@ -141,7 +141,7 @@ export class ProjectObjectStore {
      *
      * @returns The project object with that ID, either existing or newly created.
      */
-    public add(object: ProjectObject): ProjectObject {
+    public add(object: PropertyObject): PropertyObject {
         const existing = this.get(object.id);
         if (existing !== undefined) {
             return existing;
@@ -156,7 +156,7 @@ export class ProjectObjectStore {
      *
      * @returns The project object with the specified ID, or undefined if not found.
      */
-    public get(id: string): ProjectObject | undefined {
+    public get(id: string): PropertyObject | undefined {
         return this._objects.find((object) => object.id === id);
     }
 
@@ -186,13 +186,13 @@ export class ProjectObjectStore {
 
     /**
      * Updates the value of a project object.
-     * @param profileId - The profile ID of the project object (only for LayoutObjects).
+     * @param profileId - The profile ID of the project object (only for LayoutPropertyObjects).
      * @param inputId - The input ID of the project object.
      * @param id - The ID of the project object.
      * @param value - The new value for the project object.
      */
     public update(inputId: string, id: string, value: any): void {
-        let object: ProjectObject;
+        let object: PropertyObject;
 
         object = this.get(id)!;
         if (object !== undefined) {
@@ -207,12 +207,12 @@ export class ProjectObjectStore {
      *
      * @returns The updated project object, or undefined if the project object is not found.
      */
-    public addRef(id: string, ref: string): ProjectObject | undefined {
+    public addRef(id: string, ref: string): PropertyObject | undefined {
         const object = this.get(id);
         if (object) {
             object.pushReference(ref);
         }
-        return object
+        return object;
     }
 
     /**
@@ -245,7 +245,7 @@ export class ProjectObjectStore {
      *
      * @returns An array of project objects of the specified type.
      */
-    public getObjectsByType(type: string): SharedObject[] {
-        return this._objects.filter((obj: ProjectObject) => obj instanceof SharedObject && obj.type === type) as SharedObject[];
+    public getObjectsByType(type: string): SharedPropertyObject[] {
+        return this._objects.filter((obj: PropertyObject) => obj instanceof SharedPropertyObject && obj.type === type) as SharedPropertyObject[];
     }
 }

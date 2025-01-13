@@ -1,5 +1,5 @@
 from typing import List
 
-from common.py.data.entities.properties import ProjectObject
+from common.py.data.entities.properties import PropertyObject
 
-MetadataObjects = List[ProjectObject]
+MetadataObjects = List[PropertyObject]

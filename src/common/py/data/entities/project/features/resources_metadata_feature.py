@@ -3,11 +3,11 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
-from ...properties.properties_object import ProjectObject
+from ...properties.properties_object import PropertyObject
 from .project_feature import ProjectFeature, ProjectFeatureID
 
 ResourcesMetadata = typing.Dict[
-    str, typing.List[ProjectObject]
+    str, typing.List[PropertyObject]
     ]
 
 

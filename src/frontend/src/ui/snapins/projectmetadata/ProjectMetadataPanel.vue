@@ -95,7 +95,7 @@ watch(
         <ProjectExportersBar :project="project" :scope="ProjectMetadataFeature.FeatureID" class="p-2 grid justify-end" />
         <PropertyEditor
             v-model="project!.features.project_metadata.metadata"
-            v-model:shared-objects="project!.features.shared_objects"
+            v-model:shared-property-objects="project!.features.shared_objects"
             :projectProfiles="projectProfiles as PropertyProfileStore"
         />
     </div>

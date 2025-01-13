@@ -6,7 +6,7 @@ from dataclasses_json import DataClassJsonMixin
 PropertyValues = dict[str, Any]
 
 @dataclass
-class ProjectObject(DataClassJsonMixin):
+class PropertyObject(DataClassJsonMixin):
     """
     A project object.
 
