@@ -123,7 +123,10 @@ const nextName = computed(() => {
 
 function onClickStep(event: Event, callback: (event: Event) => void) {
     validator.validate();
-    callback(event);
+
+    if (callback) {
+        callback(event);
+    }
 }
 
 function onPrevStep() {
