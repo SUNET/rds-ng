@@ -20,9 +20,5 @@ class EventDispatcher(MessageDispatcher[Event]):
             msg: The command that is about to be dispatched.
             msg_meta: The command meta information.
         """
-        from ...logging import debug
-
-        if not msg_meta.suppress_logging:
-            debug(f"Dispatching event: {msg}", scope="bus")
 
         super().pre_dispatch(msg, msg_meta)

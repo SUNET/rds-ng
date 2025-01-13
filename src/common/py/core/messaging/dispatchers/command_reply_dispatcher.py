@@ -23,10 +23,6 @@ class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
             msg_meta: The command reply meta information.
         """
         from .command_dispatcher import CommandDispatcher
-        from ...logging import debug
-
-        if not msg_meta.suppress_logging:
-            debug(f"Dispatching command reply: {msg}", scope="bus")
 
         super().pre_dispatch(msg, msg_meta)
 

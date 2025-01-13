@@ -5,7 +5,7 @@ import socketio
 
 from .. import Message, Payload
 from ..composers import MessageBuilder
-from ...logging import info, warning, error, debug
+from ...logging import info, warning, error
 from ....utils import UnitID
 from ....utils.config import Configuration
 
@@ -81,7 +81,7 @@ class Client(socketio.Client):
         Establishes the connection to the server.
         """
         if self._server_address != "" and not self.connected:
-            info(f"Connecting to {self._server_address}", scope="client")
+            info(f"Connecting to {self._server_address}", scope="network")
 
             import socketio.exceptions as sioexc
 
@@ -94,7 +94,7 @@ class Client(socketio.Client):
                     retry=True,
                 )
             except sioexc.ConnectionError as exc:
-                error(f"Failed to connect to server: {str(exc)}", scope="client")
+                error(f"Failed to connect to server: {str(exc)}", scope="network")
 
     def send_message(self, msg: Message) -> None:
         """
@@ -106,7 +106,6 @@ class Client(socketio.Client):
             msg: The message to send.
         """
         if self.is_connected:
-            debug(f"Sending message: {msg}", scope="client")
             with self._lock:
                 self.emit(msg.name, data=(msg.to_json(), msg.payload.encode()))
 
@@ -117,7 +116,7 @@ class Client(socketio.Client):
 
             ClientConnectedEvent.build(self._message_builder).emit(Channel.local())
 
-            info("Connected to server", scope="client")
+            info("Connected to server", scope="network")
 
     def _on_connect_error(self, reason: typing.Any) -> None:
         with self._lock:
@@ -128,7 +127,7 @@ class Client(socketio.Client):
                 self._message_builder, reason=str(reason)
             ).emit(Channel.local())
 
-            warning("Unable to connect to server", scope="client", reason=str(reason))
+            warning("Unable to connect to server", scope="network", reason=str(reason))
 
     def _on_disconnect(self) -> None:
         with self._lock:
@@ -137,7 +136,7 @@ class Client(socketio.Client):
 
             ClientDisconnectedEvent.build(self._message_builder).emit(Channel.local())
 
-            info("Disconnected from server", scope="client")
+            info("Disconnected from server", scope="network")
 
     def _on_message(self, msg_name: str, data: str, payload: Payload) -> None:
         with self._lock:

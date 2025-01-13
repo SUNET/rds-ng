@@ -167,14 +167,6 @@ class NetworkEngine:
         except Exception as exc:  # pylint: disable=broad-exception-caught
             self._routing_error(str(exc), data=data)
         else:
-            from ...logging import debug
-
-            debug(
-                f"Received message: {msg}",
-                scope="network",
-                entrypoint=entrypoint.name,
-            )
-
             con_type = (
                 NetworkFilter.ConnectionType.SERVER
                 if entrypoint == MessageMetaInformation.Entrypoint.SERVER

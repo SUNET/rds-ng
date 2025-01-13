@@ -29,9 +29,7 @@ class CommandReplyComposer(MessageComposer):
 
         self._command = command
 
-    def emit(
-        self, *, suppress_logging: bool = False
-    ) -> None:  # pylint: disable=arguments-differ
+    def emit(self) -> None:  # pylint: disable=arguments-differ
         """
         Sends the built message through the message bus.
         """
@@ -40,14 +38,11 @@ class CommandReplyComposer(MessageComposer):
             if self._command.origin.equals(self._origin_id)
             else Channel.direct(self._command.origin)
         )
-        super().emit(target, suppress_logging=suppress_logging)
+        super().emit(target)
 
-    def _create_meta_information(
-        self, suppress_logging: bool
-    ) -> MessageMetaInformation:
+    def _create_meta_information(self) -> MessageMetaInformation:
         from ..meta import CommandReplyMetaInformation
 
         return CommandReplyMetaInformation(
             entrypoint=MessageMetaInformation.Entrypoint.LOCAL,
-            suppress_logging=suppress_logging,
         )
