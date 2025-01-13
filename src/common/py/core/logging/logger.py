@@ -1,5 +1,4 @@
 import logging
-import threading
 import typing
 
 
@@ -19,8 +18,6 @@ class Logger(logging.Logger):
         """
         super().__init__(name, level)
 
-        self._lock = threading.RLock()
-
         self.addHandler(self._create_default_handler())
 
     def _create_default_handler(self) -> logging.Handler:
@@ -39,69 +36,82 @@ class Logger(logging.Logger):
         Args:
             level: The maximum level for entries to be logged.
         """
-        with self._lock:
-            super().setLevel(level)
-            for handler in self.handlers:
-                handler.setLevel(level)
+        super().setLevel(level)
+        for handler in self.handlers:
+            handler.setLevel(level)
 
     # pylint: disable=arguments-differ
-    def debug(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
+    def debug(
+        self, msg: str, *, scope: str | None = None, flush: bool = False, **kwargs
+    ) -> None:
         """
         Logs a debugging message.
 
         Args:
             msg: The text to log.
             scope: The scope of the entry.
+            flush: Whether to immediately flush the log.
             **kwargs: Any additional parameters.
         """
-        return
-        with self._lock:
-            super().debug(msg, extra=self._pack_extra_params(scope, **kwargs))
-            self._flush()
+        self._log_entry(super().debug, msg, scope=scope, flush=flush, **kwargs)
 
     # pylint: disable=arguments-differ
-    def info(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
+    def info(
+        self, msg: str, *, scope: str | None = None, flush: bool = False, **kwargs
+    ) -> None:
         """
         Logs an information message.
 
         Args:
             msg: The text to log.
             scope: The scope of the entry.
+            flush: Whether to immediately flush the log.
             **kwargs: Any additional parameters.
         """
-        return
-        with self._lock:
-            super().info(msg, extra=self._pack_extra_params(scope, **kwargs))
-            self._flush()
+        self._log_entry(super().info, msg, scope=scope, flush=flush, **kwargs)
 
     # pylint: disable=arguments-differ
-    def warning(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
+    def warning(
+        self, msg: str, *, scope: str | None = None, flush: bool = False, **kwargs
+    ) -> None:
         """
         Logs a warning message.
 
         Args:
             msg: The text to log.
             scope: The scope of the entry.
+            flush: Whether to immediately flush the log.
             **kwargs: Any additional parameters.
         """
-        return
-        with self._lock:
-            super().warning(msg, extra=self._pack_extra_params(scope, **kwargs))
-            self._flush()
+        self._log_entry(super().warning, msg, scope=scope, flush=flush, **kwargs)
 
     # pylint: disable=arguments-differ
-    def error(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
+    def error(
+        self, msg: str, *, scope: str | None = None, flush: bool = False, **kwargs
+    ) -> None:
         """
         Logs an error message.
 
         Args:
             msg: The text to log.
             scope: The scope of the entry.
+            flush: Whether to immediately flush the log.
             **kwargs: Any additional parameters.
         """
-        return
-        with self._lock:
-            super().error(msg, extra=self._pack_extra_params(scope, **kwargs))
+        self._log_entry(super().error, msg, scope=scope, flush=flush, **kwargs)
+
+    def _log_entry(
+        self,
+        cb: any,
+        msg: str,
+        *,
+        scope: str | None = None,
+        flush: bool = False,
+        **kwargs
+    ) -> None:
+        cb(msg, extra=self._pack_extra_params(scope, **kwargs))
+
+        if flush:
             self._flush()
 
     def _pack_extra_params(
@@ -110,6 +120,5 @@ class Logger(logging.Logger):
         return {"scope": scope, "extra_params": kwargs}
 
     def _flush(self) -> None:
-        with self._lock:
-            for handler in self.handlers:
-                handler.flush()
+        for handler in self.handlers:
+            handler.flush()
