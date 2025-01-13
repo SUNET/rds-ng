@@ -84,12 +84,12 @@ export class Client {
      */
     public connectToServer(): void {
         if (!this._socket.connected) {
-            logging.info(`Connecting to ${this._serverAddress}...`, "client");
+            logging.info(`Connecting to ${this._serverAddress}...`, "network");
 
             try {
                 this._socket.connect();
             } catch (err) {
-                logging.error(`Failed to connect to server: ${String(err)}`, "client");
+                logging.error(`Failed to connect to server: ${String(err)}`, "network");
             }
         }
     }
@@ -112,7 +112,6 @@ export class Client {
      */
     public sendMessage(msg: Message): void {
         if (this._socket.connected) {
-            logging.debug(`Sending message: ${String(msg)}`, "client");
             this._socket.emit(msg.name, msg.convertToJSON(), msg.payload.encode());
         }
     }
@@ -120,19 +119,19 @@ export class Client {
     private onConnect(): void {
         ClientConnectedEvent.build(this._messageBuilder).emit(Channel.local());
 
-        logging.info("Connected to server", "client");
+        logging.info("Connected to server", "network");
     }
 
     private onConnectError(reason: any): void {
         ClientConnectionErrorEvent.build(this._messageBuilder, String(reason)).emit(Channel.local());
 
-        logging.warning("Unable to connect to server", "client", { reason: String(reason) });
+        logging.warning("Unable to connect to server", "network", { reason: String(reason) });
     }
 
     private onDisconnect(): void {
         ClientDisconnectedEvent.build(this._messageBuilder).emit(Channel.local());
 
-        logging.info("Disconnected from server", "client");
+        logging.info("Disconnected from server", "network");
     }
 
     private onMessage(msgName: string, data: string, payload: Payload): void {

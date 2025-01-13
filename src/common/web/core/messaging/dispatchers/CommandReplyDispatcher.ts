@@ -1,4 +1,3 @@
-import logging from "../../logging/Logging";
 import { CommandReply } from "../CommandReply";
 import { CommandReplyMetaInformation } from "../meta/CommandReplyMetaInformation";
 import { CommandDispatcher } from "./CommandDispatcher";
@@ -19,7 +18,6 @@ export class CommandReplyDispatcher extends MessageDispatcher<CommandReply, Comm
      * @throws Error - If the meta information type is invalid.
      */
     public preDispatch<MsgType extends CommandReply>(msg: MsgType, msgMeta: CommandReplyMetaInformation): void {
-        logging.debug(`Dispatching command reply: ${String(msg)}`, "bus");
         super.preDispatch(msg, msgMeta);
 
         CommandDispatcher.invokeReplyCallbacks(msg.unique, msg, msgMeta);
