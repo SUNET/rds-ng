@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type TreeNode } from "primevue/treenode";
+import type { TreeNode } from "primevue/treenode";
 import TreeSelect from "primevue/treeselect";
 import { type PropType, ref, toRefs, watch } from "vue";
 
