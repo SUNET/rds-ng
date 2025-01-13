@@ -102,7 +102,7 @@ class Server(socketio.Server):
                 if timed_out_component in self._connected_components:
                     debug(
                         "Component timed out, disconnecting",
-                        scope="server",
+                        scope="network",
                         component=str(timed_out_component),
                         timeout=self._connected_components[timed_out_component].timeout,
                     )
@@ -135,8 +135,6 @@ class Server(socketio.Server):
             skip_components: A list of components (clients) to be excluded from the targets.
         """
         with self._lock:
-            debug(f"Sending message: {msg}", scope="server")
-
             if msg.target.is_direct and msg.target.target_id is not None:
                 self._timestamp_component(msg.target.target_id)
 
@@ -167,13 +165,13 @@ class Server(socketio.Server):
             if comp_id in self._connected_components:
                 warning(
                     f"A component with the ID {comp_id} has already been connected to the server",
-                    scope="server",
+                    scope="network",
                 )
 
             if self._purge_client(sid):
                 warning(
                     f"A client with the SID {sid} has already been connected to the server",
-                    scope="server",
+                    scope="network",
                 )
 
             from ....settings import NetworkServerSettingIDs
@@ -195,7 +193,7 @@ class Server(socketio.Server):
                 self._message_builder, comp_id=comp_id, client_id=sid
             ).emit(Channel.local())
 
-            info("Client connected", scope="server", session=sid, component=comp_id)
+            info("Client connected", scope="network", session=sid, component=comp_id)
 
     def _on_disconnect(self, sid: str) -> None:
         with self._lock:
@@ -210,7 +208,7 @@ class Server(socketio.Server):
                 self._message_builder, comp_id=comp_id, client_id=sid
             ).emit(Channel.local())
 
-            info("Client disconnected", scope="server", session=sid)
+            info("Client disconnected", scope="network", session=sid)
 
     def _on_message(self, msg_name: str, sid: str, data: str, payload: Payload) -> None:
         with self._lock:

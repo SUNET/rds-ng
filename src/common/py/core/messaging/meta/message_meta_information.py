@@ -29,8 +29,6 @@ class MessageMetaInformation:
 
     requires_reply: bool = False
 
-    suppress_logging: bool = False
-
     @property
     def is_handled_externally(self) -> bool:
         """

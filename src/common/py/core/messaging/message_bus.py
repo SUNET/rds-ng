@@ -145,7 +145,7 @@ class MessageBus:
 
             ComponentProcessEvent.build(
                 MessageBuilder(self._comp_data.comp_id, self)
-            ).emit(Channel.local(), suppress_logging=True)
+            ).emit(Channel.local())
 
             threading.Timer(1.0, self._process).start()
 
