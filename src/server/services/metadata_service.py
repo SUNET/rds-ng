@@ -18,7 +18,7 @@ def create_metadata_service(comp: ServerComponent) -> Service:
 
     svc = comp.create_service("Metadata service", context_type=ServerServiceContext)
 
-    @svc.message_handler(GetMetadataProfilesCommand)
+    @svc.message_handler(GetMetadataProfilesCommand, is_async=True)
     def server_timeout(
         msg: GetMetadataProfilesCommand, ctx: ServerServiceContext
     ) -> None:

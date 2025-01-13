@@ -1,4 +1,4 @@
-import { type TreeNode } from "primevue/treenode";
+import type { TreeNode } from "primevue/treenode";
 import { type Ref } from "vue";
 
 import { flattenResourcesTreeNodes } from "../../../data/entities/resource/ResourceUtils";

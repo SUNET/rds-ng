@@ -35,7 +35,7 @@ def create_connectors_service(comp: ServerComponent) -> Service:
 
     svc = comp.create_service("Connectors service", context_type=ServerServiceContext)
 
-    @svc.message_handler(ConnectorAnnounceEvent)
+    @svc.message_handler(ConnectorAnnounceEvent, is_async=True)
     def connector_announce(
         msg: ConnectorAnnounceEvent, ctx: ServerServiceContext
     ) -> None:
@@ -93,7 +93,7 @@ def create_connectors_service(comp: ServerComponent) -> Service:
                 error=str(exc),
             )
 
-    @svc.message_handler(ComponentProcessEvent)
+    @svc.message_handler(ComponentProcessEvent, is_async=True)
     def purge_obsolete_connectors(
         msg: ComponentProcessEvent, ctx: ServerServiceContext
     ) -> None:
@@ -113,7 +113,7 @@ def create_connectors_service(comp: ServerComponent) -> Service:
                         name=connector.name,
                     )
 
-    @svc.message_handler(ListConnectorsCommand)
+    @svc.message_handler(ListConnectorsCommand, is_async=True)
     def list_connectors(msg: ListConnectorsCommand, ctx: ServerServiceContext) -> None:
         ListConnectorsReply.build(
             ctx.message_builder,

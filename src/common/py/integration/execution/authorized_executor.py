@@ -96,11 +96,12 @@ class AuthorizedExecutor(abc.ABC):
             with self._lock:
                 cb_failed(msg)
 
-        GetAuthorizationTokenCommand.build(
-            self._service.message_builder,
-            user_id=self._user_token.user_id,
-            auth_id=self._auth_id,
-            api_key=self._api_key,
-        ).done(_get_auth_token_done).failed(_get_auth_token_failed).emit(
-            self._auth_channel
-        )
+        with self._lock:
+            GetAuthorizationTokenCommand.build(
+                self._service.message_builder,
+                user_id=self._user_token.user_id,
+                auth_id=self._auth_id,
+                api_key=self._api_key,
+            ).done(_get_auth_token_done).failed(_get_auth_token_failed).emit(
+                self._auth_channel
+            )

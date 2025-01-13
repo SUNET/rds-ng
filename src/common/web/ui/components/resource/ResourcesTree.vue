@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { type TreeNode } from "primevue/treenode";
 import Tree from "primevue/tree";
+import type { TreeNode } from "primevue/treenode";
 import { type PropType, ref, toRefs, unref, watch } from "vue";
 
 import { useResourceTreeTools } from "./ResourceTreeTools";

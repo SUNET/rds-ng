@@ -18,7 +18,7 @@ def create_component_service(comp: BackendComponent) -> Service:
 
     svc = comp.create_service("Component service")
 
-    @svc.message_handler(ComponentInformationEvent)
+    @svc.message_handler(ComponentInformationEvent, is_async=True)
     def component_information(
         msg: ComponentInformationEvent, ctx: ServiceContext
     ) -> None:
@@ -37,7 +37,7 @@ def create_component_service(comp: BackendComponent) -> Service:
                 chain=msg,
             ).emit(remote_channel)
 
-    @svc.message_handler(ComponentProcessEvent)
+    @svc.message_handler(ComponentProcessEvent, is_async=True)
     def component_process(msg: ComponentProcessEvent, ctx: ServiceContext) -> None:
         # Listen to this event to avoid complains about unhandled messages
         pass

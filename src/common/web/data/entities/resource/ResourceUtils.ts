@@ -1,4 +1,4 @@
-import { type TreeNode } from "primevue/treenode";
+import type { TreeNode } from "primevue/treenode";
 
 import { ResourcesList } from "./ResourcesList";
 
@@ -26,7 +26,7 @@ export function resourcesListToTreeNodes(resources: ResourcesList, simpleData: b
             key: fileResource.filename,
             label: fileResource.basename,
             data: simpleData ? fileResource.filename : fileResource,
-            icon: "material-icons-outlined mi-description",
+            icon: "material-icons-outlined mi-description"
         } as TreeNode);
     }
 
@@ -36,8 +36,8 @@ export function resourcesListToTreeNodes(resources: ResourcesList, simpleData: b
             label: resources.resource.basename || "/",
             data: simpleData ? resources.resource.filename : resources.resource,
             icon: "material-icons-outlined mi-folder",
-            children: [...sortNodes(folderNodes), ...sortNodes(fileNodes)],
-        } as TreeNode,
+            children: [...sortNodes(folderNodes), ...sortNodes(fileNodes)]
+        } as TreeNode
     ];
 }
 

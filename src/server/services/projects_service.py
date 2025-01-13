@@ -42,7 +42,7 @@ def create_projects_service(comp: ServerComponent) -> Service:
 
     svc = comp.create_service("Projects service", context_type=ServerServiceContext)
 
-    @svc.message_handler(ListProjectsCommand)
+    @svc.message_handler(ListProjectsCommand, is_async=True)
     def list_projects(msg: ListProjectsCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(msg, ListProjectsReply, projects=[]):
             return
@@ -53,7 +53,7 @@ def create_projects_service(comp: ServerComponent) -> Service:
             projects=ctx.storage_pool.project_storage.filter_by_user(ctx.user.user_id),
         ).emit()
 
-    @svc.message_handler(CreateProjectCommand)
+    @svc.message_handler(CreateProjectCommand, is_async=True)
     def create_project(msg: CreateProjectCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(msg, CreateProjectReply, project_id=0):
             return
@@ -89,7 +89,7 @@ def create_projects_service(comp: ServerComponent) -> Service:
 
         send_projects_list(msg, ctx)
 
-    @svc.message_handler(UpdateProjectCommand)
+    @svc.message_handler(UpdateProjectCommand, is_async=True)
     def update_project(msg: UpdateProjectCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(msg, UpdateProjectReply, project_id=0):
             return
@@ -129,7 +129,7 @@ def create_projects_service(comp: ServerComponent) -> Service:
 
         send_projects_list(msg, ctx)
 
-    @svc.message_handler(UpdateProjectFeaturesCommand)
+    @svc.message_handler(UpdateProjectFeaturesCommand, is_async=True)
     def update_project_features(
         msg: UpdateProjectFeaturesCommand, ctx: ServerServiceContext
     ) -> None:
@@ -178,7 +178,7 @@ def create_projects_service(comp: ServerComponent) -> Service:
         # TODO:
         # send_projects_list(msg, ctx)
 
-    @svc.message_handler(MarkProjectLogbookSeenCommand)
+    @svc.message_handler(MarkProjectLogbookSeenCommand, is_async=True)
     def mark_project_logbook_seen(
         msg: MarkProjectLogbookSeenCommand, ctx: ServerServiceContext
     ) -> None:
@@ -238,7 +238,7 @@ def create_projects_service(comp: ServerComponent) -> Service:
             message=message,
         ).emit()
 
-    @svc.message_handler(DeleteProjectCommand)
+    @svc.message_handler(DeleteProjectCommand, is_async=True)
     def delete_project(msg: DeleteProjectCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(msg, DeleteProjectReply, project_id=0):
             return

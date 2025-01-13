@@ -21,7 +21,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         "Authorization service", context_type=ConnectorServiceContext
     )
 
-    @svc.message_handler(RevokeAuthorizationCommand, is_async=False)
+    @svc.message_handler(RevokeAuthorizationCommand)
     def revoke_authorization(
         msg: RevokeAuthorizationCommand, ctx: ConnectorServiceContext
     ):
@@ -38,7 +38,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             msg,
         ).emit()
 
-    @svc.message_handler(RevokeAuthorizationReply, is_async=False)
+    @svc.message_handler(RevokeAuthorizationReply)
     def revoke_authorization_reply(
         msg: RevokeAuthorizationReply, ctx: ConnectorServiceContext
     ):

@@ -35,7 +35,7 @@ class MessageMetaInformationList:
     def __init__(self):
         self._list: typing.Dict[Trace, MessageMetaInformationList._Entry] = {}
 
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
     def add(self, unique: Trace, meta: MessageMetaInformation, timeout: float) -> None:
         """

@@ -26,7 +26,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         "Project jobs service", context_type=ConnectorServiceContext
     )
 
-    @svc.message_handler(StartProjectJobCommand)
+    @svc.message_handler(StartProjectJobCommand, is_async=True)
     def start_job(msg: StartProjectJobCommand, ctx: ConnectorServiceContext) -> None:
         success = False
         message = ""
@@ -61,7 +61,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             message=message,
         ).emit()
 
-    @svc.message_handler(ComponentProcessEvent)
+    @svc.message_handler(ComponentProcessEvent, is_async=True)
     def process_engine(
         msg: ComponentProcessEvent, ctx: ConnectorServiceContext
     ) -> None:
