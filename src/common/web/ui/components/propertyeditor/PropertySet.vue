@@ -37,8 +37,21 @@ const propsToShow = computed(() =>
         )
         .filter(
             (e: ProfileLayoutClass) =>
+                // search in label
                 e.getDisplayLabel().toLowerCase().includes(searchString.value.toLowerCase()) ||
-                e.description?.toLowerCase().includes(searchString.value.toLowerCase())
+                // search in description
+                e.description?.toLowerCase().includes(searchString.value.toLowerCase()) ||
+                // search in simple property objects
+                !Object.values(props.propertyObjects.get(e.id).getValues()).findIndex((v: string) =>
+                    v.toLowerCase().includes(searchString.value.toLowerCase())
+                ) ||
+                // search in referenced property objects
+                !props.propertyObjects
+                    .getReferencedObjects(e.id)
+                    .map((o: String) => props.sharedPropertyObjectStore.get(o).getValues())
+                    .map((e: String[]) => Object.values(e))
+                    .flat()
+                    .findIndex((v: string) => v.toLowerCase().includes(searchString.value.toLowerCase()))
         )
         .sort((a: ProfileLayoutClass, b: ProfileLayoutClass) => -a.profiles!.length - -b.profiles!.length)
 );
@@ -46,11 +59,6 @@ const propsToShow = computed(() =>
 const selectedProperties = ref([]) as Ref<ProfileLayoutClass[]>;
 const unselectProperties = () => (selectedProperties.value = []);
 const selectProperties = (selection: ProfileLayoutClass[]) => (selectedProperties.value = selection);
-
-// FIXME
-const hideProperty = (id: string) => {
-    propsToShow.value = propsToShow.value.filter((e: ProfileLayoutClass) => e.getId() != id);
-};
 
 const showAddProperties = ref(false);
 const hiddenPropertys = computed(() =>
@@ -80,7 +88,6 @@ const resetFilters = () => {
                 <InputIcon class="pi pi-search"> </InputIcon>
                 <InputText type="text" v-model="searchString" id="searchString" class="w-full" placeholder="Search..." autocomplete="off" />
             </IconField>
-
             <div v-if="projectProfiles.list().length > 1" class="my-3 flex justify-between">
                 <span class="flex align-center gap-2">
                     <Chip
@@ -132,7 +139,6 @@ const resetFilters = () => {
             :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
             :projectProfiles="projectProfiles"
             :layoutProfiles="layout"
-            @hide="(id) => hideProperty(id)"
         />
     </div>
     <Button
