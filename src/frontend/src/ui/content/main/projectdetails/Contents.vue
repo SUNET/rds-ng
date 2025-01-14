@@ -69,7 +69,7 @@ watch(
                     <ContentsTabHeader :title="panel.title" :description="panel.description" />
                 </Tab>
             </TabList>
-            <TabPanels class="overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full">
+            <TabPanels class="overflow-y-scroll max-h-[calc(100vh-8.0rem)] p-0 h-full">
                 <TabPanel v-for="panel in panels" :value="panel.title" class="h-full">
                     <component :is="panel.component" :project="project" :sharedPropertyObjectStore="sharedPropertyObjectStore" />
                 </TabPanel>

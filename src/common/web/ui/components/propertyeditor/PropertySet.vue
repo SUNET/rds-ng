@@ -87,6 +87,13 @@ const resetFilters = () => {
             <IconField iconPosition="left">
                 <InputIcon class="pi pi-search"> </InputIcon>
                 <InputText type="text" v-model="searchString" id="searchString" class="w-full" placeholder="Search..." autocomplete="off" />
+                <InputIcon
+                    @click.stop="searchString = ''"
+                    disabled="searchstring == ''"
+                    class="pi pi-times-circle"
+                    :class="{ 'hover:text-red-400': searchString !== '' }"
+                    title="Reset search"
+                />
             </IconField>
             <div v-if="projectProfiles.list().length > 1" class="my-3 flex justify-between">
                 <span class="flex align-center gap-2">
@@ -109,23 +116,22 @@ const resetFilters = () => {
                         "
                     />
                 </span>
-                <span class="flex align-center gap-2" title="Hide optional properties." aria-label="Hide optional properties.">
+
+                <div v-if="searchString" class="italic text-center">
+                    {{ propsToShow.length > 0 ? propsToShow.length : "No " }} match{{ propsToShow.length != 1 ? `es` : "" }} for
+                    <span class="font-bold">{{ searchString }}</span>
+                </div>
+
+                <span class="flex justify-self-end gap-4" grid>
+                    <span class="flex gap-2" title="Hide optional properties." aria-label="Hide optional properties.">
                     <label for="required">Required only</label>
                     <InputSwitch v-model="requiredOnly" inputId="required" />
+                    </span>
+                    <span class="flex gap-2" title="Show all missing properties." aria-label="Show all missing properties.">
+                        <label for="missing">Missing only</label>
+                        <InputSwitch v-model="missingOnly" inputId="missing" />
+                    </span>
                 </span>
-            </div>
-        </div>
-
-        <!-- TODO: Put into its own component -->
-        <div v-if="searchString && propsToShow.length == 0" class="w-full text-center">
-            No matches for <span class="font-bold">{{ searchString }}</span
-            >...
-        </div>
-        <div v-else-if="searchString">
-            <div class="w-full text-center">
-                <span class="font-bold">{{ propsToShow.length }}</span> match{{ propsToShow.length > 1 ? `es` : "" }} for
-                <span class="font-bold">{{ searchString }}</span
-                >...
             </div>
         </div>
 
