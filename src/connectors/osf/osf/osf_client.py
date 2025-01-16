@@ -47,13 +47,15 @@ class OSFClient(RequestsExecutor):
             max_attempts: The number of attempts for each operation; cannot be less than 1.
             attempts_delay: The delay (in seconds) between each attempt.
         """
+        from ...base.settings import ConnectorSettingIDs
+
         super().__init__(
             comp,
             svc,
             connector_instance=connector_instance,
             auth_channel=auth_channel,
             user_token=user_token,
-            base_url="https://api.test.osf.io/v2/",
+            base_url=comp.data.config.value(ConnectorSettingIDs.TARGET),
             max_attempts=max_attempts,
             attempts_delay=attempts_delay,
         )

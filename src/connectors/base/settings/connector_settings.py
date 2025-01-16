@@ -16,9 +16,12 @@ def get_connector_settings() -> typing.Dict[SettingID, typing.Any]:
         AuthorizationSettingIDs,
         OAuth2AuthorizationSettingIDs,
     )
+    from .connector_setting_ids import ConnectorSettingIDs
     from .transmission_setting_ids import TransmissionSettingIDs
 
     return {
+        # Connector settings
+        ConnectorSettingIDs.TARGET: "",
         # Authorization settings
         AuthorizationSettingIDs.STRATEGY: "",
         # OAuth2 settings
