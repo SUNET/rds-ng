@@ -70,7 +70,17 @@ function onEditUserSettings(): void {
                     class="size-12 p-overlay-badge"
                     @click="onShowJobsPanel"
                 />
-                <Badge severity="danger" class="float-left relative top-3/4 left-3/4" :class="{ hidden: !jobsPanelBadgeVisible }" />
+                <Badge
+                    severity="danger"
+                    class="float-left relative top-3/4 left-3/4"
+                    :value="
+                        Math.min(
+                            projects.map((project) => getUnseenProjectJobHistoryRecords(project).length).reduce((p, a) => p + a, 0),
+                            1
+                        )
+                    "
+                    :class="{ hidden: !jobsPanelBadgeVisible }"
+                />
             </div>
 
             <Button

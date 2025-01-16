@@ -73,9 +73,13 @@ const filteredProperties = computed(() =>
     )
 );
 
+const resetSearch = () => {
+    searchString.value = "";
+};
+
 const resetFilters = () => {
     profileFilter.value = [];
-    searchString.value = "";
+    resetSearch();
     requiredOnly.value = false;
 };
 </script>
@@ -83,20 +87,28 @@ const resetFilters = () => {
 <template>
     <div class="w-full max-w-full">
         <!-- TODO In eigene Komponente auslagern, auch zum "add Properties" Dialog hinzufuegen. -->
-        <div class="m-5 mb-5 mr-0" :class="projectProfiles.list().length > 1 ? 'border-b' : ''">
+        <div class="m-5 mb-5 mr-2" :class="projectProfiles.list().length > 1 ? 'border-b' : ''">
             <IconField iconPosition="left">
                 <InputIcon class="pi pi-search"> </InputIcon>
-                <InputText type="text" v-model="searchString" id="searchString" class="w-full" placeholder="Search..." autocomplete="off" />
+                <InputText
+                    type="text"
+                    v-model="searchString"
+                    id="searchString"
+                    class="w-full"
+                    placeholder="Search..."
+                    autocomplete="off"
+                    @keydown.esc="resetSearch()"
+                />
                 <InputIcon
-                    @click.stop="searchString = ''"
-                    disabled="searchstring == ''"
+                    @click.stop="resetSearch()"
+                    disabled="!searchstring"
                     class="pi pi-times-circle"
-                    :class="{ 'hover:text-red-400': searchString !== '' }"
+                    :class="{ 'hover:text-red-400': !!searchString }"
                     title="Reset search"
                 />
             </IconField>
-            <div v-if="projectProfiles.list().length > 1" class="my-3 flex justify-between">
-                <span class="flex align-center gap-2">
+            <div class="my-3 flex justify-between w-full">
+                <span v-if="projectProfiles.list().length > 1" class="flex align-center gap-2">
                     <Chip
                         :label="`All (${layout.filter((e: ProfileLayoutClass) => e.required || props.propertyObjects.get(e.id) !== undefined).length})`"
                         title="Show all properties"
@@ -116,21 +128,20 @@ const resetFilters = () => {
                         "
                     />
                 </span>
-
-                <div v-if="searchString" class="italic text-center">
+                <div class="italic flex-grow text-center" :class="{ invisible: !searchString }">
                     {{ propsToShow.length > 0 ? propsToShow.length : "No " }} match{{ propsToShow.length != 1 ? `es` : "" }} for
                     <span class="font-bold">{{ searchString }}</span>
                 </div>
 
-                <span class="flex justify-self-end gap-4" grid>
+                <span v-if="projectProfiles.list().length > 1" class="flex justify-self-end gap-4" grid>
                     <span class="flex gap-2" title="Hide optional properties." aria-label="Hide optional properties.">
                     <label for="required">Required only</label>
                     <InputSwitch v-model="requiredOnly" inputId="required" />
                     </span>
-                    <span class="flex gap-2" title="Show all missing properties." aria-label="Show all missing properties.">
+                    <!-- TODO                    <span class="flex gap-2" title="Show all missing properties." aria-label="Show all missing properties.">
                         <label for="missing">Missing only</label>
                         <InputSwitch v-model="missingOnly" inputId="missing" />
-                    </span>
+                    </span> -->
                 </span>
             </div>
         </div>

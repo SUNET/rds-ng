@@ -2,6 +2,7 @@
 // @ts-nocheck
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
+import ScrollPanel from "primevue/scrollpanel";
 import { watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -66,13 +67,13 @@ function isProjectDeleted(project: Project): boolean {
 </script>
 
 <template>
-    <div>
+    <ScrollPanel class="h-full">
         <Listbox
             v-model="activeProject"
             :options="projects"
             option-value="project_id"
             :option-disabled="isProjectDeleted"
-            class="w-full h-full"
+            class="w-full h-fit"
             :pt="{
                 root: 'projects-listbox',
                 listContainer: 'projects-listbox-container',
@@ -95,13 +96,14 @@ function isProjectDeleted(project: Project): boolean {
                 <div class="r-text-caption-big r-small-caps grid justify-center">No current projects</div>
             </template>
         </Listbox>
-    </div>
+    </ScrollPanel>
 </template>
 
 <style scoped lang="scss">
 :deep(.projects-listbox) {
     // Max height is 100% - header height (5rem) - footer height (6rem)
-    @apply border-0 rounded-none bg-inherit overflow-y-auto max-h-[calc(100vh-5rem-6rem)] #{!important};
+    // did not work out, need 1 less rem because of wonky behaviour when overlay panel is active
+    @apply border-0 rounded-none bg-inherit max-h-[calc(100vh-5rem-7rem)] #{!important};
 }
 
 :deep(.projects-listbox.p-focus) {
