@@ -3,6 +3,9 @@ import Button from "primevue/button";
 import Chip from "primevue/chip";
 import Dialog from "primevue/dialog";
 import FloatLabel from "primevue/floatlabel";
+import IconField from "primevue/iconfield";
+import InputIcon from "primevue/inputicon";
+import InputSwitch from "primevue/inputswitch";
 import InputText from "primevue/inputtext";
 import OrderList from "primevue/orderlist";
 
@@ -12,26 +15,50 @@ import { calculateLayout as makeLayout } from "./utils/PropertyEditorUtils";
 
 import { PropertyObjectStore } from "./PropertyObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
-import { ProfileLayoutClass } from "./PropertyProfile";
+import { type ProfileID, ProfileLayoutClass } from "./PropertyProfile";
 
 const props = defineProps(["controller", "project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore"]);
 const colorsStore = useColorsStore();
 
 var layout = makeLayout(props.projectProfiles);
 
-const propsToShow = ref<ProfileLayoutClass[]>(
+const profileFilter = ref<ProfileID[]>([]);
+const requiredOnly = ref(false);
+const addSearchString = ref("");
+const searchString = ref("");
+
+// TODO Comment and maybe refactor to have dynamic filters
+const propsToShow = computed(() =>
     layout
-        .filter((e: ProfileLayoutClass) => e.required || props.propertyObjects.get(e.id) !== undefined)
+        .filter((e: ProfileLayoutClass) => e.required || (requiredOnly.value ? false : props.propertyObjects.get(e.id) !== undefined))
+        .filter(
+            (e: ProfileLayoutClass) =>
+                profileFilter.value.length === 0 || e.profiles.some((p: ProfileID) => profileFilter.value.map((i) => i[0]).includes(p[0]))
+        )
+        .filter(
+            (e: ProfileLayoutClass) =>
+                // search in label
+                e.getDisplayLabel().toLowerCase().includes(searchString.value.toLowerCase()) ||
+                // search in description
+                e.description?.toLowerCase().includes(searchString.value.toLowerCase()) ||
+                // search in simple property objects
+                !Object.values(props.propertyObjects.get(e.id).getValues()).findIndex((v: string) =>
+                    v.toLowerCase().includes(searchString.value.toLowerCase())
+                ) ||
+                // search in referenced property objects
+                !props.propertyObjects
+                    .getReferencedObjects(e.id)
+                    .map((o: String) => props.sharedPropertyObjectStore.get(o).getValues())
+                    .map((e: String[]) => Object.values(e))
+                    .flat()
+                    .findIndex((v: string) => v.toLowerCase().includes(searchString.value.toLowerCase()))
+        )
         .sort((a: ProfileLayoutClass, b: ProfileLayoutClass) => -a.profiles!.length - -b.profiles!.length)
 );
 
 const selectedProperties = ref([]) as Ref<ProfileLayoutClass[]>;
 const unselectProperties = () => (selectedProperties.value = []);
 const selectProperties = (selection: ProfileLayoutClass[]) => (selectedProperties.value = selection);
-
-const hideProperty = (id: string) => {
-    propsToShow.value = propsToShow.value.filter((e: ProfileLayoutClass) => e.getId() != id);
-};
 
 const showAddProperties = ref(false);
 const hiddenPropertys = computed(() =>
@@ -41,16 +68,84 @@ const hiddenPropertys = computed(() =>
 const filteredProperties = computed(() =>
     hiddenPropertys.value.filter(
         (e: ProfileLayoutClass) =>
-            e.getDisplayLabel().toLowerCase().includes(searchString.value.toLowerCase()) ||
-            e.description?.toLowerCase().includes(searchString.value.toLowerCase())
+            e.getDisplayLabel().toLowerCase().includes(addSearchString.value.toLowerCase()) ||
+            e.description?.toLowerCase().includes(addSearchString.value.toLowerCase())
     )
 );
 
-const searchString = ref("");
+const resetSearch = () => {
+    searchString.value = "";
+};
+
+const resetFilters = () => {
+    profileFilter.value = [];
+    resetSearch();
+    requiredOnly.value = false;
+};
 </script>
 
 <template>
     <div class="w-full max-w-full">
+        <!-- TODO In eigene Komponente auslagern, auch zum "add Properties" Dialog hinzufuegen. -->
+        <div class="m-5 mb-5 mr-2" :class="projectProfiles.list().length > 1 ? 'border-b' : ''">
+            <IconField iconPosition="left">
+                <InputIcon class="pi pi-search"> </InputIcon>
+                <InputText
+                    type="text"
+                    v-model="searchString"
+                    id="searchString"
+                    class="w-full"
+                    placeholder="Search..."
+                    autocomplete="off"
+                    @keydown.esc="resetSearch()"
+                />
+                <InputIcon
+                    @click.stop="resetSearch()"
+                    disabled="!searchstring"
+                    class="pi pi-times-circle"
+                    :class="{ 'hover:text-red-400': !!searchString }"
+                    title="Reset search"
+                />
+            </IconField>
+            <div class="my-3 flex justify-between w-full">
+                <span v-if="projectProfiles.list().length > 1" class="flex align-center gap-2">
+                    <Chip
+                        :label="`All (${layout.filter((e: ProfileLayoutClass) => e.required || props.propertyObjects.get(e.id) !== undefined).length})`"
+                        title="Show all properties"
+                        class="h-4 !rounded py-3 text-sm border border-slate-700 cursor-pointer"
+                        :class="profileFilter.length === 0 && !searchString && !requiredOnly ? 'text-emerald-100 bg-slate-700' : ''"
+                        @click="resetFilters"
+                    />
+                    <Chip
+                        v-for="profile in projectProfiles.list()"
+                        :label="profile.getDisplayLabel()"
+                        class="h-4 !rounded py-3 text-sm border cursor-pointer"
+                        :class="profileFilter.includes(profile.getId()) ? 'bg-emerald-50 border-emerald-600 text-slate-700' : ''"
+                        @click="
+                            profileFilter.includes(profile.getId())
+                                ? (profileFilter = profileFilter.filter((e) => e !== profile.getId()))
+                                : profileFilter.push(profile.getId())
+                        "
+                    />
+                </span>
+                <div class="italic flex-grow text-center" :class="{ invisible: !searchString }">
+                    {{ propsToShow.length > 0 ? propsToShow.length : "No " }} match{{ propsToShow.length != 1 ? `es` : "" }} for
+                    <span class="font-bold">{{ searchString }}</span>
+                </div>
+
+                <span v-if="projectProfiles.list().length > 1" class="flex justify-self-end gap-4" grid>
+                    <span class="flex gap-2" title="Hide optional properties." aria-label="Hide optional properties.">
+                    <label for="required">Required only</label>
+                    <InputSwitch v-model="requiredOnly" inputId="required" />
+                    </span>
+                    <!-- TODO                    <span class="flex gap-2" title="Show all missing properties." aria-label="Show all missing properties.">
+                        <label for="missing">Missing only</label>
+                        <InputSwitch v-model="missingOnly" inputId="missing" />
+                    </span> -->
+                </span>
+            </div>
+        </div>
+
         <PropertyOneCol
             v-for="(p, i) in propsToShow"
             :key="p.id"
@@ -61,7 +156,6 @@ const searchString = ref("");
             :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
             :projectProfiles="projectProfiles"
             :layoutProfiles="layout"
-            @hide="(id) => hideProperty(id)"
         />
     </div>
     <Button
@@ -70,7 +164,9 @@ const searchString = ref("");
         icon="material-icons-outlined mi-add"
         size="large"
         rounded
+        severity="primary"
         @click="showAddProperties = true"
+        v-tooltip="{ value: 'Add more properties' }"
     />
 
     <Dialog
@@ -81,13 +177,13 @@ const searchString = ref("");
         :style="{ width: '50vw', height: '80vh' }"
         @after-hide="
             unselectProperties();
-            searchString = '';
+            addSearchString = '';
         "
     >
         <template #default>
             <div class="h-full flex-col flex space-y-4">
                 <FloatLabel>
-                    <InputText type="text" v-model="searchString" id="searchString" class="w-full" />
+                    <InputText type="text" v-model="addSearchString" id="searchString" class="w-full" />
                     <label for="searchString">Search...</label>
                 </FloatLabel>
                 <OrderList
@@ -122,7 +218,7 @@ const searchString = ref("");
                     @click="
                         propsToShow.push(...selectedProperties);
                         unselectProperties();
-                        searchString = '';
+                        addSearchString = '';
                         showAddProperties = false;
                     "
                     >Add {{ selectedProperties.length ? "(" + selectedProperties.length + ")" : "" }}
@@ -132,7 +228,7 @@ const searchString = ref("");
                     severity="secondary"
                     @click="
                         unselectProperties();
-                        searchString = '';
+                        addSearchString = '';
                         showAddProperties = false;
                     "
                     >Cancel

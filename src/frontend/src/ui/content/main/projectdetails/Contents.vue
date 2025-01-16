@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ContentsTabHeader from "@/ui/content/main/projectdetails/ContentsTabHeader.vue";
+import ScrollPanel from "primevue/scrollpanel";
 import Tab from "primevue/tab";
 import TabList from "primevue/tablist";
 import TabPanel from "primevue/tabpanel";
@@ -69,9 +70,11 @@ watch(
                     <ContentsTabHeader :title="panel.title" :description="panel.description" />
                 </Tab>
             </TabList>
-            <TabPanels class="overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full">
+            <TabPanels class="overflow-y-hidden max-h-[calc(100vh-8.0rem)] p-0 h-full">
                 <TabPanel v-for="panel in panels" :value="panel.title" class="h-full">
-                    <component :is="panel.component" :project="project" :sharedPropertyObjectStore="sharedPropertyObjectStore" />
+                    <ScrollPanel class="h-full">
+                        <component :is="panel.component" :project="project" :sharedPropertyObjectStore="sharedPropertyObjectStore" />
+                    </ScrollPanel>
                 </TabPanel>
             </TabPanels>
         </Tabs>

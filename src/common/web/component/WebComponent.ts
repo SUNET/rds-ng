@@ -1,18 +1,17 @@
 import { createPinia } from "pinia";
 import BadgeDirective from "primevue/badgedirective";
 import PrimeVue from "primevue/config";
+import ConfirmationService from "primevue/confirmationservice";
 import ConfirmDialog from "primevue/confirmdialog";
 import ConfirmPopup from "primevue/confirmpopup";
-import ConfirmationService from "primevue/confirmationservice";
-import DynamicDialog from "primevue/dynamicdialog";
 import DialogService from "primevue/dialogservice";
+import DynamicDialog from "primevue/dynamicdialog";
 import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
-import { type App, type Component as VueComp, createApp, inject } from "vue";
+import Tooltip from "primevue/tooltip";
+import { createApp, inject, type App, type Component as VueComp } from "vue";
 import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
-import { Session } from "./Session";
-import { WebComponentData } from "./WebComponentData";
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging";
 import { registerAuthorizationStrategies } from "../integration/authorization/strategies/AuthorizationStrategies";
@@ -24,6 +23,8 @@ import { Configuration, type SettingsContainer } from "../utils/config/Configura
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
+import { Session } from "./Session";
+import { WebComponentData } from "./WebComponentData";
 
 import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
@@ -133,6 +134,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
 
         // And some directives
         app.directive("badge", BadgeDirective);
+        app.directive("tooltip", Tooltip);
 
         // Register various plugins
         app.use(createPinia());

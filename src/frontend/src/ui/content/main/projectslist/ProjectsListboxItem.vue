@@ -10,9 +10,9 @@ import { Project } from "@common/data/entities/project/Project";
 
 import { ConnectorCategory } from "@/data/entities/connector/categories/ConnectorCategory";
 import { findConnectorCategoryByInstanceID } from "@/data/entities/connector/ConnectorUtils";
+import { getAllProjectJobDetails } from "@/data/entities/project/ProjectJobUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useProjectJobsStore } from "@/data/stores/ProjectJobsStore";
-import { getAllProjectJobDetails } from "@/data/entities/project/ProjectJobUtils";
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { useUserStore } from "@/data/stores/UserStore";
 
@@ -133,7 +133,7 @@ const editMenuShown = ref(false);
                 aria-label="Options"
                 title="More options"
                 :class="{ invisible: !editMenuShown, 'group-hover:visible': true }"
-                @click="(event) => editMenu.toggle(event)"
+                @click.stop="(event) => editMenu.toggle(event)"
             >
                 <template #icon>
                     <span class="material-icons-outlined mi-more-vert" :class="[isSelected ? 'r-highlight-text' : 'r-text']" style="font-size: 32px" />

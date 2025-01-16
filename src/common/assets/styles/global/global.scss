@@ -62,11 +62,13 @@ html {
     opacity: 0.7;
 }
 
-.r-text-gray, .r-text-gray * {
+.r-text-gray,
+.r-text-gray * {
     @apply text-slate-600;
 }
 
-.r-text-light-gray, .r-text-light-gray * {
+.r-text-light-gray,
+.r-text-light-gray * {
     @apply text-slate-400;
 }
 
@@ -163,4 +165,8 @@ html {
  */
 .r-z-index-toplevel {
     @apply z-[9999] #{!important};
+}
+
+.p-scrollpanel-bar-y {
+    background-color: #aaa;
 }
