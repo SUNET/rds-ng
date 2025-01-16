@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import Badge from "primevue/badge";
+import OverlayBadge from "primevue/overlaybadge";
 import Button from "primevue/button";
 import Popover from "primevue/popover";
 import { computed, ref, unref } from "vue";
@@ -26,9 +26,13 @@ const { editUserSettings } = useUserTools(comp);
 
 const jobsPanel = ref();
 const jobsPanelIcon = computed(() => (unref(jobs).length ? "material-icons-outlined mi-rocket-launch -rotate-45" : "material-icons-outlined mi-rocket"));
-const jobsPanelBadgeVisible = computed(
-    () => unref(projects).find((project) => getUnseenProjectJobHistoryRecords(project).length > 0) || unref(jobs).length > 0
-);
+const jobPanelBadgeCounter = computed(() => {
+    let count: number = unref(jobs).length;
+    count += unref(projects)
+        .map((project) => getUnseenProjectJobHistoryRecords(project).length)
+        .reduce((v, acc) => v + acc, 0);
+    return count;
+});
 
 function onShowJobsPanel(event: Event): void {
     unref(jobsPanel).toggle(event);
@@ -70,16 +74,14 @@ function onEditUserSettings(): void {
                     class="size-12 p-overlay-badge"
                     @click="onShowJobsPanel"
                 />
-                <Badge
+                <OverlayBadge
                     severity="danger"
-                    class="float-left relative top-3/4 left-3/4"
-                    :value="
-                        Math.min(
-                            projects.map((project) => getUnseenProjectJobHistoryRecords(project).length).reduce((p, a) => p + a, 0),
-                            1
-                        )
-                    "
-                    :class="{ hidden: !jobsPanelBadgeVisible }"
+                    class="inset-[-0.3rem]"
+                    :class="{ hidden: jobPanelBadgeCounter <= 0 }"
+                    size="small"
+                    :value="jobPanelBadgeCounter < 9 ? jobPanelBadgeCounter : '9+'"
+                    :title="jobPanelBadgeCounter"
+                    :dt="{ 'outline.width': 0, 'font.weight': '800' }"
                 />
             </div>
 
