@@ -98,7 +98,7 @@ function onPublishInitDone(success: boolean, msg: string): void {
 <template>
     <div
         class="grid grid-rows-auto grid-flow-row gap-0 place-content-start group w-full min-h-20"
-        :class="activeJob ? 'grid-cols-[1fr_40%]' : 'grid-cols-[1fr_min-content]'"
+        :class="activeJob ? 'grid-cols-[1fr_40%]' : 'grid-cols-[1fr_max-content]'"
     >
         <div :id="'connector-instance-' + instance!.instance_id" class="r-text-caption r-text h-6 truncate" :title="instance!.name">
             {{ instance!.name }}
@@ -111,13 +111,15 @@ function onPublishInitDone(success: boolean, msg: string): void {
                 </span>
                 <ProgressBar class="h-3" :value="Math.trunc(activeJob.progress * 100)" :title="activeJob.message" />
             </div>
-            <div v-else :title="disablePublish ? disableReason : category?.verbAction + ' the project'">
+            <div
+                v-else
+                :title="disablePublish ? 'Unable to ' + category?.verbAction.toLowerCase() + ': ' + disableReason : category?.verbAction + ' the project'"
+            >
                 <Button
-                    v-if="category"
+                    v-if="!disablePublish && category"
                     :label="publishTitle"
                     :aria-label="publishTitle"
                     :loading="initiatePublish"
-                    :disabled="disablePublish"
                     rounded
                     size="small"
                     icon="material-icons-outlined mi-rocket-launch"
@@ -125,6 +127,10 @@ function onPublishInitDone(success: boolean, msg: string): void {
                     :pt="{ root: category.buttonClass }"
                     @click="onPublish"
                 />
+                <div v-else class="text-sm r-text-warning">
+                    <span class="font-bold">Unable to {{ category?.verbAction.toLowerCase() }}:<br /></span>
+                    <span>{{ disableReason }}</span>
+                </div>
             </div>
         </div>
 
