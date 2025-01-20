@@ -71,12 +71,12 @@ function onEditUserSettings(): void {
                     title="Jobs"
                     :icon="jobsPanelIcon"
                     icon-class="r-primary-text !text-4xl"
-                    class="size-12 p-overlay-badge"
+                    class="size-12"
                     @click="onShowJobsPanel"
                 />
                 <OverlayBadge
                     severity="danger"
-                    class="inset-[-0.3rem]"
+                    class="inset-[-0.3rem] pt-px"
                     :class="{ hidden: jobPanelBadgeCounter <= 0 }"
                     size="small"
                     :value="jobPanelBadgeCounter < 9 ? jobPanelBadgeCounter : '9+'"
