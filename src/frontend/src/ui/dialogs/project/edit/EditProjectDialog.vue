@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Checkbox from "primevue/checkbox";
 import Fieldset from "primevue/fieldset";
+import IftaLabel from "primevue/iftalabel";
 import InputText from "primevue/inputtext";
 import ScrollPanel from "primevue/scrollpanel";
 import Stepper from "primevue/stepper";
@@ -186,21 +187,25 @@ function onNextStep() {
 
                     <Fieldset legend="General settings">
                         <span class="r-form-field">
-                            <label>Title <MandatoryMark /></label>
-                            <InputText
-                                name="title"
-                                v-bind="title"
-                                v-model="dialogData.userData.title"
-                                placeholder="Title"
-                                :class="{ 'p-invalid': validator.errors.title }"
-                                v-focus
-                            />
+                            <IftaLabel>
+                                <label>Title <MandatoryMark /></label>
+                                <InputText
+                                    name="title"
+                                    v-bind="title"
+                                    v-model="dialogData.userData.title"
+                                    class="w-full"
+                                    :class="{ 'p-invalid': validator.errors.title }"
+                                    v-focus
+                                />
+                            </IftaLabel>
                             <small>The title of the project.</small>
                         </span>
 
                         <span class="r-form-field mt-5">
-                            <label>Description</label>
-                            <Textarea name="description" v-model="dialogData.userData.description" placeholder="Description" rows="3" />
+                            <IftaLabel class="mb-[-0.5rem]">
+                                <label>Description</label>
+                                <Textarea name="description" v-model="dialogData.userData.description" rows="3" class="w-full" />
+                            </IftaLabel>
                             <small>An (optional) project description.</small>
                         </span>
                     </Fieldset>
@@ -236,7 +241,7 @@ function onNextStep() {
                             </div>
                             <div v-else class="grid grid-flow-row">
                                 <span class="flex border border-solid rounded p-2">
-                                    <span class="material-icons-outlined mi-folder opacity-75 pr-2" />
+                                    <span class="basis-0 material-icons-outlined mi-folder opacity-75 pr-2" />
                                     <span>{{ dialogData.userData.datapath }}</span>
                                 </span>
                                 <span>
