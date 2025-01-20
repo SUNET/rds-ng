@@ -71,7 +71,7 @@ const groupedInstances = computed(() =>
 }
 
 :deep(.coninst-listbox-list) {
-    @apply p-0 #{!important};
+    @apply p-0 gap-0 #{!important};
 }
 
 :deep(.coninst-listbox-option) {
