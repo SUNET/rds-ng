@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Fieldset from "primevue/fieldset";
+import IftaLabel from "primevue/iftalabel";
 import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import { string as ystring } from "yup";
@@ -13,7 +14,7 @@ const { vFocus } = useDirectives();
 
 const validator = useValidator({
     name: ystring().trim().required().label("Name").default(dialogData.userData.name),
-    description: ystring().label("Description").default(dialogData.userData.description),
+    description: ystring().label("Description").default(dialogData.userData.description)
 });
 const name = validator.defineComponentBinds("name");
 </script>
@@ -22,21 +23,25 @@ const name = validator.defineComponentBinds("name");
     <form @submit.prevent="acceptDialog" class="r-form">
         <Fieldset legend="General">
             <span class="r-form-field">
-                <label>Name <MandatoryMark /></label>
-                <InputText
-                    name="name"
-                    v-bind="name"
-                    v-model="dialogData.userData.name"
-                    placeholder="Name"
-                    :class="{ 'p-invalid': validator.errors.name }"
-                    v-focus
-                />
+                <IftaLabel>
+                    <label>Name <MandatoryMark /></label>
+                    <InputText
+                        name="name"
+                        v-bind="name"
+                        v-model="dialogData.userData.name"
+                        class="w-full"
+                        :class="{ 'p-invalid': validator.errors.name }"
+                        v-focus
+                    />
+                </IftaLabel>
                 <small>The name of the connection.</small>
             </span>
 
-            <span class="r-form-field">
-                <label>Description</label>
-                <Textarea name="description" v-model.trim="dialogData.userData.description" placeholder="Description" rows="3" />
+            <span class="r-form-field mt-5">
+                <IftaLabel class="mb-[-0.5rem]">
+                    <label>Description</label>
+                    <Textarea name="description" v-model.trim="dialogData.userData.description" rows="3" class="w-full" />
+                </IftaLabel>
                 <small>An (optional) connection description.</small>
             </span>
         </Fieldset>
