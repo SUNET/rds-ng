@@ -2,7 +2,6 @@
 import { computed, type PropType } from "vue";
 import { getRandomId } from "../utils/Ids";
 
-import Button from "primevue/button";
 import RadioButton from "primevue/radiobutton";
 
 import { PropertyObjectStore } from "../PropertyObjectStore";
@@ -20,9 +19,9 @@ const id = getRandomId();
 </script>
 
 <template>
-    <div class="card justify-content-center my-5">
-        <div class="flex flex-col space-y-4">
-            <div v-for="option in inputOptions" :key="option" class="flex align-items-center">
+    <div v-if="!!inputOptions" class="justify-content-center items-center">
+        <div class="flex flex-wrap gap-4">
+            <span v-for="option in inputOptions" :key="option" class="flex shrink grow-0 items-start">
                 <RadioButton
                     class="block"
                     :modelValue="value[inputId]"
@@ -31,20 +30,18 @@ const id = getRandomId();
                     :value="option"
                     @update:modelValue="(val: String) => propertyObjects.update(inputId, propertyObjectId, val)"
                 />
-                <label :for="option + id" class="ml-2">{{ option }}</label>
-            </div>
-        </div>
-        <div class="w-full grid">
-            <Button
-                @click="propertyObjects.update(inputId, propertyObjectId, '')"
-                icon="pi pi-times"
-                severity="secondary"
-                aria-label="clear selection"
-                label="clear"
-                class="justify-self-end"
-                :class="!value[inputId] ? 'invisible' : ''"
-                outlined
-            />
+                <label :for="option + id" class="ml-2 break-all leading-snug">{{ option }}</label>
+            </span>
+
+            <span class="flex shrink grow-0 items-start">
+                <RadioButton
+                    class="block"
+                    :inputId="`reset` + propertyObjectId"
+                    name="dynamic"
+                    @click="propertyObjects.update(inputId, propertyObjectId, '')"
+                />
+                <label :for="`reset` + propertyObjectId" class="ml-2 break-all leading-snug">none</label>
+            </span>
         </div>
     </div>
 </template>
