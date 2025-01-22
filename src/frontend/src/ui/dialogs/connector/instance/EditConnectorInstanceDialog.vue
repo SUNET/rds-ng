@@ -25,14 +25,7 @@ const name = validator.defineComponentBinds("name");
             <span class="r-form-field">
                 <IftaLabel>
                     <label>Name <MandatoryMark /></label>
-                    <InputText
-                        name="name"
-                        v-bind="name"
-                        v-model="dialogData.userData.name"
-                        class="w-full"
-                        :class="{ 'p-invalid': validator.errors.name }"
-                        v-focus
-                    />
+                    <InputText name="name" v-bind="name" v-model="dialogData.userData.name" :class="{ 'p-invalid': validator.errors.name }" fluid v-focus />
                 </IftaLabel>
                 <small>The name of the connection.</small>
             </span>
@@ -40,7 +33,7 @@ const name = validator.defineComponentBinds("name");
             <span class="r-form-field mt-5">
                 <IftaLabel class="mb-[-0.5rem]">
                     <label>Description</label>
-                    <Textarea name="description" v-model.trim="dialogData.userData.description" rows="3" class="w-full" />
+                    <Textarea name="description" v-model.trim="dialogData.userData.description" rows="3" fluid />
                 </IftaLabel>
                 <small>An (optional) connection description.</small>
             </span>

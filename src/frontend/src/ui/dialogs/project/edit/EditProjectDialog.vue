@@ -193,8 +193,8 @@ function onNextStep() {
                                     name="title"
                                     v-bind="title"
                                     v-model="dialogData.userData.title"
-                                    class="w-full"
                                     :class="{ 'p-invalid': validator.errors.title }"
+                                    fluid
                                     v-focus
                                 />
                             </IftaLabel>
@@ -204,7 +204,7 @@ function onNextStep() {
                         <span class="r-form-field mt-5">
                             <IftaLabel class="mb-[-0.5rem]">
                                 <label>Description</label>
-                                <Textarea name="description" v-model="dialogData.userData.description" rows="3" class="w-full" />
+                                <Textarea name="description" v-model="dialogData.userData.description" rows="3" fluid />
                             </IftaLabel>
                             <small>An (optional) project description.</small>
                         </span>
