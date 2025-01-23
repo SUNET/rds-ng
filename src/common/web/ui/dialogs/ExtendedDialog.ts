@@ -44,7 +44,7 @@ export interface ExtendedDialogData<UserDataType> {
     options: ExtendedDialogOptions;
 
     /** A form validator if a schema was provided in the options. */
-    validator?: ExtendedDialogValidator<any>;
+    validator?: ExtendedDialogValidator<any, any>;
 
     /** Called before accepting the dialog to pre-process the dialog data. */
     processData?: (data: UserDataType) => void;

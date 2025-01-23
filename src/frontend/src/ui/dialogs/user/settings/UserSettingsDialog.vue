@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import BlockUI from "primevue/blockui";
-import { storeToRefs } from "pinia";
-import { markRaw, ref, watch } from "vue";
-import { array as yarray } from "yup";
+import { markRaw, ref } from "vue";
 
 import VerticalTabs from "@common/ui/components/verticaltabview/VerticalTabs.vue";
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 
-import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
-import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useUserTools } from "@/ui/tools/user/UserTools";
 
 // import AppearanceTab from "@/ui/dialogs/user/settings/appearance/UserSettingsAppearanceTab.vue";
@@ -22,10 +17,8 @@ import SupportTab from "@/ui/dialogs/user/settings/support/UserSettingsSupportTa
 const comp = FrontendComponent.inject();
 
 const { userSettingsUpdating } = useUserTools(comp);
-const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
+const { dialogData } = useExtendedDialogTools();
 
-const consStore = useConnectorsStore();
-const { connectors } = storeToRefs(consStore);
 const userSettings = ref<UserSettings>(dialogData.userData.userSettings);
 
 const tabs = ref([
@@ -39,31 +32,11 @@ const tabIndices = {
     support: 1 // 2
 };
 const activeTab = ref(tabIndices.connections);
-
-const validator = useValidator({
-    connector_instances: yarray()
-        .required()
-        .test("all-connectors-exist", "The connector '${path}' doesn't exist", (value: ConnectorInstance[], ctx) => {
-            for (const conInst of value) {
-                if (!findConnectorByID(connectors.value, conInst.connector_id)) {
-                    activeTab.value = tabIndices.connections;
-                    return ctx.createError({ path: conInst.connector_id });
-                }
-            }
-            return true;
-        })
-        .default(userSettings.value.connector_instances)
-});
-watch(userSettings.value.connector_instances, (newConInsts) => {
-    validator.setFieldValue("connector_instances", newConInsts);
-});
 </script>
 
 <template>
     <BlockUI :blocked="userSettingsUpdating">
-        <form @submit.prevent="acceptDialog">
-            <VerticalTabs v-model:active-tab="activeTab" :tabs="tabs" :tab-data="userSettings" />
-        </form>
+        <VerticalTabs v-model:active-tab="activeTab" :tabs="tabs" :tab-data="userSettings" />
     </BlockUI>
 </template>
 

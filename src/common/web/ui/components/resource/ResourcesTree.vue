@@ -23,6 +23,9 @@ const props = defineProps({
 });
 const { options, loading } = toRefs(props);
 const model = defineModel<string>({ default: "" });
+const emits = defineEmits<{
+    (e: "changed", path: string): void;
+}>();
 const { expandAllNodes } = useResourceTreeTools();
 
 const isLoading = ref(loading.value);
@@ -37,6 +40,8 @@ const selectedResources = ref<Object>(pathToSelectedResources(model.value));
 watch(selectedResources, (newResources) => {
     const paths = Object.keys(newResources);
     model.value = paths.length > 0 ? paths[0] : "";
+
+    emits("changed", model.value);
 });
 watch(model, (newPath) => {
     selectedResources.value = pathToSelectedResources(newPath);
