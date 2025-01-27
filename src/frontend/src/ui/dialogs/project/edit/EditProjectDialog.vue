@@ -198,7 +198,7 @@ function onNextStep() {
                 <StepPanel :value="stepIndices.main">
                     <div class="mb-2">Set your main project settings, like its title, here. You can always change these later.</div>
 
-                    <Fieldset legend="General settings">
+                    <Fieldset legend="General settings" class="r-form-fieldset">
                         <span class="r-form-field">
                             <IftaLabel>
                                 <label>Title <MandatoryMark /></label>
@@ -222,7 +222,11 @@ function onNextStep() {
                         Select the root data path for your project here. Note that this path cannot be changed once the project has been created.
                     </div>
 
-                    <Fieldset legend="Data path" class="h-fit" :class="{ 'border-[var(--p-inputtext-invalid-border-color)]': validator.hasError('datapath') }">
+                    <Fieldset
+                        legend="Data path"
+                        class="h-fit r-form-fieldset"
+                        :class="{ 'border-[var(--p-inputtext-invalid-border-color)]': validator.hasError('datapath') }"
+                    >
                         <template #legend>
                             <span class="p-fieldset-legend-label">Data path <MandatoryMark /></span>
                         </template>
@@ -256,8 +260,8 @@ function onNextStep() {
                                 </span>
                             </div>
                         </div>
+                        <small class="pt-3"><b>Important:</b> This path cannot be changed after the project has been created!</small>
                     </Fieldset>
-                    <small class="pt-3"><b>Important:</b> This path cannot be changed after the project has been created!</small>
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.features">
@@ -265,7 +269,7 @@ function onNextStep() {
                         Select the features you want to use in this project. You can always turn additional features on or existing ones off later.
                     </div>
 
-                    <Fieldset legend="Features">
+                    <Fieldset legend="Features" class="r-form-fieldset">
                         <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-1">
                             <Checkbox v-model="uiOptions.optional_snapins" :inputId="snapIn.snapInID" :value="snapIn.snapInID" class="self-center" />
                             <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.options.optional!.label }}</label>
@@ -279,7 +283,7 @@ function onNextStep() {
                         always change this selection later.
                     </div>
 
-                    <Fieldset legend="Connections">
+                    <Fieldset legend="Connections" class="r-form-fieldset">
                         <div class="r-form-field">
                             <div class="grid grid-flow-row">
                                 <div class="flex align-items-center">

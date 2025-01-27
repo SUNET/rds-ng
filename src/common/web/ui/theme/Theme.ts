@@ -24,6 +24,24 @@ export function theme(config: Configuration): any {
                     surface: palette(config.value<string>(ThemeSettingIDs.DarkSurfaceColor))
                 }
             }
+        },
+        components: {
+            fieldset: {
+                colorScheme: {
+                    light: {
+                        padding: "0",
+                        borderRadius: "0",
+                        legend: { padding: "0.5rem 0.5rem 0.5rem 0" },
+                        content: { padding: "0.25rem" }
+                    },
+                    dark: {
+                        padding: "0",
+                        borderRadius: "0",
+                        legend: { padding: "0.5rem 0.5rem 0.5rem 0" },
+                        content: { padding: "0.25rem" }
+                    }
+                }
+            }
         }
     });
 }

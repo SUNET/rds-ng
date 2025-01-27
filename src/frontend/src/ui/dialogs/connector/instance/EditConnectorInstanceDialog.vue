@@ -24,7 +24,7 @@ const validator = useValidator(form, {
 
 <template>
     <Form ref="form" :resolver="validator.resolver" validate-on-mount @submit="acceptDialog" class="r-form">
-        <Fieldset legend="General">
+        <Fieldset legend="General" class="r-form-fieldset">
             <span class="r-form-field">
                 <IftaLabel>
                     <label>Name <MandatoryMark /></label>

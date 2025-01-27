@@ -50,3 +50,12 @@
     background: #0369A1;
     border: 1px solid #0369A1;
 }
+
+/*
+ * Dialogs
+ */
+.r-dialog-header {
+    @apply r-primary-bg r-primary-text py-2.5 mb-2 rounded-b-none #{!important};
+    border-radius: inherit;
+}
+

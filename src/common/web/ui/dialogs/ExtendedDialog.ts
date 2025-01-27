@@ -3,6 +3,7 @@ import { type DynamicDialogOptions } from "primevue/dynamicdialogoptions";
 import { defineAsyncComponent } from "vue";
 
 import { type VueComponent, WebComponent } from "../../component/WebComponent";
+import { deepMerge } from "../../utils/ObjectUtils";
 
 import { ExtendedDialogValidator } from "./ExtendedDialogValidator";
 
@@ -99,6 +100,12 @@ export function extendedDialog<UserDataType>(
                 reject();
             };
         }
+
+        dialogProps.pt = deepMerge(dialogProps.pt || {}, {
+            root: "border-none",
+            header: "r-dialog-header",
+            pcCloseButton: { root: "r-primary-text hover:text-[var(--p-button-text-primary-color)]" }
+        });
 
         const dialogOptions: DynamicDialogOptions = {
             props: dialogProps,
