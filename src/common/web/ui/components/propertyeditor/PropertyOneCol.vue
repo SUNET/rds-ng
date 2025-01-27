@@ -132,13 +132,13 @@ const toggleRemoveProperty = (e: Event) => {
             <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4 max-w-full w-full items-center">
                 <span :title="propertyClass.getDisplayLabel()" class="min-w-fit">
                     <span class="text-lg"> {{ propertyClass.getDisplayLabel() }} </span>
-                    <span v-if="propertyClass.isRequired()" v-for="p in profiles">
-                        <MandatoryMark
-                            class="pl-1"
-                            :color="colorsStore.color(p[0], 70, 100)"
-                            :title="`This field is required by ${projectProfiles.getProfileLabelById(p)}`"
-                        />
-                    </span>
+                    <MandatoryMark
+                        v-if="propertyClass.isRequired()"
+                        class="pl-1"
+                        color="red"
+                        :title="`This field is required by ${projectProfiles.getProfileLabelById(p)}`"
+                    />
+
                     <Button v-if="propertyClass.getDescription()" unstyled @click="toggleRemoveDeadLink" :title="propertyClass.getDescription()">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem; color: gray" />
                     </Button>
