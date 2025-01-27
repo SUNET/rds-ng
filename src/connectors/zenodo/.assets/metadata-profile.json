@@ -40,7 +40,7 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
             "displayLabel": "Creator",
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
-            "type": ["creator"],
+            "refs": [{ "classId": "creator" }],
             "required": true,
             "multiple": true
         },
@@ -49,7 +49,7 @@
             "displayLabel": "Contributor",
             "description": "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource. To supply multiple contributors, repeat this property.",
             "example": "Charpy, Antoine; Foo Data Center",
-            "type": ["contributor"],
+            "refs": [{ "classId": "contributor" }],
             "required": false,
             "multiple": true
         },
@@ -58,7 +58,7 @@
             "displayLabel": "Subject",
             "description": "Subject, keyword, classification code, or key phrase describing the resource.",
             "example": "",
-            "type": ["subject"],
+            "refs": [{ "classId": "subject" }],
             "required": true,
             "multiple": false
         },
@@ -75,7 +75,7 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference/",
             "displayLabel": "Funding Reference",
             "description": "Information about financial support (funding) for the resource being registered.",
-            "type": ["fundingReference"],
+            "refs": [{ "classId": "fundingReference" }],
             "required": false,
             "multiple": true
         },
@@ -83,7 +83,7 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date/",
             "displayLabel": "Date",
             "description": "Different dates relevant to the work.",
-            "type": ["date"],
+            "refs": [{ "classId": "date" }],
             "required": false,
             "multiple": true
         }
@@ -94,7 +94,10 @@
             "displayLabel": "Creator",
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             "labelTemplate": "${name}",
-            "type": ["nameIdentifier", "affiliation"],
+            "refs": [
+                { "classId": "nameIdentifier", "inline": true, "multiple": false },
+                { "classId": "affiliation", "inline": true }
+            ],
             "input": [
                 {
                     "id": "name",
@@ -113,22 +116,16 @@
             "labelTemplate": "${nameIdentifier} (${nameIdentifierScheme})",
             "input": [
                 {
+                    "id": "nameIdentifierScheme",
+                    "label": "",
+                    "type": "radiobuttons",
+                    "options": ["ORCID", "GND", "other"],
+                    "description": ""
+                },
+                {
                     "id": "nameIdentifier",
                     "label": "Name Identifier",
                     "type": "string"
-                },
-                {
-                    "id": "nameIdentifierScheme",
-                    "label": "Name Identifier Scheme",
-                    "type": "string",
-                    "description": "The name of the name identifier scheme.",
-                    "example": "ORCID"
-                },
-                {
-                    "id": "schemeURI",
-                    "label": "Scheme URI",
-                    "type": "string",
-                    "description": "The URI of the name identifier scheme."
                 }
             ]
         },
@@ -137,6 +134,13 @@
             "displayLabel": "Affiliation",
             "labelTemplate": "${affiliation}",
             "input": [
+                {
+                    "id": "affiliationIdentifierScheme",
+                    "label": "",
+                    "type": "radiobuttons",
+                    "options": ["ORCID", "GND", "other"],
+                    "description": ""
+                },
                 {
                     "id": "affiliation",
                     "label": "Affiliation",
@@ -148,18 +152,6 @@
                     "label": "Affiliation Identifier",
                     "type": "string",
                     "description": "Uniquely identifies the organizational affiliation of the creator."
-                },
-                {
-                    "id": "affiliationIdentifierScheme",
-                    "label": "Affiliation Identifier Scheme",
-                    "type": "string",
-                    "description": "The name of the affiliation identifier scheme."
-                },
-                {
-                    "id": "schemeURI",
-                    "label": "Affiliation Scheme URI",
-                    "type": "string",
-                    "description": "The URI of the affiliation identifier scheme."
                 }
             ]
         },
@@ -169,7 +161,7 @@
             "description": "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource.",
             "labelTemplate": "${contributorName}",
             "example": "Charpy, Antoine; Foo Data Center",
-            "type": ["nameIdentifier", "affiliation"],
+            "refs": [{ "classId": "nameIdentifier" }, { "classId": "affiliation" }],
             "input": [
                 {
                     "id": "contributorName",
@@ -230,34 +222,12 @@
                     "required": true
                 },
                 {
-                    "id": "subjectScheme",
-                    "label": "Subject Scheme",
-                    "type": "string",
-                    "description": "The name of the subject identifier scheme.",
-                    "example": "Library of Congress Subject Headings (LCSH), ANZSRC Fields of Research",
-                    "required": true
-                },
-                {
-                    "id": "schemeURI",
-                    "label": "Subject Scheme URI",
-                    "type": "string",
-                    "description": "The URI of the subject identifier scheme.",
-                    "example": "https://id.loc.gov/authorities/subjects.html"
-                },
-                {
                     "id": "valueURI",
                     "label": "Value URI",
                     "type": "string",
                     "description": "The URI of the subject term.",
                     "example": "https://id.loc.gov/authorities/subjects/sh85035852.html",
                     "required": true
-                },
-                {
-                    "id": "classificationCode",
-                    "label": "Classification Code",
-                    "type": "string",
-                    "description": "The classification code used for the subject term in the subject scheme.",
-                    "example": "310607 (where 310607 is the classification code associated with the subject term “Nanobiotechnology” in the ANZSRC Fields of Research subject scheme)"
                 }
             ]
         },

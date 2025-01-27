@@ -41,16 +41,16 @@ const { index, propertyClass, propertyObjects, projectProfiles, sharedPropertyOb
 });
 const colorsStore = useColorsStore();
 
-propertyObjects.add(new LayoutPropertyObject(propertyClass.id));
+propertyObjects.add(new LayoutPropertyObject(propertyClass.getId()));
 
 const propertyObject = computed(
-    () => propertyObjects.get(propertyClass.id) || propertyObjects.add(new LayoutPropertyObject(propertyClass.id))
+    () => propertyObjects.get(propertyClass.getId()) || propertyObjects.add(new LayoutPropertyObject(propertyClass.getId()))
 ) as Ref<PropertyObject>;
 
 watch(
-    () => propertyObjects.get(propertyClass.id),
+    () => propertyObjects.get(propertyClass.getId()),
     (obj) => {
-        if (!obj) propertyObjects.add(new LayoutPropertyObject(propertyClass.id));
+        if (!obj) propertyObjects.add(new LayoutPropertyObject(propertyClass.getId()));
     }
 );
 
@@ -59,14 +59,14 @@ const toggleRemoveDeadLink = (event: Event) => {
     op.value.toggle(event);
 };
 
-const displayableInputs = propertyClass["input"] || [];
+const displayableInputs = propertyClass.getInputs();
 
-const addableTypes = propertyClass["type"];
+const addableTypes = propertyClass.getRefTypes();
 
-const linkedObjects = computed(() => propertyObjects.getReferencedObjects(propertyClass.id));
+const linkedObjects = computed(() => propertyObjects.getReferencedObjects(propertyClass.getId()));
 
 const profiles = computed(() => {
-    const profileIDs = layoutProfiles?.find((e) => e.id == propertyObject.value.id)!.profiles as ProfileID[];
+    const profileIDs = layoutProfiles?.find((e) => e.id == propertyObject.value.getId())!.getProfiles() as ProfileID[];
     const filteredProfileIDs: ProfileID[] = [];
 
     profileIDs.forEach((id) => {
@@ -86,18 +86,18 @@ const toggleRemoveProperty = (e: Event) => {
 <template>
     <div class="flex flex-row <!--hover:bg-gray-100--> px-2 pl-0 rounded group max-w-full w-full">
         <div class="grid w-16 justify-center shrink-0">
-            <div class="text-gray-400 mt-0 pt-0 text-lg ml-auto mr-2" :class="propertyClass.required ? '' : 'group-hover:hidden'">{{ index + 1 }}.</div>
+            <div class="text-gray-400 mt-0 pt-0 text-lg ml-auto mr-2" :class="propertyClass.isRequired() ? '' : 'group-hover:hidden'">{{ index + 1 }}.</div>
             <Popover ref="removeProperty" class="py-2 px-5">
                 <div class="flex flex-col gap-4">
                     <h3 class="text-lg font-bold">Remove "{{ propertyClass.getDisplayLabel() }}"?</h3>
-                    <p>The data for property "{{ propertyClass.getDisplayLabel() }}" will be lost.</p>
+                    <p>The data for property "{{ propertyClass.getDisplayLabel() }}" will be lost. Linked Property Objects will be preserved.</p>
                     <div class="flex gap-2 ml-auto">
                         <Button
                             severity="danger"
                             @click="
                                 () => {
-                                    propertyObjects.remove(propertyClass.id);
-                                    emit('hide', propertyClass.id);
+                                    propertyObjects.remove(propertyClass.getId());
+                                    emit('hide', propertyClass.getId());
                                 }
                             "
                         >
@@ -116,12 +116,12 @@ const toggleRemoveProperty = (e: Event) => {
                 </div>
             </Popover>
             <Button
-                :disabled="propertyClass.required"
+                :disabled="propertyClass.isRequired()"
                 text
                 icon="pi pi-trash"
                 :aria-label="'Remove ' + propertyClass.getDisplayLabel()"
                 :title="'Remove ' + propertyClass.getDisplayLabel()"
-                :class="propertyClass.required ? 'invisible' : 'invisible group-hover:visible'"
+                :class="propertyClass.isRequired() ? 'invisible' : 'invisible group-hover:visible'"
                 class="pt-0 mt-0 h-9"
                 @click="toggleRemoveProperty($event)"
                 :pt="{ root: 'text-gray-400 hover:text-red-600 bg-transparent' }"
@@ -132,27 +132,27 @@ const toggleRemoveProperty = (e: Event) => {
             <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4 max-w-full w-full items-center">
                 <span :title="propertyClass.getDisplayLabel()" class="min-w-fit">
                     <span class="text-lg"> {{ propertyClass.getDisplayLabel() }} </span>
-                    <span v-if="propertyClass.required" v-for="p in profiles">
+                    <span v-if="propertyClass.isRequired()" v-for="p in profiles">
                         <MandatoryMark
                             class="pl-1"
                             :color="colorsStore.color(p[0], 70, 100)"
                             :title="`This field is required by ${projectProfiles.getProfileLabelById(p)}`"
                         />
                     </span>
-                    <Button v-if="propertyClass.description" unstyled @click="toggleRemoveDeadLink" :title="propertyClass.description">
+                    <Button v-if="propertyClass.getDescription()" unstyled @click="toggleRemoveDeadLink" :title="propertyClass.getDescription()">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem; color: gray" />
                     </Button>
                     <Popover ref="op" class="max-w-lg">
                         {{ propertyClass.description }}
-                        <p v-if="propertyClass.example" class="mt-2" v-html="`<b>Example</b>: ${propertyClass.example}`" />
+                        <p v-if="propertyClass.getExample()" class="mt-2" v-html="`<b>Example</b>: ${propertyClass.getExample()}`" />
                     </Popover>
                 </span>
                 <span class="mr-auto ml-5 flex gap-1 flex-wrap">
                     <NewPropertyButton
-                        v-for="t in addableTypes"
-                        :key="t"
-                        :type="t"
-                        :parentId="propertyObject['id']"
+                        v-for="t in addableTypes.filter((t) => !t.isInline())"
+                        :key="t.getClassId()"
+                        :type="t.getClassId()"
+                        :parentId="propertyObject.getId()"
                         :propertyObjects="propertyObjects as PropertyObjectStore"
                         :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                         :projectProfiles="projectProfiles"
@@ -192,7 +192,7 @@ const toggleRemoveProperty = (e: Event) => {
                     :key="i"
                     class="m-1 max-w-full"
                     :item-id="i"
-                    :parentId="propertyClass.id"
+                    :parentId="propertyClass.getId()"
                     :propertyObjects="propertyObjects"
                     :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
                     :projectProfiles="projectProfiles"
@@ -213,14 +213,14 @@ const toggleRemoveProperty = (e: Event) => {
             <!-- Simple Input Row -->
             <div v-if="displayableInputs.length > 0" class="space-y-2 mt-2">
                 <div v-for="input in displayableInputs" class="row-span-1">
-                    <span v-if="input.label !== propertyClass.getDisplayLabel()">{{ input.label }}</span>
+                    <span v-if="input.getLabel() !== propertyClass.getDisplayLabel()">{{ input.getLabel() }}</span>
                     <component
-                        :is="propertyDataForms[input['type'] as PropertyDataType]"
+                        :is="propertyDataForms[input.getType() as PropertyDataType]"
                         class="w-full"
-                        :propertyObjectId="propertyObject['id']"
+                        :propertyObjectId="propertyObject.getId()"
                         :propertyObjects="propertyObjects"
-                        :inputId="input['id']"
-                        :inputOptions="input['options'] ? input['options'] : []"
+                        :inputId="input.getId()"
+                        :inputOptions="input.getOptions() ? input.getOptions() : []"
                     />
                 </div>
             </div>

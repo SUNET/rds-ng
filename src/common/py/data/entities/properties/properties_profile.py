@@ -26,9 +26,16 @@ class ProfileClassInput(DataClassJsonMixin):
 
 
 @dataclass
+class ProfileClassRef(DataClassJsonMixin):
+    classId: str
+    required: Optional[bool] = False
+    inline: Optional[bool] = False
+    multiple: Optional[bool] = True
+
+@dataclass
 class ProfileClass(DataClassJsonMixin):
     id: str
-    type: List[str] = field(default_factory=list)
+    refs: List[ProfileClassRef] = field(default_factory=list)
     displayLabel: str = ""
     description: Optional[str] = None
     labelTemplate: str = ""
@@ -39,7 +46,6 @@ class ProfileClass(DataClassJsonMixin):
 
 ProfileClassDictionary = Dict[str, ProfileClass]
 ProfileLayout = List[ProfileClass]
-
 
 @dataclass
 class PropertyProfile(DataClassJsonMixin):
