@@ -112,14 +112,14 @@ const resetFilters = () => {
                     <Chip
                         :label="`All (${layout.filter((e: ProfileLayoutClass) => e.required || props.propertyObjects.get(e.id) !== undefined).length})`"
                         title="Show all properties"
-                        class="h-4 !rounded py-3 text-sm border border-slate-700 cursor-pointer"
+                        class="h-4 !rounded py-3 text-sm border border-slate-700 cursor-pointer select-none"
                         :class="profileFilter.length === 0 && !searchString && !requiredOnly ? 'text-emerald-100 bg-slate-700' : ''"
                         @click="resetFilters"
                     />
                     <Chip
                         v-for="profile in projectProfiles.list()"
                         :label="profile.getDisplayLabel()"
-                        class="h-4 !rounded py-3 text-sm border cursor-pointer"
+                        class="h-4 !rounded py-3 text-sm border cursor-pointer select-none"
                         :class="profileFilter.includes(profile.getId()) ? 'bg-emerald-50 border-emerald-600 text-slate-700' : ''"
                         @click="
                             profileFilter.includes(profile.getId())
@@ -132,7 +132,6 @@ const resetFilters = () => {
                     {{ propsToShow.length > 0 ? propsToShow.length : "No " }} match{{ propsToShow.length != 1 ? `es` : "" }} for
                     <span class="font-bold">{{ searchString }}</span>
                 </div>
-
                 <span v-if="projectProfiles.list().length > 1" class="flex justify-self-end gap-4" grid>
                     <span class="flex gap-2" title="Hide optional properties." aria-label="Hide optional properties.">
                     <label for="required">Required only</label>
@@ -145,7 +144,6 @@ const resetFilters = () => {
                 </span>
             </div>
         </div>
-
         <PropertyOneCol
             v-for="(p, i) in propsToShow"
             :key="p.id"
@@ -190,13 +188,13 @@ const resetFilters = () => {
                     v-model="filteredProperties"
                     @update:selection="(selection: ProfileLayoutClass[]) => selectProperties(selection)"
                     dataKey="id"
-                    class="h-full"
+                    class="h-full select-none"
                     :pt="{ pcListbox: { listContainer: 'min-h-full' } }"
                     :stripedRows="true"
                 >
                     <template #option="slotProps">
-                        <div class="flex flex-col w-full p-1">
-                            <span class="font-semibold flex gap-2" :title="slotProps.option.label">
+                        <div class="flex flex-col w-full p-1" :title="slotProps.option.description">
+                            <span class="font-semibold flex gap-2">
                                 <span class="grow"> {{ slotProps.option.getDisplayLabel() }}</span>
                                 <Chip
                                     v-for="p in slotProps.option.profiles"
@@ -205,7 +203,7 @@ const resetFilters = () => {
                                     :style="`background-color: ${colorsStore.color(p[0])}`"
                                     class="h-4 !rounded py-3 text-sm bg-opacity-40"
                             /></span>
-                            <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.option.description">{{ slotProps.option.description }}</span>
+                            <span class="text-gray-500 ellipsis line-clamp-1">{{ slotProps.option.description }}</span>
                         </div>
                     </template>
                 </OrderList>
