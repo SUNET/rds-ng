@@ -9,7 +9,7 @@ import { calculateLayout as makeLayout } from "./utils/PropertyEditorUtils";
 
 import AddPropertiesDialog from "./AddPropertiesDialog.vue";
 import PropertyEditorSearchBar from "./PropertyEditorSearchBar.vue";
-import PropertyOneCol from "./PropertyOneCol.vue";
+import PropertyRow from "./PropertyRow.vue";
 
 const props = defineProps(["project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore"]);
 
@@ -66,7 +66,7 @@ const hiddenProperties = computed(() =>
             :projectProfiles="projectProfiles"
             :propertyObjects="propertyObjects"
         />
-        <PropertyOneCol
+        <PropertyRow
             v-for="(p, i) in propsToShow"
             :key="p.getId()"
             :index="i"

@@ -64,7 +64,7 @@ class ProfileClassInput {
     public readonly options?: string[];
     public required?: boolean;
 
-    public constructor(id: string, label: string, type: string, description?: string, example?: string, options?: string[], required?: boolean) {
+    public constructor(id: string, label: string, type: string, description?: string, example?: string, options: string[] = [], required?: boolean) {
         this.id = id;
         this.label = label;
         this.type = type;
@@ -124,8 +124,8 @@ class ProfileClassInput {
      *
      * @returns {string[] | undefined} The options of the property input.
      */
-    public getOptions(): string[] | undefined {
-        return this.options;
+    public getOptions(): string[] {
+        return this.options!;
     }
 }
 
@@ -226,7 +226,7 @@ export class ProfileClass {
      *
      * @returns The types of the ProfileClass.
      */
-    public getRefTypes() {
+    public getRefTypes(): ProfileClassRef[] {
         return this.refs;
     }
 

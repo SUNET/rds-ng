@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { Ref } from "vue";
+import { type Ref } from "vue";
 
 import Chip from "primevue/chip";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import InputSwitch from "primevue/inputswitch";
 import InputText from "primevue/inputtext";
-import { ProfileID } from "./PropertyProfile";
+import { type ProfileID } from "./PropertyProfile";
 
 const props = defineProps(["projectProfiles", "propertyObjects"]);
 
@@ -29,6 +29,7 @@ const resetFilters = () => {
 
 <template>
     <div class="m-5 mb-5 mr-2" :class="props.projectProfiles.list().length > 1 ? 'border-b' : ''">
+        <!-- Searchbar -->
         <IconField iconPosition="left">
             <InputIcon class="pi pi-search"> </InputIcon>
             <InputText
@@ -48,6 +49,8 @@ const resetFilters = () => {
                 title="Reset search"
             />
         </IconField>
+
+        <!-- Filters -->
         <div class="my-3 flex justify-between w-full">
             <span v-if="props.projectProfiles.list().length > 1" class="flex align-center gap-2">
                 <Chip
