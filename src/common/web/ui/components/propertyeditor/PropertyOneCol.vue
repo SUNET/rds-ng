@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import Button from "primevue/button";
 import { computed, ref, watch, type PropType, type Ref } from "vue";
+
+import Button from "primevue/button";
+import Chip from "primevue/chip";
+import Popover from "primevue/popover";
+
 import { useColorsStore } from "../../../data/stores/ColorsStore";
-import MandatoryMark from "../misc/MandatoryMark.vue";
-import LinkedItemButton from "./LinkedItemButton.vue";
-import NewPropertyButton from "./NewPropertyButton.vue";
+import IndexColumn from "./IndexColumn.vue";
+import { LayoutPropertyObject, PropertyObject, PropertyObjectStore } from "./PropertyObjectStore";
 import { ProfileClass, ProfileLayoutClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
-import Chip from "primevue/chip";
-import Popover from "primevue/popover";
-import { LayoutPropertyObject, PropertyObject, PropertyObjectStore } from "./PropertyObjectStore";
+import MandatoryMark from "../misc/MandatoryMark.vue";
+import LinkedItemButton from "./LinkedItemButton.vue";
+import NewPropertyButton from "./NewPropertyButton.vue";
 
-const emit = defineEmits(["hide"]);
 const { index, propertyClass, propertyObjects, projectProfiles, sharedPropertyObjectStore, layoutProfiles } = defineProps({
     index: {
         type: Number,
@@ -77,56 +79,16 @@ const profiles = computed(() => {
     return filteredProfileIDs;
 });
 
-const removeProperty = ref();
-const toggleRemoveProperty = (e: Event) => {
-    removeProperty.value.toggle(e);
+const removeFromLayout = (pId: string) => {
+    propertyObjects.remove(pId);
 };
 </script>
 
 <template>
-    <div class="flex flex-row <!--hover:bg-gray-100--> px-2 pl-0 rounded group max-w-full w-full">
-        <div class="grid w-16 justify-center shrink-0">
-            <div class="text-gray-400 mt-0 pt-0 text-lg ml-auto mr-2" :class="propertyClass.isRequired() ? '' : 'group-hover:hidden'">{{ index + 1 }}.</div>
-            <Popover ref="removeProperty" class="py-2 px-5">
-                <div class="flex flex-col gap-4">
-                    <h3 class="text-lg font-bold">Remove "{{ propertyClass.getDisplayLabel() }}"?</h3>
-                    <p>The data for property "{{ propertyClass.getDisplayLabel() }}" will be lost. Linked Property Objects will be preserved.</p>
-                    <div class="flex gap-2 ml-auto">
-                        <Button
-                            severity="danger"
-                            @click="
-                                () => {
-                                    propertyObjects.remove(propertyClass.getId());
-                                    emit('hide', propertyClass.getId());
-                                }
-                            "
-                        >
-                            Delete
-                        </Button>
-                        <Button
-                            outlined
-                            @click="
-                                (e) => {
-                                    toggleRemoveProperty(e);
-                                }
-                            "
-                            >Cancel
-                        </Button>
-                    </div>
-                </div>
-            </Popover>
-            <Button
-                :disabled="propertyClass.isRequired()"
-                text
-                icon="pi pi-trash"
-                :aria-label="'Remove ' + propertyClass.getDisplayLabel()"
-                :title="'Remove ' + propertyClass.getDisplayLabel()"
-                :class="propertyClass.isRequired() ? 'invisible' : 'invisible group-hover:visible'"
-                class="pt-0 mt-0 h-9"
-                @click="toggleRemoveProperty($event)"
-                :pt="{ root: 'text-gray-400 hover:text-red-600 bg-transparent' }"
-            />
-        </div>
+    <div class="flex flex-row hover:bg-gray-100 px-2 pl-0 rounded group max-w-full w-full">
+        <!-- IndexColumn holds the index number and the remove button for the property, if it is not required. -->
+        <IndexColumn class="grid w-16 justify-center shrink-0" @remove="(pId) => removeFromLayout(pId)" :propertyClass="propertyClass" :index="index + 1" />
+
         <div class="w-full grid grid-cols-1">
             <!--  Header Row -->
             <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4 max-w-full w-full items-center">

@@ -13,6 +13,7 @@ import { ProfileLayoutClass } from "./PropertyProfile";
 
 const visible = defineModel("visible") as Ref<boolean>;
 const props = defineProps(["hiddenProperties"]);
+const emit = defineEmits(["addProperties"]);
 const colorsStore = useColorsStore();
 
 const searchString = ref("");
@@ -77,7 +78,7 @@ const filteredProperties = computed(() =>
                 <Button
                     :disabled="!selectedProperties.length"
                     @click="
-                        $emit('addProperties', selectedProperties);
+                        emit('addProperties', selectedProperties);
                         resetDialog();
                         visible = false;
                     "
