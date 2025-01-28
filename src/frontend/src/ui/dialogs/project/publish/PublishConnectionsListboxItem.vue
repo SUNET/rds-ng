@@ -57,7 +57,7 @@ const disableReason = computed(() => {
     if (unref(publishOnce)) {
         return "The project has already been " + category?.verbStatusDone.toLowerCase();
     } else if (unref(requiresAuth)) {
-        return "The connector has not been connected yet";
+        return "The connector has not been configured yet";
     }
     return "";
 });

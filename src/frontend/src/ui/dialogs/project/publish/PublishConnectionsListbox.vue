@@ -43,7 +43,6 @@ const groupedInstances = computed(() =>
         option-group-label="connectorID"
         option-group-children="connectorInstances"
         option-value="instance_id"
-        class="w-full"
         :pt="{
             listContainer: 'coninst-listbox-container',
             list: 'coninst-listbox-list',
@@ -67,7 +66,7 @@ const groupedInstances = computed(() =>
 
 <style scoped lang="scss">
 :deep(.coninst-listbox-container) {
-    @apply overflow-y-auto max-h-[27rem] #{!important};
+    @apply overflow-y-auto max-h-[36rem] #{!important};
 }
 
 :deep(.coninst-listbox-list) {
