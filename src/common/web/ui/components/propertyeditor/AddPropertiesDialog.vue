@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, Ref, ref } from "vue";
+import { computed, type Ref, ref } from "vue";
 
 import Button from "primevue/button";
 import Chip from "primevue/chip";

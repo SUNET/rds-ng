@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ComputedRef, inject, reactive, ref, type Ref } from "vue";
+import { computed, type ComputedRef, inject, reactive, ref, type Ref } from "vue";
 
 import Breadcrumb from "primevue/breadcrumb";
 import Button from "primevue/button";
@@ -160,7 +160,7 @@ function createObject(type: string) {
                                 <span class="italic">
                                     {{
                                         addableTypes
-                                            .map((e) => projectProfiles.getClassLabelById(e))
+                                            .map((e: ProfileClassRef) => projectProfiles.getClassLabelById(e.getClassId()))
                                             .join(", ")
                                             .replace(/, ([^,]*)$/, " or $1")
                                     }}
