@@ -1,22 +1,17 @@
 <script setup lang="ts">
-import Button from "primevue/button";
-import Chip from "primevue/chip";
-import Dialog from "primevue/dialog";
-import FloatLabel from "primevue/floatlabel";
-import InputText from "primevue/inputtext";
-import OrderList from "primevue/orderlist";
+import { computed, ref } from "vue";
 
-import { computed, ref, type Ref } from "vue";
-import { useColorsStore } from "../../../data/stores/ColorsStore";
-import PropertyEditorSearchBar from "./PropertyEditorSearchBar.vue";
-import { calculateLayout as makeLayout } from "./utils/PropertyEditorUtils";
+import Button from "primevue/button";
 
 import { PropertyObjectStore } from "./PropertyObjectStore";
-import PropertyOneCol from "./PropertyOneCol.vue";
 import { type ProfileID, ProfileLayoutClass } from "./PropertyProfile";
+import { calculateLayout as makeLayout } from "./utils/PropertyEditorUtils";
 
-const props = defineProps(["controller", "project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore"]);
-const colorsStore = useColorsStore();
+import AddPropertiesDialog from "./AddPropertiesDialog.vue";
+import PropertyEditorSearchBar from "./PropertyEditorSearchBar.vue";
+import PropertyOneCol from "./PropertyOneCol.vue";
+
+const props = defineProps(["project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore"]);
 
 var layout = makeLayout(props.projectProfiles);
 
@@ -54,21 +49,9 @@ const propsToShow = computed(() =>
         .sort((a: ProfileLayoutClass, b: ProfileLayoutClass) => -a.profiles!.length - -b.profiles!.length)
 );
 
-const selectedProperties = ref([]) as Ref<ProfileLayoutClass[]>;
-const unselectProperties = () => (selectedProperties.value = []);
-const selectProperties = (selection: ProfileLayoutClass[]) => (selectedProperties.value = selection);
-
 const showAddProperties = ref(false);
-const hiddenPropertys = computed(() =>
+const hiddenProperties = computed(() =>
     layout.filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.getId()).includes(e.getId()))
-);
-
-const filteredProperties = computed(() =>
-    hiddenPropertys.value.filter(
-        (e: ProfileLayoutClass) =>
-            e.getDisplayLabel().toLowerCase().includes(addSearchString.value.toLowerCase()) ||
-            e.description?.toLowerCase().includes(addSearchString.value.toLowerCase())
-    )
 );
 </script>
 
@@ -94,9 +77,9 @@ const filteredProperties = computed(() =>
             :projectProfiles="projectProfiles"
             :layoutProfiles="layout"
         />
-    </div>
+
     <Button
-        v-if="hiddenPropertys.length !== 0"
+            v-if="hiddenProperties.length !== 0"
         class="fixed bottom-10 right-10"
         icon="material-icons-outlined mi-add"
         size="large"
@@ -106,73 +89,12 @@ const filteredProperties = computed(() =>
         v-tooltip="{ value: 'Add more properties' }"
     />
 
-    <Dialog
+        <AddPropertiesDialog
         v-model:visible="showAddProperties"
-        modal
-        header="Add properties"
-        :pt="{ content: 'h-full' }"
-        :style="{ width: '50vw', height: '80vh' }"
-        @after-hide="
-            unselectProperties();
-            addSearchString = '';
-        "
-    >
-        <template #default>
-            <div class="h-full flex-col flex space-y-4">
-                <FloatLabel>
-                    <InputText type="text" v-model="addSearchString" id="searchString" class="w-full" />
-                    <label for="searchString">Search...</label>
-                </FloatLabel>
-                <OrderList
-                    v-model="filteredProperties"
-                    @update:selection="(selection: ProfileLayoutClass[]) => selectProperties(selection)"
-                    dataKey="id"
-                    class="h-full select-none"
-                    :pt="{ pcListbox: { listContainer: 'min-h-full' } }"
-                    :stripedRows="true"
-                >
-                    <template #option="slotProps">
-                        <div class="flex flex-col w-full p-1" :title="slotProps.option.getDescription()">
-                            <span class="font-semibold flex gap-2">
-                                <span class="grow"> {{ slotProps.option.getDisplayLabel() }}</span>
-                                <Chip
-                                    v-for="p in slotProps.option.getProfiles()"
-                                    :label="p[0]"
-                                    size="small"
-                                    :style="`background-color: ${colorsStore.color(p[0])}`"
-                                    class="h-4 !rounded py-3 text-sm bg-opacity-40"
-                            /></span>
-                            <span class="text-gray-500 ellipsis line-clamp-1">{{ slotProps.option.getDescription() }}</span>
-                        </div>
-                    </template>
-                </OrderList>
+            @add-properties="(selectedProperties: ProfileLayoutClass[]) => propsToShow.push(...selectedProperties)"
+            :hiddenProperties="hiddenProperties"
+        />
             </div>
-        </template>
-        <template #footer>
-            <div class="flex justify-end gap-2 mt-5">
-                <Button
-                    :disabled="!selectedProperties.length"
-                    @click="
-                        propsToShow.push(...selectedProperties);
-                        unselectProperties();
-                        addSearchString = '';
-                        showAddProperties = false;
-                    "
-                    >Add {{ selectedProperties.length ? "(" + selectedProperties.length + ")" : "" }}
-                </Button>
-                <Button
-                    outlined
-                    severity="secondary"
-                    @click="
-                        unselectProperties();
-                        addSearchString = '';
-                        showAddProperties = false;
-                    "
-                    >Cancel
-                </Button>
-            </div>
-        </template>
-    </Dialog>
 </template>
 
 <style scoped lang="scss">

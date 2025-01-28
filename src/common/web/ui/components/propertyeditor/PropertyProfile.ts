@@ -265,6 +265,15 @@ export class ProfileClass {
     public getExample() {
         return this.example;
     }
+
+    /**
+     * Checks if the property is required.
+     *
+     * @returns {boolean} True if the property is required, otherwise false.
+     */
+    public isRequired() {
+        return this.required;
+    }
 }
 
 /**
@@ -281,6 +290,15 @@ export class ProfileLayoutClass extends ProfileClass {
      */
     addProfile(profile: ProfileID) {
         this.profiles!.push(profile);
+    }
+
+    /**
+     * Retrieves the list of profiles.
+     *
+     * @returns {Profile[]} An array of profiles.
+     */
+    public getProfiles() {
+        return this.profiles;
     }
 }
 
