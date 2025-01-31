@@ -17,7 +17,6 @@ var layout = makeLayout(props.projectProfiles);
 
 const profileFilter = ref<ProfileID[]>([]);
 const requiredOnly = ref(false);
-const addSearchString = ref("");
 const searchString = ref("");
 
 // TODO Comment and maybe refactor to have dynamic filters

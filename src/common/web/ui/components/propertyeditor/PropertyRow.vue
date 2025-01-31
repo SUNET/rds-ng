@@ -5,7 +5,7 @@ import { LayoutPropertyObject, PropertyObject, PropertyObjectStore } from "./Pro
 import { ProfileClass, ProfileLayoutClass, type ProfileID } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
-import EntityColumn from "./EntityColumn.vue";
+import EntityColumn from "./EntityColumn/EntityColumn.vue";
 import IndexColumn from "./IndexColumn.vue";
 
 const { index, propertyClass, propertyObjects, projectProfiles, sharedPropertyObjectStore, layoutProfiles } = defineProps({
@@ -77,6 +77,7 @@ const removeFromLayout = (pId: string) => {
             :sharedPropertyObjectStore="sharedPropertyObjectStore"
             :propertyObjects="propertyObjects"
             :propertyObject="propertyObject"
+            :isDialog="false"
         />
     </div>
 </template>

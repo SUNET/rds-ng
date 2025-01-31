@@ -7,7 +7,7 @@ import { SharedPropertyObject } from "./PropertyObjectStore";
 import { injectTemplate } from "./utils/Templates";
 
 const dialog = useDialog();
-const props = defineProps(["type", "parentId", "propertyObjects", "sharedPropertyObjectStore", "projectProfiles", "mode"]);
+const props = defineProps(["type", "parentId", "propertyObjects", "sharedPropertyObjectStore", "projectProfiles", "isDialog"]);
 
 const emit = defineEmits(["loadObject"]);
 const label = props.projectProfiles.getClassLabelById(props.type);
@@ -33,10 +33,10 @@ const linkableItems = computed(() => {
 function createObject() {
     const newObject = new SharedPropertyObject(props.type);
     props.sharedPropertyObjectStore.add(newObject);
-    props.propertyObjects.addRef(props.parentId, newObject["id"]) || props.sharedPropertyObjectStore.addRef(props.parentId, newObject["id"]);
+    props.propertyObjects.addRef(props.parentId, newObject.getId()) || props.sharedPropertyObjectStore.addRef(props.parentId, newObject.getId());
 
-    if (props.mode == "dialog") {
-        emit("loadObject", newObject["id"]);
+    if (props.isDialog) {
+        emit("loadObject", newObject.getId());
     } else {
         dialog.open(PropertyDialog, {
             props: {
@@ -54,7 +54,7 @@ function createObject() {
                 dismissableMask: true
             },
             data: {
-                id: newObject["id"],
+                id: newObject.getId(),
                 propertyObjects: props.propertyObjects,
                 sharedPropertyObjectStore: props.sharedPropertyObjectStore,
                 projectProfiles: props.projectProfiles

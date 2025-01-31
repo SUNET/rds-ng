@@ -10,12 +10,12 @@ import SplitButton from "primevue/splitbutton";
 
 import Fieldset from "primevue/fieldset";
 
-import Popover from "primevue/popover";
 import { History } from "./Breadcrumbs";
-import LinkedItemButton from "./LinkedItemButton.vue";
-import NewPropertyButton from "./NewPropertyButton.vue";
+import EntityColumnHeader from "./EntityColumn/EntityColumnHeader.vue";
+import EntityColumnInputs from "./EntityColumn/EntityColumnInputs.vue";
+import EntityColumnLinkedItems from "./EntityColumn/EntityColumnLinkedItems.vue";
 import { PropertyObjectStore, SharedPropertyObject } from "./PropertyObjectStore";
-import { ProfileClass, ProfileClassRef, propertyDataForms, PropertyDataType } from "./PropertyProfile";
+import { ProfileClass, ProfileClassRef } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 import { calcObjLabel } from "./utils/ObjectUtils";
 
@@ -30,32 +30,24 @@ const {
 
 // selected object
 const object = ref(sharedPropertyObjectStore.get(id)!) as Ref<SharedPropertyObject>;
-let objectClass = reactive(projectProfiles.getClassById(object.value.getType())!) as ProfileClass;
-let referencedObjects = computed(() => object.value.getReferences().map((e) => sharedPropertyObjectStore.get(e))) as ComputedRef<SharedPropertyObject[]>;
+let propertyClass = reactive(projectProfiles.getClassById(object.value.getType())!) as ProfileClass;
+const referencedObjects = computed(() => object.value.getReferences().map((e) => sharedPropertyObjectStore.get(e))) as ComputedRef<SharedPropertyObject[]>;
 
-const displayableInputs = ref(objectClass.getInputs());
-const addableTypes = ref(objectClass.getRefTypes()) as Ref<ProfileClassRef[]>;
+const displayableInputs = ref(propertyClass.getInputs());
+const addableTypes = ref(propertyClass.getRefTypes()) as Ref<ProfileClassRef[]>;
 
 const addableExlineTypes = computed(() => addableTypes.value.filter((t) => !t.isInline()));
 const addableInlineTypes = computed(() => addableTypes.value.filter((t) => t.isInline()));
-
-const linkedObjects = computed(() => sharedPropertyObjectStore.getReferencedObjects(object.value.getId()));
 
 // History for Breadcrumbs
 const history = new History();
 const menuPath = ref();
 
-// Description Overlay
-const op = ref();
-const toggle = (event: Event) => {
-    op.value.toggle(event);
-};
-
 function selectActiveObject(id: string) {
     object.value = sharedPropertyObjectStore.get(id) as SharedPropertyObject;
-    objectClass = projectProfiles.getClassById(object.value.getType())! as ProfileClass;
-    addableTypes.value = objectClass.getRefTypes();
-    displayableInputs.value = objectClass.getInputs();
+    propertyClass = projectProfiles.getClassById(object.value.getType())! as ProfileClass;
+    addableTypes.value = propertyClass.getRefTypes();
+    displayableInputs.value = propertyClass.getInputs();
     history.navigateTo(object.value);
     // TODO optimize by only updating necessary elements
     menuPath.value = history.list().map((item: SharedPropertyObject) => {
@@ -94,97 +86,42 @@ function createObject(type: string) {
                 />
             </template>
             <template #title>
-                <div class="row-span-1 text-gray-800 justify-between flex items-center">
-                    <span :title="objectClass.getDisplayLabel()" class="flex-none">
-                        <span class="text-2xl"> {{ objectClass.getDisplayLabel() }}</span>
-                        <Button v-if="objectClass.getDescription()" unstyled @click="toggle" :title="objectClass.getDescription()">
-                            <i class="pi pi-question-circle mx-2" style="font-size: 1rem" />
-                        </Button>
-                        <Popover ref="op" class="max-w-lg">
-                            {{ objectClass.getDescription() }}
-                            <span v-if="objectClass.getExample()" v-html="`<br/>Example: ${objectClass.getExample()}`" />
-                        </Popover>
-                    </span>
+                <!--  Header Row -->
 
-                    <span class="mr-auto ml-5 flex gap-1 flex-wrap">
-                        <NewPropertyButton
-                            v-for="t in addableExlineTypes"
-                            :key="t.getClassId()"
-                            :type="t.getClassId()"
-                            :parentId="object.getId()"
-                            :propertyObjects="propertyObjects"
-                            :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
-                            :projectProfiles="projectProfiles"
-                            mode="dialog"
-                            @loadObject="(id) => selectActiveObject(id)"
-                        />
-                    </span>
-                </div>
+                <EntityColumnHeader
+                    :addableTypes="addableTypes"
+                    :propertyClass="propertyClass"
+                    :propertyObject="object"
+                    :propertyObjects="propertyObjects"
+                    :sharedPropertyObjectStore="sharedPropertyObjectStore"
+                    :projectProfiles="projectProfiles"
+                    :isDialog="true"
+                    @loadObject="(id) => selectActiveObject(id)"
+                />
             </template>
             <template #content>
                 <div class="flex flex-row">
                     <div class="grow max-w-full space-y-4">
                         <!--  Linked Items Row -->
-                        <div
-                            v-if="addableExlineTypes.length > 0"
-                            class="row-span-1 flex mt-3 p-2 flex-wrap gap-0.5 rounded-md"
-                            style="
-                                box-shadow:
-                                    0 0 #0000,
-                                    0 0 #0000,
-                                    0 1px 2px 0 rgba(18, 18, 23, 0.05);
-                                transition:
-                                    background-color 0.2s,
-                                    color 0.2s,
-                                    border-color 0.2s,
-                                    box-shadow 0.2s,
-                                    outline-color 0.2s;
-                                border: 1px dashed #b6bfca;
-                            "
-                        >
-                            <LinkedItemButton
-                                v-if="linkedObjects.length > 0"
-                                v-for="i in linkedObjects"
-                                :key="i"
-                                class="m-1 max-w-full"
-                                :item-id="i"
-                                :parentId="object.getId()"
-                                :propertyObjects="propertyObjects"
-                                :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
-                                :projectProfiles="projectProfiles"
-                                mode="dialog"
-                                @loadObject="(id) => selectActiveObject(id)"
-                            />
-                            <span v-else class="text-gray-500 m-1 my-3 place-self-center align-middle inline-block"
-                                >No
-                                <span class="italic">
-                                    {{
-                                        addableTypes
-                                            .map((e: ProfileClassRef) => projectProfiles.getClassLabelById(e.getClassId()))
-                                            .join(", ")
-                                            .replace(/, ([^,]*)$/, " or $1")
-                                    }}
-                                </span>
-                                linked</span
-                            >
-                        </div>
+
+                        <EntityColumnLinkedItems
+                            v-if="!!addableExlineTypes.length"
+                            :propertyObjects="propertyObjects"
+                            :propertyClass="object"
+                            :sharedPropertyObjectStore="sharedPropertyObjectStore"
+                            :projectProfiles="projectProfiles"
+                            :addableTypes="addableExlineTypes"
+                            :propertyObject="object"
+                        />
                         <!-- Simple Input Row -->
-                        <div class="space-y-5">
-                            <div v-for="input in displayableInputs" class="row-span-1 space-y-1">
-                                <div v-if="input.getLabel() !== objectClass.getDisplayLabel()" class="font-bold mb-1 font">{{ input.getLabel() }}</div>
-                                {{ input.getDescription() }}
-                                <span v-if="input.getExample()" v-html="`<br/>Example: ${input.getExample()}`" />
-                                <component
-                                    :is="propertyDataForms[input.getType() as PropertyDataType]"
-                                    class="w-full"
-                                    :propertyObjectId="object.getId()"
-                                    :propertyObjects="sharedPropertyObjectStore"
-                                    :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
-                                    :inputId="input.getId()"
-                                    :inputOptions="input.getOptions() ? input.getOptions() : []"
-                                />
-                            </div>
-                        </div>
+                        <EntityColumnInputs
+                            v-if="displayableInputs.length > 0"
+                            :displayableInputs="displayableInputs"
+                            :propertyObject="object"
+                            :propertyObjects="sharedPropertyObjectStore"
+                            :propertyClass="propertyClass"
+                            :isDialog="true"
+                        />
 
                         <Fieldset
                             v-for="t in addableInlineTypes"
@@ -211,7 +148,7 @@ function createObject(type: string) {
                             <div class="space-y">
                                 <div
                                     v-for="[i, refObject] of referencedObjects.filter((e: SharedPropertyObject) => e.getType() === t.getClassId()).entries()"
-                                    class="row-span-1 space-y-1 my-2 some-elemente mb-0 mt-1"
+                                    class="row-span-1 space-y-1 my-2 last-fieldset-round mb-0 mt-1"
                                 >
                                     <Fieldset class="bg-sky-50 rounded-none border-y my-0">
                                         <template #legend class="m-0 p-0">
@@ -228,24 +165,16 @@ function createObject(type: string) {
                                                 />
                                             </div>
                                         </template>
-                                        <div v-for="input in projectProfiles.getClassById(t.getClassId())?.getInputs()" class="py-2 first:mt-0 space-y-0.5">
-                                            <div v-if="input.getLabel() !== objectClass.getDisplayLabel()" class="font-bold">
-                                                {{ input.getLabel() }}
-                                            </div>
-                                            <div v-if="input.getLabel() !== objectClass.getDisplayLabel()" class="r-text-gray">
-                                                {{ input.getDescription() }}
-                                            </div>
-                                            <div v-if="input.getExample()" v-html="`Example: ${input.getExample()}`" />
-                                            <component
-                                                :is="propertyDataForms[input.getType() as PropertyDataType]"
-                                                class="w-full"
-                                                :propertyObjectId="refObject?.getId()"
-                                                :propertyObjects="sharedPropertyObjectStore"
-                                                :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
-                                                :inputId="input.getId()"
-                                                :inputOptions="input.getOptions() ? input.getOptions() : []"
-                                            />
-                                        </div>
+
+                                        <EntityColumnInputs
+                                            v-if="!!projectProfiles.getClassById(t.getClassId())?.getInputs().length"
+                                            class="mt-2"
+                                            :displayableInputs="projectProfiles.getClassById(t.getClassId())?.getInputs()"
+                                            :propertyObject="object"
+                                            :propertyObjects="sharedPropertyObjectStore"
+                                            :propertyClass="propertyClass"
+                                            :isDialog="true"
+                                        />
                                     </Fieldset>
                                 </div>
                             </div>
@@ -266,7 +195,7 @@ function createObject(type: string) {
     @apply ml-auto m-0 p-0 rounded bg-transparent;
 }
 
-.some-elemente:last-child > .p-fieldset {
+.last-fieldset-round:last-child > .p-fieldset {
     @apply rounded-b-md;
 }
 </style>

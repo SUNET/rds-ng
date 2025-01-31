@@ -5,13 +5,23 @@ import Button from "primevue/button";
 import Chip from "primevue/chip";
 import Popover from "primevue/popover";
 
-import { useColorsStore } from "../../../data/stores/ColorsStore";
-import MandatoryMark from "../misc/MandatoryMark.vue";
-import NewPropertyButton from "./NewPropertyButton.vue";
-import type { ProfileClassRef } from "./PropertyProfile";
+import { useColorsStore } from "../../../../data/stores/ColorsStore";
+import MandatoryMark from "../../misc/MandatoryMark.vue";
+import NewPropertyButton from "../NewPropertyButton.vue";
+import type { ProfileClassRef } from "../PropertyProfile";
 
 const colorsStore = useColorsStore();
-const props = defineProps(["addableTypes", "propertyClass", "propertyObjects", "propertyObject", "sharedPropertyObjectStore", "projectProfiles", "profiles"]);
+const props = defineProps([
+    "isDialog",
+    "addableTypes",
+    "propertyClass",
+    "propertyObjects",
+    "propertyObject",
+    "sharedPropertyObjectStore",
+    "projectProfiles",
+    "profiles"
+]);
+const emit = defineEmits(["loadObject"]);
 
 const descriptionPopover = ref();
 const toggleDescriptionPopover = (event: Event) => {
@@ -20,16 +30,16 @@ const toggleDescriptionPopover = (event: Event) => {
 </script>
 
 <template>
-    <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4 max-w-full w-full items-center">
-        <span :title="propertyClass.getDisplayLabel()" class="min-w-fit">
-            <span class="text-lg"> {{ propertyClass.getDisplayLabel() }} </span>
+    <div class="row-span-1 text-gray-800 justify-between flex items-center">
+        <span :title="propertyClass.getDisplayLabel()" class="min-w-fit flex-none">
+            <span :class="isDialog ? 'text-xl' : 'text-lg'"> {{ propertyClass.getDisplayLabel() }} </span>
             <MandatoryMark v-if="propertyClass.isRequired()" class="pl-1" color="red" />
 
             <Button v-if="propertyClass.getDescription()" unstyled @click="toggleDescriptionPopover" :title="propertyClass.getDescription()">
-                <i class="pi pi-question-circle mx-2" style="font-size: 1rem; color: gray" />
+                <i class="pi pi-question-circle mx-2 text-gray-500 text-base" />
             </Button>
             <Popover ref="descriptionPopover" class="max-w-lg">
-                {{ propertyClass.description }}
+                {{ propertyClass.getDescription() }}
                 <p v-if="propertyClass.getExample()" class="mt-2" v-html="`<b>Example</b>: ${propertyClass.getExample()}`" />
             </Popover>
         </span>
@@ -42,9 +52,11 @@ const toggleDescriptionPopover = (event: Event) => {
                 :propertyObjects="propertyObjects"
                 :sharedPropertyObjectStore="sharedPropertyObjectStore"
                 :projectProfiles="projectProfiles"
+                :isDialog="isDialog"
+                @loadObject="(id) => emit('loadObject', id)"
             />
         </span>
-        <span class="flex self-center gap-2">
+        <span v-if="!isDialog" class="flex self-center gap-2">
             <Chip
                 v-for="p in profiles.sort()"
                 :label="projectProfiles.getProfileLabelById(p)"

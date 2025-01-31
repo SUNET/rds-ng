@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProfileClassRef } from "./PropertyProfile";
+import type { ProfileClassRef } from "../PropertyProfile";
 
 import EntityColumnHeader from "./EntityColumnHeader.vue";
 import EntityColumnInputs from "./EntityColumnInputs.vue";

@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import LinkedItemButton from "./LinkedItemButton.vue";
-import { ProfileClassRef } from "./PropertyProfile";
+import LinkedItemButton from "../LinkedItemButton.vue";
+import { ProfileClassRef } from "../PropertyProfile";
 
 const props = defineProps(["propertyObjects", "propertyClass", "addableTypes", "projectProfiles", "sharedPropertyObjectStore"]);
-const linkedObjects = computed(() => props.propertyObjects.getReferencedObjects(props.propertyClass.getId()));
+const linkedObjects = computed(() => [
+    ...props.sharedPropertyObjectStore.getReferencedObjects(props.propertyClass.getId()),
+    ...props.propertyObjects.getReferencedObjects(props.propertyClass.getId())
+]);
 const addableTypesStr = props.addableTypes
     .map((e: ProfileClassRef) => props.projectProfiles.getClassLabelById(e.getClassId()))
     .join(", ")
