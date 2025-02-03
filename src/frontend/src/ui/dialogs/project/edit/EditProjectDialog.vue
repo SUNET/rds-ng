@@ -271,7 +271,13 @@ function onNextStep() {
 
                     <Fieldset legend="Features" class="r-form-fieldset">
                         <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-1">
-                            <Checkbox v-model="uiOptions.optional_snapins" :inputId="snapIn.snapInID" :value="snapIn.snapInID" class="self-center" />
+                            <Checkbox
+                                v-model="uiOptions.optional_snapins"
+                                :inputId="snapIn.snapInID"
+                                :value="snapIn.snapInID"
+                                size="large"
+                                class="self-center"
+                            />
                             <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.options.optional!.label }}</label>
                         </div>
                     </Fieldset>
