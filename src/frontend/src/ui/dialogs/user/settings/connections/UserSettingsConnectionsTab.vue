@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { type PropType, ref, toRefs, unref } from "vue";
 
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
@@ -7,7 +8,9 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserTools } from "@/ui/tools/user/UserTools";
 
-import ConnectorInstancesListbox from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListbox.vue";
+import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+
+import ConnectorInstancesList from "@/ui/components/connector/ConnectorInstancesList.vue";
 import NewConnectorInstance from "@/ui/dialogs/user/settings/connections/NewConnectorInstance.vue";
 
 const comp = FrontendComponent.inject();
@@ -18,6 +21,9 @@ const props = defineProps({
     }
 });
 const { tabData: userSettings } = toRefs(props);
+
+const consStore = useConnectorsStore();
+const { connectors } = storeToRefs(consStore);
 
 const { saveUserSettings } = useUserTools(comp);
 
@@ -38,7 +44,9 @@ function onCreateInstance(instance: ConnectorInstance): void {
             connection, use the drop-down list at the bottom of the connections list.
         </div>
 
-        <ConnectorInstancesListbox v-model="selectedConnectorInstance" :user-settings="userSettings" />
+        <ScrollPanel class="overflow-y-auto h-[27rem]">
+            <ConnectorInstancesList :instances="userSettings.connector_instances" :connectors="connectors" />
+        </ScrollPanel>
         <NewConnectorInstance :user-settings="userSettings" @create-instance="onCreateInstance" />
     </div>
 </template>
