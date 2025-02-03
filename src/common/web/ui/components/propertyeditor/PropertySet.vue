@@ -38,12 +38,13 @@ const propsToShow = computed(() =>
                     v.toLowerCase().includes(searchString.value.toLowerCase())
                 ) ||
                 // search in referenced property objects
-                !props.propertyObjects
+                      // implement search function on objects? this seems buggy
+                      props.propertyObjects
                     .getReferencedObjects(e.id)
                     .map((o: String) => props.sharedPropertyObjectStore.get(o).getValues())
-                    .map((e: String[]) => Object.values(e))
+                          .map((e: {}) => Object.values(e))
                     .flat()
-                    .findIndex((v: string) => v.toLowerCase().includes(searchString.value.toLowerCase()))
+                          .findIndex((v: string) => v.toLowerCase().includes(searchString.value.toLowerCase())) >= 0
         )
         .sort((a: ProfileLayoutClass, b: ProfileLayoutClass) => -a.profiles!.length - -b.profiles!.length)
 );
