@@ -11,7 +11,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useConnectorInstancesTools } from "@/ui/tools/connector/ConnectorInstancesTools";
 
-import ConnectorHeader from "@/ui/components/connector/ConnectorHeader.vue";
+import ConnectorInstancesHeader from "@/ui/components/connector/ConnectorInstancesHeader.vue";
 
 const comp = FrontendComponent.inject();
 const consStore = useConnectorsStore();
@@ -57,7 +57,7 @@ function onSelectConnector(connector: Connector): void {
             @change="(event) => onSelectConnector(event.value as Connector)"
         >
             <template #option="connectorItem">
-                <ConnectorHeader :connector-id="connectorItem.option.connector_id" />
+                <ConnectorInstancesHeader :connector-id="connectorItem.option.connector_id" />
             </template>
         </Select>
     </div>
