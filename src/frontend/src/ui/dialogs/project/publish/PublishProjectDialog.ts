@@ -25,14 +25,14 @@ export async function publishProjectDialog(comp: FrontendComponent, project: Pro
         {
             header: "Publish & Export project",
             modal: true,
-            contentClass: "w-[25vw] min-w-[40rem]",
+            contentClass: "w-[30vw] min-w-[48rem] h-[60vh] min-h-[40rem]"
         },
         {
-            project: project,
+            project: project
         },
         {
             hasRejectButton: true,
-            rejectLabel: "Close",
-        },
+            rejectLabel: "Close"
+        }
     );
 }

@@ -4,6 +4,7 @@ import { connectorInstanceIsAuthorized } from "@common/data/entities/connector/C
 import { storeToRefs } from "pinia";
 import Button from "primevue/button";
 import ProgressBar from "primevue/progressbar";
+import Tag from "primevue/tag";
 import { computed, type PropType, ref, toRefs, unref } from "vue";
 
 import { ConnectorOptions } from "@common/data/entities/connector/Connector";
@@ -57,7 +58,7 @@ const disableReason = computed(() => {
     if (unref(publishOnce)) {
         return "The project has already been " + category?.verbStatusDone.toLowerCase();
     } else if (unref(requiresAuth)) {
-        return "The connector has not been connected yet";
+        return "The connector has not been configured yet";
     }
     return "";
 });
@@ -97,11 +98,21 @@ function onPublishInitDone(success: boolean, msg: string): void {
 
 <template>
     <div
-        class="grid grid-rows-auto grid-flow-row gap-0 place-content-start group w-full min-h-20"
-        :class="activeJob ? 'grid-cols-[1fr_40%]' : 'grid-cols-[1fr_min-content]'"
+        class="grid grid-rows-auto gap-2.5 place-content-start group w-full min-h-20"
+        :class="activeJob ? 'grid-cols-[min-content_1fr_40%]' : 'grid-cols-[min-content_1fr_max-content]'"
     >
-        <div :id="'connector-instance-' + instance!.instance_id" class="r-text-caption r-text h-6 truncate" :title="instance!.name">
-            {{ instance!.name }}
+        <div :class="{ 'pt-1': instance!.description }">
+            <Tag v-if="!disablePublish" :severity="activeJob ? 'info' : 'success'" :title="activeJob ? 'In progress' : 'Ready'" class="w-10 h-10 rounded-full">
+                <span class="material-icons-outlined" :class="activeJob ? 'mi-rocket-launch' : 'mi-rocket'" />
+            </Tag>
+            <Tag v-else severity="warn" title="Not ready" class="w-10 h-10 rounded-full">
+                <span class="material-icons-outlined mi-clear" />
+            </Tag>
+        </div>
+
+        <div class="grid grid-flow-row content-center">
+            <div :id="'connector-instance-' + instance!.instance_id" class="r-text-caption h-6 truncate" :title="instance!.name">{{ instance!.name }}</div>
+            <div v-if="instance!.description" class="truncate" :title="instance!.description">{{ instance!.description }}</div>
         </div>
 
         <div class="row-span-3 pl-1 content-center w-full">
@@ -111,26 +122,29 @@ function onPublishInitDone(success: boolean, msg: string): void {
                 </span>
                 <ProgressBar class="h-3" :value="Math.trunc(activeJob.progress * 100)" :title="activeJob.message" />
             </div>
-            <div v-else :title="disablePublish ? disableReason : category?.verbAction + ' the project'">
+            <div
+                v-else
+                :title="disablePublish ? 'Unable to ' + category?.verbAction.toLowerCase() + ': ' + disableReason : category?.verbAction + ' the project'"
+            >
                 <Button
-                    v-if="category"
+                    v-if="!disablePublish && category"
                     :label="publishTitle"
                     :aria-label="publishTitle"
                     :loading="initiatePublish"
-                    :disabled="disablePublish"
-                    rounded
                     size="small"
                     icon="material-icons-outlined mi-rocket-launch"
                     loading-icon="material-icons-outlined mi-rocket-launch"
                     :pt="{ root: category.buttonClass }"
                     @click="onPublish"
                 />
+                <div v-else class="text-sm r-text-warning">
+                    <span class="font-bold">Unable to {{ category?.verbAction.toLowerCase() }}:<br /></span>
+                    <span>{{ disableReason }}</span>
+                </div>
             </div>
         </div>
 
-        <div class="truncate" :title="instance!.description">{{ instance!.description || "&nbsp;" }}</div>
-
-        <div class="h-5">&nbsp;</div>
+        <div class="h-3">&nbsp;</div>
 
         <div class="grid grid-cols-[1fr_max-content] grid-flow-col col-span-2 text-sm">
             <div v-if="category" class="grid grid-flow-col auto-cols-max gap-2 r-text-secondary italic">

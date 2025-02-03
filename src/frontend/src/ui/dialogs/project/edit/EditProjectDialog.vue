@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { Form } from "@primevue/forms";
 import Checkbox from "primevue/checkbox";
 import Fieldset from "primevue/fieldset";
+import IftaLabel from "primevue/iftalabel";
 import InputText from "primevue/inputtext";
 import ScrollPanel from "primevue/scrollpanel";
 import Stepper from "primevue/stepper";
@@ -11,7 +13,7 @@ import StepPanel from "primevue/steppanel";
 import Textarea from "primevue/textarea";
 import ToggleSwitch from "primevue/toggleswitch";
 import { computed, onMounted, ref, unref, watch } from "vue";
-import { string as ystring } from "yup";
+import * as yup from "yup";
 
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
@@ -48,13 +50,21 @@ const stepIndices = {
 const lastStepIndex = Object.entries(stepIndices).length - 1;
 const activeStep = ref(stepIndices.main);
 
-const validator = useValidator({
-    title: ystring().trim().required().label("Title").default(dialogData.userData.title),
-    description: ystring().label("Description").default(dialogData.userData.description),
-    datapath: ystring().trim().required().label("Data path").default(dialogData.userData.datapath)
+const form = ref();
+const validator = useValidator(form, {
+    title: yup.string().trim().required().label("Title").default(dialogData.userData.title),
+    description: yup.string().label("Description").default(dialogData.userData.description),
+    datapath: yup
+        .string()
+        .test("datapath-not-empty", "No data path selected", (_, ctx) => {
+            if (dialogData.userData.datapath == "") {
+                return ctx.createError({ path: "datapath" });
+            }
+            return true;
+        })
+        .label("Data path")
+        .default(dialogData.userData.datapath)
 });
-const title = validator.defineComponentBinds("title");
-const datapath = validator.defineComponentBinds("datapath");
 
 const resourcesNodes = ref<Object[]>([]);
 const resourcesError = ref("");
@@ -66,7 +76,6 @@ onMounted(() => {
             .done((reply: ListResourcesReply, success, msg) => {
                 if (success) {
                     resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true);
-                    //resourcesError.value = "Unable to load resources";
                 }
             })
             .failed((_, msg) => {
@@ -97,15 +106,13 @@ const nextCallback = computed(() => {
     if (unref(activeStep) >= lastStepIndex) {
         return acceptDialog;
     } else {
-        validator.validate();
-
         // Verify each step to prevent advancing to the next one
         if (unref(activeStep) == stepIndices.main) {
-            if ("title" in validator.errors) {
+            if (validator.hasError("title")) {
                 return undefined;
             }
         } else if (unref(activeStep) == stepIndices.datapath) {
-            if ("datapath" in validator.errors) {
+            if (validator.hasError("datapath")) {
                 return undefined;
             }
         }
@@ -122,26 +129,33 @@ const nextName = computed(() => {
 });
 
 function onClickStep(event: Event, callback: (event: Event) => void) {
-    validator.validate();
-
-    if (callback) {
-        callback(event);
-    }
+    validator
+        .validate()
+        .then(() => {
+            if (callback) {
+                callback(event);
+            }
+        })
+        .catch(() => {});
 }
 
 function onPrevStep() {
-    validator.validate();
     activeStep.value -= 1;
 }
 
 function onNextStep() {
-    validator.validate();
     activeStep.value += 1;
 }
 </script>
 
 <template>
-    <form @submit.prevent="!newProject ? acceptDialog : undefined" :class="[{ 'h-[calc(100%-4rem)]': newProject }, 'r-form']">
+    <Form
+        ref="form"
+        :resolver="validator.resolver"
+        validate-on-mount
+        @submit="!newProject ? acceptDialog : undefined"
+        :class="[{ 'h-[calc(100%-4rem)]': newProject }, 'r-form']"
+    >
         <Stepper v-model:value="activeStep" :linear="newProject" :dt="!newProject ? { 'separator.activeBackground': '{content.border.color}' } : {}">
             <StepList>
                 <Step v-slot="{ activateCallback }" :value="stepIndices.main" :pt="{ number: 'hidden' }">
@@ -184,23 +198,20 @@ function onNextStep() {
                 <StepPanel :value="stepIndices.main">
                     <div class="mb-2">Set your main project settings, like its title, here. You can always change these later.</div>
 
-                    <Fieldset legend="General settings">
+                    <Fieldset legend="General settings" class="r-form-fieldset">
                         <span class="r-form-field">
-                            <label>Title <MandatoryMark /></label>
-                            <InputText
-                                name="title"
-                                v-bind="title"
-                                v-model="dialogData.userData.title"
-                                placeholder="Title"
-                                :class="{ 'p-invalid': validator.errors.title }"
-                                v-focus
-                            />
+                            <IftaLabel>
+                                <label>Title <MandatoryMark /></label>
+                                <InputText name="title" v-model="dialogData.userData.title" fluid v-focus />
+                            </IftaLabel>
                             <small>The title of the project.</small>
                         </span>
 
                         <span class="r-form-field mt-5">
-                            <label>Description</label>
-                            <Textarea name="description" v-model="dialogData.userData.description" placeholder="Description" rows="3" />
+                            <IftaLabel class="mb-[-0.5rem]">
+                                <label>Description</label>
+                                <Textarea name="description" v-model="dialogData.userData.description" rows="3" fluid />
+                            </IftaLabel>
                             <small>An (optional) project description.</small>
                         </span>
                     </Fieldset>
@@ -211,7 +222,11 @@ function onNextStep() {
                         Select the root data path for your project here. Note that this path cannot be changed once the project has been created.
                     </div>
 
-                    <Fieldset legend="Data path" class="h-fit" :class="{ 'border-[var(--p-inputtext-invalid-border-color)]': !!validator.errors.datapath }">
+                    <Fieldset
+                        legend="Data path"
+                        class="h-fit r-form-fieldset"
+                        :class="{ 'border-[var(--p-inputtext-invalid-border-color)]': validator.hasError('datapath') }"
+                    >
                         <template #legend>
                             <span class="p-fieldset-legend-label">Data path <MandatoryMark /></span>
                         </template>
@@ -224,11 +239,12 @@ function onNextStep() {
                                     </small>
                                     <ScrollPanel class="h-48">
                                         <ResourcesTree
-                                            v-bind="datapath"
+                                            name="datapath"
                                             v-model="dialogData.userData.datapath"
                                             :options="resourcesNodes"
                                             loading
                                             class="w-full h-fit"
+                                            @changed="validator.refresh()"
                                         />
                                     </ScrollPanel>
                                 </div>
@@ -236,7 +252,7 @@ function onNextStep() {
                             </div>
                             <div v-else class="grid grid-flow-row">
                                 <span class="flex border border-solid rounded p-2">
-                                    <span class="material-icons-outlined mi-folder opacity-75 pr-2" />
+                                    <span class="basis-0 material-icons-outlined mi-folder opacity-75 pr-2" />
                                     <span>{{ dialogData.userData.datapath }}</span>
                                 </span>
                                 <span>
@@ -244,8 +260,8 @@ function onNextStep() {
                                 </span>
                             </div>
                         </div>
+                        <small class="pt-3"><b>Important:</b> This path cannot be changed after the project has been created!</small>
                     </Fieldset>
-                    <small class="pt-3"><b>Important:</b> This path cannot be changed after the project has been created!</small>
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.features">
@@ -253,9 +269,15 @@ function onNextStep() {
                         Select the features you want to use in this project. You can always turn additional features on or existing ones off later.
                     </div>
 
-                    <Fieldset legend="Features">
+                    <Fieldset legend="Features" class="r-form-fieldset">
                         <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-1">
-                            <Checkbox v-model="uiOptions.optional_snapins" :inputId="snapIn.snapInID" :value="snapIn.snapInID" class="self-center" />
+                            <Checkbox
+                                v-model="uiOptions.optional_snapins"
+                                :inputId="snapIn.snapInID"
+                                :value="snapIn.snapInID"
+                                size="large"
+                                class="self-center"
+                            />
                             <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.options.optional!.label }}</label>
                         </div>
                     </Fieldset>
@@ -267,7 +289,7 @@ function onNextStep() {
                         always change this selection later.
                     </div>
 
-                    <Fieldset legend="Connections">
+                    <Fieldset legend="Connections" class="r-form-fieldset">
                         <div class="r-form-field">
                             <div class="grid grid-flow-row">
                                 <div class="flex align-items-center">
@@ -276,7 +298,7 @@ function onNextStep() {
                                         inputId="useSelectConnectorInstances"
                                         :true-value="false"
                                         :false-value="true"
-                                        @change="validator.validate()"
+                                        @change="validator.refresh()"
                                         class="self-center"
                                     />
                                     <label for="useSelectConnectorInstances" class="pl-1.5">Use only the following connections:</label>
@@ -286,7 +308,7 @@ function onNextStep() {
                                     <ConnectorInstancesSelect
                                         v-model="dialogData.userData.options.active_connector_instances"
                                         :disabled="dialogData.userData.options.use_all_connector_instances"
-                                        class="w-full h-full"
+                                        class="w-full h-60"
                                     />
                                 </div>
                             </div>
@@ -295,7 +317,7 @@ function onNextStep() {
                 </StepPanel>
             </StepPanels>
         </Stepper>
-    </form>
+    </Form>
 
     <EditProjectDialogFooter
         v-if="newProject"

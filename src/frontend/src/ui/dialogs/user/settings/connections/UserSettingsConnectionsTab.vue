@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { type PropType, ref, toRefs, unref } from "vue";
+import ScrollPanel from "primevue/scrollpanel";
+import { type PropType, toRefs, unref } from "vue";
 
-import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
+import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserTools } from "@/ui/tools/user/UserTools";
 
-import ConnectorInstancesListbox from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListbox.vue";
-import NewConnectorInstance from "@/ui/dialogs/user/settings/connections/NewConnectorInstance.vue";
+import ConnectionsList from "@/ui/dialogs/user/settings/connections/ConnectionsList.vue";
+import NewConnection from "@/ui/dialogs/user/settings/connections/NewConnection.vue";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -21,12 +22,8 @@ const { tabData: userSettings } = toRefs(props);
 
 const { saveUserSettings } = useUserTools(comp);
 
-const selectedConnectorInstance = ref<ConnectorInstanceID | undefined>();
-
 function onCreateInstance(instance: ConnectorInstance): void {
     saveUserSettings(unref(userSettings)!);
-
-    selectedConnectorInstance.value = instance.instance_id;
 }
 </script>
 
@@ -38,8 +35,10 @@ function onCreateInstance(instance: ConnectorInstance): void {
             connection, use the drop-down list at the bottom of the connections list.
         </div>
 
-        <ConnectorInstancesListbox v-model="selectedConnectorInstance" :user-settings="userSettings" />
-        <NewConnectorInstance :user-settings="userSettings" @create-instance="onCreateInstance" />
+        <ScrollPanel class="h-[29rem]">
+            <ConnectionsList :user-settings="userSettings" />
+        </ScrollPanel>
+        <NewConnection :user-settings="userSettings" @create-instance="onCreateInstance" />
     </div>
 </template>
 

@@ -145,7 +145,9 @@ const editMenuShown = ref(false);
             <ProgressSpinner class="w-8 h-8" strokeWidth="4" />
         </div>
 
-        <div v-if="!isDeleted" id="project-description" class="overflow-hidden line-clamp" :title="project.description">{{ project!.description }}</div>
+        <div v-if="!isDeleted" id="project-description" class="overflow-hidden line-clamp-2" :title="project.description">
+            {{ project!.description }}
+        </div>
         <div v-else class="italic">The project is currently being deleted...</div>
 
         <div class="grid grid-cols-[1fr_min-content] self-end col-span-2 r-text-gray">
@@ -166,10 +168,4 @@ const editMenuShown = ref(false);
     </div>
 </template>
 
-<style scoped lang="scss">
-#project-description {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-</style>
+<style></style>

@@ -40,12 +40,12 @@ defineProps({
 });
 const { dialogData } = useExtendedDialogTools();
 
-const errors = ref([]);
+const errors = ref<string[]>([]);
 if (!!dialogData.validator) {
     watch(
-        () => dialogData.validator!.errors,
+        () => dialogData.validator!.errorMessages,
         (err) => {
-            errors.value = err ? Object.values(err) : [];
+            errors.value = err;
         }
     );
 }

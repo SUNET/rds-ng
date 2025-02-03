@@ -26,6 +26,7 @@ const { editProject, publishProject } = useProjectTools(comp);
             label="Publish &amp; Export"
             icon="material-icons-outlined mi-rocket-launch"
             icon-class="!text-3xl"
+            class="px-8 mr-1"
             @click="publishProject(project)"
         />
     </div>

@@ -80,6 +80,7 @@ function isProjectDeleted(project: Project): boolean {
                 list: 'projects-listbox-list',
                 option: 'projects-listbox-option'
             }"
+            :dt="{ 'option.selected.background': 'var(--r-shade-darker)' }"
         >
             <template #option="projectEntry">
                 <ProjectsListboxItem
@@ -106,23 +107,15 @@ function isProjectDeleted(project: Project): boolean {
     @apply border-0 rounded-none bg-inherit max-h-[calc(100vh-5rem-7rem)] #{!important};
 }
 
-:deep(.projects-listbox.p-focus) {
-    @apply shadow-none #{!important};
-}
-
 :deep(.projects-listbox-container) {
     @apply max-h-full #{!important};
 }
 
 :deep(.projects-listbox-list) {
-    @apply p-0 #{!important};
+    @apply p-0 gap-0 #{!important};
 }
 
 :deep(.projects-listbox-option) {
     @apply pr-2 border-solid border-b border-[--r-border-color] #{!important};
-}
-
-:deep(.projects-listbox-option:hover) {
-    @apply bg-[--r-shade-dark] #{!important};
 }
 </style>

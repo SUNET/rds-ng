@@ -24,7 +24,7 @@ class Logger(logging.Logger):
         import sys
         from .formatter import Formatter
 
-        handler = logging.StreamHandler(sys.stdout)
+        handler = logging.StreamHandler()
         handler.setLevel(self.level)
         handler.setFormatter(Formatter())
         return handler
