@@ -120,7 +120,6 @@ function onPublishInitDone(success: boolean, msg: string): void {
                     :label="publishTitle"
                     :aria-label="publishTitle"
                     :loading="initiatePublish"
-                    rounded
                     size="small"
                     icon="material-icons-outlined mi-rocket-launch"
                     loading-icon="material-icons-outlined mi-rocket-launch"

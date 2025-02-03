@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import Message from "primevue/message";
 import { storeToRefs } from "pinia";
+import Message from "primevue/message";
+import ScrollPanel from "primevue/scrollpanel";
 import { ref } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
@@ -8,7 +9,7 @@ import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 
 import { useUserStore } from "@/data/stores/UserStore";
 
-import PublishConnectionsListbox from "@/ui/dialogs/project/publish/PublishConnectionsListbox.vue";
+import PublishConnectionsList from "@/ui/dialogs/project/publish/PublishConnectionsList.vue";
 
 const { dialogData } = useExtendedDialogTools();
 
@@ -27,7 +28,9 @@ const { userSettings } = storeToRefs(userStore);
         </Message>
         <div v-else class="mb-2">To publish or export a project to a service, click on its corresponding button.</div>
 
-        <PublishConnectionsListbox :project="project" :user-settings="userSettings" class="w-full h-full" />
+        <ScrollPanel class="h-[61rem]">
+            <PublishConnectionsList :project="project" :user-settings="userSettings" />
+        </ScrollPanel>
     </div>
 </template>
 
