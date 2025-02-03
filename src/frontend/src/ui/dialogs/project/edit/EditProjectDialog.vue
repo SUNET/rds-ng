@@ -302,7 +302,7 @@ function onNextStep() {
                                     <ConnectorInstancesSelect
                                         v-model="dialogData.userData.options.active_connector_instances"
                                         :disabled="dialogData.userData.options.use_all_connector_instances"
-                                        class="w-full h-48"
+                                        class="w-full h-60"
                                     />
                                 </div>
                             </div>

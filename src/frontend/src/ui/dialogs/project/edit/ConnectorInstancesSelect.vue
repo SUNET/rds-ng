@@ -9,15 +9,15 @@ import { groupConnectorInstances } from "@common/data/entities/connector/Connect
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useUserStore } from "@/data/stores/UserStore";
 
-import ConnectorHeader from "@/ui/components/connector/ConnectorHeader.vue";
+import ConnectorInstancesHeader from "@/ui/components/connector/ConnectorInstancesHeader.vue";
 
 const consStore = useConnectorsStore();
 const userStore = useUserStore();
 const props = defineProps({
     disabled: {
         type: Boolean,
-        default: false,
-    },
+        default: false
+    }
 });
 const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
@@ -30,10 +30,10 @@ const model = defineModel({ default: [] });
 <template>
     <ScrollPanel>
         <div v-for="group of groupedInstances" :class="{ 'p-disabled': disabled }">
-            <ConnectorHeader :connector-id="group.connectorID" class="r-shade-dark rounded list-entry" />
+            <ConnectorInstancesHeader :connector-id="group.connectorID" class="r-shade-dark rounded list-entry h-11" />
 
-            <div v-for="instance of group.connectorInstances" :key="instance.instance_id" class="flex align-items-center list-entry">
-                <Checkbox v-model="model" :inputId="instance.instance_id" :value="instance.instance_id" :disabled="disabled" class="self-center" />
+            <div v-for="instance of group.connectorInstances" :key="instance.instance_id" class="flex align-items-center list-entry !py-1">
+                <Checkbox v-model="model" :inputId="instance.instance_id" :value="instance.instance_id" :disabled="disabled" size="large" class="self-center" />
                 <label :for="instance.instance_id" class="pl-1.5">{{ instance.name }}</label>
             </div>
         </div>
