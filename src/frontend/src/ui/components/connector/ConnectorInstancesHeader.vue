@@ -15,7 +15,7 @@ const props = defineProps({
         required: true
     }
 });
-const { connectorId, lightMode } = toRefs(props);
+const { connectorId } = toRefs(props);
 const connector = computed(() => findConnectorByID(consStore.connectors, connectorId!.value));
 const category = unref(connector) ? findConnectorCategory(unref(connector)!) : undefined;
 </script>
