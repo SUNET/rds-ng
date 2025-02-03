@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { type PropType, ref, toRefs, unref } from "vue";
-
-import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
-import { UserSettings } from "@common/data/entities/user/UserSettings";
+import ScrollPanel from "primevue/scrollpanel";
+import { type PropType, toRefs, unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { useUserStore } from "@/data/stores/UserStore";
+
+import { useConnectorInstancesTools } from "@/ui/tools/connector/ConnectorInstancesTools";
 import { useUserTools } from "@/ui/tools/user/UserTools";
 
-import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
+import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
+import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import ConnectorInstancesList from "@/ui/components/connector/ConnectorInstancesList.vue";
+import ConnectorInstancesListItem from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListItem.vue";
 import NewConnectorInstance from "@/ui/dialogs/user/settings/connections/NewConnectorInstance.vue";
 
 const comp = FrontendComponent.inject();
@@ -23,16 +28,26 @@ const props = defineProps({
 const { tabData: userSettings } = toRefs(props);
 
 const consStore = useConnectorsStore();
+const userStore = useUserStore();
 const { connectors } = storeToRefs(consStore);
+const { userAuthorizations } = storeToRefs(userStore);
 
+const { editInstance, deleteInstance, requestInstanceAuthorization, revokeInstanceAuthorization } = useConnectorInstancesTools(comp);
 const { saveUserSettings } = useUserTools(comp);
-
-const selectedConnectorInstance = ref<ConnectorInstanceID | undefined>();
 
 function onCreateInstance(instance: ConnectorInstance): void {
     saveUserSettings(unref(userSettings)!);
+}
 
-    selectedConnectorInstance.value = instance.instance_id;
+function onEditInstance(instance: ConnectorInstance): void {
+    editInstance(unref(userSettings)!.connector_instances, instance, findConnectorByID(unref(connectors), instance.connector_id)).then(() => {
+        saveUserSettings(unref(userSettings)!);
+    });
+}
+
+function onDeleteInstance(instance: ConnectorInstance) {
+    deleteInstance(unref(userSettings)!.connector_instances, instance);
+    saveUserSettings(unref(userSettings)!);
 }
 </script>
 
@@ -44,8 +59,19 @@ function onCreateInstance(instance: ConnectorInstance): void {
             connection, use the drop-down list at the bottom of the connections list.
         </div>
 
-        <ScrollPanel class="overflow-y-auto h-[27rem]">
-            <ConnectorInstancesList :instances="userSettings.connector_instances" :connectors="connectors" />
+        <ScrollPanel class="h-[29rem]">
+            <ConnectorInstancesList :instances="userSettings.connector_instances" :connectors="connectors">
+                <template #instance="slotProps">
+                    <ConnectorInstancesListItem
+                        :instance="slotProps.instance"
+                        @authorize-instance="requestInstanceAuthorization(slotProps.instance, connectors, userAuthorizations)"
+                        @unauthorize-instance="revokeInstanceAuthorization(slotProps.instance)"
+                        @dblclick="onEditInstance(slotProps.instance)"
+                        @edit-instance="onEditInstance(slotProps.instance)"
+                        @delete-instance="onDeleteInstance(slotProps.instance)"
+                    />
+                </template>
+            </ConnectorInstancesList>
         </ScrollPanel>
         <NewConnectorInstance :user-settings="userSettings" @create-instance="onCreateInstance" />
     </div>

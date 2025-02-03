@@ -2,6 +2,7 @@
 import Accordion from "primevue/accordion";
 import AccordionContent from "primevue/accordioncontent";
 import AccordionHeader from "primevue/accordionheader";
+import Divider from "primevue/divider";
 import AccordionPanel from "primevue/accordionpanel";
 import { computed, type PropType, toRefs, unref } from "vue";
 
@@ -27,14 +28,15 @@ const groupedInstances = computed(() => groupConnectorInstances(unref(instances)
 </script>
 
 <template>
-    <Accordion :value="groupedInstances.map((inst) => inst.connectorID)" multiple>
-        <AccordionPanel v-for="group in groupedInstances" :key="group.connectorID" :value="group.connectorID">
-            <AccordionHeader class="pl-0">
+    <Accordion :value="groupedInstances.map((inst) => inst.connectorID)" multiple :dt="{ 'content.padding': '0 1.125rem 1.125rem 0.75rem' }">
+        <AccordionPanel v-for="group in groupedInstances" :key="group.connectorID" :value="group.connectorID" class="border-0">
+            <AccordionHeader class="r-shade-dark rounded-xl mb-4">
                 <ConnectorInstancesHeader :connector-id="group.connectorID" />
             </AccordionHeader>
             <AccordionContent>
-                <div v-for="instance in group.connectorInstances" class="pl-0">
+                <div v-for="[index, instance] of group.connectorInstances.entries()" class="cursor-pointer">
                     <slot name="instance" :instance="instance" />
+                    <Divider v-if="index < group.connectorInstances.length - 1" />
                 </div>
             </AccordionContent>
         </AccordionPanel>
