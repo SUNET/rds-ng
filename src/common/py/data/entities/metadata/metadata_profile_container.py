@@ -1,8 +1,10 @@
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import Any, Dict, List
+from typing import List
 
 from dataclasses_json import dataclass_json
+
+from ..properties import ProfileMetadata, PropertyProfile
 
 
 @dataclass_json
@@ -28,9 +30,11 @@ class MetadataProfileContainer:
     category: str
     role: Role
 
-    profile: Dict[str, Dict[str, Any]] = field(
-        default_factory=dict
-    )  # TODO: Proper type
+    profile: PropertyProfile = field(
+        default_factory=lambda: PropertyProfile(
+            metadata=ProfileMetadata(("", ""), "", ""), layout=[]
+        )
+    )
 
 
 MetadataProfileContainerList = List[MetadataProfileContainer]
