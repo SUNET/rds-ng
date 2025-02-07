@@ -10,7 +10,8 @@ export class DataManagementPlanSnapIn extends SnapIn {
             name: "Data Management Plan",
             optional: {
                 label: "Data Management Plan",
-                feature: DataManagementPlanFeature.FeatureID
+                feature: DataManagementPlanFeature.FeatureID,
+                description: "Write a data management plan (DMP) about your project."
             },
             tabPanel: {
                 label: "Data Management Plan",

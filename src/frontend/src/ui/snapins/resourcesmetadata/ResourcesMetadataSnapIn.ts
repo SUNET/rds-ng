@@ -10,7 +10,8 @@ export class ResourcesMetadataSnapIn extends SnapIn {
             name: "Annotation",
             optional: {
                 label: "Annotation",
-                feature: ResourcesMetadataFeature.FeatureID
+                feature: ResourcesMetadataFeature.FeatureID,
+                description: "Annotate individual file objects with metadata."
             },
             tabPanel: {
                 label: "Annotation",

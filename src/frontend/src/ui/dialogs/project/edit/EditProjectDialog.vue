@@ -181,7 +181,7 @@ function onNextStep() {
                         :active="newProject ? stepIndices.features <= activeStep : stepIndices.features == activeStep"
                         :click-callback="(event: Event) => onClickStep(event, activateCallback)"
                         icon="mi-checklist"
-                        title="Features"
+                        title="Additional features"
                     />
                 </Step>
 
@@ -265,12 +265,10 @@ function onNextStep() {
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.features">
-                    <div class="mb-2">
-                        Select the features you want to use in this project. You can always turn additional features on or existing ones off later.
-                    </div>
+                    <div class="mb-2">Select additional features you want to use in this project. You can always turn these on or off later.</div>
 
-                    <Fieldset legend="Features" class="r-form-fieldset">
-                        <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-1">
+                    <Fieldset legend="Additional features" class="r-form-fieldset">
+                        <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-3">
                             <Checkbox
                                 v-model="uiOptions.optional_snapins"
                                 :inputId="snapIn.snapInID"
@@ -278,7 +276,12 @@ function onNextStep() {
                                 size="large"
                                 class="self-center"
                             />
-                            <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.options.optional!.label }}</label>
+                            <label :for="snapIn.snapInID" class="pl-2 grid grid-flow-row">
+                                <span class="font-bold">{{ snapIn.options.optional!.label }}</span>
+                                <span v-if="!!snapIn.options.optional?.description" class="r-text-gray text-sm">{{
+                                    snapIn.options.optional?.description
+                                }}</span>
+                            </label>
                         </div>
                     </Fieldset>
                 </StepPanel>

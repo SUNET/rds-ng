@@ -10,7 +10,8 @@ export class ProjectMetadataSnapIn extends SnapIn {
             name: "Publication Metadata",
             optional: {
                 label: "Publication Metadata",
-                feature: ProjectMetadataFeature.FeatureID
+                feature: ProjectMetadataFeature.FeatureID,
+                description: "The overall research metadata of the project."
             },
             tabPanel: {
                 label: "Publication Metadata",
