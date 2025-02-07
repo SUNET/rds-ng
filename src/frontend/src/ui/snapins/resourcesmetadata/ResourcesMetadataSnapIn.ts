@@ -7,14 +7,14 @@ export class ResourcesMetadataSnapIn extends SnapIn {
 
     public constructor() {
         super(ResourcesMetadataSnapIn.SnapInID, {
-            name: "Annotation",
+            name: "Data annotation",
             optional: {
-                label: "Annotation",
+                label: "Data annotation",
                 feature: ResourcesMetadataFeature.FeatureID,
                 description: "Annotate individual file objects with metadata."
             },
             tabPanel: {
-                label: "Annotation",
+                label: "Data annotation",
                 loader: () => import("./ResourcesMetadataPanel.vue"),
                 description: "Annotate individual file objects with metadata."
             }

@@ -7,14 +7,14 @@ export class ProjectMetadataSnapIn extends SnapIn {
 
     public constructor() {
         super(ProjectMetadataSnapIn.SnapInID, {
-            name: "Publication Metadata",
+            name: "Metadata",
             optional: {
-                label: "Publication Metadata",
+                label: "Metadata",
                 feature: ProjectMetadataFeature.FeatureID,
                 description: "The overall research metadata of the project."
             },
             tabPanel: {
-                label: "Publication Metadata",
+                label: "Metadata",
                 loader: () => import("./ProjectMetadataPanel.vue"),
                 description: "Add metadata describing your project."
             }
