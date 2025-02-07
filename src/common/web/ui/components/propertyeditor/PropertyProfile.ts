@@ -64,7 +64,7 @@ class ProfileClassInput {
     public readonly options?: string[];
     public required?: boolean;
 
-    public constructor(id: string, label: string, type: string, description?: string, example?: string, options?: string[], required?: boolean) {
+    public constructor(id: string, label: string, type: string, description?: string, example?: string, options: string[] = [], required?: boolean) {
         this.id = id;
         this.label = label;
         this.type = type;
@@ -72,6 +72,101 @@ class ProfileClassInput {
         this.example = example;
         this.options = options;
         this.required = required;
+    }
+
+    /**
+     * Retrieves the unique identifier of the property input.
+     *
+     * @returns {string} The identifier of the property input.
+     */
+    public getId(): string {
+        return this.id;
+    }
+
+    /**
+     * Retrieves the description of the property input.
+     *
+     * @returns {string | undefined} The description of the property input.
+     */
+    public getDescription(): string | undefined {
+        return this.description;
+    }
+
+    /**
+     * Retrieves the example of the property input.
+     *
+     * @returns {string | undefined} The example of the property input.
+     */
+    public getExample(): string | undefined {
+        return this.example;
+    }
+
+    /**
+     * Retrieves the label of the property input.
+     *
+     * @returns {string} The label of the property input.
+     */
+    public getLabel(): string {
+        return this.label;
+    }
+
+    /**
+     * Retrieves the type of the property input.
+     *
+     * @returns {string} The type of the property input.
+     */
+    public getType(): string {
+        return this.type;
+    }
+
+    /**
+     * Retrieves the options of the input.
+     *
+     * @returns {string[] | undefined} The options of the property input.
+     */
+    public getOptions(): string[] {
+        return this.options!;
+    }
+}
+
+export class ProfileClassRef {
+    public readonly classId: string;
+    public readonly required: Boolean;
+    public readonly inline: Boolean;
+    public readonly multiple: Boolean;
+
+    public constructor(classId: string, required: Boolean = false, inline: Boolean = false, multiple: Boolean = true) {
+        this.classId = classId;
+        this.required = required;
+        this.inline = inline;
+        this.multiple = multiple;
+    }
+
+    /**
+     * Retrieves the class type identifier.
+     *
+     * @returns {string} The class identifier.
+     */
+    public getClassId() {
+        return this.classId;
+    }
+
+    /**
+     * Checks if the ref property is set to inline mode.
+     *
+     * @returns {boolean} True if the property is inline, otherwise false.
+     */
+    public isInline() {
+        return this.inline;
+    }
+
+    /**
+     * Determines if multiple refs of this type are allowed.
+     *
+     * @returns {boolean} True if multiple refs are allowed, otherwise false.
+     */
+    public allowsMultiple() {
+        return this.multiple;
     }
 }
 
@@ -86,7 +181,10 @@ export class ProfileClass {
     public required?: boolean;
     public readonly multiple?: boolean;
     public readonly example?: string;
-    public readonly type: string[];
+
+    //@ts-ignore
+    @Type(() => ProfileClassRef)
+    public readonly refs: ProfileClassRef[];
 
     // @ts-ignore
     @Type(() => ProfileClassInput)
@@ -100,7 +198,7 @@ export class ProfileClass {
         required?: boolean,
         multiple?: boolean,
         example?: string,
-        type: string[] = [],
+        refs: ProfileClassRef[] = [],
         input: ProfileClassInput[] = []
     ) {
         this.id = id;
@@ -110,7 +208,7 @@ export class ProfileClass {
         this.required = required;
         this.multiple = multiple;
         this.example = example;
-        this.type = type;
+        this.refs = refs;
         this.input = input;
     }
 
@@ -128,8 +226,8 @@ export class ProfileClass {
      *
      * @returns The types of the ProfileClass.
      */
-    public getTypes() {
-        return this.type;
+    public getRefTypes(): ProfileClassRef[] {
+        return this.refs;
     }
 
     /**
@@ -149,6 +247,33 @@ export class ProfileClass {
     public getDisplayLabel() {
         return this.displayLabel;
     }
+
+    /**
+     * Retrieves the description of the property class.
+     *
+     * @returns {string} The description of the property class.
+     */
+    public getDescription() {
+        return this.description;
+    }
+
+    /**
+     * Retrieves an example for the property class.
+     *
+     * @returns The current value of the example class.
+     */
+    public getExample() {
+        return this.example;
+    }
+
+    /**
+     * Checks if the property is required.
+     *
+     * @returns {boolean} True if the property is required, otherwise false.
+     */
+    public isRequired() {
+        return this.required;
+    }
 }
 
 /**
@@ -165,6 +290,15 @@ export class ProfileLayoutClass extends ProfileClass {
      */
     addProfile(profile: ProfileID) {
         this.profiles!.push(profile);
+    }
+
+    /**
+     * Retrieves the list of profiles.
+     *
+     * @returns {Profile[]} An array of profiles.
+     */
+    public getProfiles() {
+        return this.profiles;
     }
 }
 

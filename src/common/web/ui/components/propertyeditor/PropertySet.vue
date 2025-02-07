@@ -1,30 +1,22 @@
 <script setup lang="ts">
-import Button from "primevue/button";
-import Chip from "primevue/chip";
-import Dialog from "primevue/dialog";
-import FloatLabel from "primevue/floatlabel";
-import IconField from "primevue/iconfield";
-import InputIcon from "primevue/inputicon";
-import InputSwitch from "primevue/inputswitch";
-import InputText from "primevue/inputtext";
-import OrderList from "primevue/orderlist";
+import { computed, ref } from "vue";
 
-import { computed, ref, type Ref } from "vue";
-import { useColorsStore } from "../../../data/stores/ColorsStore";
-import { calculateLayout as makeLayout } from "./utils/PropertyEditorUtils";
+import Button from "primevue/button";
 
 import { PropertyObjectStore } from "./PropertyObjectStore";
-import PropertyOneCol from "./PropertyOneCol.vue";
 import { type ProfileID, ProfileLayoutClass } from "./PropertyProfile";
+import { calculateLayout as makeLayout } from "./utils/PropertyEditorUtils";
 
-const props = defineProps(["controller", "project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore"]);
-const colorsStore = useColorsStore();
+import AddPropertiesDialog from "./AddPropertiesDialog.vue";
+import PropertyEditorSearchBar from "./PropertyEditorSearchBar.vue";
+import PropertyRow from "./PropertyRow.vue";
+
+const props = defineProps(["project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore"]);
 
 var layout = makeLayout(props.projectProfiles);
 
 const profileFilter = ref<ProfileID[]>([]);
 const requiredOnly = ref(false);
-const addSearchString = ref("");
 const searchString = ref("");
 
 // TODO Comment and maybe refactor to have dynamic filters
@@ -46,109 +38,37 @@ const propsToShow = computed(() =>
                     v.toLowerCase().includes(searchString.value.toLowerCase())
                 ) ||
                 // search in referenced property objects
-                !props.propertyObjects
+                      // implement search function on objects? this seems buggy
+                      props.propertyObjects
                     .getReferencedObjects(e.id)
                     .map((o: String) => props.sharedPropertyObjectStore.get(o).getValues())
-                    .map((e: String[]) => Object.values(e))
+                          .map((e: {}) => Object.values(e))
                     .flat()
-                    .findIndex((v: string) => v.toLowerCase().includes(searchString.value.toLowerCase()))
+                          .findIndex((v: string) => v.toLowerCase().includes(searchString.value.toLowerCase())) >= 0
         )
         .sort((a: ProfileLayoutClass, b: ProfileLayoutClass) => -a.profiles!.length - -b.profiles!.length)
 );
 
-const selectedProperties = ref([]) as Ref<ProfileLayoutClass[]>;
-const unselectProperties = () => (selectedProperties.value = []);
-const selectProperties = (selection: ProfileLayoutClass[]) => (selectedProperties.value = selection);
-
 const showAddProperties = ref(false);
-const hiddenPropertys = computed(() =>
+const hiddenProperties = computed(() =>
     layout.filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.getId()).includes(e.getId()))
 );
-
-const filteredProperties = computed(() =>
-    hiddenPropertys.value.filter(
-        (e: ProfileLayoutClass) =>
-            e.getDisplayLabel().toLowerCase().includes(addSearchString.value.toLowerCase()) ||
-            e.description?.toLowerCase().includes(addSearchString.value.toLowerCase())
-    )
-);
-
-const resetSearch = () => {
-    searchString.value = "";
-};
-
-const resetFilters = () => {
-    profileFilter.value = [];
-    resetSearch();
-    requiredOnly.value = false;
-};
 </script>
 
 <template>
     <div class="w-full max-w-full">
-        <!-- TODO In eigene Komponente auslagern, auch zum "add Properties" Dialog hinzufuegen. -->
-        <div class="m-5 mb-5 mr-2" :class="projectProfiles.list().length > 1 ? 'border-b' : ''">
-            <IconField iconPosition="left">
-                <InputIcon class="pi pi-search"> </InputIcon>
-                <InputText
-                    type="text"
-                    v-model="searchString"
-                    id="searchString"
-                    class="w-full"
-                    placeholder="Search..."
-                    autocomplete="off"
-                    @keydown.esc="resetSearch()"
-                />
-                <InputIcon
-                    @click.stop="resetSearch()"
-                    disabled="!searchstring"
-                    class="pi pi-times-circle"
-                    :class="{ 'hover:text-red-400': !!searchString }"
-                    title="Reset search"
-                />
-            </IconField>
-            <div class="my-3 flex justify-between w-full">
-                <span v-if="projectProfiles.list().length > 1" class="flex align-center gap-2">
-                    <Chip
-                        :label="`All (${layout.filter((e: ProfileLayoutClass) => e.required || props.propertyObjects.get(e.id) !== undefined).length})`"
-                        title="Show all properties"
-                        class="h-4 !rounded py-3 text-sm border border-slate-700 cursor-pointer"
-                        :class="profileFilter.length === 0 && !searchString && !requiredOnly ? 'text-emerald-100 bg-slate-700' : ''"
-                        @click="resetFilters"
-                    />
-                    <Chip
-                        v-for="profile in projectProfiles.list()"
-                        :label="profile.getDisplayLabel()"
-                        class="h-4 !rounded py-3 text-sm border cursor-pointer"
-                        :class="profileFilter.includes(profile.getId()) ? 'bg-emerald-50 border-emerald-600 text-slate-700' : ''"
-                        @click="
-                            profileFilter.includes(profile.getId())
-                                ? (profileFilter = profileFilter.filter((e) => e !== profile.getId()))
-                                : profileFilter.push(profile.getId())
-                        "
-                    />
-                </span>
-                <div class="italic flex-grow text-center" :class="{ invisible: !searchString }">
-                    {{ propsToShow.length > 0 ? propsToShow.length : "No " }} match{{ propsToShow.length != 1 ? `es` : "" }} for
-                    <span class="font-bold">{{ searchString }}</span>
-                </div>
-
-                <span v-if="projectProfiles.list().length > 1" class="flex justify-self-end gap-4" grid>
-                    <span class="flex gap-2" title="Hide optional properties." aria-label="Hide optional properties.">
-                    <label for="required">Required only</label>
-                    <InputSwitch v-model="requiredOnly" inputId="required" />
-                    </span>
-                    <!-- TODO                    <span class="flex gap-2" title="Show all missing properties." aria-label="Show all missing properties.">
-                        <label for="missing">Missing only</label>
-                        <InputSwitch v-model="missingOnly" inputId="missing" />
-                    </span> -->
-                </span>
-            </div>
-        </div>
-
-        <PropertyOneCol
+        <PropertyEditorSearchBar
+            v-model:all-count="layout.filter((e: ProfileLayoutClass) => e.isRequired() || props.propertyObjects.get(e.id) !== undefined).length"
+            v-model:search-string="searchString"
+            v-model:profile-filter="profileFilter"
+            v-model:required-only="requiredOnly"
+            v-model:matches-count="propsToShow.length"
+            :projectProfiles="projectProfiles"
+            :propertyObjects="propertyObjects"
+        />
+        <PropertyRow
             v-for="(p, i) in propsToShow"
-            :key="p.id"
+            :key="p.getId()"
             :index="i"
             class="my-5 w-full max-w-full"
             :propertyClass="p"
@@ -157,9 +77,9 @@ const resetFilters = () => {
             :projectProfiles="projectProfiles"
             :layoutProfiles="layout"
         />
-    </div>
+
     <Button
-        v-if="hiddenPropertys.length !== 0"
+            v-if="hiddenProperties.length !== 0"
         class="fixed bottom-10 right-10"
         icon="material-icons-outlined mi-add"
         size="large"
@@ -169,73 +89,12 @@ const resetFilters = () => {
         v-tooltip="{ value: 'Add more properties' }"
     />
 
-    <Dialog
+        <AddPropertiesDialog
         v-model:visible="showAddProperties"
-        modal
-        header="Add properties"
-        :pt="{ content: 'h-full' }"
-        :style="{ width: '50vw', height: '80vh' }"
-        @after-hide="
-            unselectProperties();
-            addSearchString = '';
-        "
-    >
-        <template #default>
-            <div class="h-full flex-col flex space-y-4">
-                <FloatLabel>
-                    <InputText type="text" v-model="addSearchString" id="searchString" class="w-full" />
-                    <label for="searchString">Search...</label>
-                </FloatLabel>
-                <OrderList
-                    v-model="filteredProperties"
-                    @update:selection="(selection: ProfileLayoutClass[]) => selectProperties(selection)"
-                    dataKey="id"
-                    class="h-full"
-                    :pt="{ pcListbox: { listContainer: 'min-h-full' } }"
-                    :stripedRows="true"
-                >
-                    <template #option="slotProps">
-                        <div class="flex flex-col w-full p-1">
-                            <span class="font-semibold flex gap-2" :title="slotProps.option.label">
-                                <span class="grow"> {{ slotProps.option.getDisplayLabel() }}</span>
-                                <Chip
-                                    v-for="p in slotProps.option.profiles"
-                                    :label="p[0]"
-                                    size="small"
-                                    :style="`background-color: ${colorsStore.color(p[0])}`"
-                                    class="h-4 !rounded py-3 text-sm bg-opacity-40"
-                            /></span>
-                            <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.option.description">{{ slotProps.option.description }}</span>
-                        </div>
-                    </template>
-                </OrderList>
+            @add-properties="(selectedProperties: ProfileLayoutClass[]) => propsToShow.push(...selectedProperties)"
+            :hiddenProperties="hiddenProperties"
+        />
             </div>
-        </template>
-        <template #footer>
-            <div class="flex justify-end gap-2 mt-5">
-                <Button
-                    :disabled="!selectedProperties.length"
-                    @click="
-                        propsToShow.push(...selectedProperties);
-                        unselectProperties();
-                        addSearchString = '';
-                        showAddProperties = false;
-                    "
-                    >Add {{ selectedProperties.length ? "(" + selectedProperties.length + ")" : "" }}
-                </Button>
-                <Button
-                    outlined
-                    severity="secondary"
-                    @click="
-                        unselectProperties();
-                        addSearchString = '';
-                        showAddProperties = false;
-                    "
-                    >Cancel
-                </Button>
-            </div>
-        </template>
-    </Dialog>
 </template>
 
 <style scoped lang="scss">

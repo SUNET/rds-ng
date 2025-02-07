@@ -1,9 +1,6 @@
 {
     "metadata": {
-        "id": [
-            "objects",
-            "2024.09.17"
-        ],
+        "id": ["objects", "2024.09.17"],
         "displayLabel": "Object resource",
         "description": "A profile for individual resources."
     },
@@ -51,9 +48,7 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
             "displayLabel": "Creator",
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
-            "type": [
-                "creator"
-            ],
+            "refs": [{ "classId": "creator" }],
             "required": true,
             "multiple": true
         }
@@ -64,9 +59,9 @@
             "displayLabel": "Creator",
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             "labelTemplate": "${name}",
-            "type": [
-                "nameIdentifier",
-                "affiliation"
+            "refs": [
+                { "classId": "nameIdentifier", "inline": true },
+                { "classId": "affiliation", "inline": true }
             ],
             "input": [
                 {
@@ -85,22 +80,16 @@
             "labelTemplate": "${nameIdentifier}",
             "input": [
                 {
+                    "id": "nameIdentifierScheme",
+                    "label": "",
+                    "type": "radiobuttons",
+                    "options": ["ORCID", "GND", "other"],
+                    "description": ""
+                },
+                {
                     "id": "nameIdentifier",
                     "label": "Name Identifier",
-                    "type": "string",
-                    "description": "Uniquely identifies an individual or legal entity, according to various schemes."
-                },
-                {
-                    "id": "nameIdentifierScheme",
-                    "label": "Name Identifier Scheme",
-                    "type": "string",
-                    "description": "The name of the name identifier scheme."
-                },
-                {
-                    "id": "schemeURI",
-                    "label": "Scheme URI",
-                    "type": "string",
-                    "description": "The URI of the name identifier scheme."
+                    "type": "string"
                 }
             ]
         },
@@ -109,6 +98,13 @@
             "displayLabel": "Affiliation",
             "labelTemplate": "${affiliation}",
             "input": [
+                {
+                    "id": "affiliationIdentifierScheme",
+                    "label": "",
+                    "type": "radiobuttons",
+                    "options": ["ORCID", "GND", "other"],
+                    "description": ""
+                },
                 {
                     "id": "affiliation",
                     "label": "Affiliation",
@@ -120,18 +116,6 @@
                     "label": "Affiliation Identifier",
                     "type": "string",
                     "description": "Uniquely identifies the organizational affiliation of the creator."
-                },
-                {
-                    "id": "affiliationIdentifierScheme",
-                    "label": "Affiliation Identifier Scheme",
-                    "type": "string",
-                    "description": "The name of the affiliation identifier scheme."
-                },
-                {
-                    "id": "schemeURI",
-                    "label": "Affiliation Scheme URI",
-                    "type": "string",
-                    "description": "The URI of the affiliation identifier scheme."
                 }
             ]
         }
