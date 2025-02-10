@@ -24,6 +24,9 @@ export interface SnapInOptions {
 
         /** The ID of a directly associated project feature. If set, the associated feature will be en-/disabled alongside the snap-in. */
         feature?: ProjectFeatureID;
+
+        /** A description of the feature. */
+        description?: string;
     };
 
     /** Tab-panel options. */

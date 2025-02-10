@@ -18,7 +18,7 @@ const comp = FrontendComponent.inject();
 const route = useRoute();
 const projStore = useProjectsStore();
 const { projects, activeProject } = storeToRefs(projStore);
-const { publishProject, editProject, deleteProject } = useProjectTools(comp);
+const { uploadProject, editProject, deleteProject } = useProjectTools(comp);
 
 const unwatchProjects = watch(projects, () => {
     // If the current URL contains a project ID, select that project once we received our projects list
@@ -88,7 +88,7 @@ function isProjectDeleted(project: Project): boolean {
                     :is-selected="isProjectSelected(projectEntry.option)"
                     :is-deleted="isProjectDeleted(projectEntry.option)"
                     @dblclick="editProject(projectEntry.option)"
-                    @publish-project="publishProject(projectEntry.option)"
+                    @upload-project="uploadProject(projectEntry.option)"
                     @edit-project="editProject(projectEntry.option)"
                     @delete-project="deleteProject(projectEntry.option)"
                 />

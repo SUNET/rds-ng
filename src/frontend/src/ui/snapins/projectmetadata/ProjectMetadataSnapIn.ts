@@ -1,5 +1,3 @@
-import { ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
-
 import { SnapIn, type SnapInID } from "../SnapIn";
 
 export class ProjectMetadataSnapIn extends SnapIn {
@@ -7,13 +5,9 @@ export class ProjectMetadataSnapIn extends SnapIn {
 
     public constructor() {
         super(ProjectMetadataSnapIn.SnapInID, {
-            name: "Publication Metadata",
-            optional: {
-                label: "Publication Metadata",
-                feature: ProjectMetadataFeature.FeatureID
-            },
+            name: "Metadata",
             tabPanel: {
-                label: "Publication Metadata",
+                label: "Metadata",
                 loader: () => import("./ProjectMetadataPanel.vue"),
                 description: "Add metadata describing your project."
             }

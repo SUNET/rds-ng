@@ -14,8 +14,8 @@ from ...data.entities.connector import (
     Connector,
     ConnectorID,
     ConnectorCategoryID,
-    ConnectorMetadataProfile,
 )
+from ...data.entities.properties import ProfileMetadata, PropertyProfile
 
 
 @Message.define("event/connector/list")
@@ -63,7 +63,11 @@ class ConnectorAnnounceEvent(Event):
 
     logos: Connector.Logos = dataclasses.field(default_factory=Connector.Logos)
 
-    metadata_profile: ConnectorMetadataProfile = dataclasses.field(default_factory=dict)
+    metadata_profile: PropertyProfile = dataclasses.field(
+        default_factory=lambda: PropertyProfile(
+            metadata=ProfileMetadata(("", ""), "", ""), layout=[]
+        )
+    )
 
     @staticmethod
     def build(
@@ -76,7 +80,7 @@ class ConnectorAnnounceEvent(Event):
         authorization: AuthorizationSettings,
         options: Connector.Options,
         logos: Connector.Logos,
-        metadata_profile: ConnectorMetadataProfile,
+        metadata_profile: PropertyProfile,
         chain: Message | None = None
     ) -> EventComposer:
         """

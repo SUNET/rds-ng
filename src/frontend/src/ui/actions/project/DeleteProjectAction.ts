@@ -4,7 +4,7 @@ import { Project } from "@common/data/entities/project/Project";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
-import { StatusNotifier } from "@common/ui/actions/notifiers/StatusNotifier.ts";
+import { StatusNotifier } from "@common/ui/actions/notifiers/StatusNotifier";
 import { type ConfirmDialogResult } from "@common/ui/dialogs/ConfirmDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 

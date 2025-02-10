@@ -42,14 +42,14 @@ export class ListProjectJobsReply extends CommandReply {
         cmd: ListProjectJobsCommand,
         jobs: ProjectJob[],
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<ListProjectJobsReply> {
         return messageBuilder.buildCommandReply(ListProjectJobsReply, cmd, success, message, { jobs: jobs });
     }
 }
 
 /**
- * Command to initiate a publishing job.
+ * Command to initiate a project job.
  *
  * @param project_id - The project ID.
  * @param connector_instance - The connector instance ID.
@@ -66,7 +66,7 @@ export class InitiateProjectJobCommand extends Command {
         messageBuilder: MessageBuilder,
         projectID: ProjectID,
         connectorInstance: ConnectorInstanceID,
-        chain: Message | null = null,
+        chain: Message | null = null
     ): CommandComposer<InitiateProjectJobCommand> {
         return messageBuilder.buildCommand(InitiateProjectJobCommand, { project_id: projectID, connector_instance: connectorInstance }, chain);
     }
@@ -84,7 +84,7 @@ export class InitiateProjectJobReply extends CommandReply {
         messageBuilder: MessageBuilder,
         cmd: InitiateProjectJobCommand,
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<InitiateProjectJobReply> {
         return messageBuilder.buildCommandReply(InitiateProjectJobReply, cmd, success, message);
     }

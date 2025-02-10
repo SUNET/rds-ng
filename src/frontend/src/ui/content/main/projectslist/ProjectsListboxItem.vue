@@ -48,7 +48,7 @@ const props = defineProps({
 });
 const { project, isSelected, isDeleted } = toRefs(props);
 const emits = defineEmits<{
-    (e: "publish-project", project: Project): void;
+    (e: "upload-project", project: Project): void;
     (e: "edit-project", project: Project): void;
     (e: "delete-project", project: Project): void;
 }>();
@@ -91,10 +91,10 @@ const editMenuItems = ref([
         label: "Edit project",
         items: [
             {
-                label: "Publish & Export",
+                label: "Upload project",
                 icon: "material-icons-outlined mi-rocket-launch",
                 command: () => {
-                    emits("publish-project", project!.value);
+                    emits("upload-project", project!.value);
                 }
             },
             {
