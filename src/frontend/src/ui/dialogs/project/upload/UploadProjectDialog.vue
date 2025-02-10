@@ -20,15 +20,17 @@ const { userSettings } = storeToRefs(userStore);
 
 <template>
     <div class="grid grid-rows-[min-content_1fr] gap-1.5 w-full h-full">
-        <Message v-if="userSettings.connector_instances.length == 0" severity="warn" :closable="false" class="pb-1">
-            <div>
-                To upload your project, add at least one connection to an external service in your settings
-                <span class="material-icons-outlined mi-settings relative top-1.5" />.
+        <div v-if="userSettings.connector_instances.length > 0" class="mb-2">
+            To upload your project to an external service, click on its corresponding button.
+        </div>
+        <Message v-else severity="warn" :closable="false" class="m-0.5 mt-2 pt-0">
+            <div class="mt-[-0.4rem]">
+                You haven't added any connections to external services yet. To be able to upload your project, go to your settings
+                <span class="material-icons-outlined mi-settings relative top-1.5" /> and add at least one connection to an external service.
             </div>
         </Message>
-        <div v-else class="mb-2">To upload your project to an external service, click on its corresponding button.</div>
 
-        <ScrollPanel class="h-[calc(60vh-3rem)] min-h-[33rem]">
+        <ScrollPanel v-if="userSettings.connector_instances.length > 0" class="h-[calc(60vh-3rem)] min-h-[33rem]">
             <UploadConnectionsList :project="project" :user-settings="userSettings" />
         </ScrollPanel>
     </div>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
+import Message from "primevue/message";
 import { type PropType, toRefs, unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -45,7 +46,7 @@ function onDeleteInstance(instance: ConnectorInstance) {
 </script>
 
 <template>
-    <ConnectorInstancesList :instances="userSettings.connector_instances" :connectors="connectors">
+    <ConnectorInstancesList v-if="userSettings.connector_instances.length > 0" :instances="userSettings.connector_instances" :connectors="connectors">
         <template #instance="slotProps">
             <ConnectionsListItem
                 :instance="slotProps.instance"
@@ -57,6 +58,12 @@ function onDeleteInstance(instance: ConnectorInstance) {
             />
         </template>
     </ConnectorInstancesList>
+    <Message v-else severity="warn" :closable="false" class="m-0.5 mt-2">
+        <div>
+            You haven't added any connections to external services yet. To add a connection, select its desired type (i.e., the external service you want to
+            upload your projects to) from the drop-down list below.
+        </div>
+    </Message>
 </template>
 
 <style scoped lang="scss"></style>
