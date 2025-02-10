@@ -1,5 +1,9 @@
+import { WebComponent } from "../../../../component/WebComponent";
+import { confirmDialog } from "../../../dialogs/ConfirmDialog";
+import { PropertyObjectStore, SharedPropertyObject } from "../PropertyObjectStore";
 import { type ProfileID, ProfileLayoutClass, PropertyProfile } from "../PropertyProfile";
 import { PropertyProfileStore } from "../PropertyProfileStore";
+import { injectTemplate } from "./Templates";
 
 /**
  * Checks whether two profile IDs are the same.
@@ -88,4 +92,112 @@ export function calculateLayout(projectProfiles: PropertyProfileStore): ProfileL
         }
     }
     return layout;
+}
+
+/**
+ * Generates a list of linkable objects for a given parent ID and type.
+ *
+ * This function retrieves objects that are referenced in either the shared property object store
+ * or the property object store, then filters out objects that are already linked or
+ * have the same ID as the parent. It returns an array of objects with labels and commands
+ * to add references to the property object stores.
+ *
+ * @param propertyObjects - The store containing property objects.
+ * @param sharedPropertyObjectStore - The store containing shared property objects.
+ * @param projectProfiles - The store containing property profiles.
+ * @param parentId - The ID of the parent object.
+ * @param type - The type of objects to link.
+ * @returns An array of linkable objects with labels and commands.
+ */
+export function linkableObjects(
+    propertyObjects: PropertyObjectStore,
+    sharedPropertyObjectStore: PropertyObjectStore,
+    projectProfiles: PropertyProfileStore,
+    parentId: string,
+    type: string
+) {
+    const linkedItems = [...sharedPropertyObjectStore.getReferencedObjects(parentId).flat(), ...propertyObjects.getReferencedObjects(parentId).flat()];
+    const linkable = sharedPropertyObjectStore
+        .getObjectsByType(type)
+        .filter((item: SharedPropertyObject) => !linkedItems.includes(item.id))
+        .filter((item: SharedPropertyObject) => item.id != parentId);
+    return linkable.length > 0
+        ? linkable.map((item: SharedPropertyObject) => ({
+              label: injectTemplate(projectProfiles.getLabelTemplateById(item.type)!, sharedPropertyObjectStore.get(item.id)!),
+              command: () => {
+                  propertyObjects.addRef(parentId, item.id) || sharedPropertyObjectStore.addRef(parentId, item.id);
+              }
+          }))
+        : [];
+}
+
+/**
+ * Generates a list of actions for a linked item in a property editor.
+ * Actions include unlinking the item and deleting the item.
+ *
+ * @param comp - The web component instance.
+ * @param propertyObjects - The store containing property objects.
+ * @param sharedPropertyObjectStore - The shared store containing property objects.
+ * @param parentId - The ID of the parent object.
+ * @param propertyObjectId - The ID of the property object.
+ * @param classDisplayLabel - The label to display for the item.
+ * @returns An array of action objects for the linked item.
+ */
+export function linkedItemActions(
+    comp: WebComponent,
+    propertyObjects: PropertyObjectStore,
+    sharedPropertyObjectStore: PropertyObjectStore,
+    parentId: string,
+    propertyObjectId: string,
+    classDisplayLabel: string
+) {
+    return [
+        {
+            label: `Remove ${classDisplayLabel}`,
+            hasSubmenu: false,
+            items: [
+                {
+                    label: `Unlink item`,
+                    icon: "material-icons-outlined mi-link-off",
+                    disabled: sharedPropertyObjectStore.get(propertyObjectId)!.isEmpty(),
+                    command: () => {
+                        confirmDialog(comp, {
+                            header: `Unlink ${classDisplayLabel}?`,
+                            message: "Are you sure you want to unlink this item? The object will not be deleted, you can relink at any time.",
+                            acceptLabel: "Unlink",
+                            acceptIcon: "pi pi-minus",
+                            acceptClass: "p-button-danger",
+                            rejectLabel: "Cancel",
+                            rejectIcon: "pi pi-times",
+                            rejectClass: "p-button-secondary"
+                        }).then(() => {
+                            propertyObjects.removeRef(parentId, propertyObjectId);
+                            sharedPropertyObjectStore.removeRef(parentId, propertyObjectId);
+                        });
+                    }
+                },
+                { separator: true },
+                {
+                    label: "Delete item",
+                    icon: "material-icons-outlined mi-delete-forever",
+                    class: "r-text-error",
+                    command: () => {
+                        confirmDialog(comp, {
+                            header: `Delete ${classDisplayLabel}?`,
+                            message: "Are you sure you want to delete this item? It will not be recoverable.",
+                            acceptLabel: "Delete",
+                            acceptIcon: "pi pi-trash",
+                            acceptClass: "p-button-danger",
+                            rejectLabel: "Cancel",
+                            rejectIcon: "pi pi-times",
+                            rejectClass: "p-button-secondary"
+                        }).then(() => {
+                            propertyObjects.remove(propertyObjectId);
+                            sharedPropertyObjectStore.remove(propertyObjectId);
+                        });
+                    }
+                }
+            ]
+        }
+    ];
 }

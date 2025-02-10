@@ -39,6 +39,7 @@ const linkedItemActions = computed(() => [
             {
                 label: `Unlink item`,
                 icon: "material-icons-outlined mi-link-off",
+                disabled: object.value.isEmpty(),
                 command: () => {
                     confirmDialog(comp, {
                         header: `Unlink "${instanceLabel.value}?"`,

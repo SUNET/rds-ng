@@ -95,7 +95,7 @@
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             "labelTemplate": "${name}",
             "refs": [
-                { "classId": "nameIdentifier", "inline": true, "multiple": false },
+                { "classId": "nameIdentifier", "inline": true },
                 { "classId": "affiliation", "inline": true }
             ],
             "input": [
