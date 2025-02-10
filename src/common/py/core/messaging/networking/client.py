@@ -1,6 +1,7 @@
 import threading
 import typing
 
+import requests
 import socketio
 
 from .. import Message, Payload
@@ -31,7 +32,7 @@ class Client(socketio.Client):
 
         self._message_builder = message_builder
 
-        from ....settings import NetworkClientSettingIDs
+        from ....settings import NetworkSettingIDs, NetworkClientSettingIDs
 
         self._server_address: str = self._config.value(
             NetworkClientSettingIDs.SERVER_ADDRESS
@@ -39,8 +40,15 @@ class Client(socketio.Client):
         self._connection_timeout: int = self._config.value(
             NetworkClientSettingIDs.CONNECTION_TIMEOUT
         )
+        self._verify_ssl: bool = self._config.value(NetworkSettingIDs.VERIFY_SSL)
 
-        super().__init__(reconnection_delay_max=self._connection_timeout)
+        init_args = {"reconnection_delay_max": self._connection_timeout}
+        if not self._verify_ssl:
+            http_session = requests.Session()
+            http_session.verify = False
+            init_args["http_session"] = http_session
+
+        super().__init__(**init_args)
 
         self._message_handler: ClientMessageHandler | None = None
 

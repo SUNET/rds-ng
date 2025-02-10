@@ -16,6 +16,7 @@ from common.py.integration.authorization.strategies import (
 )
 from common.py.integration.execution import AuthorizedExecutor
 from common.py.services import Service
+from common.py.settings import NetworkSettingIDs
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -220,6 +221,10 @@ class RequestsExecutor(AuthorizedExecutor):
         self, *, auth_token: AuthorizationToken | None
     ) -> requests.Session:
         session = requests.Session()
+
+        if not self._component.data.config.value(NetworkSettingIDs.VERIFY_SSL):
+            session.verify = False
+
         session.headers.update(
             {
                 "Accept": "*/*",
