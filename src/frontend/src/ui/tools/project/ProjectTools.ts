@@ -4,7 +4,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { CreateProjectAction } from "@/ui/actions/project/CreateProjectAction";
 import { DeleteProjectAction } from "@/ui/actions/project/DeleteProjectAction";
 import { UpdateProjectAction } from "@/ui/actions/project/UpdateProjectAction";
-import { publishProjectDialog, type PublishProjectDialogData } from "@/ui/dialogs/project/publish/PublishProjectDialog";
+import { uploadProjectDialog, type UploadProjectDialogData } from "@/ui/dialogs/project/upload/UploadProjectDialog";
 
 /**
  * Tools for working with projects.
@@ -26,8 +26,8 @@ export function useProjectTools(comp: FrontendComponent) {
         });
     }
 
-    function publishProject(project: Project): Promise<PublishProjectDialogData> {
-        return publishProjectDialog(comp, project);
+    function uploadProject(project: Project): Promise<UploadProjectDialogData> {
+        return uploadProjectDialog(comp, project);
     }
 
     function deleteProject(project: Project): void {
@@ -41,7 +41,7 @@ export function useProjectTools(comp: FrontendComponent) {
     return {
         newProject,
         editProject,
-        publishProject,
+        uploadProject,
         deleteProject
     };
 }

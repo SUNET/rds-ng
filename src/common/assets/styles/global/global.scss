@@ -4,7 +4,8 @@
 :root {
     --r-border-color: var(--p-surface-200);
     --r-shade: color-mix(in srgb, var(--p-highlight-background), #fff 50%);
-    --r-shade-dark: color-mix(in srgb, var(--p-highlight-background), #fff 25%);
+    --r-shade-dark: color-mix(in srgb, var(--p-primary-color), #fff 95%);
+    --r-shade-darker: color-mix(in srgb, var(--p-primary-color), #fff 90%);
 }
 
 /*
@@ -138,6 +139,10 @@ html {
 
 .r-shade-dark {
     background-color: var(--r-shade-dark);
+}
+
+.r-shade-darker {
+    background-color: var(--r-shade-darker);
 }
 
 .r-shade-text {

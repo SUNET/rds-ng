@@ -2,7 +2,6 @@ from .connector import (
     Connector,
     ConnectorID,
     ConnectorCategoryID,
-    ConnectorMetadataProfile,
 )
 from .connector_instance import ConnectorInstance, ConnectorInstanceID
 

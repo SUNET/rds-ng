@@ -3,6 +3,7 @@ import { type DynamicDialogOptions } from "primevue/dynamicdialogoptions";
 import { defineAsyncComponent } from "vue";
 
 import { type VueComponent, WebComponent } from "../../component/WebComponent";
+import { deepMerge } from "../../utils/ObjectUtils";
 
 import { ExtendedDialogValidator } from "./ExtendedDialogValidator";
 
@@ -44,7 +45,7 @@ export interface ExtendedDialogData<UserDataType> {
     options: ExtendedDialogOptions;
 
     /** A form validator if a schema was provided in the options. */
-    validator?: ExtendedDialogValidator<any>;
+    validator?: ExtendedDialogValidator<any, any>;
 
     /** Called before accepting the dialog to pre-process the dialog data. */
     processData?: (data: UserDataType) => void;
@@ -99,6 +100,12 @@ export function extendedDialog<UserDataType>(
                 reject();
             };
         }
+
+        dialogProps.pt = deepMerge(dialogProps.pt || {}, {
+            root: "border-none",
+            header: "r-dialog-header",
+            pcCloseButton: { root: "r-primary-text hover:text-[var(--p-button-text-primary-color)]" }
+        });
 
         const dialogOptions: DynamicDialogOptions = {
             props: dialogProps,

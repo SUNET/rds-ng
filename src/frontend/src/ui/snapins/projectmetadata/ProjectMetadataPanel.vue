@@ -85,7 +85,7 @@ watch(
     <div v-if="userSettings.connector_instances.length == 0" class="p-2 px-6">
         <Message severity="warn" :closable="false" class="pb-1">
             <div>
-                You haven't configured any connections to external services yet. In order to add metadata to your publication, open your settings
+                You haven't configured any connections to external services yet. In order to add metadata to your project, open your settings
                 <span class="material-icons-outlined mi-settings relative top-1.5" />
                 and add at least one connection.
             </div>

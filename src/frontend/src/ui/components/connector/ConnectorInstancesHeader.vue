@@ -21,10 +21,10 @@ const category = unref(connector) ? findConnectorCategory(unref(connector)!) : u
 </script>
 
 <template>
-    <div v-if="connector" class="grid grid-rows-1 grid-cols-[auto_1fr_min-content] grid-flow-col gap-3 w-full place-content-start items-center">
+    <div v-if="connector" class="grid grid-rows-1 grid-cols-[auto_1fr_min-content] grid-flow-col gap-3 place-content-start items-center w-full">
         <img v-if="connector.logos.horizontal_logo" :src="connector.logos.horizontal_logo" class="h-4" alt="{{ connector.name }}" :title="connector.name" />
-        <div class="truncate r-shade-text opacity-70" :title="connector.description">{{ connector.name }}</div>
-        <div>
+        <div class="truncate" :title="connector.description">{{ connector.name }}</div>
+        <div class="pr-4">
             <ConnectorCategoryTag v-if="category" :category="category" />
         </div>
     </div>

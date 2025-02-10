@@ -25,8 +25,8 @@ const { userSettings } = storeToRefs(userStore);
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 
@@ -54,24 +54,24 @@ const values = computed(() => {
         {
             group: "General",
             name: "Project ID",
-            value: unref(project)!.project_id,
+            value: unref(project)!.project_id
         },
         {
             group: "General",
             name: "Created on",
-            value: formatLocaleTimestamp(unref(project)!.creation_time),
+            value: formatLocaleTimestamp(unref(project)!.creation_time)
         },
-        // Publish and export
+        // Uploads
         {
-            group: "Publish & Export",
-            name: "Total publications and exports",
-            value: `${totalJobStatistics.totalCount.succeeded} total (${totalJobStatistics.totalCount.failed} failed)`,
+            group: "Uploads",
+            name: "Total uploads",
+            value: `${totalJobStatistics.totalCount.succeeded} total (${totalJobStatistics.totalCount.failed} failed)`
         },
         {
-            group: "Publish & Export",
-            name: "Last published or exported on",
-            value: totalJobStatistics.lastJob > 0 ? formatLocaleTimestamp(totalJobStatistics.lastJob) : "Never",
-        },
+            group: "Uploads",
+            name: "Last uploaded on",
+            value: totalJobStatistics.lastJob > 0 ? formatLocaleTimestamp(totalJobStatistics.lastJob) : "Never"
+        }
     ];
 
     // Connector instances
@@ -81,9 +81,9 @@ const values = computed(() => {
         const category = findConnectorCategoryByInstanceID(unref(connectors), unref(userSettings).connector_instances, instance.instance_id);
 
         values.push({
-            group: "Publish & Export",
+            group: "Uploads",
             name: instance.name,
-            value: `${succeeded} ${category ? (succeeded > 1 ? category.verbNounPlural.toLowerCase() : category.verbNoun.toLowerCase()) : ""} (${failed} failed)`,
+            value: `${succeeded} ${category ? (succeeded > 1 ? category.verbNounPlural.toLowerCase() : category.verbNoun.toLowerCase()) : ""} (${failed} failed)`
         });
     }
 
@@ -100,18 +100,18 @@ const values = computed(() => {
         {
             group: "Objects",
             name: "Data path",
-            value: unref(project)!.resources_path,
+            value: unref(project)!.resources_path
         },
         {
             group: "Objects",
             name: "Total number of objects",
-            value: totalNumberOfObjects,
+            value: totalNumberOfObjects
         },
         {
             group: "Objects",
             name: "Total size of objects",
-            value: totalSizeOfObjects,
-        },
+            value: totalSizeOfObjects
+        }
     );
 
     return values;

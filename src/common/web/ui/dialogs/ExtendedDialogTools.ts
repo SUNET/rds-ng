@@ -1,7 +1,6 @@
-import { toTypedSchema } from "@vee-validate/yup";
-import { useForm } from "vee-validate";
-import { inject, reactive, nextTick } from "vue";
-import { object as yobject } from "yup";
+import { inject, reactive } from "vue";
+import * as yup from "yup";
+
 import { scrollElementIntoView } from "../../utils/HTMLUtils";
 
 import { type ExtendedDialogData } from "./ExtendedDialog";
@@ -27,15 +26,21 @@ export function useExtendedDialogTools() {
         }
 
         if (dialogData.validator) {
-            // @ts-ignore
-            function selectFirstError({ errors }) {
+            function selectFirstError(errors: yup.ValidationError[]) {
                 try {
-                    const firstError = Object.keys(errors)[0];
-                    scrollElementIntoView(`[name="${firstError}"]`);
+                    const firstError = errors[0];
+                    scrollElementIntoView(`[name="${firstError.path}"]`);
                 } catch (e) {}
             }
 
-            dialogData.validator.handleSubmit(accept, selectFirstError)();
+            dialogData.validator
+                .validate()
+                .then(() => {
+                    accept();
+                })
+                .catch((errors: yup.ValidationError[]) => {
+                    selectFirstError(errors);
+                });
         } else {
             accept();
         }
@@ -48,26 +53,11 @@ export function useExtendedDialogTools() {
         dialogRef.value.close();
     }
 
-    function useValidator<SchemaType>(schema: SchemaType, validateImmediately: boolean = true) {
-        const validator = reactive(
-            new ExtendedDialogValidator(
-                useForm({
-                    // @ts-ignore
-                    validationSchema: toTypedSchema(yobject(schema)),
-                }),
-            ),
-        );
+    function useValidator<FormType, ShapeType extends yup.ObjectShape>(form: FormType, shape: ShapeType) {
+        const validator = reactive(new ExtendedDialogValidator(form, shape));
 
         // @ts-ignore
         dialogData.validator = validator;
-
-        if (validateImmediately) {
-            // Schedule an automatic validation for the next tick
-            nextTick(() => {
-                dialogData.validator?.validate().then();
-            }).then();
-        }
-
         return validator;
     }
 
@@ -76,6 +66,6 @@ export function useExtendedDialogTools() {
         dialogData,
         acceptDialog,
         rejectDialog,
-        useValidator,
+        useValidator
     };
 }

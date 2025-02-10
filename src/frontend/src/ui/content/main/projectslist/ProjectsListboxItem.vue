@@ -48,7 +48,7 @@ const props = defineProps({
 });
 const { project, isSelected, isDeleted } = toRefs(props);
 const emits = defineEmits<{
-    (e: "publish-project", project: Project): void;
+    (e: "upload-project", project: Project): void;
     (e: "edit-project", project: Project): void;
     (e: "delete-project", project: Project): void;
 }>();
@@ -91,10 +91,10 @@ const editMenuItems = ref([
         label: "Edit project",
         items: [
             {
-                label: "Publish & Export",
+                label: "Upload project",
                 icon: "material-icons-outlined mi-rocket-launch",
                 command: () => {
-                    emits("publish-project", project!.value);
+                    emits("upload-project", project!.value);
                 }
             },
             {
@@ -145,7 +145,9 @@ const editMenuShown = ref(false);
             <ProgressSpinner class="w-8 h-8" strokeWidth="4" />
         </div>
 
-        <div v-if="!isDeleted" id="project-description" class="overflow-hidden line-clamp" :title="project.description">{{ project!.description }}</div>
+        <div v-if="!isDeleted" id="project-description" class="overflow-hidden line-clamp-2" :title="project.description">
+            {{ project!.description }}
+        </div>
         <div v-else class="italic">The project is currently being deleted...</div>
 
         <div class="grid grid-cols-[1fr_min-content] self-end col-span-2 r-text-gray">
@@ -166,10 +168,4 @@ const editMenuShown = ref(false);
     </div>
 </template>
 
-<style scoped lang="scss">
-#project-description {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-</style>
+<style></style>

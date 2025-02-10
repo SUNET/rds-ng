@@ -13,5 +13,9 @@
 }
 
 .r-form-field {
-    @apply grid auto-rows-auto grid-cols-1 gap-1;
+    @apply grid auto-rows-auto grid-cols-1 gap-0.5;
+}
+
+.r-form-fieldset {
+    @apply border-l-0 border-r-0 border-b-0 text-lg;
 }

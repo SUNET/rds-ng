@@ -1,16 +1,15 @@
 import dataclasses
-import typing
 from dataclasses import dataclass
 from enum import IntFlag
 
 from dataclasses_json import dataclass_json
 
 from ..authorization import AuthorizationSettings
+from ..properties import ProfileMetadata, PropertyProfile
 from ....utils import UnitID
 
 ConnectorID = str
 ConnectorCategoryID = str
-ConnectorMetadataProfile = typing.Dict[str, typing.Any]  # TODO: Use proper type
 
 
 @dataclass_json
@@ -37,11 +36,11 @@ class Connector:
         Options of a connector.
 
         Attributes:
-            PUBLISH_ONCE: If set, the project may only be published once.
+            UPLOAD_ONCE: If set, the project may only be uploaded once.
         """
 
         DEFAULT = 0x0000
-        PUBLISH_ONCE = 0x0001
+        UPLOAD_ONCE = 0x0001
 
     @dataclass_json
     @dataclass
@@ -71,6 +70,10 @@ class Connector:
 
     logos: Logos = dataclasses.field(default_factory=Logos)
 
-    metadata_profile: ConnectorMetadataProfile = dataclasses.field(default_factory=dict)
+    metadata_profile: PropertyProfile = dataclasses.field(
+        default_factory=lambda: PropertyProfile(
+            metadata=ProfileMetadata(("", ""), "", ""), layout=[]
+        )
+    )
 
     announce_timestamp: float = 0.0

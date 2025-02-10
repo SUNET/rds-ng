@@ -18,10 +18,6 @@ const props = defineProps({
     instance: {
         type: Object as PropType<ConnectorInstance>,
         required: true
-    },
-    isSelected: {
-        type: Boolean,
-        default: false
     }
 });
 const emits = defineEmits<{
@@ -31,7 +27,7 @@ const emits = defineEmits<{
     (e: "delete-instance", instance: ConnectorInstance): void;
 }>();
 
-const { instance, isSelected } = toRefs(props);
+const { instance } = toRefs(props);
 const { userAuthorizations } = storeToRefs(userStore);
 
 const connector = computed(() => findConnectorByID(consStore.connectors, instance.value.connector_id));
@@ -100,28 +96,58 @@ watch(userAuthorizations, () => {
 </script>
 
 <template>
-    <div class="grid grid-rows-auto grid-cols-[min-content_1fr_min-content] grid-flow-row gap-0 place-content-start group w-full">
-        <div v-if="requiresAuthorization" class="row-span-3 pt-1 pr-2.5">
-            <Tag :severity="isAuthorized ? 'success' : 'danger'" :title="isAuthorized ? 'Connected' : 'Not connected'" class="w-10 h-10 rounded-full">
+    <div class="grid grid-rows-auto grid-cols-[min-content_1fr_min-content_min-content] gap-2.5 place-content-start coontent-center w-full">
+        <div :class="{ 'pt-1': instance!.description }">
+            <Tag
+                :severity="isAuthorized || !requiresAuthorization ? 'success' : 'danger'"
+                :title="isAuthorized || !requiresAuthorization ? 'Connected' : 'Not connected'"
+                class="w-10 h-10 rounded-full"
+            >
                 <span class="material-icons-outlined" :class="isAuthorized ? 'mi-power' : 'mi-power-off'" />
             </Tag>
         </div>
-        <div v-else class="row-span-3" />
 
-        <div :id="'connector-instance-' + instance!.instance_id" class="r-text-caption h-6 truncate" :title="instance!.name">{{ instance!.name }}</div>
+        <div class="grid grid-flow-row content-center">
+            <div :id="'connector-instance-' + instance!.instance_id" class="r-text-caption h-6 truncate" :title="instance!.name">{{ instance!.name }}</div>
+            <div v-if="instance!.description" class="truncate" :title="instance!.description">{{ instance!.description }}</div>
+        </div>
 
-        <div class="row-span-2 pl-1">
+        <div v-if="requiresAuthorization">
+            <Button
+                v-if="isAuthorized"
+                :label="isUnAuthorizing ? 'Disconnecting...' : 'Disconnect'"
+                severity="warn"
+                size="small"
+                icon="material-icons-outlined mi-link-off"
+                class="r-button-small !min-h-10"
+                :loading="isUnAuthorizing"
+                @click="onUnauthorize"
+            />
+            <Button
+                v-else
+                :label="isUnAuthorizing ? 'Connecting...' : 'Connect'"
+                severity="info"
+                size="small"
+                icon="material-icons-outlined mi-link"
+                class="r-button-small !min-h-10"
+                :loading="isUnAuthorizing"
+                @click="onAuthorize"
+            />
+        </div>
+        <div v-else>&nbsp;</div>
+
+        <div>
             <Button
                 text
                 rounded
                 size="small"
                 aria-label="Options"
                 title="More options"
-                :class="{ invisible: !editMenuShown, 'group-hover:visible': true }"
+                class="opacity-60 hover:opacity-100"
                 @click="(event) => editMenu.toggle(event)"
             >
                 <template #icon>
-                    <span class="material-icons-outlined mi-more-vert" :class="[isSelected ? 'r-highlight-text' : 'r-text']" style="font-size: 32px" />
+                    <span class="material-icons-outlined mi-more-vert r-text" style="font-size: 32px" />
                 </template>
             </Button>
             <Menu
@@ -133,34 +159,6 @@ watch(userAuthorizations, () => {
                 @blur="editMenuShown = false"
             />
         </div>
-
-        <div class="truncate" :title="instance!.description">{{ instance!.description }}</div>
-
-        <div v-if="requiresAuthorization" class="col-span-3 place-self-end mt-1">
-            <Button
-                v-if="isAuthorized"
-                :label="isUnAuthorizing ? 'Disconnecting...' : 'Disconnect'"
-                severity="warn"
-                size="small"
-                rounded
-                icon="material-icons-outlined mi-link-off"
-                class="r-button-small !min-h-10"
-                :loading="isUnAuthorizing"
-                @click="onUnauthorize"
-            />
-            <Button
-                v-else
-                :label="isUnAuthorizing ? 'Connecting...' : 'Connect'"
-                severity="info"
-                size="small"
-                rounded
-                icon="material-icons-outlined mi-link"
-                class="r-button-small !min-h-10"
-                :loading="isUnAuthorizing"
-                @click="onAuthorize"
-            />
-        </div>
-        <div v-else class="col-span-3 place-self-end">&nbsp;</div>
     </div>
 </template>
 

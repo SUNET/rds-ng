@@ -9,10 +9,8 @@ import ErrorsMessage from "../components/misc/ErrorsMessage.vue";
 const { acceptDialog, rejectDialog, dialogData } = useExtendedDialogTools();
 
 const errors = computed<string[]>(() => {
-    if (!!dialogData.validator) {
-        if (!!dialogData.validator.errors) {
-            return Object.values(dialogData.validator.errors);
-        }
+    if (!!dialogData.validator && !dialogData.validator.isValid) {
+        return dialogData.validator.errorMessages;
     }
     return [];
 });

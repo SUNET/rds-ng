@@ -3,7 +3,11 @@
  */
 export function useDirectives() {
     const vFocus = {
-        mounted: (el: HTMLElement) => el.focus()
+        mounted: (el: HTMLElement) => {
+            setTimeout(() => {
+                el.focus();
+            }, 250);
+        }
     };
 
     return {

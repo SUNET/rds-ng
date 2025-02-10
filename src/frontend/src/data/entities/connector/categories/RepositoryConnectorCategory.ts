@@ -8,14 +8,14 @@ export class RepositoryConnectorCategory extends ConnectorCategory {
     public constructor() {
         super(
             "Repository",
-            "Publish your project to make it available to the public.",
-            "Publish",
-            "Publication",
-            "Publications",
-            "Publishing",
-            "Published",
+            "Upload your project to make it available to the public.",
+            "Upload",
+            "Upload",
+            "Uploads",
+            "Uploading",
+            "Uploaded",
             "r-connector-category-repository-tag",
-            "r-connector-category-repository-button",
+            "r-connector-category-repository-button"
         );
     }
 }

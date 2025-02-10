@@ -17,7 +17,7 @@ class ConnectorInformation:
             "description": "Connector for Zenodo",
             "category": "repository",
             "options": {
-                "publish_once": true
+                "upload_once": true
             },
             "logos": {
                 "default": "/some/file.png",
@@ -78,8 +78,8 @@ class ConnectorInformation:
             options = Connector.Options.DEFAULT
             options_data = data["options"]
 
-            if "publish_once" in options_data and options_data["publish_once"] is True:
-                options |= Connector.Options.PUBLISH_ONCE
+            if "upload_once" in options_data and options_data["upload_once"] is True:
+                options |= Connector.Options.UPLOAD_ONCE
         except Exception:  # pylint: disable=broad-exception-caught
             return Connector.Options.DEFAULT
 
@@ -110,7 +110,7 @@ class ConnectorInformation:
             with open(data["metadata_profile"], encoding="utf-8") as file:
                 return PropertyProfile.from_dict(json.load(file))
         except:  # pylint: disable=bare-except
-            return PropertyProfile(ProfileMetadata(('dummy', ''), 'dummy', 'dummy'), [])
+            return PropertyProfile(ProfileMetadata(("dummy", ""), "dummy", "dummy"), [])
 
     @property
     def connector_id(self) -> str:
