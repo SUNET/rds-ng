@@ -4,31 +4,17 @@ import { useDialog } from "primevue/usedialog";
 import { computed } from "vue";
 import PropertyDialog from "./PropertyDialog.vue";
 import { SharedPropertyObject } from "./PropertyObjectStore";
-import { injectTemplate } from "./utils/Templates";
+import { linkableObjects } from "./utils/PropertyEditorUtils";
 
 const dialog = useDialog();
 const props = defineProps(["type", "parentId", "propertyObjects", "sharedPropertyObjectStore", "projectProfiles", "isDialog"]);
 
 const emit = defineEmits(["loadObject"]);
 const label = props.projectProfiles.getClassLabelById(props.type);
-const linkableItems = computed(() => {
-    const linkedItems = [
-        ...props.propertyObjects.getReferencedObjects(props.parentId),
-        ...props.sharedPropertyObjectStore.getReferencedObjects(props.parentId)
-    ].flat();
-    const linkable = props.sharedPropertyObjectStore
-        .getObjectsByType(props.type)
-        .filter((item: SharedPropertyObject) => !linkedItems.includes(item.id))
-        .filter((item: SharedPropertyObject) => item.id != props.parentId);
-    return linkable.length > 0
-        ? linkable.map((item: SharedPropertyObject) => ({
-              label: injectTemplate(props.projectProfiles.getLabelTemplateById(item.type), props.sharedPropertyObjectStore.get(item.id)),
-              command: () => {
-                  props.propertyObjects.addRef(props.parentId, item.id) || props.sharedPropertyObjectStore.addRef(props.parentId, item.id);
-              }
-          }))
-        : [];
-});
+
+const linkableItems = computed(() =>
+    linkableObjects(props.propertyObjects, props.sharedPropertyObjectStore, props.projectProfiles, props.parentId, props.type)
+);
 
 function createObject() {
     const newObject = new SharedPropertyObject(props.type);

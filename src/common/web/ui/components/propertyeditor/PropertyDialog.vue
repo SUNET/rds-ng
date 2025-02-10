@@ -4,12 +4,14 @@ import { computed, type ComputedRef, inject, reactive, ref, type Ref } from "vue
 import Breadcrumb from "primevue/breadcrumb";
 import Button from "primevue/button";
 import Card from "primevue/card";
+import Menu from "primevue/menu";
 import type { MenuItem } from "primevue/menuitem";
 import ScrollPanel from "primevue/scrollpanel";
 import SplitButton from "primevue/splitbutton";
 
 import Fieldset from "primevue/fieldset";
 
+import { WebComponent } from "../../../component/WebComponent";
 import { History } from "./Breadcrumbs";
 import EntityColumnHeader from "./EntityColumn/EntityColumnHeader.vue";
 import EntityColumnInputs from "./EntityColumn/EntityColumnInputs.vue";
@@ -18,6 +20,7 @@ import { PropertyObjectStore, SharedPropertyObject } from "./PropertyObjectStore
 import { ProfileClass, ProfileClassRef } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 import { calcObjLabel } from "./utils/ObjectUtils";
+import { linkableObjects, linkedItemActions } from "./utils/PropertyEditorUtils";
 
 const dialogRef = inject("dialogRef") as any;
 const {
@@ -29,9 +32,11 @@ const {
     dialogRef.value.data;
 
 // selected object
-const object = ref(sharedPropertyObjectStore.get(id)!) as Ref<SharedPropertyObject>;
-let propertyClass = reactive(projectProfiles.getClassById(object.value.getType())!) as ProfileClass;
-const referencedObjects = computed(() => object.value.getReferences().map((e) => sharedPropertyObjectStore.get(e))) as ComputedRef<SharedPropertyObject[]>;
+const propertyObject = ref(sharedPropertyObjectStore.get(id)!) as Ref<SharedPropertyObject>;
+let propertyClass = reactive(projectProfiles.getClassById(propertyObject.value.getType())!) as ProfileClass;
+const referencedObjects = computed(() => propertyObject.value.getReferences().map((e) => sharedPropertyObjectStore.get(e))) as ComputedRef<
+    SharedPropertyObject[]
+>;
 
 const displayableInputs = ref(propertyClass.getInputs());
 const addableTypes = ref(propertyClass.getRefTypes()) as Ref<ProfileClassRef[]>;
@@ -44,11 +49,11 @@ const history = new History();
 const menuPath = ref();
 
 function selectActiveObject(id: string) {
-    object.value = sharedPropertyObjectStore.get(id) as SharedPropertyObject;
-    propertyClass = projectProfiles.getClassById(object.value.getType())! as ProfileClass;
+    propertyObject.value = sharedPropertyObjectStore.get(id) as SharedPropertyObject;
+    propertyClass = projectProfiles.getClassById(propertyObject.value.getType())! as ProfileClass;
     addableTypes.value = propertyClass.getRefTypes();
     displayableInputs.value = propertyClass.getInputs();
-    history.navigateTo(object.value);
+    history.navigateTo(propertyObject.value);
     // TODO optimize by only updating necessary elements
     menuPath.value = history.list().map((item: SharedPropertyObject) => {
         const obj = sharedPropertyObjectStore.get(item.getId()) as SharedPropertyObject;
@@ -62,10 +67,38 @@ function selectActiveObject(id: string) {
 
 selectActiveObject(id);
 
+const comp = WebComponent.instance;
+
+const inlineMenuRef = ref({}) as Ref<{ [key: string]: any }>;
+
+const itemActions = (property: SharedPropertyObject) =>
+    linkedItemActions(
+        comp,
+        propertyObjects,
+        sharedPropertyObjectStore,
+        propertyObject.value.getId(),
+        property.getId(),
+        projectProfiles.getClassById(property.getType())?.getDisplayLabel()!
+    );
+
+const linkableByClass = (classId: string) => {
+    return linkableObjects(propertyObjects, sharedPropertyObjectStore, projectProfiles, propertyObject.value.getId(), classId).length
+        ? linkableObjects(propertyObjects, sharedPropertyObjectStore, projectProfiles, propertyObject.value.getId(), classId).sort((a: any, b: any) =>
+              a.label > b.label ? 1 : b.label > a.label ? -1 : 0
+          )
+        : [
+              {
+                  label: `No linkable ${projectProfiles.getClassById(classId)?.getDisplayLabel()}(s) available`,
+                  disabled: true
+              }
+          ];
+};
+
 function createObject(type: string) {
     const newObject = new SharedPropertyObject(type);
+
     sharedPropertyObjectStore.add(newObject);
-    propertyObjects.addRef(object.value.getId(), newObject.getId()) || sharedPropertyObjectStore.addRef(object.value.getId(), newObject.getId());
+    sharedPropertyObjectStore.addRef(propertyObject.value.getId(), newObject.getId());
 }
 </script>
 
@@ -91,7 +124,7 @@ function createObject(type: string) {
                 <EntityColumnHeader
                     :addableTypes="addableTypes"
                     :propertyClass="propertyClass"
-                    :propertyObject="object"
+                    :propertyObject="propertyObject"
                     :propertyObjects="propertyObjects"
                     :sharedPropertyObjectStore="sharedPropertyObjectStore"
                     :projectProfiles="projectProfiles"
@@ -107,17 +140,17 @@ function createObject(type: string) {
                         <EntityColumnLinkedItems
                             v-if="!!addableExlineTypes.length"
                             :propertyObjects="propertyObjects"
-                            :propertyClass="object"
+                            :propertyClass="propertyObject"
                             :sharedPropertyObjectStore="sharedPropertyObjectStore"
                             :projectProfiles="projectProfiles"
                             :addableTypes="addableExlineTypes"
-                            :propertyObject="object"
+                            :propertyObject="propertyObject"
                         />
                         <!-- Simple Input Row -->
                         <EntityColumnInputs
                             v-if="displayableInputs.length > 0"
                             :displayableInputs="displayableInputs"
-                            :propertyObject="object"
+                            :propertyObject="propertyObject"
                             :propertyObjects="sharedPropertyObjectStore"
                             :propertyClass="propertyClass"
                             :isDialog="true"
@@ -125,52 +158,63 @@ function createObject(type: string) {
 
                         <Fieldset
                             v-for="t in addableInlineTypes"
-                            class="p-0 border"
+                            class="rounded-md"
                             :class="{ 'border-0': referencedObjects.filter((e) => e.getType() === t.getClassId()).length === 0 }"
+                            :pt="{ content: 'p-0' }"
                         >
                             <template #legend>
-                                <div class="right">
-                                    <SplitButton
-                                        @click="() => createObject(t.getClassId())"
-                                        icon="pi pi-plus"
-                                        dropdownIcon="pi pi-link"
-                                        severity="primary"
-                                        outlined
-                                        :label="projectProfiles.getClassById(t.getClassId())?.getDisplayLabel()"
-                                        :title="projectProfiles.getClassById(t.getClassId())?.getDescription()"
-                                        :disabled="
-                                            !t.allowsMultiple() &&
-                                            referencedObjects.filter((e: SharedPropertyObject) => e.getType() === t.getClassId()).length > 0
-                                        "
-                                    />
-                                </div>
+                                <SplitButton
+                                    @click="() => createObject(t.getClassId())"
+                                    class="p-0"
+                                    icon="pi pi-plus"
+                                    dropdownIcon="pi pi-link"
+                                    severity="primary"
+                                    outlined
+                                    :label="projectProfiles.getClassById(t.getClassId())!.getDisplayLabel()"
+                                    :title="projectProfiles.getClassById(t.getClassId())!.getDescription()"
+                                    :disabled="
+                                        !t.allowsMultiple() && referencedObjects.filter((e: SharedPropertyObject) => e.getType() === t.getClassId()).length > 0
+                                    "
+                                    :model="linkableByClass(t.getClassId())"
+                                />
                             </template>
                             <div class="space-y">
                                 <div
                                     v-for="[i, refObject] of referencedObjects.filter((e: SharedPropertyObject) => e.getType() === t.getClassId()).entries()"
-                                    class="row-span-1 space-y-1 my-2 last-fieldset-round mb-0 mt-1"
+                                    class="row-span-1 last-fieldset-round [&:not(:first-child)]:mt-5"
                                 >
-                                    <Fieldset class="bg-sky-50 rounded-none border-y my-0">
+                                    <Fieldset class="bg-sky-50 rounded-none border-y p-2 legend-right">
                                         <template #legend class="m-0 p-0">
                                             <div class="flex items-center space-x-3">
-                                                <span> #{{ i + 1 }}</span>
-                                                <Button
-                                                    @click="sharedPropertyObjectStore.remove(refObject!.getId())"
-                                                    class="[&:not(:hover)]:bg-white"
-                                                    icon="pi pi-times"
-                                                    severity="danger"
-                                                    rounded
-                                                    outlined
-                                                    size="small"
-                                                />
+                                                <span>
+                                                    <Button
+                                                        class="[&:not(:hover)]:bg-white"
+                                                        type="button"
+                                                        icon="pi pi-ellipsis-v"
+                                                        @click.stop="(event) => inlineMenuRef[refObject.getId()].toggle(event)"
+                                                        aria-haspopup="true"
+                                                        aria-controls="overlay_menu"
+                                                        outlined
+                                                        size="small"
+                                                    />
+                                                    <Menu
+                                                        :ref="
+                                                            (el) => {
+                                                                inlineMenuRef[refObject.getId()] = el;
+                                                            }
+                                                        "
+                                                        id="overlay_menu"
+                                                        :model="itemActions(refObject)"
+                                                        :popup="true"
+                                                    />
+                                                </span>
                                             </div>
                                         </template>
-
                                         <EntityColumnInputs
                                             v-if="!!projectProfiles.getClassById(t.getClassId())?.getInputs().length"
                                             class="mt-2"
                                             :displayableInputs="projectProfiles.getClassById(t.getClassId())?.getInputs()"
-                                            :propertyObject="object"
+                                            :propertyObject="refObject"
                                             :propertyObjects="sharedPropertyObjectStore"
                                             :propertyClass="propertyClass"
                                             :isDialog="true"
@@ -192,10 +236,14 @@ function createObject(type: string) {
 }
 
 :deep(.p-fieldset-legend) {
+    @apply p-0 ml-[-1px];
+}
+
+:deep(.legend-right > .p-fieldset-legend) {
     @apply ml-auto m-0 p-0 rounded bg-transparent;
 }
 
 .last-fieldset-round:last-child > .p-fieldset {
-    @apply rounded-b-md;
+    @apply rounded-b-md mb-0;
 }
 </style>

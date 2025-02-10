@@ -71,6 +71,10 @@ export abstract class PropertyObject {
     pushReference(ref: string): void {
         this.refs.push(ref);
     }
+
+    isEmpty(): boolean {
+        return Object.keys(this.value).length === 0 || Object.values(this.value).every((v) => !v);
+    }
 }
 
 /**
