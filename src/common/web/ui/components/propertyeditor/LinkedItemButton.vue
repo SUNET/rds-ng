@@ -15,7 +15,7 @@ import { calcBgColor, calcBorderColor, calcObjLabel } from "./utils/ObjectUtils"
 SplitButton.components.PVSMenu = Menu;
 const comp = WebComponent.instance;
 const dialog = useDialog();
-const props = defineProps(["itemId", "parentId", "propertyObjects", "sharedPropertyObjectStore", "projectProfiles", "mode"]);
+const props = defineProps(["itemId", "parentId", "propertyObjects", "sharedPropertyObjectStore", "projectProfiles", "isDialog"]);
 
 const object = computed(() => {
     const obj = props.sharedPropertyObjectStore.get(props.itemId) as SharedPropertyObject;
@@ -86,7 +86,7 @@ const linkedItemActions = computed(() => [
 const emit = defineEmits(["loadObject"]);
 
 function handleClick() {
-    if (props.mode == "dialog") {
+    if (props.isDialog) {
         emit("loadObject", object.value["id"]);
     } else {
         dialog.open(PropertyDialog, {

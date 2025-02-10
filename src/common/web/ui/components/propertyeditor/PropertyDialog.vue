@@ -145,6 +145,8 @@ function createObject(type: string) {
                             :projectProfiles="projectProfiles"
                             :addableTypes="addableExlineTypes"
                             :propertyObject="propertyObject"
+                            :isDialog="true"
+                            @loadObject="(id) => selectActiveObject(id)"
                         />
                         <!-- Simple Input Row -->
                         <EntityColumnInputs
