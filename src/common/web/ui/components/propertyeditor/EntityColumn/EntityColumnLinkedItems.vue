@@ -4,7 +4,8 @@ import { computed } from "vue";
 import LinkedItemButton from "../LinkedItemButton.vue";
 import { ProfileClassRef } from "../PropertyProfile";
 
-const props = defineProps(["propertyObjects", "propertyClass", "addableTypes", "projectProfiles", "sharedPropertyObjectStore"]);
+const emit = defineEmits(["loadObject"]);
+const props = defineProps(["propertyObjects", "propertyClass", "addableTypes", "projectProfiles", "sharedPropertyObjectStore", "isDialog"]);
 const linkedObjects = computed(() => [
     ...props.sharedPropertyObjectStore.getReferencedObjects(props.propertyClass.getId()),
     ...props.propertyObjects.getReferencedObjects(props.propertyClass.getId())
@@ -27,6 +28,8 @@ const addableTypesStr = props.addableTypes
             :propertyObjects="propertyObjects"
             :sharedPropertyObjectStore="sharedPropertyObjectStore"
             :projectProfiles="projectProfiles"
+            :isDialog="isDialog"
+            @load-object="(id) => emit('loadObject', id)"
         />
         <div v-else class="text-gray-500 m-1 my-3 place-self-center align-middle inline-block">
             No
