@@ -158,8 +158,9 @@ function createObject(type: string) {
 
                         <Fieldset
                             v-for="t in addableInlineTypes"
-                            class="p-0 border"
+                            class="rounded-md"
                             :class="{ 'border-0': referencedObjects.filter((e) => e.getType() === t.getClassId()).length === 0 }"
+                            :pt="{ content: 'p-0' }"
                         >
                             <template #legend>
                                 <SplitButton
@@ -180,9 +181,9 @@ function createObject(type: string) {
                             <div class="space-y">
                                 <div
                                     v-for="[i, refObject] of referencedObjects.filter((e: SharedPropertyObject) => e.getType() === t.getClassId()).entries()"
-                                    class="row-span-1 space-y-1 my-2 last-fieldset-round mb-0 mt-1"
+                                    class="row-span-1 last-fieldset-round [&:not(:first-child)]:mt-5"
                                 >
-                                    <Fieldset class="bg-sky-50 rounded-none border-y my-0 legend-right">
+                                    <Fieldset class="bg-sky-50 rounded-none border-y p-2 legend-right">
                                         <template #legend class="m-0 p-0">
                                             <div class="flex items-center space-x-3">
                                                 <span>
@@ -243,6 +244,6 @@ function createObject(type: string) {
 }
 
 .last-fieldset-round:last-child > .p-fieldset {
-    @apply rounded-b-md;
+    @apply rounded-b-md mb-0;
 }
 </style>
