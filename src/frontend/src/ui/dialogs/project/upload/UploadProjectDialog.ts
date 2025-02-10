@@ -6,24 +6,24 @@ import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/Ex
 import { FrontendComponent } from "@/component/FrontendComponent";
 
 /**
- * The data used by the ``publishProjectDialog`` function.
+ * The data used by the ``uploadProjectDialog`` function.
  */
-export interface PublishProjectDialogData {
+export interface UploadProjectDialogData {
     project: Project;
 }
 
 /**
- * Shows the publish dialog for a project.
+ * Shows the upload dialog for a project.
  *
  * @param comp - The global component.
- * @param project - The project to publish.
+ * @param project - The project to upload.
  */
-export async function publishProjectDialog(comp: FrontendComponent, project: Project): ExtendedDialogResult<PublishProjectDialogData> {
-    return extendedDialog<PublishProjectDialogData>(
+export async function uploadProjectDialog(comp: FrontendComponent, project: Project): ExtendedDialogResult<UploadProjectDialogData> {
+    return extendedDialog<UploadProjectDialogData>(
         comp,
-        defineAsyncComponent(() => import("@/ui/dialogs/project/publish/PublishProjectDialog.vue")),
+        defineAsyncComponent(() => import("@/ui/dialogs/project/upload/UploadProjectDialog.vue")),
         {
-            header: "Publish & Export project",
+            header: "Upload project",
             modal: true,
             contentClass: "w-[30vw] min-w-[48rem] h-[60vh] min-h-[36rem]"
         },

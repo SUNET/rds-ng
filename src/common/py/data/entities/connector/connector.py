@@ -36,11 +36,11 @@ class Connector:
         Options of a connector.
 
         Attributes:
-            PUBLISH_ONCE: If set, the project may only be published once.
+            UPLOAD_ONCE: If set, the project may only be uploaded once.
         """
 
         DEFAULT = 0x0000
-        PUBLISH_ONCE = 0x0001
+        UPLOAD_ONCE = 0x0001
 
     @dataclass_json
     @dataclass

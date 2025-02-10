@@ -15,7 +15,7 @@ const props = defineProps({
     }
 });
 const { project } = toRefs(props);
-const { editProject, publishProject } = useProjectTools(comp);
+const { editProject, uploadProject } = useProjectTools(comp);
 </script>
 
 <template>
@@ -23,11 +23,11 @@ const { editProject, publishProject } = useProjectTools(comp);
         <Button label="Project settings" icon="material-icons-outlined mi-settings" icon-class="!text-3xl" @click="editProject(project)" />
         <Button
             severity="contrast"
-            label="Publish &amp; Export"
+            label="Upload project"
             icon="material-icons-outlined mi-rocket-launch"
             icon-class="!text-3xl"
             class="px-8 mr-1"
-            @click="publishProject(project)"
+            @click="uploadProject(project)"
         />
     </div>
 </template>

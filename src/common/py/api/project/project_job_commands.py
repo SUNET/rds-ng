@@ -128,7 +128,7 @@ class StartProjectJobCommand(Command):
     Command to start a project job in the target connector.
 
     Args:
-        project: The project to publish.
+        project: The project to upload.
         connector_instance: The connector instance ID.
         user_token: The user token.
         broker_token: Token to create the resources broker.

@@ -8,7 +8,7 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 
 import ConnectorInstancesList from "@/ui/components/connector/ConnectorInstancesList.vue";
-import PublishConnectionsListItem from "@/ui/dialogs/project/publish/PublishConnectionsListItem.vue";
+import UploadConnectionsListItem from "@/ui/dialogs/project/upload/UploadConnectionsListItem.vue";
 
 const props = defineProps({
     project: {
@@ -29,7 +29,7 @@ const { connectors } = storeToRefs(consStore);
 <template>
     <ConnectorInstancesList :instances="userSettings.connector_instances" :connectors="connectors">
         <template #instance="slotProps">
-            <PublishConnectionsListItem :project="project" :instance="slotProps.instance" />
+            <UploadConnectionsListItem :project="project" :instance="slotProps.instance" />
         </template>
     </ConnectorInstancesList>
 </template>

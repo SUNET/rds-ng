@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useUserStore } from "@/data/stores/UserStore";
-import { connectorInstanceIsAuthorized } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { storeToRefs } from "pinia";
 import Button from "primevue/button";
 import ProgressBar from "primevue/progressbar";
@@ -9,6 +7,7 @@ import { computed, type PropType, ref, toRefs, unref } from "vue";
 
 import { ConnectorOptions } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
+import { connectorInstanceIsAuthorized } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { connectorRequiresAuthorization, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { ProjectStatistics } from "@common/data/entities/project/ProjectStatistics";
@@ -19,6 +18,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { findConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
 import { getActiveProjectJob } from "@/data/entities/project/ProjectJobUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { useUserStore } from "@/data/stores/UserStore";
 import { InitiateProjectJobAction } from "@/ui/actions/project/InitiateProjectJobAction";
 import { ListProjectJobsAction } from "@/ui/actions/project/ListProjectJobsAction";
 
@@ -39,7 +39,7 @@ const props = defineProps({
 const { project, instance } = toRefs(props);
 const { userAuthorizations } = storeToRefs(userStore);
 const connector = computed(() => findConnectorByID(consStore.connectors, unref(instance)!.connector_id));
-const publishOnce = computed(() => (unref(connector)!.options & ConnectorOptions.PublishOnce) == ConnectorOptions.PublishOnce);
+const uploadOnce = computed(() => (unref(connector)!.options & ConnectorOptions.UploadOnce) == ConnectorOptions.UploadOnce);
 const requiresAuth = computed(() => connectorRequiresAuthorization(unref(connector)!));
 const isAuthorized = computed(() => connectorInstanceIsAuthorized(unref(instance)!, unref(userAuthorizations)));
 const category = unref(connector) ? findConnectorCategory(unref(connector)!) : undefined;
@@ -47,46 +47,46 @@ const category = unref(connector) ? findConnectorCategory(unref(connector)!) : u
 const activeJob = computed(() => getActiveProjectJob(unref(project)!, unref(instance)!));
 const jobStats = computed(() => new ProjectStatistics(unref(project)!).getJobStatistics(unref(instance)!.instance_id));
 
-const initiatePublish = ref(false);
-const disablePublish = computed(() => {
+const initiateUpload = ref(false);
+const disableUpload = computed(() => {
     if (unref(connector)) {
-        return (unref(publishOnce) && unref(jobStats).totalCount.succeeded >= 1) || (unref(requiresAuth) && !unref(isAuthorized));
+        return (unref(uploadOnce) && unref(jobStats).totalCount.succeeded >= 1) || (unref(requiresAuth) && !unref(isAuthorized));
     }
     return true;
 });
 const disableReason = computed(() => {
-    if (unref(publishOnce)) {
+    if (unref(uploadOnce)) {
         return "The project has already been " + category?.verbStatusDone.toLowerCase();
     } else if (unref(requiresAuth)) {
         return "The connector has not been configured yet";
     }
     return "";
 });
-const publishTitle = computed(() => (unref(initiatePublish) ? "Initiating..." : category?.verbAction));
+const uploadTitle = computed(() => (unref(initiateUpload) ? "Initiating..." : category?.verbAction));
 
-function onPublish() {
+function onUpload() {
     const conn = unref(connector);
     if (conn) {
-        initiatePublish.value = true;
+        initiateUpload.value = true;
 
         const action = new InitiateProjectJobAction(comp);
         action
             .prepare(unref(project), conn, unref(instance))
             .done((_, success, msg) => {
-                onPublishInitDone(success, msg);
+                onUploadInitDone(success, msg);
             })
             .failed((_, msg) => {
-                onPublishInitDone(false, msg);
+                onUploadInitDone(false, msg);
             });
         action.execute();
     }
 }
 
-function onPublishInitDone(success: boolean, msg: string): void {
+function onUploadInitDone(success: boolean, msg: string): void {
     // Only unlock the init-phase after updating the jobs list
     const listJobsAction = new ListProjectJobsAction(comp);
     listJobsAction.prepare().done(() => {
-        initiatePublish.value = false;
+        initiateUpload.value = false;
     });
     listJobsAction.execute();
 
@@ -102,7 +102,7 @@ function onPublishInitDone(success: boolean, msg: string): void {
         :class="activeJob ? 'grid-cols-[min-content_1fr_40%]' : 'grid-cols-[min-content_1fr_max-content]'"
     >
         <div :class="{ 'pt-1': instance!.description }">
-            <Tag v-if="!disablePublish" :severity="activeJob ? 'info' : 'success'" :title="activeJob ? 'In progress' : 'Ready'" class="w-10 h-10 rounded-full">
+            <Tag v-if="!disableUpload" :severity="activeJob ? 'info' : 'success'" :title="activeJob ? 'In progress' : 'Ready'" class="w-10 h-10 rounded-full">
                 <span class="material-icons-outlined" :class="activeJob ? 'mi-rocket-launch' : 'mi-rocket'" />
             </Tag>
             <Tag v-else severity="warn" title="Not ready" class="w-10 h-10 rounded-full">
@@ -124,18 +124,18 @@ function onPublishInitDone(success: boolean, msg: string): void {
             </div>
             <div
                 v-else
-                :title="disablePublish ? 'Unable to ' + category?.verbAction.toLowerCase() + ': ' + disableReason : category?.verbAction + ' the project'"
+                :title="disableUpload ? 'Unable to ' + category?.verbAction.toLowerCase() + ': ' + disableReason : category?.verbAction + ' the project'"
             >
                 <Button
-                    v-if="!disablePublish && category"
-                    :label="publishTitle"
-                    :aria-label="publishTitle"
-                    :loading="initiatePublish"
+                    v-if="!disableUpload && category"
+                    :label="uploadTitle"
+                    :aria-label="uploadTitle"
+                    :loading="initiateUpload"
                     size="small"
                     icon="material-icons-outlined mi-rocket-launch"
                     loading-icon="material-icons-outlined mi-rocket-launch"
                     :pt="{ root: category.buttonClass }"
-                    @click="onPublish"
+                    @click="onUpload"
                 />
                 <div v-else class="text-sm r-text-warning">
                     <span class="font-bold">Unable to {{ category?.verbAction.toLowerCase() }}:<br /></span>

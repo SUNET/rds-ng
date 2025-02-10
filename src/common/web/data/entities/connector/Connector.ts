@@ -17,11 +17,11 @@ export type ConnectorCategoryID = string;
 /**
  * Various options of a category.
  *
- * @param PublishOnce - If set, the project may only be published once.
+ * @param UploadOnce - If set, the project may only be uploaded once.
  */
 export const enum ConnectorOptions {
     Default = 0x0000,
-    PublishOnce = 0x0001
+    UploadOnce = 0x0001
 }
 
 /**

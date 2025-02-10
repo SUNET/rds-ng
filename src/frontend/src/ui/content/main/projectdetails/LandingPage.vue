@@ -16,7 +16,7 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                         </div>
                     </div>
                     <div class="text-lg font-light mb-1">
-                        Your flexible solution for research data managing and publishing. The services are designed to make data management effortless and
+                        Your flexible solution for research data managing and uploading. The services are designed to make data management effortless and
                         collaborative, so you can focus on what matters most: <span class="italic">your research</span>.
                         <div class="pt-2 text-lg">
                             Learn more:

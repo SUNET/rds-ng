@@ -288,8 +288,8 @@ function onNextStep() {
 
                 <StepPanel :value="stepIndices.connections">
                     <div class="mb-2">
-                        Here you can select which connections - all or only specific ones - to make available for publishing or exporting your project. You can
-                        always change this selection later.
+                        Here you can select which connections - all or only specific ones - to make available for uploading your project. You can always change
+                        this selection later.
                     </div>
 
                     <Fieldset legend="Connections" class="r-form-fieldset">
