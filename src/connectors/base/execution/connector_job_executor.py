@@ -61,6 +61,15 @@ class ConnectorJobExecutor(abc.ABC):
 
         self._is_active = True
 
+    def prepare(self) -> None:
+        """
+        Called before the actual job is started. Performs various connector-specific checks.
+        """
+
+        # TODO:
+        #  Get status of project from logbook (do we have that here?)
+        #  Status must be DEFAULT or UPLOADED (+ connector allows multi uploads), fail otherwise
+
     def start(self) -> None:
         """
         Called when the job execution is started. Must always be implemented.
