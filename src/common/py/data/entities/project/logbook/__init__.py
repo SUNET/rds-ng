@@ -3,6 +3,10 @@ from .project_job_history_record import (
     ProjectJobHistoryRecordExtData,
     ProjectJobHistoryRecordExtDataIDs,
 )
+from .project_job_history_utils import (
+    get_most_recent_job_history_record,
+    get_most_recent_job_history_record_by_connector_instance,
+)
 from .project_logbook_record import ProjectLogbookRecord, RecordID
 from .project_logbook_type import ProjectLogbookType
 from .project_logbook_utils import (

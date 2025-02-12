@@ -6,6 +6,7 @@ from common.py.component import BackendComponent
 from common.py.core.logging import debug
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.data.entities.project import get_external_project_state
 from common.py.data.entities.project.logbook import ProjectJobHistoryRecordExtData
 from common.py.integration.resources.brokers import ResourcesBrokerTunnelType
 from common.py.integration.resources.transmitters import ResourcesTransmitter
@@ -66,9 +67,14 @@ class ConnectorJobExecutor(abc.ABC):
         Called before the actual job is started. Performs various connector-specific checks.
         """
 
+        # Get the initial external project state
+        external_state = get_external_project_state(
+            self._job.project, self._job.connector_instance
+        )
+
         # TODO:
-        #  Get status of project from logbook (do we have that here?)
         #  Status must be DEFAULT or UPLOADED (+ connector allows multi uploads), fail otherwise
+        #    If status is UPLOADED, check service for publication status
 
     def start(self) -> None:
         """
