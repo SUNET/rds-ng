@@ -54,8 +54,7 @@ class ConnectorJobsEngine:
             )
 
             self._executors.append(executor)
-            executor.prepare()
-            executor.start()
+            executor.run()
 
             debug(
                 "Spawned job executor",

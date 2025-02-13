@@ -16,6 +16,7 @@ from common.py.integration.resources.brokers import ResourcesBrokerTunnelType
 from common.py.integration.resources.transmitters import ResourcesTransmitter
 from common.py.services import Service
 
+from ..connector import ProjectExternalStateCallbacks
 from ..data.entities.connector import ConnectorJob
 
 
@@ -71,9 +72,9 @@ class ConnectorJobExecutor(abc.ABC):
 
         self._is_active = True
 
-    def prepare(self) -> None:
+    def run(self) -> None:
         """
-        Called before the actual job is started. Performs various connector-specific checks.
+        Called to run the job execution.
         """
 
         # Get the initial external project state; this can only be DEFAULT or UPLOADED
@@ -81,28 +82,30 @@ class ConnectorJobExecutor(abc.ABC):
             self._job.project, self._job.connector_instance
         )
 
-        # If the project has already been uploaded, update its state to reflect the actual state
+        # If the project has already been uploaded, update its state to reflect the actual state; otherwise we can simply start the job
         if external_state.external_state == ProjectExternalState.State.UPLOADED:
-            self.update_external_project_state(external_state)
+            callbacks = ProjectExternalStateCallbacks()
+            callbacks.done(lambda state: self._check_project_external_state(state))
+            callbacks.failed(lambda reason: self.set_failed(reason))
 
-        # Check for the various states
-        if external_state.external_state == ProjectExternalState.State.LOCKED:
-            raise RuntimeError("The project is locked and cannot be updated anymore")
-        elif external_state.external_state == ProjectExternalState.State.UPLOADED:
-            if Connector.Options.UPLOAD_ONCE in self._connector_options:
-                raise RuntimeError("The project has already been uploaded")
-        elif external_state.external_state == ProjectExternalState.State.UNKNOWN:
-            raise RuntimeError(
-                "The project is in an unknown state and cannot be updated at the moment"
-            )
+            self.query_external_state(external_state, callbacks=callbacks)
+        else:
+            self.start()
 
-    def update_external_project_state(self, state: ProjectExternalState) -> None:
+    def query_external_state(
+        self,
+        external_state: ProjectExternalState,
+        *,
+        callbacks: ProjectExternalStateCallbacks,
+    ) -> None:
         """
-        Updates the external project state to reflect the actual state on the external service.
+        Queries the actual external project state from the remote service.
 
         Args:
-            state: The current external project state.
+            external_state: The currently stored external state.
+            callbacks: The callbacks for asynchronous continuation.
         """
+
         raise NotImplementedError()
 
     def start(self) -> None:
@@ -220,6 +223,25 @@ class ConnectorJobExecutor(abc.ABC):
         ).emit(self._target_channel)
 
         self._log_debug(failure_msg)
+
+    def _check_project_external_state(
+        self, external_state: ProjectExternalState
+    ) -> None:
+        # Check for various fail states
+        if external_state.external_state == ProjectExternalState.State.LOCKED:
+            self.set_failed("The project is locked and cannot be updated anymore")
+        elif (
+            external_state.external_state == ProjectExternalState.State.UPLOADED
+            and Connector.Options.UPLOAD_ONCE in self._connector_options
+        ):
+            self.set_failed("The project has already been uploaded")
+        elif external_state.external_state == ProjectExternalState.State.UNKNOWN:
+            self.set_failed(
+                "The project is in an unknown state and cannot be updated at the moment"
+            )
+        else:
+            # The project is in a valid state, so we can start the job
+            self.start()
 
     def _log_debug(self, message: str) -> None:
         debug(

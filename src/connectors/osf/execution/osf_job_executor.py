@@ -31,6 +31,7 @@ from ..osf import (
     OSFStorageData,
     OSFUploadFileCallbacks,
 )
+from ...base.connector import ProjectExternalStateCallbacks
 from ...base.data.entities.connector import ConnectorJob
 from ...base.execution import ConnectorJobExecutor
 
@@ -86,9 +87,14 @@ class OSFJobExecutor(ConnectorJobExecutor):
             ),
         )
 
-    def update_external_project_state(self, state: ProjectExternalState) -> None:
-        # TODO
-        pass
+    def query_external_state(
+        self,
+        external_state: ProjectExternalState,
+        *,
+        callbacks: ProjectExternalStateCallbacks,
+    ) -> None:
+        external_state.external_state = ProjectExternalState.State.DEFAULT
+        callbacks.invoke_done_callbacks(external_state)
 
     def start(self) -> None:
         self._project_create()

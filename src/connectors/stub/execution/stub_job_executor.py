@@ -23,6 +23,8 @@ from common.py.integration.resources.transmitters import (
 )
 from common.py.services import Service
 from common.py.utils import human_readable_file_size
+
+from ...base.connector import ProjectExternalStateCallbacks
 from ...base.data.entities.connector import ConnectorJob
 from ...base.execution import ConnectorJobExecutor
 
@@ -46,9 +48,14 @@ class StubJobExecutor(ConnectorJobExecutor):
             tunnel_type=MemoryBrokerTunnel,
         )
 
-    def update_external_project_state(self, state: ProjectExternalState) -> None:
-        # We always allow reuploads
-        state.external_state = ProjectExternalState.State.DEFAULT
+    def query_external_state(
+        self,
+        external_state: ProjectExternalState,
+        *,
+        callbacks: ProjectExternalStateCallbacks,
+    ) -> None:
+        external_state.external_state = ProjectExternalState.State.LOCKED
+        callbacks.invoke_done_callbacks(external_state)
 
     def start(self) -> None:
         callbacks = ResourcesTransmitterPrepareCallbacks()
