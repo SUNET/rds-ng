@@ -29,8 +29,8 @@ from ..zenodo import (
     ZenodoProjectData,
     ZenodoUploadFileCallbacks,
 )
-from ...base.connector import ProjectExternalStateCallbacks
 from ...base.data.entities.connector import ConnectorJob
+from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorJobExecutor
 from ...base.integration.execution.requests_executor import RequestsExecutorOptions
 from ...base.settings import TransmissionSettingIDs

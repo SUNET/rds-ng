@@ -31,8 +31,8 @@ from ..osf import (
     OSFStorageData,
     OSFUploadFileCallbacks,
 )
-from ...base.connector import ProjectExternalStateCallbacks
 from ...base.data.entities.connector import ConnectorJob
+from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorJobExecutor
 
 

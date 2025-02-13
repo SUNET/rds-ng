@@ -24,8 +24,8 @@ from common.py.integration.resources.transmitters import (
 from common.py.services import Service
 from common.py.utils import human_readable_file_size
 
-from ...base.connector import ProjectExternalStateCallbacks
 from ...base.data.entities.connector import ConnectorJob
+from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorJobExecutor
 
 

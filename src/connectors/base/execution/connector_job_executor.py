@@ -16,8 +16,8 @@ from common.py.integration.resources.brokers import ResourcesBrokerTunnelType
 from common.py.integration.resources.transmitters import ResourcesTransmitter
 from common.py.services import Service
 
-from ..connector import ProjectExternalStateCallbacks
 from ..data.entities.connector import ConnectorJob
+from ..data.types import ProjectExternalStateCallbacks
 
 
 class ConnectorJobExecutor(abc.ABC):
