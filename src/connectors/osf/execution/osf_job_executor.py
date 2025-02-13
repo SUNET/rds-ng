@@ -3,6 +3,7 @@ import typing
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.data.entities.project import ProjectExternalState
 from common.py.data.entities.project.logbook import (
     ProjectJobHistoryRecordExtData,
     ProjectJobHistoryRecordExtDataIDs,
@@ -84,6 +85,10 @@ class OSFJobExecutor(ConnectorJobExecutor):
                 TransmissionSettingIDs.ATTEMPTS_DELAY
             ),
         )
+
+    def update_external_project_state(self, state: ProjectExternalState) -> None:
+        # TODO
+        pass
 
     def start(self) -> None:
         self._project_create()

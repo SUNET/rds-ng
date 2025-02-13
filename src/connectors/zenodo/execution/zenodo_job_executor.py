@@ -3,6 +3,7 @@ import typing
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.data.entities.project import ProjectExternalState
 from common.py.data.entities.project.logbook import (
     ProjectJobHistoryRecordExtData,
     ProjectJobHistoryRecordExtDataIDs,
@@ -88,6 +89,10 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
             user_token=self._job.user_token,
             requests_options=RequestsExecutorOptions(content_type=None),
         )
+
+    def update_external_project_state(self, state: ProjectExternalState) -> None:
+        # TODO
+        pass
 
     def start(self) -> None:
         self._project_create()

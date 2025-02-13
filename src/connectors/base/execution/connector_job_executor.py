@@ -6,7 +6,11 @@ from common.py.component import BackendComponent
 from common.py.core.logging import debug
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
-from common.py.data.entities.project import get_external_project_state
+from common.py.data.entities.connector import Connector
+from common.py.data.entities.project import (
+    get_external_project_state,
+    ProjectExternalState,
+)
 from common.py.data.entities.project.logbook import ProjectJobHistoryRecordExtData
 from common.py.integration.resources.brokers import ResourcesBrokerTunnelType
 from common.py.integration.resources.transmitters import ResourcesTransmitter
@@ -40,12 +44,17 @@ class ConnectorJobExecutor(abc.ABC):
             target_channel: The target server channel.
             tunnel_type: The resources broker tunnel type to use for downloads.
         """
+        from ..component import ConnectorComponent
         from ..settings import TransmissionSettingIDs
 
         self._job = job
 
         self._mesage_builder = message_builder
         self._target_channel = target_channel
+
+        self._connector_options = typing.cast(
+            ConnectorComponent, comp
+        ).connector_info.options
 
         self._transmitter: ResourcesTransmitter = ResourcesTransmitter(
             comp,
@@ -67,14 +76,34 @@ class ConnectorJobExecutor(abc.ABC):
         Called before the actual job is started. Performs various connector-specific checks.
         """
 
-        # Get the initial external project state
+        # Get the initial external project state; this can only be DEFAULT or UPLOADED
         external_state = get_external_project_state(
             self._job.project, self._job.connector_instance
         )
 
-        # TODO:
-        #  Status must be DEFAULT or UPLOADED (+ connector allows multi uploads), fail otherwise
-        #    If status is UPLOADED, check service for publication status
+        # If the project has already been uploaded, update its state to reflect the actual state
+        if external_state.external_state == ProjectExternalState.State.UPLOADED:
+            self.update_external_project_state(external_state)
+
+        # Check for the various states
+        if external_state.external_state == ProjectExternalState.State.LOCKED:
+            raise RuntimeError("The project is locked and cannot be updated anymore")
+        elif external_state.external_state == ProjectExternalState.State.UPLOADED:
+            if Connector.Options.UPLOAD_ONCE in self._connector_options:
+                raise RuntimeError("The project has already been uploaded")
+        elif external_state.external_state == ProjectExternalState.State.UNKNOWN:
+            raise RuntimeError(
+                "The project is in an unknown state and cannot be updated at the moment"
+            )
+
+    def update_external_project_state(self, state: ProjectExternalState) -> None:
+        """
+        Updates the external project state to reflect the actual state on the external service.
+
+        Args:
+            state: The current external project state.
+        """
+        raise NotImplementedError()
 
     def start(self) -> None:
         """

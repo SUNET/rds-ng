@@ -5,6 +5,7 @@ from common.py.component import BackendComponent
 from common.py.core import logging
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.data.entities.project import ProjectExternalState
 from common.py.data.entities.project.logbook import (
     ProjectJobHistoryRecordExtData,
     ProjectJobHistoryRecordExtDataIDs,
@@ -44,6 +45,10 @@ class StubJobExecutor(ConnectorJobExecutor):
             target_channel=target_channel,
             tunnel_type=MemoryBrokerTunnel,
         )
+
+    def update_external_project_state(self, state: ProjectExternalState) -> None:
+        # We always allow reuploads
+        state.external_state = ProjectExternalState.State.DEFAULT
 
     def start(self) -> None:
         callbacks = ResourcesTransmitterPrepareCallbacks()
