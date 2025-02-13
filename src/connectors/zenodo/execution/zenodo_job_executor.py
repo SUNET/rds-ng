@@ -91,7 +91,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
             requests_options=RequestsExecutorOptions(content_type=None),
         )
 
-    def query_external_state(
+    def query_external_project_state(
         self,
         external_state: ProjectExternalState,
         *,

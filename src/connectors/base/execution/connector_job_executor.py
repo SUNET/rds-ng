@@ -88,11 +88,11 @@ class ConnectorJobExecutor(abc.ABC):
             callbacks.done(lambda state: self._check_project_external_state(state))
             callbacks.failed(lambda reason: self.set_failed(reason))
 
-            self.query_external_state(external_state, callbacks=callbacks)
+            self.query_external_project_state(external_state, callbacks=callbacks)
         else:
             self.start()
 
-    def query_external_state(
+    def query_external_project_state(
         self,
         external_state: ProjectExternalState,
         *,

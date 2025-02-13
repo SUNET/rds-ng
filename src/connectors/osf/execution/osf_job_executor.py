@@ -87,7 +87,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
             ),
         )
 
-    def query_external_state(
+    def query_external_project_state(
         self,
         external_state: ProjectExternalState,
         *,
