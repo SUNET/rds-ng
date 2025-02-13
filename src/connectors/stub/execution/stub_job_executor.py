@@ -5,6 +5,10 @@ from common.py.component import BackendComponent
 from common.py.core import logging
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.data.entities.project.logbook import (
+    ProjectJobHistoryRecordExtData,
+    ProjectJobHistoryRecordExtDataIDs,
+)
 from common.py.data.entities.resource import (
     files_list_from_resources_list,
     Resource,
@@ -59,7 +63,7 @@ class StubJobExecutor(ConnectorJobExecutor):
 
             self._download(files_list)
         else:
-            self.set_done()
+            self.set_done(ext_data=self._get_job_ext_data())
 
     def _prepare_failed(self, reason: str) -> None:
         self.set_failed(f"Failed to prepare job: {reason}")
@@ -72,7 +76,7 @@ class StubJobExecutor(ConnectorJobExecutor):
         callbacks.progress(_report_each_file)
         callbacks.done(lambda res, buffer: self._download_done(res, buffer))
         callbacks.failed(lambda res, reason: self._download_failed(res, reason))
-        callbacks.all_done(lambda _: self.set_done())
+        callbacks.all_done(lambda _: self.set_done(ext_data=self._get_job_ext_data()))
 
         self._transmitter.download_list(files, callbacks=callbacks)
 
@@ -90,3 +94,10 @@ class StubJobExecutor(ConnectorJobExecutor):
 
     def _download_failed(self, res: Resource, reason: str) -> None:
         self.set_failed(f"Failed to download {res.filename}: {reason}")
+
+    def _get_job_ext_data(self) -> ProjectJobHistoryRecordExtData:
+        from common.py.utils import generate_random_string
+
+        return {
+            ProjectJobHistoryRecordExtDataIDs.EXTERNAL_ID: generate_random_string(6),
+        }
