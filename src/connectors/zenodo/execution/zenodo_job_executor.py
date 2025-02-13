@@ -26,6 +26,7 @@ from ..zenodo import (
     ZenodoClient,
     ZenodoCreateProjectCallbacks,
     ZenodoFileData,
+    ZenodoGetProjectCallbacks,
     ZenodoProjectData,
     ZenodoUploadFileCallbacks,
 )
@@ -91,17 +92,47 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
             requests_options=RequestsExecutorOptions(content_type=None),
         )
 
+    def start(self) -> None:
+        self._project_create()
+
+    # -- External state
+
     def query_external_project_state(
         self,
         external_state: ProjectExternalState,
         *,
-        callbacks: ProjectExternalStateCallbacks,
+        state_callbacks: ProjectExternalStateCallbacks,
     ) -> None:
-        external_state.external_state = ProjectExternalState.State.DEFAULT
-        callbacks.invoke_done_callbacks(external_state)
+        self.report_message("Querying external project...")
 
-    def start(self) -> None:
-        self._project_create()
+        callbacks = ZenodoGetProjectCallbacks()
+        callbacks.done(
+            lambda data: self._query_external_project_state_done(data, state_callbacks)
+        )
+        callbacks.failed(
+            lambda reason: self._query_external_project_state_failed(
+                reason, state_callbacks
+            )
+        )
+
+        self._zenodo_client.get_project(external_state.external_id, callbacks=callbacks)
+
+    def _query_external_project_state_done(
+        self, project: ZenodoProjectData, state_callbacks: ProjectExternalStateCallbacks
+    ) -> None:
+        # TODO: Done: Antwort verarbeiten
+        external_state = ProjectExternalState(
+            external_id=project.project_id,
+            external_state=ProjectExternalState.State.DEFAULT,
+        )
+        state_callbacks.invoke_done_callbacks(external_state)
+
+    def _query_external_project_state_failed(
+        self, reason: str, state_callbacks: ProjectExternalStateCallbacks
+    ) -> None:
+        # TODO: Was passiert bei not found? Timeout?
+        print(reason, flush=True)
+        state_callbacks.invoke_fail_callbacks(reason)
 
     # -- Project creation
 

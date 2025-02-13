@@ -6,17 +6,19 @@ import requests
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.data.entities.connector import ConnectorInstanceID
-from common.py.data.entities.project import Project
+from common.py.data.entities.project import Project, ProjectExternalState
 from common.py.data.entities.user import UserToken
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
 from .zenodo_callbacks import (
     ZenodoCreateProjectCallbacks,
     ZenodoDeleteProjectCallbacks,
+    ZenodoGetProjectCallbacks,
     ZenodoUploadFileCallbacks,
 )
 from .zenodo_request_data import ZenodoFileData, ZenodoProjectData
 from ..metadata import ZenodoMetadataCreator
+from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.integration.execution import RequestsExecutor
 from ...base.integration.execution.requests_executor import RequestsExecutorOptions
 
@@ -63,6 +65,33 @@ class ZenodoClient(RequestsExecutor):
             ),
             max_attempts=max_attempts,
             attempts_delay=attempts_delay,
+        )
+
+    def get_project(
+        self,
+        project_id: str,
+        *,
+        callbacks: ZenodoGetProjectCallbacks = ZenodoGetProjectCallbacks(),
+    ) -> None:
+        """
+        Gets information about an existing project.
+
+        Args:
+            project_id: The project ID.
+            callbacks: Optional request callbacks.
+        """
+
+        def _execute(session: requests.Session) -> ZenodoProjectData:
+            resp = self.get(
+                session,
+                ["deposit", "depositions", project_id],
+            )
+            return ZenodoProjectData(resp)
+
+        self._execute(
+            cb_exec=_execute,
+            cb_done=lambda data: callbacks.invoke_done_callbacks(data),
+            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
         )
 
     def create_project(

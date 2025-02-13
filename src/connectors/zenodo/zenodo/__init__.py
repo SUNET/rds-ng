@@ -1,4 +1,5 @@
 from .zenodo_callbacks import (
+    ZenodoGetProjectCallbacks,
     ZenodoCreateProjectCallbacks,
     ZenodoDeleteProjectCallbacks,
     ZenodoUploadFileCallbacks,

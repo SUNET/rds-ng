@@ -5,6 +5,17 @@ from common.py.utils.func import ExecutionCallbacks
 from .zenodo_request_data import ZenodoFileData, ZenodoProjectData
 
 
+class ZenodoGetProjectCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[ZenodoProjectData], None],
+        typing.Callable[[str], None],
+    ]
+):
+    """
+    Callbacks for the get project API call.
+    """
+
+
 class ZenodoCreateProjectCallbacks(
     ExecutionCallbacks[
         typing.Callable[[ZenodoProjectData], None],

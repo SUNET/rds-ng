@@ -52,10 +52,10 @@ class StubJobExecutor(ConnectorJobExecutor):
         self,
         external_state: ProjectExternalState,
         *,
-        callbacks: ProjectExternalStateCallbacks,
+        state_callbacks: ProjectExternalStateCallbacks,
     ) -> None:
         external_state.external_state = ProjectExternalState.State.DEFAULT
-        callbacks.invoke_done_callbacks(external_state)
+        state_callbacks.invoke_done_callbacks(external_state)
 
     def start(self) -> None:
         callbacks = ResourcesTransmitterPrepareCallbacks()

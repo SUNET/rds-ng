@@ -88,7 +88,7 @@ class ConnectorJobExecutor(abc.ABC):
             callbacks.done(lambda state: self._check_project_external_state(state))
             callbacks.failed(lambda reason: self.set_failed(reason))
 
-            self.query_external_project_state(external_state, callbacks=callbacks)
+            self.query_external_project_state(external_state, state_callbacks=callbacks)
         else:
             self.start()
 
@@ -96,14 +96,14 @@ class ConnectorJobExecutor(abc.ABC):
         self,
         external_state: ProjectExternalState,
         *,
-        callbacks: ProjectExternalStateCallbacks,
+        state_callbacks: ProjectExternalStateCallbacks,
     ) -> None:
         """
         Queries the actual external project state from the remote service.
 
         Args:
             external_state: The currently stored external state.
-            callbacks: The callbacks for asynchronous continuation.
+            state_callbacks: The callbacks for asynchronous continuation.
         """
 
         raise NotImplementedError()
