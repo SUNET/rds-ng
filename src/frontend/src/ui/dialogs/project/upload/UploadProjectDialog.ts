@@ -25,7 +25,7 @@ export async function uploadProjectDialog(comp: FrontendComponent, project: Proj
         {
             header: "Upload project",
             modal: true,
-            contentClass: "w-[30vw] min-w-[48rem] h-[60vh] min-h-[36rem]"
+            contentClass: "w-[30vw] min-w-[48rem] h-[50rem]"
         },
         {
             project: project
