@@ -57,7 +57,7 @@ class AuthorizedExecutor(abc.ABC):
         *,
         cb_exec: typing.Callable[..., typing.Any],
         cb_done: typing.Callable[[typing.Any], None],
-        cb_failed: typing.Callable[[str], None],
+        cb_failed: typing.Callable[[Exception], None],
         cb_prepare: (
             typing.Callable[
                 [AuthorizationToken | None], typing.Dict[str, typing.Any] | None
@@ -79,12 +79,12 @@ class AuthorizedExecutor(abc.ABC):
                         if exargs is not None:
                             kwargs |= exargs
                 except Exception as exc:  # pylint: disable=broad-exception-caught
-                    cb_failed(str(exc))
+                    cb_failed(exc)
                 else:
                     attempt_success, result = attempt(
                         cb_exec,
                         cb_retry=cb_retry,
-                        cb_fail=lambda e: cb_failed(str(e)),
+                        cb_failed=lambda e: cb_failed(e),
                         attempts=self._max_attempts,
                         delay=self._attempts_delay,
                         **kwargs,
@@ -94,7 +94,7 @@ class AuthorizedExecutor(abc.ABC):
 
         def _get_auth_token_failed(_, msg: str) -> None:
             with self._lock:
-                cb_failed(msg)
+                cb_failed(Exception(msg))
 
         with self._lock:
             GetAuthorizationTokenCommand.build(

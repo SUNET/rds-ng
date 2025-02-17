@@ -31,11 +31,11 @@ class ProjectExternalState:
     external_id: str
 
 
-def get_external_project_state(
+def get_last_known_external_project_state(
     project: Project, connector_instance: ConnectorInstanceID
 ) -> ProjectExternalState:
     """
-    Retrieves the external state of a project consisting of its base upload state and external ID.
+    Retrieves the last known external state of a project consisting of its base upload state and external ID.
 
     Args:
         project: The project.

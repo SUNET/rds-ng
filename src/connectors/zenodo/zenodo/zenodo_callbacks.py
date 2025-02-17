@@ -8,7 +8,7 @@ from .zenodo_request_data import ZenodoFileData, ZenodoProjectData
 class ZenodoGetProjectCallbacks(
     ExecutionCallbacks[
         typing.Callable[[ZenodoProjectData], None],
-        typing.Callable[[str], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
@@ -19,7 +19,7 @@ class ZenodoGetProjectCallbacks(
 class ZenodoCreateProjectCallbacks(
     ExecutionCallbacks[
         typing.Callable[[ZenodoProjectData], None],
-        typing.Callable[[str], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
@@ -30,7 +30,7 @@ class ZenodoCreateProjectCallbacks(
 class ZenodoDeleteProjectCallbacks(
     ExecutionCallbacks[
         typing.Callable[[], None],
-        typing.Callable[[str], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
@@ -41,7 +41,7 @@ class ZenodoDeleteProjectCallbacks(
 class ZenodoUploadFileCallbacks(
     ExecutionCallbacks[
         typing.Callable[[ZenodoFileData], None],
-        typing.Callable[[str], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """

@@ -8,7 +8,7 @@ from .osf_request_data import OSFFileData, OSFProjectData, OSFStorageData
 class OSFCreateProjectCallbacks(
     ExecutionCallbacks[
         typing.Callable[[OSFProjectData], None],
-        typing.Callable[[str], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
@@ -19,7 +19,7 @@ class OSFCreateProjectCallbacks(
 class OSFDeleteProjectCallbacks(
     ExecutionCallbacks[
         typing.Callable[[], None],
-        typing.Callable[[str], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
@@ -30,7 +30,7 @@ class OSFDeleteProjectCallbacks(
 class OSFGetStorageCallbacks(
     ExecutionCallbacks[
         typing.Callable[[OSFStorageData], None],
-        typing.Callable[[str], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
@@ -41,7 +41,7 @@ class OSFGetStorageCallbacks(
 class OSFUploadFileCallbacks(
     ExecutionCallbacks[
         typing.Callable[[OSFFileData], None],
-        typing.Callable[[str], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """

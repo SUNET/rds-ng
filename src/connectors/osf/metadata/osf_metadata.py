@@ -1,8 +1,13 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Dict, List
 
-from common.py.data.metadata import (Metadata, MetadataCreator, MetadataParser,
-                                     MetadataParserQuery)
+from common.py.data.entities.properties import PropertyObject
+from common.py.data.metadata import (
+    Metadata,
+    MetadataCreator,
+    MetadataParser,
+    MetadataParserQuery,
+)
 
 
 @dataclass
@@ -22,7 +27,7 @@ class OSFMetadataCreator(MetadataCreator):
         Creates an OSFMetadata object from the provided metadata.
     """
 
-    def create(self, metadata: List[Dict[str, Any]]) -> OSFMetadata:
+    def create(self, metadata: List[PropertyObject]) -> OSFMetadata:
         """
         Creates an OSFMetadata object from a list of metadata dictionaries.
 
@@ -33,7 +38,7 @@ class OSFMetadataCreator(MetadataCreator):
             OSFMetadata: An instance of OSFMetadata populated with the parsed metadata.
         """
 
-        osf_metadata = metadata # = MetadataParser.filter_by_profile("OSF", metadata)
+        osf_metadata = metadata  # = MetadataParser.filter_by_profile("OSF", metadata)
 
         product = OSFMetadata()
 

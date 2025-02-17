@@ -6,7 +6,7 @@ def attempt(
     callback: typing.Callable[..., typing.Any],
     *args,
     cb_retry: typing.Callable[..., None] | None = None,
-    cb_fail: typing.Callable[[Exception], None] | None = None,
+    cb_failed: typing.Callable[[Exception], None] | None = None,
     attempts: int = 1,
     delay: float = 3.0,
     **kwargs,
@@ -18,7 +18,7 @@ def attempt(
     Args:
         callback: The callback to attempt.
         cb_retry: An optional callback called on each retry.
-        cb_fail: An optional callback in case of a failure.
+        cb_failed: An optional callback in case of a failure.
         attempts: The number of attempts.
         delay: The delay (in seconds) between attempts.
         args: Arbitrary positional arguments, passed to the callback.
@@ -37,8 +37,8 @@ def attempt(
                 if callable(cb_retry):
                     cb_retry(*args, **kwargs)
             else:
-                if callable(cb_fail):
-                    cb_fail(exc)
+                if callable(cb_failed):
+                    cb_failed(exc)
                 else:
                     raise exc
 

@@ -1,4 +1,3 @@
-import json
 import typing
 from dataclasses import dataclass
 
@@ -197,7 +196,7 @@ class RequestsExecutor(AuthorizedExecutor):
         *,
         cb_exec: typing.Callable[..., typing.Any],
         cb_done: typing.Callable[[typing.Any], None],
-        cb_failed: typing.Callable[[str], None],
+        cb_failed: typing.Callable[[Exception], None],
         cb_retry: typing.Callable[..., None] | None = None,
         **kwargs,
     ) -> None:

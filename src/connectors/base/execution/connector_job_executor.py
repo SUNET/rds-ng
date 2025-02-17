@@ -8,7 +8,7 @@ from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
 from common.py.data.entities.connector import Connector
 from common.py.data.entities.project import (
-    get_external_project_state,
+    get_last_known_external_project_state,
     ProjectExternalState,
 )
 from common.py.data.entities.project.logbook import ProjectJobHistoryRecordExtData
@@ -77,15 +77,15 @@ class ConnectorJobExecutor(abc.ABC):
         Called to run the job execution.
         """
 
-        # Get the initial external project state; this can only be DEFAULT or UPLOADED
-        external_state = get_external_project_state(
+        # Get the last known external project state; this can only be DEFAULT or UPLOADED
+        external_state = get_last_known_external_project_state(
             self._job.project, self._job.connector_instance
         )
 
         # If the project has already been uploaded, update its state to reflect the actual state; otherwise we can simply start the job
         if external_state.external_state == ProjectExternalState.State.UPLOADED:
             callbacks = ProjectExternalStateCallbacks()
-            callbacks.done(lambda state: self._check_project_external_state(state))
+            callbacks.done(lambda state: self._process_project_external_state(state))
             callbacks.failed(lambda reason: self.set_failed(reason))
 
             self.query_external_project_state(external_state, state_callbacks=callbacks)
@@ -224,7 +224,7 @@ class ConnectorJobExecutor(abc.ABC):
 
         self._log_debug(failure_msg)
 
-    def _check_project_external_state(
+    def _process_project_external_state(
         self, external_state: ProjectExternalState
     ) -> None:
         # Check for various fail states

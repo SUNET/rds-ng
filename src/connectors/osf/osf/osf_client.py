@@ -106,7 +106,7 @@ class OSFClient(RequestsExecutor):
         self._execute(
             cb_exec=_execute,
             cb_done=lambda data: callbacks.invoke_done_callbacks(data),
-            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
 
     def delete_project(
@@ -132,7 +132,7 @@ class OSFClient(RequestsExecutor):
         self._execute(
             cb_exec=_execute,
             cb_done=lambda _: callbacks.invoke_done_callbacks(),
-            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
 
     def get_storage(
@@ -161,7 +161,7 @@ class OSFClient(RequestsExecutor):
         self._execute(
             cb_exec=_execute,
             cb_done=lambda data: callbacks.invoke_done_callbacks(data),
-            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
 
     def upload_file(
@@ -204,8 +204,8 @@ class OSFClient(RequestsExecutor):
             callbacks.invoke_done_callbacks(data)
             file.close()  # Free up the buffer to save memory
 
-        def _upload_failed(reason: str) -> None:
-            callbacks.invoke_fail_callbacks(reason)
+        def _upload_failed(exc: Exception) -> None:
+            callbacks.invoke_fail_callbacks(str(exc))
             file.close()  # Free up the buffer to save memory
 
         self._execute(

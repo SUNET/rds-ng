@@ -42,6 +42,20 @@ class ZenodoProjectData(ZenodoRequestData):
         return str(self.value("id"))
 
     @property
+    def state(self) -> str:
+        """
+        The state of the project; can be *inprogress*, *done* or *error*.
+        """
+        return str(self.value("state"))
+
+    @property
+    def is_submitted(self) -> bool:
+        """
+        Whether the project has been submitted.
+        """
+        return bool(self.value("submitted"))
+
+    @property
     def project_link(self) -> str:
         """
         The link to the project.

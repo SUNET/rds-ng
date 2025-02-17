@@ -106,7 +106,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
         callbacks = OSFCreateProjectCallbacks()
         callbacks.done(lambda data: self._project_create_done(data))
-        callbacks.failed(lambda reason: self._project_create_failed(reason))
+        callbacks.failed(lambda exc: self._project_create_failed(exc))
 
         self._osf_client.create_project(self._job.project, callbacks=callbacks)
 
@@ -115,8 +115,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
         self._storage_get(osf_project)
 
-    def _project_create_failed(self, reason: str) -> None:
-        self.set_failed(f"Unable to create project: {reason}")
+    def _project_create_failed(self, exc: Exception) -> None:
+        self.set_failed(f"Unable to create project: {str(exc)}")
 
     # -- Storage retrieval
 
@@ -125,7 +125,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
         callbacks = OSFGetStorageCallbacks()
         callbacks.done(lambda data: self._storage_fetched(osf_project, data))
-        callbacks.failed(lambda reason: self._storage_failed(reason))
+        callbacks.failed(lambda exc: self._storage_failed(exc))
         callbacks.failed(lambda _: self._delete_failed_project(osf_project))
 
         self._osf_client.get_storage(osf_project, callbacks=callbacks)
@@ -135,8 +135,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
     ) -> None:
         self._transmitter_prepare(osf_project, osf_storage)
 
-    def _storage_failed(self, reason: str) -> None:
-        self.set_failed(f"Unable to get storage information: {reason}")
+    def _storage_failed(self, exc: Exception) -> None:
+        self.set_failed(f"Unable to get storage information: {str(exc)}")
 
     # -- Transmitter preparation
 
@@ -218,7 +218,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
         callbacks = OSFUploadFileCallbacks()
         callbacks.done(lambda data: self._upload_file_done(resource, data))
-        callbacks.failed(lambda reason: self._upload_file_failed(resource, reason))
+        callbacks.failed(lambda exc: self._upload_file_failed(resource, exc))
         callbacks.failed(lambda _: self._delete_failed_project(osf_project))
 
         self._osf_client.upload_file(
@@ -234,8 +234,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
     def _upload_file_done(self, resource: Resource, _: OSFFileData) -> None:
         self.report_message(f"Uploaded {resource.filename}")
 
-    def _upload_file_failed(self, res: Resource, reason: str) -> None:
-        self.set_failed(f"Failed to upload {res.filename}: {reason}")
+    def _upload_file_failed(self, res: Resource, exc: Exception) -> None:
+        self.set_failed(f"Failed to upload {res.filename}: {str(exc)}")
 
     # Miscellaneous
 

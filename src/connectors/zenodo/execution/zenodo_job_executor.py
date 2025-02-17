@@ -1,4 +1,7 @@
 import typing
+from http import HTTPStatus
+
+import requests
 
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
@@ -110,9 +113,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
             lambda data: self._query_external_project_state_done(data, state_callbacks)
         )
         callbacks.failed(
-            lambda reason: self._query_external_project_state_failed(
-                reason, state_callbacks
-            )
+            lambda exc: self._query_external_project_state_failed(exc, state_callbacks)
         )
 
         self._zenodo_client.get_project(external_state.external_id, callbacks=callbacks)
@@ -120,19 +121,39 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
     def _query_external_project_state_done(
         self, project: ZenodoProjectData, state_callbacks: ProjectExternalStateCallbacks
     ) -> None:
-        # TODO: Done: Antwort verarbeiten
-        external_state = ProjectExternalState(
-            external_id=project.project_id,
-            external_state=ProjectExternalState.State.DEFAULT,
+        state = ProjectExternalState.State.UNKNOWN
+
+        if (
+            project.state == "inprogress" or project.state == "unsubmitted"
+        ) and not project.is_submitted:
+            state = ProjectExternalState.State.DEFAULT
+        elif project.state == "done" or project.is_submitted:
+            state = ProjectExternalState.State.LOCKED
+
+        state_callbacks.invoke_done_callbacks(
+            ProjectExternalState(
+                external_id=project.project_id,
+                external_state=state,
+            )
         )
-        state_callbacks.invoke_done_callbacks(external_state)
 
     def _query_external_project_state_failed(
-        self, reason: str, state_callbacks: ProjectExternalStateCallbacks
+        self,
+        exc: Exception,
+        state_callbacks: ProjectExternalStateCallbacks,
     ) -> None:
-        # TODO: Was passiert bei not found? Timeout?
-        print(reason, flush=True)
-        state_callbacks.invoke_fail_callbacks(reason)
+        if (
+            isinstance(exc, requests.exceptions.RequestException)
+            and exc.response.status_code == HTTPStatus.NOT_FOUND
+        ):
+            state_callbacks.invoke_done_callbacks(
+                ProjectExternalState(
+                    external_id="",
+                    external_state=ProjectExternalState.State.DEFAULT,
+                )
+            )
+        else:
+            state_callbacks.invoke_fail_callbacks(str(exc))
 
     # -- Project creation
 
@@ -141,7 +162,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
         callbacks = ZenodoCreateProjectCallbacks()
         callbacks.done(lambda data: self._project_create_done(data))
-        callbacks.failed(lambda reason: self._project_create_failed(reason))
+        callbacks.failed(lambda exc: self._project_create_failed(exc))
 
         self._zenodo_client.create_project(self._job.project, callbacks=callbacks)
 
@@ -150,8 +171,8 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
         self._transmitter_prepare(zenodo_project)
 
-    def _project_create_failed(self, reason: str) -> None:
-        self.set_failed(f"Unable to create project: {reason}")
+    def _project_create_failed(self, exc: Exception) -> None:
+        self.set_failed(f"Unable to create project: {str(exc)}")
 
     # -- Transmitter preparation
 
@@ -226,7 +247,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
         callbacks = ZenodoUploadFileCallbacks()
         callbacks.done(lambda data: self._upload_file_done(resource, data))
-        callbacks.failed(lambda reason: self._upload_file_failed(resource, reason))
+        callbacks.failed(lambda exc: self._upload_file_failed(resource, exc))
         callbacks.failed(lambda _: self._delete_failed_project(zenodo_project))
 
         self._zenodo_upload_client.upload_file(
@@ -242,8 +263,8 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
     def _upload_file_done(self, resource: Resource, _: ZenodoFileData) -> None:
         self.report_message(f"Uploaded {resource.filename}")
 
-    def _upload_file_failed(self, res: Resource, reason: str) -> None:
-        self.set_failed(f"Failed to upload {res.filename}: {reason}")
+    def _upload_file_failed(self, res: Resource, exc: Exception) -> None:
+        self.set_failed(f"Failed to upload {res.filename}: {str(exc)}")
 
     # Miscellaneous
 

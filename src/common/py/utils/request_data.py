@@ -71,3 +71,6 @@ class RequestData:
         The error reason (in case the request failed).
         """
         return self._response.reason if self.is_erroneous else ""
+
+    def __str__(self) -> str:
+        return f"response={self._response}; data={self.data}"

@@ -6,7 +6,7 @@ import requests
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.data.entities.connector import ConnectorInstanceID
-from common.py.data.entities.project import Project, ProjectExternalState
+from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
@@ -18,7 +18,6 @@ from .zenodo_callbacks import (
 )
 from .zenodo_request_data import ZenodoFileData, ZenodoProjectData
 from ..metadata import ZenodoMetadataCreator
-from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.integration.execution import RequestsExecutor
 from ...base.integration.execution.requests_executor import RequestsExecutorOptions
 
@@ -91,7 +90,7 @@ class ZenodoClient(RequestsExecutor):
         self._execute(
             cb_exec=_execute,
             cb_done=lambda data: callbacks.invoke_done_callbacks(data),
-            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
 
     def create_project(
@@ -163,7 +162,7 @@ class ZenodoClient(RequestsExecutor):
         self._execute(
             cb_exec=_execute,
             cb_done=lambda data: callbacks.invoke_done_callbacks(data),
-            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
 
     def delete_project(
@@ -189,7 +188,7 @@ class ZenodoClient(RequestsExecutor):
         self._execute(
             cb_exec=_execute,
             cb_done=lambda _: callbacks.invoke_done_callbacks(),
-            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
 
     def upload_file(
@@ -228,8 +227,8 @@ class ZenodoClient(RequestsExecutor):
             callbacks.invoke_done_callbacks(data)
             file.close()  # Free up the buffer to save memory
 
-        def _upload_failed(reason: str) -> None:
-            callbacks.invoke_fail_callbacks(reason)
+        def _upload_failed(exc: Exception) -> None:
+            callbacks.invoke_fail_callbacks(str(exc))
             file.close()  # Free up the buffer to save memory
 
         self._execute(
