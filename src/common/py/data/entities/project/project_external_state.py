@@ -63,3 +63,16 @@ def get_last_known_external_project_state(
         external_id = ""
 
     return ProjectExternalState(external_state=state, external_id=external_id)
+
+
+def check_reuse_external_project(external_state: ProjectExternalState) -> bool:
+    """
+    Checks whether an external project should be reused when uploading.
+
+    Args:
+        external_state: The external project state.
+    """
+    return (
+        external_state.external_state == ProjectExternalState.State.UPLOADED
+        and external_state.external_id != ""
+    )
