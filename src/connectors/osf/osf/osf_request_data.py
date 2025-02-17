@@ -73,6 +73,13 @@ class OSFStorageData(OSFRequestData):
         return self.value("data.attributes.name")
 
     @property
+    def is_public(self) -> bool:
+        """
+        Whether the project is public.
+        """
+        return self.value("data.attributes.public")
+
+    @property
     def file_link(self) -> str:
         """
         The link to upload files.

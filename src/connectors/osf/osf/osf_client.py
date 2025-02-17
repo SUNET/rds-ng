@@ -13,6 +13,7 @@ from common.py.services import Service
 from .osf_callbacks import (
     OSFCreateProjectCallbacks,
     OSFDeleteProjectCallbacks,
+    OSFGetProjectCallbacks,
     OSFGetStorageCallbacks,
     OSFUploadFileCallbacks,
 )
@@ -58,6 +59,33 @@ class OSFClient(RequestsExecutor):
             base_url=comp.data.config.value(ConnectorSettingIDs.TARGET),
             max_attempts=max_attempts,
             attempts_delay=attempts_delay,
+        )
+
+    def get_project(
+        self,
+        project_id: str,
+        *,
+        callbacks: OSFGetProjectCallbacks = OSFGetProjectCallbacks(),
+    ) -> None:
+        """
+        Gets information about an existing project.
+
+        Args:
+            project_id: The project ID.
+            callbacks: Optional request callbacks.
+        """
+
+        def _execute(session: requests.Session) -> OSFProjectData:
+            resp = self.get(
+                session,
+                ["nodes", project_id],
+            )
+            return OSFProjectData(resp)
+
+        self._execute(
+            cb_exec=_execute,
+            cb_done=lambda data: callbacks.invoke_done_callbacks(data),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
 
     def create_project(

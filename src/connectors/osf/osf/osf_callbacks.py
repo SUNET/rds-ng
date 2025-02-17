@@ -5,6 +5,17 @@ from common.py.utils.func import ExecutionCallbacks
 from .osf_request_data import OSFFileData, OSFProjectData, OSFStorageData
 
 
+class OSFGetProjectCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[OSFProjectData], None],
+        typing.Callable[[Exception], None],
+    ]
+):
+    """
+    Callbacks for the get project API call.
+    """
+
+
 class OSFCreateProjectCallbacks(
     ExecutionCallbacks[
         typing.Callable[[OSFProjectData], None],

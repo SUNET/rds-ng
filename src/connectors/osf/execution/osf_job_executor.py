@@ -1,4 +1,7 @@
 import typing
+from http import HTTPStatus
+
+import requests
 
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
@@ -31,6 +34,7 @@ from ..osf import (
     OSFStorageData,
     OSFUploadFileCallbacks,
 )
+from ..osf.osf_callbacks import OSFGetProjectCallbacks
 from ...base.data.entities.connector import ConnectorJob
 from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorJobExecutor
@@ -87,17 +91,62 @@ class OSFJobExecutor(ConnectorJobExecutor):
             ),
         )
 
+    def start(self) -> None:
+        self._project_create()
+
+    # -- External state
+
     def query_external_project_state(
         self,
         external_state: ProjectExternalState,
         *,
         state_callbacks: ProjectExternalStateCallbacks,
     ) -> None:
-        external_state.external_state = ProjectExternalState.State.DEFAULT
-        state_callbacks.invoke_done_callbacks(external_state)
+        self.report_message("Querying external project...")
 
-    def start(self) -> None:
-        self._project_create()
+        callbacks = OSFGetProjectCallbacks()
+        callbacks.done(
+            lambda data: self._query_external_project_state_done(data, state_callbacks)
+        )
+        callbacks.failed(
+            lambda exc: self._query_external_project_state_failed(exc, state_callbacks)
+        )
+
+        self._osf_client.get_project(external_state.external_id, callbacks=callbacks)
+
+    def _query_external_project_state_done(
+        self, project: OSFProjectData, state_callbacks: ProjectExternalStateCallbacks
+    ) -> None:
+        # OSF doesn't lock projects
+        state = ProjectExternalState.State.DEFAULT
+        state_callbacks.invoke_done_callbacks(
+            ProjectExternalState(
+                external_id=project.project_id,
+                external_state=state,
+            )
+        )
+
+    def _query_external_project_state_failed(
+        self,
+        exc: Exception,
+        state_callbacks: ProjectExternalStateCallbacks,
+    ) -> None:
+        if isinstance(exc, requests.exceptions.RequestException) and (
+            exc.response.status_code == HTTPStatus.NOT_FOUND
+            or exc.response.status_code == HTTPStatus.GONE
+        ):
+            self.report_message(
+                "The previous project no longer exists, a new one will be created"
+            )
+
+            state_callbacks.invoke_done_callbacks(
+                ProjectExternalState(
+                    external_id="",
+                    external_state=ProjectExternalState.State.DEFAULT,
+                )
+            )
+        else:
+            state_callbacks.invoke_fail_callbacks(str(exc))
 
     # -- Project creation
 
