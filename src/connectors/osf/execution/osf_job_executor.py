@@ -91,7 +91,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
             ),
         )
 
-    def start(self) -> None:
+    def start(self, external_state: ProjectExternalState) -> None:
         self._project_create()
 
     # -- External state

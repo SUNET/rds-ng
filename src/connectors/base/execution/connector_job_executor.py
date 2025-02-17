@@ -90,7 +90,7 @@ class ConnectorJobExecutor(abc.ABC):
 
             self.query_external_project_state(external_state, state_callbacks=callbacks)
         else:
-            self.start()
+            self.start(external_state)
 
     def query_external_project_state(
         self,
@@ -108,11 +108,14 @@ class ConnectorJobExecutor(abc.ABC):
 
         raise NotImplementedError()
 
-    def start(self) -> None:
+    def start(self, external_state: ProjectExternalState) -> None:
         """
         Called when the job execution is started. Must always be implemented.
 
         If the job cannot start, an exception should be thrown.
+
+        Args:
+            external_state: The external project state.
         """
 
         raise NotImplementedError()
@@ -241,7 +244,7 @@ class ConnectorJobExecutor(abc.ABC):
             )
         else:
             # The project is in a valid state, so we can start the job
-            self.start()
+            self.start(external_state)
 
     def _log_debug(self, message: str) -> None:
         debug(
