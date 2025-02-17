@@ -134,6 +134,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
             ProjectExternalState(
                 external_id=project.project_id,
                 external_state=state,
+                project_data=project,
             )
         )
 
