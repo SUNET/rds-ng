@@ -60,7 +60,7 @@ class StubJobExecutor(ConnectorJobExecutor):
     def start(self) -> None:
         callbacks = ResourcesTransmitterPrepareCallbacks()
         callbacks.done(lambda res: self._prepare_done(res))
-        callbacks.failed(lambda reason: self._prepare_failed(reason))
+        callbacks.failed(lambda exc: self._prepare_failed(exc))
 
         self._transmitter.prepare(self._job.project, callbacks=callbacks)
 
@@ -77,8 +77,8 @@ class StubJobExecutor(ConnectorJobExecutor):
         else:
             self.set_done(ext_data=self._get_job_ext_data())
 
-    def _prepare_failed(self, reason: str) -> None:
-        self.set_failed(f"Failed to prepare job: {reason}")
+    def _prepare_failed(self, exc: Exception) -> None:
+        self.set_failed(f"Failed to prepare job: {str(exc)}")
 
     def _download(self, files: typing.List[Resource]) -> None:
         def _report_each_file(res: Resource, current: int, total: int) -> None:
@@ -87,7 +87,7 @@ class StubJobExecutor(ConnectorJobExecutor):
         callbacks = ResourcesTransmitterDownloadCallbacks()
         callbacks.progress(_report_each_file)
         callbacks.done(lambda res, buffer: self._download_done(res, buffer))
-        callbacks.failed(lambda res, reason: self._download_failed(res, reason))
+        callbacks.failed(lambda res, exc: self._download_failed(res, exc))
         callbacks.all_done(lambda _: self.set_done(ext_data=self._get_job_ext_data()))
 
         self._transmitter.download_list(files, callbacks=callbacks)
@@ -104,8 +104,8 @@ class StubJobExecutor(ConnectorJobExecutor):
             size=len(buffer.readall()),
         )
 
-    def _download_failed(self, res: Resource, reason: str) -> None:
-        self.set_failed(f"Failed to download {res.filename}: {reason}")
+    def _download_failed(self, res: Resource, exc: Exception) -> None:
+        self.set_failed(f"Failed to download {res.filename}: {str(exc)}")
 
     def _get_job_ext_data(self) -> ProjectJobHistoryRecordExtData:
         from common.py.utils import generate_random_string

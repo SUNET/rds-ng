@@ -7,7 +7,7 @@ from common.py.utils.func import ExecutionCallbacks
 class ProjectExternalStateCallbacks(
     ExecutionCallbacks[
         typing.Callable[[ProjectExternalState], None],
-        typing.Callable[[str], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """

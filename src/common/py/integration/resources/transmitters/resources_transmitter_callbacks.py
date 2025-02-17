@@ -10,7 +10,7 @@ ResourceBuffer = io.RawIOBase
 
 class ResourcesTransmitterPrepareCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[ResourcesList], None], typing.Callable[[str], None]
+        typing.Callable[[ResourcesList], None], typing.Callable[[Exception], None]
     ]
 ):
     """
@@ -21,7 +21,7 @@ class ResourcesTransmitterPrepareCallbacks(
 class ResourcesTransmitterDownloadCallbacks(
     ExecutionCallbacks[
         typing.Callable[[Resource, ResourceBuffer], None],
-        typing.Callable[[Resource, str], None],
+        typing.Callable[[Resource, Exception], None],
     ]
 ):
     """

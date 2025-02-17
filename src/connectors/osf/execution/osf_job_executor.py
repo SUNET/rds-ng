@@ -149,7 +149,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
                 osf_project, osf_storage, resources=res
             )
         )
-        callbacks.failed(lambda reason: self._transmitter_prepare_failed(reason))
+        callbacks.failed(lambda exc: self._transmitter_prepare_failed(exc))
         callbacks.failed(lambda _: self._delete_failed_project(osf_project))
 
         self._transmitter.prepare(self._job.project, callbacks=callbacks)
@@ -172,8 +172,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
         else:
             self.set_done(ext_data=self._get_job_ext_data(osf_project))
 
-    def _transmitter_prepare_failed(self, reason: str) -> None:
-        self.set_failed(f"Failed to prepare job: {reason}")
+    def _transmitter_prepare_failed(self, exc: Exception) -> None:
+        self.set_failed(f"Failed to prepare job: {str(exc)}")
 
     # -- File transfers
 
@@ -194,7 +194,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
                 osf_project, osf_storage, resource=res, buffer=buffer
             )
         )
-        callbacks.failed(lambda res, reason: self._download_file_failed(res, reason))
+        callbacks.failed(lambda res, exc: self._download_file_failed(res, exc))
         callbacks.failed(lambda _, __: self._delete_failed_project(osf_project))
         callbacks.all_done(
             lambda success: (
@@ -228,8 +228,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
             callbacks=callbacks,
         )
 
-    def _download_file_failed(self, res: Resource, reason: str) -> None:
-        self.set_failed(f"Failed to download {res.filename}: {reason}")
+    def _download_file_failed(self, res: Resource, exc: Exception) -> None:
+        self.set_failed(f"Failed to download {res.filename}: {str(exc)}")
 
     def _upload_file_done(self, resource: Resource, _: OSFFileData) -> None:
         self.report_message(f"Uploaded {resource.filename}")

@@ -30,7 +30,7 @@ const { userSettings } = storeToRefs(userStore);
             </div>
         </Message>
 
-        <ScrollPanel v-if="userSettings.connector_instances.length > 0" class="h-[47rem] min-h-[33rem]">
+        <ScrollPanel v-if="userSettings.connector_instances.length > 0" class="h-[46rem] min-h-[32rem]">
             <UploadConnectionsList :project="project" :user-settings="userSettings" />
         </ScrollPanel>
     </div>

@@ -86,7 +86,7 @@ class ConnectorJobExecutor(abc.ABC):
         if external_state.external_state == ProjectExternalState.State.UPLOADED:
             callbacks = ProjectExternalStateCallbacks()
             callbacks.done(lambda state: self._process_project_external_state(state))
-            callbacks.failed(lambda reason: self.set_failed(reason))
+            callbacks.failed(lambda exc: self.set_failed(str(exc)))
 
             self.query_external_project_state(external_state, state_callbacks=callbacks)
         else:

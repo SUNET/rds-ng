@@ -99,7 +99,7 @@ class ResourcesTransmitter(AuthorizedExecutor):
         self._execute(
             cb_exec=_prepare,
             cb_done=lambda _: callbacks.invoke_done_callbacks(self._context.resources),
-            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
 
     def download(
@@ -195,10 +195,10 @@ class ResourcesTransmitter(AuthorizedExecutor):
                     resource, typing.cast(ResourceBuffer, download_ctx.tunnel)
                 )
 
-            def _download_failed(reason: str) -> None:
+            def _download_failed(exc: Exception) -> None:
                 self._context.download_failed = True
 
-                callbacks.invoke_fail_callbacks(resource, reason)
+                callbacks.invoke_fail_callbacks(resource, exc)
 
             self._execute(
                 cb_exec=_download,
@@ -249,7 +249,7 @@ class ResourcesTransmitter(AuthorizedExecutor):
         *,
         cb_exec: typing.Callable[..., typing.Any],
         cb_done: typing.Callable[[typing.Any], None],
-        cb_failed: typing.Callable[[str], None],
+        cb_failed: typing.Callable[[Exception], None],
         cb_retry: typing.Callable[..., None] | None = None,
         **kwargs,
     ) -> None:
