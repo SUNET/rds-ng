@@ -54,7 +54,7 @@ class ROCrateExporter(ProjectExporter):
                     refs[o.type] = [*refs.get(o.type, []), {"@id": o.id}]
                 values = values | po.value | refs
 
-            crate.add_file(key, properties=values)
+            crate.add_file(key, properties=values, dest_path=key.removeprefix("/"))
 
         # add shared objects
         for sharedObject in project.features.shared_objects:
