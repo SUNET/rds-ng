@@ -1,4 +1,5 @@
 import json
+from urllib.parse import quote
 
 from rocrate.model.contextentity import ContextEntity
 from rocrate.rocrate import ROCrate
@@ -51,10 +52,10 @@ class ROCrateExporter(ProjectExporter):
                 refs = {}
 
                 for o in refObjects:
-                    refs[o.type] = [*refs.get(o.type, []), {"@id": o.id}]
+                    refs[o.type] = [*refs.get(o.type, []), {"@id": quote(o.id)}]
                 values = values | po.value | refs
 
-            crate.add_file(key, properties=values, dest_path=key.removeprefix("/"))
+            crate.add_file(key, properties=values, dest_path=quote(key.removeprefix("/")))
 
         # add shared objects
         for sharedObject in project.features.shared_objects:
@@ -62,28 +63,29 @@ class ROCrateExporter(ProjectExporter):
             refs = {}
 
             for o in refObjects:
-                refs[o.type] = [*refs.get(o.type, []), {"@id": o.id}]
+                refs[o.type] = [*refs.get(o.type, []), {"@id": quote(o.id)}]
 
             p = {"@type": sharedObject.type} | sharedObject.value | refs
 
-            crate.add(ContextEntity(crate, sharedObject.id, properties=p))
+            crate.add(ContextEntity(crate, quote(sharedObject.id), properties=p))
 
 
         # add project metadata
         # is the root data set the right spot for this?
-        metadata_values = {"@id": "./"}
+        root = crate.dereference("./")
 
         for m in [m for m in project.features.project_metadata.metadata if "datacite" in m.id]: # HACK
             refObjects = [o for o in project.features.shared_objects if o.id in m.refs]
-            refs = {}
 
+            # add references
             for o in refObjects:
-                refs[o.type] = [*refs.get(o.type, []), {"@id": o.id}]
-            metadata_values = metadata_values | m.value | refs
+                root[o.type] = [*root.get(o.type, []), {"@id": quote(o.id)}]
+            
+            # add simple values
+            for k, v in m.value.items():
+                root[k] = v
 
-        crate.update_jsonld(metadata_values)
-
-        metadata_bytes = str.encode(json.dumps(crate.metadata.generate()))
+        metadata_bytes = str.encode(json.dumps(crate.metadata.generate(), indent=4))
 
         return ProjectExporterResult(mimetype="application/ld+json", data=metadata_bytes)
     
