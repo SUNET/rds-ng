@@ -2,6 +2,8 @@ import json
 from urllib.parse import quote
 
 from rocrate.model.contextentity import ContextEntity
+from rocrate.model.data_entity import DataEntity
+from rocrate.model.root_dataset import RootDataset
 from rocrate.rocrate import ROCrate
 
 from common.py.data.entities.project import Project
@@ -46,44 +48,45 @@ class ROCrateExporter(ProjectExporter):
 
         # add files
         for key, propertyObjects in project.features.resources_metadata.metadata.items():
-            values = {}
+            file: DataEntity = crate.add_file(key, dest_path=quote(key.removeprefix("/"))) # pyright: ignore[reportAssignmentType]
+            
             for po in propertyObjects:
                 refObjects = [o for o in project.features.shared_objects if o.id in po.refs]
-                refs = {}
 
+                # add simple values
+                for k, v in po.value.items():
+                    file[k] = v
+
+                # add references
                 for o in refObjects:
-                    refs[o.type] = [*refs.get(o.type, []), {"@id": quote(o.id)}]
-                values = values | po.value | refs
-
-            crate.add_file(key, properties=values, dest_path=quote(key.removeprefix("/")))
+                    file[o.type] = [*file.get(o.type, []), {"@id": quote(o.id)}]
 
         # add shared objects
         for sharedObject in project.features.shared_objects:
-            refObjects = [o for o in project.features.shared_objects if o.id in sharedObject.refs]
-            refs = {}
+            entity: ContextEntity = crate.add(ContextEntity(crate, quote(sharedObject.id), properties={"@type": sharedObject.type})) # pyright: ignore[reportAssignmentType]
 
-            for o in refObjects:
-                refs[o.type] = [*refs.get(o.type, []), {"@id": quote(o.id)}]
-
-            p = {"@type": sharedObject.type} | sharedObject.value | refs
-
-            crate.add(ContextEntity(crate, quote(sharedObject.id), properties=p))
-
-
-        # add project metadata
-        # is the root data set the right spot for this?
-        root = crate.dereference("./")
-
-        for m in [m for m in project.features.project_metadata.metadata if "datacite" in m.id]: # HACK
-            refObjects = [o for o in project.features.shared_objects if o.id in m.refs]
+            # add simple values
+            for k, v in sharedObject.value.items():
+                entity[k] = v
 
             # add references
+            refObjects = [o for o in project.features.shared_objects if o.id in sharedObject.refs]
             for o in refObjects:
-                root[o.type] = [*root.get(o.type, []), {"@id": quote(o.id)}]
-            
+                entity[o.type] = [*entity.get(o.type, []), {"@id": quote(o.id)}]
+
+        # add project metadata
+        root: RootDataset = crate.dereference("./")
+
+        for m in [m for m in project.features.project_metadata.metadata if "datacite" in m.id]: # HACK
+
             # add simple values
             for k, v in m.value.items():
                 root[k] = v
+
+            # add references
+            refObjects = [o for o in project.features.shared_objects if o.id in m.refs]
+            for o in refObjects:
+                root[o.type] = [*root.get(o.type, []), {"@id": quote(o.id)}]
 
         metadata_bytes = str.encode(json.dumps(crate.metadata.generate(), indent=4))
 
