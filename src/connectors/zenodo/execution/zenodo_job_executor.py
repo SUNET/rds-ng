@@ -6,7 +6,10 @@ import requests
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
-from common.py.data.entities.project import ProjectExternalState
+from common.py.data.entities.project import (
+    check_reuse_external_project,
+    ProjectExternalState,
+)
 from common.py.data.entities.project.logbook import (
     ProjectJobHistoryRecordExtData,
     ProjectJobHistoryRecordExtDataIDs,
@@ -28,9 +31,11 @@ from common.py.utils import human_readable_file_size, relativize_path
 from ..zenodo import (
     ZenodoClient,
     ZenodoCreateProjectCallbacks,
-    ZenodoFileData,
+    ZenodoDeleteAllFilesCallbacks,
+    ZenodoFileObject,
     ZenodoGetProjectCallbacks,
-    ZenodoProjectData,
+    ZenodoProjectObject,
+    ZenodoUpdateProjectCallbacks,
     ZenodoUploadFileCallbacks,
 )
 from ...base.data.entities.connector import ConnectorJob
@@ -43,9 +48,6 @@ from ...base.settings import TransmissionSettingIDs
 class ZenodoJobExecutor(ConnectorJobExecutor):
     """
     Job executor for Zenodo.
-
-    The executor performs the following steps:
-        1. Create a Zenodo project
     """
 
     def __init__(
@@ -96,7 +98,10 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
         )
 
     def start(self, external_state: ProjectExternalState) -> None:
-        self._project_create()
+        if check_reuse_external_project(external_state):
+            self._project_update(external_state)
+        else:
+            self._project_create()
 
     # -- External state
 
@@ -119,14 +124,16 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
         self._zenodo_client.get_project(external_state.external_id, callbacks=callbacks)
 
     def _query_external_project_state_done(
-        self, project: ZenodoProjectData, state_callbacks: ProjectExternalStateCallbacks
+        self,
+        project: ZenodoProjectObject,
+        state_callbacks: ProjectExternalStateCallbacks,
     ) -> None:
         state = ProjectExternalState.State.UNKNOWN
 
         if (
             project.state == "inprogress" or project.state == "unsubmitted"
         ) and not project.is_submitted:
-            state = ProjectExternalState.State.DEFAULT
+            state = ProjectExternalState.State.UPLOADED
         elif project.state == "done" or project.is_submitted:
             state = ProjectExternalState.State.LOCKED
 
@@ -171,7 +178,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
         self._zenodo_client.create_project(self._job.project, callbacks=callbacks)
 
-    def _project_create_done(self, zenodo_project: ZenodoProjectData) -> None:
+    def _project_create_done(self, zenodo_project: ZenodoProjectObject) -> None:
         self.report_message(f"Project created (Zenodo ID: {zenodo_project.project_id})")
 
         self._transmitter_prepare(zenodo_project)
@@ -179,9 +186,47 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
     def _project_create_failed(self, exc: Exception) -> None:
         self.set_failed(f"Unable to create project: {str(exc)}")
 
+    # -- Project update
+
+    def _project_update(self, external_state: ProjectExternalState) -> None:
+        self.report_message("Updating project...")
+
+        callbacks = ZenodoUpdateProjectCallbacks()
+        callbacks.done(lambda data: self._project_update_done(data))
+        callbacks.failed(lambda exc: self._project_update_failed(exc))
+
+        self._zenodo_client.update_project(
+            external_state.external_id, self._job.project, callbacks=callbacks
+        )
+
+    def _project_update_done(self, zenodo_project: ZenodoProjectObject) -> None:
+        self.report_message(f"Project updated (Zenodo ID: {zenodo_project.project_id})")
+
+        self._project_update_cleanup(zenodo_project)
+
+    def _project_update_failed(self, exc: Exception) -> None:
+        self.set_failed(f"Unable to update project: {str(exc)}")
+
+    def _project_update_cleanup(self, zenodo_project: ZenodoProjectObject) -> None:
+        self.report_message("Clearing previous project files...")
+
+        callbacks = ZenodoDeleteAllFilesCallbacks()
+        callbacks.done(lambda: self._project_update_cleanup_done(zenodo_project))
+        callbacks.failed(lambda exc: self._project_update_failed(exc))
+
+        self._zenodo_client.delete_all_files(zenodo_project, callbacks=callbacks)
+
+    def _project_update_cleanup_done(self, zenodo_project: ZenodoProjectObject) -> None:
+        self.report_message("Project cleaned up")
+
+        self._transmitter_prepare(zenodo_project)
+
+    def _project_update_cleanup_failed(self, exc: Exception) -> None:
+        self.set_failed(f"Unable to cleanup project: {str(exc)}")
+
     # -- Transmitter preparation
 
-    def _transmitter_prepare(self, zenodo_project: ZenodoProjectData) -> None:
+    def _transmitter_prepare(self, zenodo_project: ZenodoProjectObject) -> None:
         callbacks = ResourcesTransmitterPrepareCallbacks()
         callbacks.done(
             lambda res: self._transmitter_prepare_done(zenodo_project, resources=res)
@@ -193,7 +238,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
     def _transmitter_prepare_done(
         self,
-        zenodo_project: ZenodoProjectData,
+        zenodo_project: ZenodoProjectObject,
         *,
         resources: ResourcesList,
     ) -> None:
@@ -215,7 +260,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
     def _download_files(
         self,
-        zenodo_project: ZenodoProjectData,
+        zenodo_project: ZenodoProjectObject,
         *,
         files: typing.List[Resource],
     ) -> None:
@@ -243,7 +288,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
     def _download_file_done(
         self,
-        zenodo_project: ZenodoProjectData,
+        zenodo_project: ZenodoProjectObject,
         *,
         resource: Resource,
         buffer: ResourceBuffer,
@@ -265,7 +310,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
     def _download_file_failed(self, res: Resource, exc: Exception) -> None:
         self.set_failed(f"Failed to download {res.filename}: {str(exc)}")
 
-    def _upload_file_done(self, resource: Resource, _: ZenodoFileData) -> None:
+    def _upload_file_done(self, resource: Resource, _: ZenodoFileObject) -> None:
         self.report_message(f"Uploaded {resource.filename}")
 
     def _upload_file_failed(self, res: Resource, exc: Exception) -> None:
@@ -273,11 +318,11 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
     # Miscellaneous
 
-    def _delete_failed_project(self, zenodo_project: ZenodoProjectData) -> None:
+    def _delete_failed_project(self, zenodo_project: ZenodoProjectObject) -> None:
         self._zenodo_client.delete_project(zenodo_project)
 
     def _get_job_ext_data(
-        self, zenodo_project: ZenodoProjectData
+        self, zenodo_project: ZenodoProjectObject
     ) -> ProjectJobHistoryRecordExtData:
         return {
             ProjectJobHistoryRecordExtDataIDs.EXTERNAL_ID: zenodo_project.project_id,

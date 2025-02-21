@@ -1,8 +1,6 @@
 import typing
 
-import requests
-
-from common.py.utils import RequestData
+from common.py.utils import ExtendedDictionary, RequestData
 
 
 class ZenodoRequestData(RequestData):
@@ -18,20 +16,20 @@ class ZenodoRequestData(RequestData):
         if not self.is_erroneous:
             return ""
 
-        err_msg = self.value("message", "Unknown error")
+        err_msg = self.data.value("message", "Unknown error")
         errors: typing.List[str] = []
-        for error in self.value("errors", []):
-            field = self._value(error, "field", "")
-            message = self._value(error, "message", "Unknown error")
+        for error in self.data.value("errors", []):
+            field = self.data.value_from_data(error, "field", "")
+            message = self.data.value_from_data(error, "message", "Unknown error")
             errors.append(f"{field}: {message}" if field != "" else message)
         else:
             errors.append(self._response.reason)
         return f"{err_msg} [{'; '.join(errors)}]"
 
 
-class ZenodoProjectData(ZenodoRequestData):
+class ZenodoProjectObject(ExtendedDictionary):
     """
-    Zenodo project data.
+    Zenodo project object.
     """
 
     @property
@@ -70,7 +68,27 @@ class ZenodoProjectData(ZenodoRequestData):
         return str(self.value("links.bucket"))
 
 
-class ZenodoFileData(ZenodoRequestData):
+class ZenodoFileObject(ExtendedDictionary):
     """
-    Zenodo file data.
+    Zenodo file object.
     """
+
+    @property
+    def file_id(self) -> str:
+        """
+        The ID of the file.
+        """
+        return str(self.value("id"))
+
+
+class ZenodoFileListObject(ExtendedDictionary):
+    """
+    Zenodo file list object.
+    """
+
+    @property
+    def files(self) -> typing.List[ZenodoFileObject]:
+        """
+        The list of files.
+        """
+        return [ZenodoFileObject(file_data) for file_data in self._data]

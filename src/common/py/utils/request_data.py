@@ -3,15 +3,19 @@ from http import HTTPStatus
 
 import requests
 
+from .extended_dictionary import ExtendedDictionary
+
+DataType = typing.TypeVar("DataType", bound=ExtendedDictionary)
+
 
 class RequestData:
     """
     Class to easily access data from an HTTP request.
     """
     
-    def __init__(self, resp: requests.Response, *, verify_response: bool = True):
+    def __init__(self, data_type: typing.Generic[DataType], resp: requests.Response, *, verify_response: bool = True):
         self._response = resp
-        self._data = resp.json()
+        self._data = typing.cast(ExtendedDictionary, data_type(resp.json()))
         
         if verify_response:
             self._verify()
@@ -19,35 +23,11 @@ class RequestData:
     def _verify(self) -> None:
         if self.is_erroneous:
             raise requests.RequestException(self.error, response=self._response)
-    
-    def value(self, path: str, default: typing.Any = None) -> typing.Any:
-        """
-        Gets a value from the response, supporting dot notation.
-        
-        Args:
-            path: The full value path.
-            default: A default value.
-
-        Returns:
-            The value or the default one if none was found.
-        """
-        return self._value(self._data, path, default)
-
-    def _value(
-        self, data: typing.Any, path: str, default: typing.Any = None
-    ) -> typing.Any:
-        value = data
-        try:
-            for key in path.split("."):
-                value = value[key]
-            return value
-        except KeyError:
-            return default
         
     @property
-    def data(self) -> typing.Any:
+    def data(self) -> DataType:
         """
-        The raw response data.
+        The data of the response.
         """
         return self._data
     
@@ -71,6 +51,10 @@ class RequestData:
         The error reason (in case the request failed).
         """
         return self._response.reason if self.is_erroneous else ""
+    
+    @classmethod
+    def from_response(cls, data_type: typing.Any, resp: requests.Response) -> DataType:
+        return typing.cast(RequestData, cls(data_type, resp)).data
 
     def __str__(self) -> str:
-        return f"response={self._response}; data={self.data}"
+        return f"{self._response}"

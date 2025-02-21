@@ -30,6 +30,10 @@ from ...base.execution import ConnectorJobExecutor
 
 
 class StubJobExecutor(ConnectorJobExecutor):
+    """
+    Job executor for the stub connector.
+    """
+
     def __init__(
         self,
         comp: BackendComponent,

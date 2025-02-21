@@ -233,7 +233,7 @@ class OSFClient(RequestsExecutor):
             file.close()  # Free up the buffer to save memory
 
         def _upload_failed(exc: Exception) -> None:
-            callbacks.invoke_fail_callbacks(str(exc))
+            callbacks.invoke_fail_callbacks(exc)
             file.close()  # Free up the buffer to save memory
 
         self._execute(

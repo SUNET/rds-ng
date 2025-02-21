@@ -43,12 +43,6 @@ from ...base.execution import ConnectorJobExecutor
 class OSFJobExecutor(ConnectorJobExecutor):
     """
     Job executor for OSF.
-
-    The executor performs the following steps:
-        1. Create an OSF project
-        2. Get storage information for the new project
-        3. Retrieve the list of files to upload
-        4. Down- and upload each file
     """
 
     def __init__(
