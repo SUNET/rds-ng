@@ -53,8 +53,34 @@ class RequestData:
         return self._response.reason if self.is_erroneous else ""
     
     @classmethod
-    def from_response(cls, data_type: typing.Any, resp: requests.Response) -> DataType:
-        return typing.cast(RequestData, cls(data_type, resp)).data
+    def from_response(cls, data_type: typing.Any, resp: requests.Response, *, verify_response: bool = True) -> "RequestData":
+        """
+        Creates a data response from an HTTP response.
+
+        Args:
+            data_type: The data type.
+            resp: The HTTP response.
+            verify_response: Whether to verify the response.
+
+        Returns:
+            The newly created request data.
+        """
+        return typing.cast(RequestData, cls(data_type, resp, verify_response=verify_response))
+    
+    @classmethod
+    def data_from_response(cls, data_type: typing.Any, resp: requests.Response, *, verify_response: bool = True) -> DataType:
+        """
+        Creates a data response from an HTTP response and retrieves the data object.
+        
+        Args:
+            data_type: The data type.
+            resp: The HTTP response.
+            verify_response: Whether to verify the response.
+
+        Returns:
+            The newly created data object.
+        """
+        return typing.cast(RequestData, cls(data_type, resp, verify_response=verify_response)).data
 
     def __str__(self) -> str:
         return f"{self._response}"

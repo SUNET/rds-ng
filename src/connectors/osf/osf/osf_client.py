@@ -17,7 +17,12 @@ from .osf_callbacks import (
     OSFGetStorageCallbacks,
     OSFUploadFileCallbacks,
 )
-from .osf_request_data import OSFFileData, OSFProjectData, OSFStorageData
+from .osf_request_data import (
+    OSFFileObject,
+    OSFProjectObject,
+    OSFRequestData,
+    OSFStorageObject,
+)
 from ..metadata import OSFMetadataCreator
 from ...base.integration.execution import RequestsExecutor
 
@@ -75,12 +80,12 @@ class OSFClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        def _execute(session: requests.Session) -> OSFProjectData:
+        def _execute(session: requests.Session) -> OSFProjectObject:
             resp = self.get(
                 session,
                 ["nodes", project_id],
             )
-            return OSFProjectData(resp)
+            return OSFRequestData.data_from_response(OSFProjectObject, resp)
 
         self._execute(
             cb_exec=_execute,
@@ -106,7 +111,7 @@ class OSFClient(RequestsExecutor):
         metadata = creator.create(project.features.project_metadata.metadata)
         # creator.validate(metadata)
 
-        def _execute(session: requests.Session) -> OSFProjectData:
+        def _execute(session: requests.Session) -> OSFProjectObject:
             resp = self.post(
                 session,
                 ["nodes"],
@@ -129,7 +134,7 @@ class OSFClient(RequestsExecutor):
                     }
                 },
             )
-            return OSFProjectData(resp)
+            return OSFRequestData.data_from_response(OSFProjectObject, resp)
 
         self._execute(
             cb_exec=_execute,
@@ -139,7 +144,7 @@ class OSFClient(RequestsExecutor):
 
     def delete_project(
         self,
-        osf_project: OSFProjectData,
+        osf_project: OSFProjectObject,
         *,
         callbacks: OSFDeleteProjectCallbacks = OSFDeleteProjectCallbacks(),
     ):
@@ -165,7 +170,7 @@ class OSFClient(RequestsExecutor):
 
     def get_storage(
         self,
-        osf_project: OSFProjectData,
+        osf_project: OSFProjectObject,
         *,
         provider: str = "osfstorage",
         callbacks: OSFGetStorageCallbacks = OSFGetStorageCallbacks(),
@@ -179,12 +184,12 @@ class OSFClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        def _execute(session: requests.Session) -> OSFStorageData:
+        def _execute(session: requests.Session) -> OSFStorageObject:
             resp = self.get(
                 session,
                 ["nodes", osf_project.project_id, "files", "providers", provider],
             )
-            return OSFStorageData(resp)
+            return OSFRequestData.data_from_response(OSFStorageObject, resp)
 
         self._execute(
             cb_exec=_execute,
@@ -194,7 +199,7 @@ class OSFClient(RequestsExecutor):
 
     def upload_file(
         self,
-        osf_storage: OSFStorageData,
+        osf_storage: OSFStorageObject,
         *,
         path: str,
         file: ResourceBuffer,
@@ -210,7 +215,7 @@ class OSFClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        def _execute(session: requests.Session) -> OSFFileData:
+        def _execute(session: requests.Session) -> OSFFileObject:
             file_path = pathlib.PurePosixPath(path)
             target_storage = self._create_directory_tree(
                 session, osf_storage, path=file_path.parent
@@ -226,9 +231,9 @@ class OSFClient(RequestsExecutor):
                 data=file,
                 params={"name": file_path.name},
             )
-            return OSFFileData(resp)
+            return OSFRequestData.data_from_response(OSFFileObject, resp)
 
-        def _upload_done(data: OSFFileData) -> None:
+        def _upload_done(data: OSFFileObject) -> None:
             callbacks.invoke_done_callbacks(data)
             file.close()  # Free up the buffer to save memory
 
@@ -245,10 +250,10 @@ class OSFClient(RequestsExecutor):
     def _create_directory_tree(
         self,
         session: requests.Session,
-        osf_storage: OSFStorageData,
+        osf_storage: OSFStorageObject,
         *,
         path: pathlib.PurePosixPath,
-    ) -> OSFStorageData:
+    ) -> OSFStorageObject:
         storage = osf_storage
         for entry in path.parts:
             if entry == "" or entry == "/":
@@ -258,8 +263,8 @@ class OSFClient(RequestsExecutor):
         return storage
 
     def _create_directory(
-        self, session: requests.Session, osf_storage: OSFStorageData, *, name: str
-    ) -> OSFStorageData:
+        self, session: requests.Session, osf_storage: OSFStorageObject, *, name: str
+    ) -> OSFStorageObject:
         # Check if the subdirectory had already been created previously
         for folder in osf_storage.folders:
             if folder.name == name:
@@ -272,12 +277,14 @@ class OSFClient(RequestsExecutor):
             params={"name": name},
         )
 
-        storage_data = OSFStorageData(resp, verify_response=False)
+        storage_data = OSFRequestData.from_response(
+            OSFStorageObject, resp, verify_response=False
+        )
         if (
             storage_data.is_erroneous
             and storage_data.status_code != HTTPStatus.CONFLICT
         ):
             raise requests.RequestException(resp.reason, response=resp)
         else:
-            osf_storage.folders.append(storage_data)
-            return storage_data
+            osf_storage.folders.append(storage_data.data)
+            return storage_data.data

@@ -6,8 +6,8 @@ from .osf_callbacks import (
 )
 from .osf_client import OSFClient
 from .osf_request_data import (
-    OSFFileData,
-    OSFProjectData,
+    OSFFileObject,
+    OSFProjectObject,
     OSFRequestData,
-    OSFStorageData,
+    OSFStorageObject,
 )

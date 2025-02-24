@@ -1,8 +1,6 @@
 import typing
 
-import requests
-
-from common.py.utils import RequestData
+from common.py.utils import ExtendedDictionary, RequestData
 
 
 class OSFRequestData(RequestData):
@@ -19,18 +17,18 @@ class OSFRequestData(RequestData):
             return ""
 
         errors: typing.List[str] = []
-        for error in self.value("errors", []):
-            source = self._value(error, "source.pointer", "")
-            detail = self._value(error, "detail", "Unknown error")
+        for error in self.data.value("errors", []):
+            source = self.data.value_from_data(error, "source.pointer", "")
+            detail = self.data.value_from_data(error, "detail", "Unknown error")
             errors.append(f"{source}: {detail}" if source != "" else detail)
         else:
             errors.append(self._response.reason)
         return "; ".join(errors)
 
 
-class OSFProjectData(OSFRequestData):
+class OSFProjectObject(ExtendedDictionary):
     """
-    OSF project data.
+    OSF project object.
     """
 
     @property
@@ -48,15 +46,15 @@ class OSFProjectData(OSFRequestData):
         return self.value("data.links.html")
 
 
-class OSFStorageData(OSFRequestData):
+class OSFStorageObject(ExtendedDictionary):
     """
-    OSF storage data.
+    OSF storage object.
     """
 
-    def __init__(self, resp: requests.Response, *, verify_response: bool = True):
-        super().__init__(resp, verify_response=verify_response)
+    def __init__(self, data: typing.Any):
+        super().__init__(data)
 
-        self._folders: typing.List[OSFStorageData] = []
+        self._folders: typing.List[OSFStorageObject] = []
 
     @property
     def storage_id(self) -> str:
@@ -94,7 +92,7 @@ class OSFStorageData(OSFRequestData):
         return self.value("data.links.new_folder")
 
     @property
-    def folders(self) -> typing.List["OSFStorageData"]:
+    def folders(self) -> typing.List["OSFStorageObject"]:
         """
         A list of all sub-folders (as OSFStorageData).
 
@@ -104,7 +102,7 @@ class OSFStorageData(OSFRequestData):
         return self._folders
 
 
-class OSFFileData(OSFRequestData):
+class OSFFileObject(ExtendedDictionary):
     """
-    OSF file data.
+    OSF file object.
     """

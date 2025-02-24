@@ -95,7 +95,7 @@ class ZenodoClient(RequestsExecutor):
                 session,
                 ["deposit", "depositions", project_id],
             )
-            return ZenodoRequestData.from_response(ZenodoProjectObject, resp)
+            return ZenodoRequestData.data_from_response(ZenodoProjectObject, resp)
 
         self._execute(
             cb_exec=_execute,
@@ -123,7 +123,7 @@ class ZenodoClient(RequestsExecutor):
                 ["deposit", "depositions"],
                 json=self._get_project_metadata(project),
             )
-            return ZenodoRequestData.from_response(ZenodoProjectObject, resp)
+            return ZenodoRequestData.data_from_response(ZenodoProjectObject, resp)
 
         self._execute(
             cb_exec=_execute,
@@ -153,7 +153,7 @@ class ZenodoClient(RequestsExecutor):
                 ["deposit", "depositions", project_id],
                 json=self._get_project_metadata(project),
             )
-            return ZenodoRequestData.from_response(ZenodoProjectObject, resp)
+            return ZenodoRequestData.data_from_response(ZenodoProjectObject, resp)
 
         self._execute(
             cb_exec=_execute,
@@ -206,7 +206,7 @@ class ZenodoClient(RequestsExecutor):
                 session,
                 ["deposit", "depositions", zenodo_project.project_id, "files"],
             )
-            return ZenodoRequestData.from_response(ZenodoFileListObject, resp)
+            return ZenodoRequestData.data_from_response(ZenodoFileListObject, resp)
 
         self._execute(
             cb_exec=_execute,
@@ -244,7 +244,7 @@ class ZenodoClient(RequestsExecutor):
                 f"{zenodo_project.bucket_link}/{file_path.name}",
                 data=BytesIO(file.readall()),
             )
-            return ZenodoRequestData.from_response(ZenodoFileObject, resp)
+            return ZenodoRequestData.data_from_response(ZenodoFileObject, resp)
 
         def _upload_done(data: ZenodoFileObject) -> None:
             callbacks.invoke_done_callbacks(data)
@@ -321,9 +321,6 @@ class ZenodoClient(RequestsExecutor):
             for file in files.files:
                 delete_file_callbacks = ZenodoDeleteFileCallbacks()
                 delete_file_callbacks.done(_file_deleted)
-                delete_file_callbacks.failed(
-                    lambda exc: callbacks.invoke_fail_callbacks(exc)
-                )
 
                 self.delete_file(zenodo_project, file, callbacks=delete_file_callbacks)
 

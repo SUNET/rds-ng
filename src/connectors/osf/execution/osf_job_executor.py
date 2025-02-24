@@ -28,10 +28,10 @@ from common.py.utils import human_readable_file_size, relativize_path
 from ..osf import (
     OSFClient,
     OSFCreateProjectCallbacks,
-    OSFFileData,
+    OSFFileObject,
     OSFGetStorageCallbacks,
-    OSFProjectData,
-    OSFStorageData,
+    OSFProjectObject,
+    OSFStorageObject,
     OSFUploadFileCallbacks,
 )
 from ..osf.osf_callbacks import OSFGetProjectCallbacks
@@ -109,7 +109,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
         self._osf_client.get_project(external_state.external_id, callbacks=callbacks)
 
     def _query_external_project_state_done(
-        self, project: OSFProjectData, state_callbacks: ProjectExternalStateCallbacks
+        self, project: OSFProjectObject, state_callbacks: ProjectExternalStateCallbacks
     ) -> None:
         # OSF doesn't lock projects
         state = ProjectExternalState.State.DEFAULT
@@ -154,7 +154,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
         self._osf_client.create_project(self._job.project, callbacks=callbacks)
 
-    def _project_create_done(self, osf_project: OSFProjectData) -> None:
+    def _project_create_done(self, osf_project: OSFProjectObject) -> None:
         self.report_message(f"Project created (OSF ID: {osf_project.project_id})")
 
         self._storage_get(osf_project)
@@ -164,7 +164,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
     # -- Storage retrieval
 
-    def _storage_get(self, osf_project: OSFProjectData) -> None:
+    def _storage_get(self, osf_project: OSFProjectObject) -> None:
         self.report_message("Getting storage information...")
 
         callbacks = OSFGetStorageCallbacks()
@@ -175,7 +175,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
         self._osf_client.get_storage(osf_project, callbacks=callbacks)
 
     def _storage_fetched(
-        self, osf_project: OSFProjectData, osf_storage: OSFStorageData
+        self, osf_project: OSFProjectObject, osf_storage: OSFStorageObject
     ) -> None:
         self._transmitter_prepare(osf_project, osf_storage)
 
@@ -185,7 +185,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
     # -- Transmitter preparation
 
     def _transmitter_prepare(
-        self, osf_project: OSFProjectData, osf_storage: OSFStorageData
+        self, osf_project: OSFProjectObject, osf_storage: OSFStorageObject
     ) -> None:
         callbacks = ResourcesTransmitterPrepareCallbacks()
         callbacks.done(
@@ -200,8 +200,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
     def _transmitter_prepare_done(
         self,
-        osf_project: OSFProjectData,
-        osf_storage: OSFStorageData,
+        osf_project: OSFProjectObject,
+        osf_storage: OSFStorageObject,
         *,
         resources: ResourcesList,
     ) -> None:
@@ -223,8 +223,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
     def _download_files(
         self,
-        osf_project: OSFProjectData,
-        osf_storage: OSFStorageData,
+        osf_project: OSFProjectObject,
+        osf_storage: OSFStorageObject,
         *,
         files: typing.List[Resource],
     ) -> None:
@@ -252,8 +252,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
     def _download_file_done(
         self,
-        osf_project: OSFProjectData,
-        osf_storage: OSFStorageData,
+        osf_project: OSFProjectObject,
+        osf_storage: OSFStorageObject,
         *,
         resource: Resource,
         buffer: ResourceBuffer,
@@ -275,7 +275,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
     def _download_file_failed(self, res: Resource, exc: Exception) -> None:
         self.set_failed(f"Failed to download {res.filename}: {str(exc)}")
 
-    def _upload_file_done(self, resource: Resource, _: OSFFileData) -> None:
+    def _upload_file_done(self, resource: Resource, _: OSFFileObject) -> None:
         self.report_message(f"Uploaded {resource.filename}")
 
     def _upload_file_failed(self, res: Resource, exc: Exception) -> None:
@@ -283,11 +283,11 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
     # Miscellaneous
 
-    def _delete_failed_project(self, osf_project: OSFProjectData) -> None:
+    def _delete_failed_project(self, osf_project: OSFProjectObject) -> None:
         self._osf_client.delete_project(osf_project)
 
     def _get_job_ext_data(
-        self, osf_project: OSFProjectData
+        self, osf_project: OSFProjectObject
     ) -> ProjectJobHistoryRecordExtData:
         return {
             ProjectJobHistoryRecordExtDataIDs.EXTERNAL_ID: osf_project.project_id,

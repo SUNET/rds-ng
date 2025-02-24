@@ -2,12 +2,12 @@ import typing
 
 from common.py.utils.func import ExecutionCallbacks
 
-from .osf_request_data import OSFFileData, OSFProjectData, OSFStorageData
+from .osf_request_data import OSFFileObject, OSFProjectObject, OSFStorageObject
 
 
 class OSFGetProjectCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[OSFProjectData], None],
+        typing.Callable[[OSFProjectObject], None],
         typing.Callable[[Exception], None],
     ]
 ):
@@ -18,7 +18,7 @@ class OSFGetProjectCallbacks(
 
 class OSFCreateProjectCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[OSFProjectData], None],
+        typing.Callable[[OSFProjectObject], None],
         typing.Callable[[Exception], None],
     ]
 ):
@@ -40,7 +40,7 @@ class OSFDeleteProjectCallbacks(
 
 class OSFGetStorageCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[OSFStorageData], None],
+        typing.Callable[[OSFStorageObject], None],
         typing.Callable[[Exception], None],
     ]
 ):
@@ -51,7 +51,7 @@ class OSFGetStorageCallbacks(
 
 class OSFUploadFileCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[OSFFileData], None],
+        typing.Callable[[OSFFileObject], None],
         typing.Callable[[Exception], None],
     ]
 ):
