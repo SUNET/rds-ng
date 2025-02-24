@@ -219,12 +219,12 @@ class OSFJobExecutor(ConnectorJobExecutor):
     def _storage_get(
         self,
         osf_project: OSFProjectObject,
-        cb_fetched: typing.Callable[[OSFProjectObject, OSFStorageObject], None],
+        cb: typing.Callable[[OSFProjectObject, OSFStorageObject], None],
     ) -> None:
         self.report_message("Getting storage information...")
 
         callbacks = OSFGetStorageCallbacks()
-        callbacks.done(lambda data: cb_fetched(osf_project, data))
+        callbacks.done(lambda data: cb(osf_project, data))
         callbacks.failed(
             lambda exc: self.set_failed(
                 f"Unable to get storage information: {str(exc)}"

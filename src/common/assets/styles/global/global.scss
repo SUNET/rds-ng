@@ -3,9 +3,8 @@
  */
 :root {
     --r-border-color: var(--p-surface-200);
-    --r-shade: color-mix(in srgb, var(--p-highlight-background), #fff 50%);
-    --r-shade-dark: color-mix(in srgb, var(--p-primary-color), #fff 95%);
-    --r-shade-darker: color-mix(in srgb, var(--p-primary-color), #fff 90%);
+    --r-shade-dark: var(--p-primary-50);
+    --r-shade-darker: var(--p-primary-100);
 }
 
 /*
@@ -131,10 +130,6 @@ html {
 
 .r-border-error {
     @apply border-rose-500 #{!important};
-}
-
-.r-shade {
-    background-color: var(--r-shade);
 }
 
 .r-shade-dark {
