@@ -106,3 +106,23 @@ class OSFFileObject(ExtendedDictionary):
     """
     OSF file object.
     """
+
+    @property
+    def delete_link(self) -> str:
+        """
+        The link to delete a file or folder.
+        """
+        return self.value("data.links.delete")
+
+
+class OSFFileListObject(ExtendedDictionary):
+    """
+    OSf file list object.
+    """
+
+    @property
+    def files(self) -> typing.List[OSFFileObject]:
+        """
+        The list of files.
+        """
+        return [OSFFileObject(file_data) for file_data in self.value("data")]

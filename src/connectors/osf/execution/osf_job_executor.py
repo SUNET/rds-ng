@@ -6,7 +6,10 @@ import requests
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
-from common.py.data.entities.project import ProjectExternalState
+from common.py.data.entities.project import (
+    check_reuse_external_project,
+    ProjectExternalState,
+)
 from common.py.data.entities.project.logbook import (
     ProjectJobHistoryRecordExtData,
     ProjectJobHistoryRecordExtDataIDs,
@@ -29,12 +32,17 @@ from ..osf import (
     OSFClient,
     OSFCreateProjectCallbacks,
     OSFFileObject,
+    OSFGetFileListCallbacks,
     OSFGetStorageCallbacks,
     OSFProjectObject,
     OSFStorageObject,
     OSFUploadFileCallbacks,
 )
-from ..osf.osf_callbacks import OSFGetProjectCallbacks
+from ..osf.osf_callbacks import (
+    OSFDeleteAllFilesCallbacks,
+    OSFGetProjectCallbacks,
+    OSFUpdateProjectCallbacks,
+)
 from ...base.data.entities.connector import ConnectorJob
 from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorJobExecutor
@@ -86,7 +94,10 @@ class OSFJobExecutor(ConnectorJobExecutor):
         )
 
     def start(self, external_state: ProjectExternalState) -> None:
-        self._project_create()
+        if check_reuse_external_project(external_state):
+            self._project_update(external_state)
+        else:
+            self._project_create()
 
     # -- External state
 
@@ -112,7 +123,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
         self, project: OSFProjectObject, state_callbacks: ProjectExternalStateCallbacks
     ) -> None:
         # OSF doesn't lock projects
-        state = ProjectExternalState.State.DEFAULT
+        state = ProjectExternalState.State.UPLOADED
         state_callbacks.invoke_done_callbacks(
             ProjectExternalState(
                 external_id=project.project_id,
@@ -157,30 +168,71 @@ class OSFJobExecutor(ConnectorJobExecutor):
     def _project_create_done(self, osf_project: OSFProjectObject) -> None:
         self.report_message(f"Project created (OSF ID: {osf_project.project_id})")
 
-        self._storage_get(osf_project)
+        self._storage_get(osf_project, self._transmitter_prepare)
 
     def _project_create_failed(self, exc: Exception) -> None:
         self.set_failed(f"Unable to create project: {str(exc)}")
 
+    # -- Project update
+
+    def _project_update(self, external_state: ProjectExternalState) -> None:
+        self.report_message("Updating project...")
+
+        callbacks = OSFUpdateProjectCallbacks()
+        callbacks.done(lambda data: self._project_update_done(data))
+        callbacks.failed(lambda exc: self._project_update_failed(exc))
+
+        self._osf_client.update_project(
+            external_state.external_id, self._job.project, callbacks=callbacks
+        )
+
+    def _project_update_done(self, osf_project: OSFProjectObject) -> None:
+        self.report_message(f"Project updated (OSF ID: {osf_project.project_id})")
+
+        self._storage_get(osf_project, self._project_update_cleanup)
+
+    def _project_update_failed(self, exc: Exception) -> None:
+        self.set_failed(f"Unable to update project: {str(exc)}")
+
+    def _project_update_cleanup(
+        self, osf_project: OSFProjectObject, osf_storage: OSFStorageObject
+    ) -> None:
+        self.report_message("Clearing previous project files...")
+
+        callbacks = OSFGetFileListCallbacks()
+        callbacks.done(lambda data: print(data.files, flush=True))
+
+        self._osf_client.get_file_list(osf_project, osf_storage, callbacks=callbacks)
+
+    def _project_update_cleanup_done(
+        self, osf_project: OSFProjectObject, osf_storage: OSFStorageObject
+    ) -> None:
+        self.report_message("Project cleaned up")
+
+        self._transmitter_prepare(osf_project, osf_storage)
+
+    def _project_update_cleanup_failed(self, exc: Exception) -> None:
+        self.set_failed(f"Unable to cleanup project: {str(exc)}")
+
     # -- Storage retrieval
 
-    def _storage_get(self, osf_project: OSFProjectObject) -> None:
+    def _storage_get(
+        self,
+        osf_project: OSFProjectObject,
+        cb_fetched: typing.Callable[[OSFProjectObject, OSFStorageObject], None],
+    ) -> None:
         self.report_message("Getting storage information...")
 
         callbacks = OSFGetStorageCallbacks()
-        callbacks.done(lambda data: self._storage_fetched(osf_project, data))
-        callbacks.failed(lambda exc: self._storage_failed(exc))
+        callbacks.done(lambda data: cb_fetched(osf_project, data))
+        callbacks.failed(
+            lambda exc: self.set_failed(
+                f"Unable to get storage information: {str(exc)}"
+            )
+        )
         callbacks.failed(lambda _: self._delete_failed_project(osf_project))
 
         self._osf_client.get_storage(osf_project, callbacks=callbacks)
-
-    def _storage_fetched(
-        self, osf_project: OSFProjectObject, osf_storage: OSFStorageObject
-    ) -> None:
-        self._transmitter_prepare(osf_project, osf_storage)
-
-    def _storage_failed(self, exc: Exception) -> None:
-        self.set_failed(f"Unable to get storage information: {str(exc)}")
 
     # -- Transmitter preparation
 

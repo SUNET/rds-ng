@@ -1,4 +1,5 @@
 import pathlib
+import typing
 from http import HTTPStatus
 
 import requests
@@ -12,12 +13,16 @@ from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
 from .osf_callbacks import (
     OSFCreateProjectCallbacks,
+    OSFDeleteFileCallbacks,
     OSFDeleteProjectCallbacks,
+    OSFGetFileListCallbacks,
     OSFGetProjectCallbacks,
     OSFGetStorageCallbacks,
+    OSFUpdateProjectCallbacks,
     OSFUploadFileCallbacks,
 )
 from .osf_request_data import (
+    OSFFileListObject,
     OSFFileObject,
     OSFProjectObject,
     OSFRequestData,
@@ -107,32 +112,41 @@ class OSFClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        creator = OSFMetadataCreator()
-        metadata = creator.create(project.features.project_metadata.metadata)
-        # creator.validate(metadata)
-
         def _execute(session: requests.Session) -> OSFProjectObject:
             resp = self.post(
                 session,
                 ["nodes"],
-                json={
-                    "data": {
-                        "type": "nodes",
-                        "attributes": {
-                            "title": (
-                                metadata.title
-                                if metadata.title
-                                else "Uploaded via Sciebo RDS"
-                            ),
-                            "category": (
-                                metadata.category if metadata.category else "other"
-                            ),
-                            "description": (
-                                metadata.description if metadata.description else ""
-                            ),
-                        },
-                    }
-                },
+                json=self._get_project_metadata(project),
+            )
+            return OSFRequestData.data_from_response(OSFProjectObject, resp)
+
+        self._execute(
+            cb_exec=_execute,
+            cb_done=lambda data: callbacks.invoke_done_callbacks(data),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
+        )
+
+    def update_project(
+        self,
+        project_id: str,
+        project: Project,
+        *,
+        callbacks: OSFUpdateProjectCallbacks = OSFUpdateProjectCallbacks(),
+    ) -> None:
+        """
+        Updates an existing OSF project.
+
+        Args:
+            project_id: The remote project ID.
+            project: The originating project.
+            callbacks: Optional request callbacks.
+        """
+
+        def _execute(session: requests.Session) -> OSFProjectObject:
+            resp = self.patch(
+                session,
+                ["nodes", project_id],
+                json=self._get_project_metadata(project, external_id=project_id),
             )
             return OSFRequestData.data_from_response(OSFProjectObject, resp)
 
@@ -197,6 +211,35 @@ class OSFClient(RequestsExecutor):
             cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
 
+    def get_file_list(
+        self,
+        osf_project: OSFProjectObject,
+        osf_storage: OSFStorageObject,
+        *,
+        callbacks: OSFGetFileListCallbacks = OSFGetFileListCallbacks(),
+    ) -> None:
+        """
+        Retrieves the complete file list of an OSF project for a specific storage provider.
+
+        Args:
+            osf_project: The OSF project.
+            osf_storage: The OSF storage.
+            callbacks:  Optional request callbacks.
+        """
+
+        def _execute(session: requests.Session) -> OSFFileListObject:
+            resp = self.get(
+                session,
+                ["nodes", osf_project.project_id, "files", osf_storage.storage_id],
+            )
+            return OSFRequestData.data_from_response(OSFFileListObject, resp)
+
+        self._execute(
+            cb_exec=_execute,
+            cb_done=lambda data: callbacks.invoke_done_callbacks(data),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
+        )
+
     def upload_file(
         self,
         osf_storage: OSFStorageObject,
@@ -247,6 +290,32 @@ class OSFClient(RequestsExecutor):
             cb_failed=_upload_failed,
         )
 
+    def delete_file(
+        self,
+        osf_file: OSFFileObject,
+        *,
+        callbacks: OSFDeleteFileCallbacks = OSFDeleteFileCallbacks(),
+    ):
+        """
+        Deletes an existing OSF file.
+
+        Args:
+            osf_file: The OSF file.
+            callbacks: Optional request callbacks.
+        """
+
+        def _execute(session: requests.Session) -> None:
+            self.delete(
+                session,
+                osf_file.delete_link,
+            )
+
+        self._execute(
+            cb_exec=_execute,
+            cb_done=lambda _: callbacks.invoke_done_callbacks(),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
+        )
+
     def _create_directory_tree(
         self,
         session: requests.Session,
@@ -288,3 +357,26 @@ class OSFClient(RequestsExecutor):
         else:
             osf_storage.folders.append(storage_data.data)
             return storage_data.data
+
+    def _get_project_metadata(
+        self, project: Project, *, external_id: str = ""
+    ) -> typing.Any:
+        creator = OSFMetadataCreator()
+        metadata = creator.create(project.features.project_metadata.metadata)
+        # creator.validate(metadata)
+
+        return {
+            "data": {
+                "type": "nodes",
+                "id": external_id,
+                "attributes": {
+                    "title": (
+                        metadata.title if metadata.title else "Uploaded via Sciebo RDS"
+                    ),
+                    "category": (metadata.category if metadata.category else "other"),
+                    "description": (
+                        metadata.description if metadata.description else ""
+                    ),
+                },
+            }
+        }
