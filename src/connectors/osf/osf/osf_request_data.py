@@ -26,7 +26,21 @@ class OSFRequestData(RequestData):
         return "; ".join(errors)
 
 
-class OSFProjectObject(ExtendedDictionary):
+class OSFObject(ExtendedDictionary):
+    """
+    Base for an OSF object.
+    """
+
+    def __init__(self, data: typing.Any, root: str = "data"):
+        super().__init__(data)
+
+        self._root = root
+
+    def _get_data_path(self, path: str) -> str:
+        return f"{self._root}.{path}" if self._root != "" else path
+
+
+class OSFProjectObject(OSFObject):
     """
     OSF project object.
     """
@@ -36,17 +50,17 @@ class OSFProjectObject(ExtendedDictionary):
         """
         The ID  of the project.
         """
-        return self.value("data.id")
+        return self.value(self._get_data_path("id"))
 
     @property
     def project_link(self) -> str:
         """
         The external link for the project.
         """
-        return self.value("data.links.html")
+        return self.value(self._get_data_path("links.html"))
 
 
-class OSFStorageObject(ExtendedDictionary):
+class OSFStorageObject(OSFObject):
     """
     OSF storage object.
     """
@@ -61,35 +75,35 @@ class OSFStorageObject(ExtendedDictionary):
         """
         The ID of the storage.
         """
-        return self.value("data.id")
+        return self.value(self._get_data_path("id"))
 
     @property
     def name(self) -> str:
         """
         The name (path) of the storage.
         """
-        return self.value("data.attributes.name")
+        return self.value(self._get_data_path("attributes.name"))
 
     @property
     def is_public(self) -> bool:
         """
         Whether the project is public.
         """
-        return self.value("data.attributes.public")
+        return self.value(self._get_data_path("attributes.public"))
 
     @property
     def file_link(self) -> str:
         """
         The link to upload files.
         """
-        return self.value("data.links.upload")
+        return self.value(self._get_data_path("links.upload"))
 
     @property
     def folder_link(self) -> str:
         """
         The link to create new folders.
         """
-        return self.value("data.links.new_folder")
+        return self.value(self._get_data_path("links.new_folder"))
 
     @property
     def folders(self) -> typing.List["OSFStorageObject"]:
@@ -102,7 +116,7 @@ class OSFStorageObject(ExtendedDictionary):
         return self._folders
 
 
-class OSFFileObject(ExtendedDictionary):
+class OSFFileObject(OSFObject):
     """
     OSF file object.
     """
@@ -112,10 +126,10 @@ class OSFFileObject(ExtendedDictionary):
         """
         The link to delete a file or folder.
         """
-        return self.value("data.links.delete")
+        return self.value(self._get_data_path("links.delete"))
 
 
-class OSFFileListObject(ExtendedDictionary):
+class OSFFileListObject(OSFObject):
     """
     OSf file list object.
     """
@@ -125,4 +139,4 @@ class OSFFileListObject(ExtendedDictionary):
         """
         The list of files.
         """
-        return [OSFFileObject(file_data) for file_data in self.value("data")]
+        return [OSFFileObject(file_data, "") for file_data in self.value("data")]

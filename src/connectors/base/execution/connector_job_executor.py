@@ -160,7 +160,13 @@ class ConnectorJobExecutor(abc.ABC):
             message=message,
         ).emit(self._target_channel)
 
-        self._log_debug(f"Job progression update: {message} ({progress*100:0.1f}%)")
+        if ProjectJobProgressEvent.Contents.MESSAGE in contents:
+            if ProjectJobProgressEvent.Contents.PROGRESS in contents:
+                self._log_debug(
+                    f"Job progression update: {message} ({progress*100:0.1f}%)"
+                )
+            else:
+                self._log_debug(f"Job progression update: {message}")
 
     def report_message(self, message: str) -> None:
         """

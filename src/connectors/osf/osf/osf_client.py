@@ -13,6 +13,7 @@ from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
 from .osf_callbacks import (
     OSFCreateProjectCallbacks,
+    OSFDeleteAllFilesCallbacks,
     OSFDeleteFileCallbacks,
     OSFDeleteProjectCallbacks,
     OSFGetFileListCallbacks,
@@ -230,7 +231,7 @@ class OSFClient(RequestsExecutor):
         def _execute(session: requests.Session) -> OSFFileListObject:
             resp = self.get(
                 session,
-                ["nodes", osf_project.project_id, "files", osf_storage.storage_id],
+                ["nodes", osf_project.project_id, "files", osf_storage.name],
             )
             return OSFRequestData.data_from_response(OSFFileListObject, resp)
 
@@ -315,6 +316,53 @@ class OSFClient(RequestsExecutor):
             cb_done=lambda _: callbacks.invoke_done_callbacks(),
             cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
+
+    def delete_all_files(
+        self,
+        osf_project: OSFProjectObject,
+        osf_storage: OSFStorageObject,
+        *,
+        callbacks: OSFDeleteAllFilesCallbacks = OSFDeleteAllFilesCallbacks(),
+    ):
+        """
+        Deletes all files of a Zenodo project.
+
+        Args:
+            osf_project: The OSF project.
+            osf_storage: The OSF storage.
+            callbacks: Optional request callbacks.
+        """
+
+        def _get_file_list_done(files: OSFFileListObject):
+            files_to_delete = len(files.files)
+            if files_to_delete > 0:
+
+                def _file_deleted():
+                    nonlocal files_to_delete
+                    files_to_delete -= 1
+
+                    if files_to_delete <= 0:
+                        callbacks.invoke_done_callbacks()
+
+                for file in files.files:
+                    delete_file_callbacks = OSFDeleteFileCallbacks()
+                    delete_file_callbacks.done(_file_deleted)
+                    delete_file_callbacks.failed(
+                        lambda _: _file_deleted()
+                    )  # We ignore errors here
+
+                    self.delete_file(file, callbacks=delete_file_callbacks)
+            else:
+                callbacks.invoke_done_callbacks()
+
+        def _get_file_list_failed(exc: Exception):
+            callbacks.invoke_fail_callbacks(exc)
+
+        file_list_callbacks = OSFGetFileListCallbacks()
+        file_list_callbacks.done(_get_file_list_done)
+        file_list_callbacks.failed(_get_file_list_failed)
+
+        self.get_file_list(osf_project, osf_storage, callbacks=file_list_callbacks)
 
     def _create_directory_tree(
         self,

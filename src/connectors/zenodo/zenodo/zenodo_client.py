@@ -310,19 +310,27 @@ class ZenodoClient(RequestsExecutor):
 
         def _get_file_list_done(files: ZenodoFileListObject):
             files_to_delete = len(files.files)
+            if files_to_delete > 0:
 
-            def _file_deleted():
-                nonlocal files_to_delete
-                files_to_delete -= 1
+                def _file_deleted():
+                    nonlocal files_to_delete
+                    files_to_delete -= 1
 
-                if files_to_delete <= 0:
-                    callbacks.invoke_done_callbacks()
+                    if files_to_delete <= 0:
+                        callbacks.invoke_done_callbacks()
 
-            for file in files.files:
-                delete_file_callbacks = ZenodoDeleteFileCallbacks()
-                delete_file_callbacks.done(_file_deleted)
+                for file in files.files:
+                    delete_file_callbacks = ZenodoDeleteFileCallbacks()
+                    delete_file_callbacks.done(_file_deleted)
+                    delete_file_callbacks.failed(
+                        lambda _: _file_deleted()
+                    )  # We ignore errors here
 
-                self.delete_file(zenodo_project, file, callbacks=delete_file_callbacks)
+                    self.delete_file(
+                        zenodo_project, file, callbacks=delete_file_callbacks
+                    )
+            else:
+                callbacks.invoke_done_callbacks()
 
         def _get_file_list_failed(exc: Exception):
             callbacks.invoke_fail_callbacks(exc)

@@ -199,10 +199,13 @@ class OSFJobExecutor(ConnectorJobExecutor):
     ) -> None:
         self.report_message("Clearing previous project files...")
 
-        callbacks = OSFGetFileListCallbacks()
-        callbacks.done(lambda data: print(data.files, flush=True))
+        callbacks = OSFDeleteAllFilesCallbacks()
+        callbacks.done(
+            lambda: self._project_update_cleanup_done(osf_project, osf_storage)
+        )
+        callbacks.failed(lambda exc: self._project_update_failed(exc))
 
-        self._osf_client.get_file_list(osf_project, osf_storage, callbacks=callbacks)
+        self._osf_client.delete_all_files(osf_project, osf_storage, callbacks=callbacks)
 
     def _project_update_cleanup_done(
         self, osf_project: OSFProjectObject, osf_storage: OSFStorageObject
