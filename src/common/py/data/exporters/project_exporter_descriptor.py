@@ -30,3 +30,5 @@ class ProjectExporterDescriptor:
     extension: str
 
     scope: typing.List[ProjectFeatureID] = field(default_factory=list)
+
+    filename: str | None

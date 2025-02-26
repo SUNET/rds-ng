@@ -26,6 +26,7 @@ class ROCrateExporter(ProjectExporter):
             description="Exports to an RO-Crate (Research Object) file",
             extension="json",
             scope=[ProjectMetadataFeature.feature_id],
+            filename="ro-crate-metadata"
         )
 
     def export(
