@@ -1,3 +1,4 @@
+from common.py.api import ComponentProcessEvent
 from common.py.api.network import ServerTimeoutEvent
 from common.py.api.session import (
     GetSessionValueCommand,
@@ -58,5 +59,9 @@ def create_session_service(comp: ServerComponent) -> Service:
 
         ctx.session_manager[msg.origin][msg.key] = msg.value
         SetSessionValueReply.build(ctx.message_builder, msg).emit()
+
+    @svc.message_handler(ComponentProcessEvent, is_async=True)
+    def component_process(_: ComponentProcessEvent, ctx: ServerServiceContext) -> None:
+        ctx.session_manager.process_sessions()
 
     return svc

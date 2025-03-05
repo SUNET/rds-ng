@@ -1,3 +1,4 @@
+import threading
 import time
 import typing
 
@@ -12,12 +13,14 @@ class ProjectVolatileStates:
     A map of all project volatile states (mapped using the project and connector instance ID).
     """
 
-    REFRESH_INTERVAL = 60 * 60  # Once per hour
+    STATE_LIFETIME = 10  # 60 * 60  # Keep states valid for one hour
 
     def __init__(self):
         self._states: typing.Dict[
             typing.Tuple[ProjectID, ConnectorInstanceID], ProjectVolatileState
         ] = {}
+
+        self._lock = threading.RLock()
 
     def get(
         self, project_id: ProjectID, instance_id: ConnectorInstanceID
@@ -32,13 +35,15 @@ class ProjectVolatileStates:
         Returns:
             The volatile project state.
         """
-        if not self.contains(project_id, instance_id):
-            self._states[(project_id, instance_id)] = ProjectVolatileState(
-                external_state=ProjectExternalState(
-                    external_state=ProjectExternalState.State.UNKNOWN, external_id=""
+        with self._lock:
+            if not self.contains(project_id, instance_id):
+                self._states[(project_id, instance_id)] = ProjectVolatileState(
+                    external_state=ProjectExternalState(
+                        external_state=ProjectExternalState.State.UNKNOWN,
+                        external_id="",
+                    )
                 )
-            )
-        return self._states[(project_id, instance_id)]
+            return self._states[(project_id, instance_id)]
 
     def set(
         self,
@@ -55,9 +60,10 @@ class ProjectVolatileStates:
             instance_id: The connector instance ID.
             external_state: The project's external state.
         """
-        state = self.get(project_id, instance_id)
-        state.external_state = external_state
-        state.timestamp = time.time()
+        with self._lock:
+            state = self.get(project_id, instance_id)
+            state.external_state = external_state
+            state.timestamp = time.time()
 
     def contains(self, project_id: ProjectID, instance_id: ConnectorInstanceID) -> bool:
         """
@@ -67,21 +73,25 @@ class ProjectVolatileStates:
             project_id: The project ID.
             instance_id: The connector instance ID.
         """
-        return (project_id, instance_id) in self._states
+        with self._lock:
+            return (project_id, instance_id) in self._states
 
-    def needs_refresh(
-        self, project_id: ProjectID, instance_id: ConnectorInstanceID
-    ) -> bool:
+    def update_outdated_states(self) -> None:
         """
-        Checks whether a state needs to be refreshed.
-
-        Args:
-            project_id: The project ID.
-            instance_id: The connector instance ID.
+        Called periodically to automatically update outdated states.
         """
-        state = self.get(project_id, instance_id)
+        with self._lock:
+            for outdated_state in self._get_outdated_states():
+                # TODO
+                print(outdated_state, flush=True)
 
-        return (
-            state.timestamp == 0
-            or time.time() - state.timestamp >= self.REFRESH_INTERVAL
-        )
+    def _get_outdated_states(self) -> typing.List[ProjectVolatileState]:
+        """
+        Gets a list of all states that should be refreshed.
+        """
+        return [
+            state
+            for state in self._states.values()
+            if state.timestamp == 0
+            or time.time() - state.timestamp >= self.STATE_LIFETIME
+        ]

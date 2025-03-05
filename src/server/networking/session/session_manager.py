@@ -53,6 +53,14 @@ class SessionManager:
         with SessionManager._lock:
             return session_id in SessionManager._sessions
 
+    def process_sessions(self) -> None:
+        """
+        Called periodically to process all active sessions.
+        """
+        with SessionManager._lock:
+            for session in self._sessions.values():
+                session.process()
+
     def find_user_sessions(self, user_id: UserID) -> typing.List[Session]:
         """
         Finds all sessions associated with the user ID. Since a single user can be logged in for several sessions, a list of all these is returned.
