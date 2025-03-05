@@ -40,6 +40,25 @@ class ProjectVolatileStates:
             )
         return self._states[(project_id, instance_id)]
 
+    def set(
+        self,
+        project_id: ProjectID,
+        instance_id: ConnectorInstanceID,
+        *,
+        external_state: ProjectExternalState,
+    ) -> None:
+        """
+        Sets the volatile state for a specific project and connector instance.
+
+        Args:
+            project_id: The project ID.
+            instance_id: The connector instance ID.
+            external_state: The project's external state.
+        """
+        state = self.get(project_id, instance_id)
+        state.external_state = external_state
+        state.timestamp = time.time()
+
     def contains(self, project_id: ProjectID, instance_id: ConnectorInstanceID) -> bool:
         """
         Checks whether a state is stored for a specific project and connector instance.
@@ -66,13 +85,3 @@ class ProjectVolatileStates:
             state.timestamp == 0
             or time.time() - state.timestamp >= self.REFRESH_INTERVAL
         )
-
-    def refresh(self, project_id: ProjectID, instance_id: ConnectorInstanceID) -> None:
-        """
-        Updates the timestamp of a volatile state.
-
-        Args:
-            project_id: The project ID.
-            instance_id: The connector instance ID.
-        """
-        self[project_id, instance_id].timestamp = time.time()

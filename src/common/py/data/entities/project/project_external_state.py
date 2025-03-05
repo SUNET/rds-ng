@@ -1,11 +1,14 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
+from dataclasses_json import dataclass_json
+
 from .logbook import ProjectJobHistoryRecordExtDataIDs
 from .project import Project
 from ..connector import ConnectorInstanceID
 
 
+@dataclass_json
 @dataclass(kw_only=True)
 class ProjectExternalState:
     """

@@ -2,6 +2,7 @@ import abc
 import time
 import typing
 
+from common.py.api import ProjectExternalStateEvent
 from common.py.component import BackendComponent
 from common.py.core.logging import debug
 from common.py.core.messaging import Channel
@@ -85,11 +86,13 @@ class ConnectorJobExecutor(abc.ABC):
         # If the project has already been uploaded, update its state to reflect the actual state; otherwise we can simply start the job
         if external_state.external_state == ProjectExternalState.State.UPLOADED:
             callbacks = ProjectExternalStateCallbacks()
+            callbacks.done(lambda state: self._send_project_external_state_event(state))
             callbacks.done(lambda state: self._process_project_external_state(state))
             callbacks.failed(lambda exc: self.set_failed(str(exc)))
 
             self.query_external_project_state(external_state, state_callbacks=callbacks)
         else:
+            self._send_project_external_state_event(external_state)
             self.start(external_state)
 
     def query_external_project_state(
@@ -232,6 +235,17 @@ class ConnectorJobExecutor(abc.ABC):
         ).emit(self._target_channel)
 
         self._log_debug(failure_msg)
+
+    def _send_project_external_state_event(
+        self, external_state: ProjectExternalState
+    ) -> None:
+        # Notify the server about the new external state
+        ProjectExternalStateEvent.build(
+            self._mesage_builder,
+            project_id=self._job.project.project_id,
+            instance_id=self._job.connector_instance,
+            external_state=external_state,
+        ).emit(self._target_channel)
 
     def _process_project_external_state(
         self, external_state: ProjectExternalState

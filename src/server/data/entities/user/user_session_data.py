@@ -1,5 +1,7 @@
-from dataclasses import dataclass
+import typing
+from dataclasses import dataclass, field
 
+from server.data.entities.project import ProjectVolatileStates
 from server.networking.session.session import SessionID
 from server.services import ServerServiceContext
 
@@ -9,6 +11,10 @@ class UserSessionData:
     """
     User-specific (volatile) data stored in the user's session.
     """
+
+    volatile_project_states: ProjectVolatileStates = field(
+        default_factory=ProjectVolatileStates
+    )
 
 
 def get_user_session_data(
@@ -28,4 +34,4 @@ def get_user_session_data(
     session_key = "$_user_data_$"
     if session_key not in ctx.session_manager[session_id]:
         ctx.session_manager[session_id][session_key] = UserSessionData()
-    return ctx.session_manager[session_id][session_key]
+    return typing.cast(UserSessionData, ctx.session_manager[session_id][session_key])

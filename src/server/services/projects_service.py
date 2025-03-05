@@ -1,9 +1,12 @@
 import time
 
+from common.py.api import ProjectExternalStateEvent
+from common.py.data.entities.project import ProjectExternalState
 from common.py.services import Service
 
 from .tools import send_projects_list
 from ..component import ServerComponent
+from ..data.entities.user import get_user_session_data
 
 
 def create_projects_service(comp: ServerComponent) -> Service:
@@ -274,5 +277,14 @@ def create_projects_service(comp: ServerComponent) -> Service:
         ).emit()
 
         send_projects_list(msg, ctx)
+
+    @svc.message_handler(ProjectExternalStateEvent, is_async=True)
+    def project_external_state(
+        msg: ProjectExternalStateEvent, ctx: ServerServiceContext
+    ) -> None:
+        data = get_user_session_data(ctx.session.session_id, ctx)
+        data.volatile_project_states.set(
+            msg.project_id, msg.instance_id, external_state=msg.external_state
+        )
 
     return svc
