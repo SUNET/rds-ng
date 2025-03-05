@@ -1,5 +1,3 @@
-import dataclasses
-import typing
 from dataclasses import dataclass
 from enum import StrEnum
 
@@ -16,7 +14,6 @@ class ProjectExternalState:
     Attributes:
         external_state: The state on the external service.
         external_id: The project ID within the external service.
-        project_data: Arbitrary external project data.
     """
 
     class State(StrEnum):
@@ -32,8 +29,6 @@ class ProjectExternalState:
 
     external_state: State
     external_id: str
-
-    project_data: typing.Any = dataclasses.field(default=None)
 
 
 def get_last_known_external_project_state(
@@ -70,18 +65,14 @@ def get_last_known_external_project_state(
     return ProjectExternalState(external_state=state, external_id=external_id)
 
 
-def check_reuse_external_project(
-    external_state: ProjectExternalState, check_data: bool = True
-) -> bool:
+def check_reuse_external_project(external_state: ProjectExternalState) -> bool:
     """
     Checks whether an external project should be reused when uploading.
 
     Args:
         external_state: The external project state.
-        check_data: Whether to check if project data is present.
     """
     return (
         external_state.external_state == ProjectExternalState.State.UPLOADED
         and external_state.external_id != ""
-        and (not check_data or external_state.project_data is not None)
     )

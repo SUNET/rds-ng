@@ -9,7 +9,8 @@ from ...core.messaging.composers import (
     MessageBuilder,
     EventComposer,
 )
-from ...data.entities.project import Project, ProjectID
+from ...data.entities.connector import ConnectorInstanceID
+from ...data.entities.project import Project, ProjectExternalState, ProjectID
 
 
 @Message.define("event/project/list")
@@ -63,4 +64,41 @@ class ProjectLogbookEvent(Event):
         """
         return message_builder.build_event(
             ProjectLogbookEvent, chain, project_id=project_id, logbook=logbook
+        )
+
+
+@Message.define("event/project/external-state")
+class ProjectExternalStateEvent(Event):
+    """
+    Emitted whenever the external state of a project has been updated.
+
+    Args:
+        project_id: The project ID.
+        instance_id: The connector instance ID.
+        external_state: The new project's external state.
+    """
+
+    project_id: ProjectID
+    instance_id: ConnectorInstanceID
+
+    external_state: ProjectExternalState
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        project_id: ProjectID,
+        instance_id: ConnectorInstanceID,
+        external_state: ProjectExternalState,
+        chain: Message | None = None
+    ) -> EventComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_event(
+            ProjectExternalStateEvent,
+            chain,
+            project_id=project_id,
+            instance_id=instance_id,
+            external_state=external_state,
         )
