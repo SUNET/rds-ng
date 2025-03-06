@@ -59,13 +59,6 @@ class Session:
             self._user_origin = user_origin
             return True
 
-    def process(self) -> None:
-        """
-        Called periodically to perform recurring tasks.
-        """
-        with self._lock:
-            self._user_data.process()
-
     def __getitem__(self, key: str) -> typing.Any:
         """
         Retrieves a data value stored in this session.

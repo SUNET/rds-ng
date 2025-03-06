@@ -3,7 +3,7 @@ from common.py.data.entities.authorization import AuthorizationSettings
 from common.py.services import Service
 from common.py.utils import EntryGuard
 
-_ANNOUNCE_INTERVAL = 3600  # Once per hour
+_ANNOUNCE_INTERVAL = 60 * 60  # Once per hour
 
 
 def create_connector_service(comp: BackendComponent) -> Service:

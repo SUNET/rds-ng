@@ -59,13 +59,13 @@ export class ProjectLogbookEvent extends Event {
  * Emitted whenever the external state of a project has been updated.
  *
  * @param project_id - The project ID.
- * @param instance_id - The connector instance ID.
+ * @param connector_instance - The connector instance ID.
  * @param external_state - The new project's external state.
  */
 @Message.define("event/project/external-state")
 export class ProjectExternalStateEvent extends Event {
     public readonly project_id: ProjectID = 0;
-    public readonly instance_id: ConnectorInstanceID = "";
+    public readonly connector_instance: ConnectorInstanceID = "";
 
     // @ts-ignore
     @Type(() => ProjectExternalState)
@@ -77,10 +77,14 @@ export class ProjectExternalStateEvent extends Event {
     public static build(
         messageBuilder: MessageBuilder,
         projectID: ProjectID,
-        instance_id: ConnectorInstanceID,
+        connector_instance: ConnectorInstanceID,
         external_state: ProjectExternalState,
         chain: Message | null = null
     ): EventComposer<ProjectLogbookEvent> {
-        return messageBuilder.buildEvent(ProjectLogbookEvent, { project_id: projectID, instance_id: instance_id, external_state: external_state }, chain);
+        return messageBuilder.buildEvent(
+            ProjectLogbookEvent,
+            { project_id: projectID, connector_instance: connector_instance, external_state: external_state },
+            chain
+        );
     }
 }

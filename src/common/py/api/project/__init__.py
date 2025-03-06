@@ -12,6 +12,7 @@ from .project_commands import (
 )
 from .project_events import (
     ProjectExternalStateEvent,
+    ProjectExternalStateRenewalEvent,
     ProjectLogbookEvent,
     ProjectsListEvent,
 )

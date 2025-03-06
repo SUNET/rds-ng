@@ -13,6 +13,7 @@ class ProjectVolatileStates:
     A map of all project volatile states (mapped using the project and connector instance ID).
     """
 
+    # TODO
     STATE_LIFETIME = 10  # 60 * 60  # Keep states valid for one hour
 
     def __init__(self):
@@ -38,10 +39,12 @@ class ProjectVolatileStates:
         with self._lock:
             if not self.contains(project_id, instance_id):
                 self._states[(project_id, instance_id)] = ProjectVolatileState(
+                    project_id=project_id,
+                    connector_instance=instance_id,
                     external_state=ProjectExternalState(
                         external_state=ProjectExternalState.State.UNKNOWN,
                         external_id="",
-                    )
+                    ),
                 )
             return self._states[(project_id, instance_id)]
 
@@ -76,22 +79,18 @@ class ProjectVolatileStates:
         with self._lock:
             return (project_id, instance_id) in self._states
 
-    def update_outdated_states(self) -> None:
-        """
-        Called periodically to automatically update outdated states.
-        """
-        with self._lock:
-            for outdated_state in self._get_outdated_states():
-                # TODO
-                print(outdated_state, flush=True)
-
-    def _get_outdated_states(self) -> typing.List[ProjectVolatileState]:
+    def get_outdated_states(self) -> typing.List[ProjectVolatileState]:
         """
         Gets a list of all states that should be refreshed.
         """
-        return [
-            state
-            for state in self._states.values()
-            if state.timestamp == 0
-            or time.time() - state.timestamp >= self.STATE_LIFETIME
-        ]
+        with self._lock:
+            outdated_states = [
+                state
+                for state in self._states.values()
+                if state.timestamp == 0
+                or time.time() - state.timestamp >= self.STATE_LIFETIME
+            ]
+            for outdated_state in outdated_states:
+                # Immediately update the state's timestamp to avoid floods of updates
+                outdated_state.timestamp = time.time()
+            return outdated_states

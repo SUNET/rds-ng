@@ -74,12 +74,12 @@ class ProjectExternalStateEvent(Event):
 
     Args:
         project_id: The project ID.
-        instance_id: The connector instance ID.
+        connector_instance: The connector instance ID.
         external_state: The new project's external state.
     """
 
     project_id: ProjectID
-    instance_id: ConnectorInstanceID
+    connector_instance: ConnectorInstanceID
 
     external_state: ProjectExternalState
 
@@ -88,7 +88,7 @@ class ProjectExternalStateEvent(Event):
         message_builder: MessageBuilder,
         *,
         project_id: ProjectID,
-        instance_id: ConnectorInstanceID,
+        connector_instance: ConnectorInstanceID,
         external_state: ProjectExternalState,
         chain: Message | None = None
     ) -> EventComposer:
@@ -99,6 +99,38 @@ class ProjectExternalStateEvent(Event):
             ProjectExternalStateEvent,
             chain,
             project_id=project_id,
-            instance_id=instance_id,
+            connector_instance=connector_instance,
             external_state=external_state,
+        )
+
+
+@Message.define("event/project/external-state/renewal")
+class ProjectExternalStateRenewalEvent(Event):
+    """
+    Emitted whenever the external state of a project needs to be updated.
+
+    Args:
+        project: The project.
+        connector_instance: The connector instance ID.
+    """
+
+    project: Project
+    connector_instance: ConnectorInstanceID
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        project: Project,
+        connector_instance: ConnectorInstanceID,
+        chain: Message | None = None
+    ) -> EventComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_event(
+            ProjectExternalStateRenewalEvent,
+            chain,
+            project=project,
+            connector_instance=connector_instance,
         )

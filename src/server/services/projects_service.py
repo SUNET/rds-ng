@@ -1,10 +1,14 @@
 import time
 
-from common.py.api import ProjectExternalStateEvent
+from common.py.api import ProjectExternalStateRenewalEvent
+from common.py.core.messaging import Channel
+from common.py.data.entities.connector import find_connector_by_instance_id
 from common.py.services import Service
+from common.py.utils import EntryGuard
 
 from .tools import send_projects_list
 from ..component import ServerComponent
+from ..networking.session import Session
 
 
 def create_projects_service(comp: ServerComponent) -> Service:
@@ -18,7 +22,8 @@ def create_projects_service(comp: ServerComponent) -> Service:
         The newly created service.
     """
 
-    from common.py.api.project import (
+    from common.py.api import (
+        ComponentProcessEvent,
         ListProjectsCommand,
         ListProjectsReply,
         CreateProjectCommand,
@@ -31,6 +36,7 @@ def create_projects_service(comp: ServerComponent) -> Service:
         UpdateProjectFeaturesReply,
         MarkProjectLogbookSeenCommand,
         MarkProjectLogbookSeenReply,
+        ProjectExternalStateEvent,
     )
     from common.py.data.entities import clone_entity
     from common.py.data.entities.project import Project
@@ -280,8 +286,68 @@ def create_projects_service(comp: ServerComponent) -> Service:
     def project_external_state(
         msg: ProjectExternalStateEvent, ctx: ServerServiceContext
     ) -> None:
+        # TODO: Wrong session
+        #   Find proper user -> Sessions
         ctx.session.user_data.volatile_project_states.set(
-            msg.project_id, msg.instance_id, external_state=msg.external_state
+            msg.project_id, msg.connector_instance, external_state=msg.external_state
         )
+
+    @svc.message_handler(ComponentProcessEvent, is_async=True)
+    def refresh_project_volatile_states(
+        _: ComponentProcessEvent, ctx: ServerServiceContext
+    ) -> None:
+        with EntryGuard("refresh_project_volatile_states") as guard:
+            if not guard.can_execute:
+                return
+
+            for session in ctx.session_manager.sessions:
+                # Skip sessions w/o a logged in user
+                if session is None or session.status != Session.Status.AUTHENTICATED:
+                    continue
+
+                for (
+                    outdated_state
+                ) in session.user_data.volatile_project_states.get_outdated_states():
+                    print("0", flush=True)
+                    # First, get the project, user and connector; if any of these is None, skip over
+                    if (
+                        project := ctx.storage_pool.project_storage.get(
+                            outdated_state.project_id
+                        )
+                    ) is None:
+                        print("1", flush=True)
+                        continue
+
+                    print("session", flush=True)
+                    print(session.user_token, flush=True)
+
+                    if (
+                        user := ctx.storage_pool.user_storage.get(
+                            session.user_token.user_id
+                        )
+                    ) is None:
+                        print("2", flush=True)
+                        continue
+
+                    print("y", flush=True)
+
+                    if (
+                        connector := find_connector_by_instance_id(
+                            ctx.storage_pool.connector_storage.list(),
+                            user.user_settings.connector_instances,
+                            outdated_state.connector_instance,
+                        )
+                    ) is None:
+                        print("3", flush=True)
+                        continue
+
+                    print(outdated_state, flush=True)
+                    print(connector.connector_address, flush=True)
+
+                    ProjectExternalStateRenewalEvent.build(
+                        ctx.message_builder,
+                        project=project,
+                        connector_instance=outdated_state.connector_instance,
+                    ).emit(Channel.direct(connector.connector_address))
 
     return svc
