@@ -1,6 +1,7 @@
 from common.py.api import ProjectExternalStateRenewalEvent
-from ...base.data.types import ProjectExternalStateCallbacks
+from common.py.data.entities.project import ProjectExternalState
 
+from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorRequestsHandler
 
 
@@ -12,8 +13,10 @@ class StubRequestsHandler(ConnectorRequestsHandler):
     def renew_external_project_state(
         self,
         event: ProjectExternalStateRenewalEvent,
+        external_state: ProjectExternalState,
         *,
         callbacks: ProjectExternalStateCallbacks,
     ) -> None:
-        # TODO
-        pass
+        # TODO: Auslagern?
+        external_state.external_state = ProjectExternalState.State.DEFAULT
+        callbacks.invoke_done_callbacks(external_state=external_state)

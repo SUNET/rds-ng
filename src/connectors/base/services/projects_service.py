@@ -50,7 +50,9 @@ def create_projects_service(comp: BackendComponent) -> Service:
             callbacks.done(lambda state: _send_external_state(state))
             callbacks.failed(lambda _: _send_external_state(last_external_state))
 
-            ctx.requests_handler.renew_external_project_state(msg, callbacks=callbacks)
+            ctx.requests_handler.renew_external_project_state(
+                msg, last_external_state, callbacks=callbacks
+            )
         else:
             _send_external_state(last_external_state)
 

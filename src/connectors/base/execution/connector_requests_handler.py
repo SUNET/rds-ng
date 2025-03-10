@@ -2,6 +2,7 @@ import abc
 import typing
 
 from common.py.api import ProjectExternalStateRenewalEvent
+from common.py.data.entities.project import ProjectExternalState
 
 from ..data.types import ProjectExternalStateCallbacks
 
@@ -14,6 +15,7 @@ class ConnectorRequestsHandler(abc.ABC):
     def renew_external_project_state(
         self,
         event: ProjectExternalStateRenewalEvent,
+        external_state: ProjectExternalState,
         *,
         callbacks: ProjectExternalStateCallbacks,
     ) -> None:
@@ -22,6 +24,7 @@ class ConnectorRequestsHandler(abc.ABC):
 
         Args:
             event: The originating event.
+            external_state: The current external state.
             callbacks: Callbacks to be invoked upon completion.
         """
         raise NotImplementedError()
