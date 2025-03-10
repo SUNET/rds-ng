@@ -1,5 +1,12 @@
+from common.py.api import ProjectExternalStateEvent
 from common.py.component import BackendComponent
+from common.py.data.entities.project import (
+    get_last_known_external_project_state,
+    ProjectExternalState,
+)
 from common.py.services import Service
+
+from ..data.types import ProjectExternalStateCallbacks
 
 
 def create_projects_service(comp: BackendComponent) -> Service:
@@ -23,7 +30,28 @@ def create_projects_service(comp: BackendComponent) -> Service:
     def project_external_state_renewal(
         msg: ProjectExternalStateRenewalEvent, ctx: ConnectorServiceContext
     ) -> None:
-        pass
-        # TODO
+        def _send_external_state(external_state: ProjectExternalState) -> None:
+            ProjectExternalStateEvent.build(
+                ctx.message_builder,
+                project_id=msg.project.project_id,
+                user_id=msg.user_token.user_id,
+                connector_instance=msg.connector_instance,
+                external_state=external_state,
+            ).emit(ctx.remote_channel)
+
+        # Get the last known external project state; this can only be DEFAULT or UPLOADED
+        last_external_state = get_last_known_external_project_state(
+            msg.project, msg.connector_instance
+        )
+
+        # If the project has already been uploaded, update its state to reflect the actual state
+        if last_external_state.external_state == ProjectExternalState.State.UPLOADED:
+            callbacks = ProjectExternalStateCallbacks()
+            callbacks.done(lambda state: _send_external_state(state))
+            callbacks.failed(lambda _: _send_external_state(last_external_state))
+
+            ctx.requests_handler.renew_external_project_state(msg, callbacks=callbacks)
+        else:
+            _send_external_state(last_external_state)
 
     return svc

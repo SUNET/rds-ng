@@ -1,5 +1,6 @@
 import typing
 
+from ..execution import OSFRequestsHandler
 from ...base.component import ConnectorComponent
 
 
@@ -14,6 +15,7 @@ class OSFConnectorComponent(ConnectorComponent):
         super().__init__(
             "osf",
             executor_type=OSFJobExecutor,
+            handler_type=OSFRequestsHandler,
             module_name=__name__,
         )
 

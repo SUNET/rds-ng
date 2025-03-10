@@ -79,21 +79,23 @@ class ConnectorJobExecutor(abc.ABC):
         """
 
         # Get the last known external project state; this can only be DEFAULT or UPLOADED
-        external_state = get_last_known_external_project_state(
+        last_external_state = get_last_known_external_project_state(
             self._job.project, self._job.connector_instance
         )
 
         # If the project has already been uploaded, update its state to reflect the actual state; otherwise we can simply start the job
-        if external_state.external_state == ProjectExternalState.State.UPLOADED:
+        if last_external_state.external_state == ProjectExternalState.State.UPLOADED:
             callbacks = ProjectExternalStateCallbacks()
             callbacks.done(lambda state: self._send_project_external_state_event(state))
             callbacks.done(lambda state: self._process_project_external_state(state))
             callbacks.failed(lambda exc: self.set_failed(str(exc)))
 
-            self.query_external_project_state(external_state, state_callbacks=callbacks)
+            self.query_external_project_state(
+                last_external_state, state_callbacks=callbacks
+            )
         else:
-            self._send_project_external_state_event(external_state)
-            self.start(external_state)
+            self._send_project_external_state_event(last_external_state)
+            self.start(last_external_state)
 
     def query_external_project_state(
         self,
