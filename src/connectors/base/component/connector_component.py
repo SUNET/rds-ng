@@ -40,7 +40,7 @@ class ConnectorComponent(BackendComponent):
         self._connector_info = ConnectorInformation(connector_id)
 
         self._jobs_engine = ConnectorJobsEngine(executor_type=executor_type)
-        self._requests_handler = handler_type()
+        self._requests_handler = handler_type(self)
 
     def run(self) -> None:
         from ..data.entities.connector.categories import register_connector_categories

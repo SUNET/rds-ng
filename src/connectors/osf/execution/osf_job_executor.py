@@ -121,14 +121,15 @@ class OSFJobExecutor(ConnectorJobExecutor):
     def _query_external_project_state_done(
         self, project: OSFProjectObject, state_callbacks: ProjectExternalStateCallbacks
     ) -> None:
-        # OSF doesn't lock projects
-        state = ProjectExternalState.State.UPLOADED
-        state_callbacks.invoke_done_callbacks(
-            ProjectExternalState(
-                external_id=project.project_id,
-                external_state=state,
-            )
+        from .osf_utils import process_external_project_state
+
+        external_state = ProjectExternalState(
+            external_id=project.project_id,
+            external_state=ProjectExternalState.State.UNKNOWN,
         )
+        process_external_project_state(project, external_state)
+
+        state_callbacks.invoke_done_callbacks(external_state)
 
     def _query_external_project_state_failed(
         self,

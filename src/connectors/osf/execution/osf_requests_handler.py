@@ -1,6 +1,12 @@
 from common.py.api import ProjectExternalStateRenewalEvent
+from common.py.core.messaging import Channel
+from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import ProjectExternalState
+from common.py.data.entities.user import UserToken
+from common.py.services import Service
 
+from ..osf import OSFClient, OSFProjectObject
+from ..osf.osf_callbacks import OSFGetProjectCallbacks
 from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorRequestsHandler
 
@@ -12,10 +18,50 @@ class OSFRequestsHandler(ConnectorRequestsHandler):
 
     def renew_external_project_state(
         self,
-        event: ProjectExternalStateRenewalEvent,
-        external_state: ProjectExternalState,
+        svc: Service,
+        msg: ProjectExternalStateRenewalEvent,
         *,
+        auth_channel: Channel,
+        external_state: ProjectExternalState,
         callbacks: ProjectExternalStateCallbacks,
     ) -> None:
-        # TODO
-        pass
+        def _get_project_done(project: OSFProjectObject) -> None:
+            from .osf_utils import process_external_project_state
+
+            process_external_project_state(project, external_state)
+            callbacks.invoke_done_callbacks(external_state)
+
+        def _get_project_failed(exc: Exception) -> None:
+            callbacks.invoke_fail_callbacks(exc)
+
+        if (
+            client := self._create_client(
+                svc,
+                auth_channel=auth_channel,
+                connector_instance=msg.connector_instance,
+                user_token=msg.user_token,
+            )
+        ) is not None:
+            get_project_callbacks = OSFGetProjectCallbacks()
+            get_project_callbacks.done(_get_project_done)
+            get_project_callbacks.failed(_get_project_failed)
+
+            client.get_project(
+                external_state.external_id, callbacks=get_project_callbacks
+            )
+
+    def _create_client(
+        self,
+        svc: Service,
+        *,
+        auth_channel: Channel,
+        connector_instance: ConnectorInstanceID,
+        user_token: UserToken,
+    ) -> OSFClient:
+        return OSFClient(
+            self._comp,
+            svc,
+            connector_instance=connector_instance,
+            auth_channel=auth_channel,
+            user_token=user_token,
+        )

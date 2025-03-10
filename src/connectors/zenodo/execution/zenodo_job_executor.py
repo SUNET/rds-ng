@@ -128,21 +128,15 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
         project: ZenodoProjectObject,
         state_callbacks: ProjectExternalStateCallbacks,
     ) -> None:
-        state = ProjectExternalState.State.UNKNOWN
+        from .zenodo_utils import process_external_project_state
 
-        if (
-            project.state == "inprogress" or project.state == "unsubmitted"
-        ) and not project.is_submitted:
-            state = ProjectExternalState.State.UPLOADED
-        elif project.state == "done" or project.is_submitted:
-            state = ProjectExternalState.State.LOCKED
-
-        state_callbacks.invoke_done_callbacks(
-            ProjectExternalState(
-                external_id=project.project_id,
-                external_state=state,
-            )
+        external_state = ProjectExternalState(
+            external_id=project.project_id,
+            external_state=ProjectExternalState.State.UNKNOWN,
         )
+        process_external_project_state(project, external_state)
+
+        state_callbacks.invoke_done_callbacks(external_state)
 
     def _query_external_project_state_failed(
         self,

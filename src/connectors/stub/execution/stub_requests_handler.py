@@ -1,5 +1,7 @@
 from common.py.api import ProjectExternalStateRenewalEvent
+from common.py.core.messaging import Channel
 from common.py.data.entities.project import ProjectExternalState
+from common.py.services import Service
 
 from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorRequestsHandler
@@ -12,9 +14,11 @@ class StubRequestsHandler(ConnectorRequestsHandler):
 
     def renew_external_project_state(
         self,
+        service: Service,
         event: ProjectExternalStateRenewalEvent,
-        external_state: ProjectExternalState,
         *,
+        auth_channel: Channel,
+        external_state: ProjectExternalState,
         callbacks: ProjectExternalStateCallbacks,
     ) -> None:
         from .stub_utils import process_external_project_state
