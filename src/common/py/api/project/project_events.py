@@ -11,7 +11,7 @@ from ...core.messaging.composers import (
 )
 from ...data.entities.connector import ConnectorInstanceID
 from ...data.entities.project import Project, ProjectExternalState, ProjectID
-from ...data.entities.user import UserID
+from ...data.entities.user import UserID, UserToken
 
 
 @Message.define("event/project/list")
@@ -118,10 +118,13 @@ class ProjectExternalStateRenewalEvent(Event):
     Args:
         project: The project.
         connector_instance: The connector instance ID.
+        user_token: The user token.
     """
 
     project: Project
     connector_instance: ConnectorInstanceID
+
+    user_token: UserToken
 
     @staticmethod
     def build(
@@ -129,6 +132,7 @@ class ProjectExternalStateRenewalEvent(Event):
         *,
         project: Project,
         connector_instance: ConnectorInstanceID,
+        user_token: UserToken,
         chain: Message | None = None
     ) -> EventComposer:
         """
@@ -139,4 +143,5 @@ class ProjectExternalStateRenewalEvent(Event):
             chain,
             project=project,
             connector_instance=connector_instance,
+            user_token=user_token,
         )

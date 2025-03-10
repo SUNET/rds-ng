@@ -338,6 +338,7 @@ def create_projects_service(comp: ServerComponent) -> Service:
                         ctx.message_builder,
                         project=project,
                         connector_instance=outdated_state.connector_instance,
+                        user_token=session.user_token,
                     ).emit(Channel.direct(connector.connector_address))
 
     return svc
