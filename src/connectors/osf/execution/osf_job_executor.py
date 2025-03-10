@@ -32,7 +32,6 @@ from ..osf import (
     OSFClient,
     OSFCreateProjectCallbacks,
     OSFFileObject,
-    OSFGetFileListCallbacks,
     OSFGetStorageCallbacks,
     OSFProjectObject,
     OSFStorageObject,

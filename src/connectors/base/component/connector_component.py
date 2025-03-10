@@ -44,6 +44,7 @@ class ConnectorComponent(BackendComponent):
             ConnectorServiceContext,
             create_authorization_service,
             create_connector_service,
+            create_projects_service,
             create_project_jobs_service,
         )
 
@@ -57,6 +58,7 @@ class ConnectorComponent(BackendComponent):
         # Create connector-specific services
         create_connector_service(self)
         create_authorization_service(self)
+        create_projects_service(self)
         create_project_jobs_service(self)
 
         super().run()
