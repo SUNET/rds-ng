@@ -317,6 +317,18 @@ def create_projects_service(comp: ServerComponent) -> Service:
                 for (
                     outdated_state
                 ) in session.user_data.volatile_project_states.get_outdated_states():
+                    # Skip states for currently running jobs
+                    if (
+                        ctx.storage_pool.project_job_storage.get(
+                            (
+                                outdated_state.project_id,
+                                outdated_state.connector_instance,
+                            )
+                        )
+                        is not None
+                    ):
+                        continue
+
                     # Get the project and connector; if any of these is None, skip over
                     if (
                         project := ctx.storage_pool.project_storage.get(
