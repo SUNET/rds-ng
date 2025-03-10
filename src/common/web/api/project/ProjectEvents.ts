@@ -8,6 +8,7 @@ import { ConnectorInstanceID } from "../../data/entities/connector/ConnectorInst
 import { ProjectLogbook } from "../../data/entities/project/logbook/ProjectLogbook";
 import { Project, type ProjectID } from "../../data/entities/project/Project";
 import { ProjectExternalState, ProjectUploadState } from "../../data/entities/project/ProjectExternalState";
+import { type UserID } from "../../data/entities/user/User";
 
 /**
  * Emitted whenever the user's projects list has been updated.
@@ -59,12 +60,14 @@ export class ProjectLogbookEvent extends Event {
  * Emitted whenever the external state of a project has been updated.
  *
  * @param project_id - The project ID.
+ * @param user_id - The user ID.
  * @param connector_instance - The connector instance ID.
  * @param external_state - The new project's external state.
  */
 @Message.define("event/project/external-state")
 export class ProjectExternalStateEvent extends Event {
     public readonly project_id: ProjectID = 0;
+    public readonly user_id: UserID = "";
     public readonly connector_instance: ConnectorInstanceID = "";
 
     // @ts-ignore
@@ -76,6 +79,7 @@ export class ProjectExternalStateEvent extends Event {
      */
     public static build(
         messageBuilder: MessageBuilder,
+        userID: UserID,
         projectID: ProjectID,
         connector_instance: ConnectorInstanceID,
         external_state: ProjectExternalState,
@@ -83,7 +87,7 @@ export class ProjectExternalStateEvent extends Event {
     ): EventComposer<ProjectLogbookEvent> {
         return messageBuilder.buildEvent(
             ProjectLogbookEvent,
-            { project_id: projectID, connector_instance: connector_instance, external_state: external_state },
+            { project_id: projectID, user_id: userID, connector_instance: connector_instance, external_state: external_state },
             chain
         );
     }

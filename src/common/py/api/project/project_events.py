@@ -11,6 +11,7 @@ from ...core.messaging.composers import (
 )
 from ...data.entities.connector import ConnectorInstanceID
 from ...data.entities.project import Project, ProjectExternalState, ProjectID
+from ...data.entities.user import UserID
 
 
 @Message.define("event/project/list")
@@ -74,11 +75,13 @@ class ProjectExternalStateEvent(Event):
 
     Args:
         project_id: The project ID.
+        user_id: The user ID.
         connector_instance: The connector instance ID.
         external_state: The new project's external state.
     """
 
     project_id: ProjectID
+    user_id: UserID
     connector_instance: ConnectorInstanceID
 
     external_state: ProjectExternalState
@@ -88,6 +91,7 @@ class ProjectExternalStateEvent(Event):
         message_builder: MessageBuilder,
         *,
         project_id: ProjectID,
+        user_id: UserID,
         connector_instance: ConnectorInstanceID,
         external_state: ProjectExternalState,
         chain: Message | None = None
@@ -99,6 +103,7 @@ class ProjectExternalStateEvent(Event):
             ProjectExternalStateEvent,
             chain,
             project_id=project_id,
+            user_id=user_id,
             connector_instance=connector_instance,
             external_state=external_state,
         )
@@ -108,6 +113,7 @@ class ProjectExternalStateEvent(Event):
 class ProjectExternalStateRenewalEvent(Event):
     """
     Emitted whenever the external state of a project needs to be updated.
+    Unlike `ProjectExternalStateEvent`, the entire project needs to be sent with this request, as more than the project ID will be needed.
 
     Args:
         project: The project.

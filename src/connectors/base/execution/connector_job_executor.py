@@ -243,6 +243,7 @@ class ConnectorJobExecutor(abc.ABC):
         ProjectExternalStateEvent.build(
             self._mesage_builder,
             project_id=self._job.project.project_id,
+            user_id=self._job.user_token.user_id,
             connector_instance=self._job.connector_instance,
             external_state=external_state,
         ).emit(self._target_channel)

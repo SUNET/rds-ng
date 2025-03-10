@@ -286,11 +286,12 @@ def create_projects_service(comp: ServerComponent) -> Service:
     def project_external_state(
         msg: ProjectExternalStateEvent, ctx: ServerServiceContext
     ) -> None:
-        # TODO: Wrong session
-        #   Find proper user -> Sessions
-        ctx.session.user_data.volatile_project_states.set(
-            msg.project_id, msg.connector_instance, external_state=msg.external_state
-        )
+        for session in ctx.session_manager.find_user_sessions(msg.user_id):
+            session.user_data.volatile_project_states.set(
+                msg.project_id,
+                msg.connector_instance,
+                external_state=msg.external_state,
+            )
 
     @svc.message_handler(ComponentProcessEvent, is_async=True)
     def refresh_project_volatile_states(
@@ -301,35 +302,28 @@ def create_projects_service(comp: ServerComponent) -> Service:
                 return
 
             for session in ctx.session_manager.sessions:
-                # Skip sessions w/o a logged in user
-                if session is None or session.status != Session.Status.AUTHENTICATED:
+                # Skip sessions w/o an authenticated user
+                if session.status != Session.Status.AUTHENTICATED:
+                    continue
+
+                # Try to get the user account, skip if none could be found
+                if (
+                    user := ctx.storage_pool.user_storage.get(
+                        session.user_token.user_id
+                    )
+                ) is None:
                     continue
 
                 for (
                     outdated_state
                 ) in session.user_data.volatile_project_states.get_outdated_states():
-                    print("0", flush=True)
-                    # First, get the project, user and connector; if any of these is None, skip over
+                    # Get the project and connector; if any of these is None, skip over
                     if (
                         project := ctx.storage_pool.project_storage.get(
                             outdated_state.project_id
                         )
                     ) is None:
-                        print("1", flush=True)
                         continue
-
-                    print("session", flush=True)
-                    print(session.user_token, flush=True)
-
-                    if (
-                        user := ctx.storage_pool.user_storage.get(
-                            session.user_token.user_id
-                        )
-                    ) is None:
-                        print("2", flush=True)
-                        continue
-
-                    print("y", flush=True)
 
                     if (
                         connector := find_connector_by_instance_id(
@@ -338,11 +332,7 @@ def create_projects_service(comp: ServerComponent) -> Service:
                             outdated_state.connector_instance,
                         )
                     ) is None:
-                        print("3", flush=True)
                         continue
-
-                    print(outdated_state, flush=True)
-                    print(connector.connector_address, flush=True)
 
                     ProjectExternalStateRenewalEvent.build(
                         ctx.message_builder,
