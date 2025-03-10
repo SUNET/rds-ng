@@ -40,7 +40,7 @@ class ConnectorComponent(BackendComponent):
         self._connector_info = ConnectorInformation(connector_id)
 
         self._jobs_engine = ConnectorJobsEngine(executor_type=executor_type)
-        self._requests_handler = handler_type(self)
+        self._requests_handler_type = handler_type
 
     def run(self) -> None:
         from ..data.entities.connector.categories import register_connector_categories
@@ -57,7 +57,7 @@ class ConnectorComponent(BackendComponent):
 
         # Assign the global jobs engine and requests handler to the service context
         ConnectorServiceContext.set_jobs_engine(self._jobs_engine)
-        ConnectorServiceContext.set_requests_handler(self._requests_handler)
+        ConnectorServiceContext.set_requests_handler_type(self._requests_handler_type)
 
         # Register global items
         register_connector_categories()

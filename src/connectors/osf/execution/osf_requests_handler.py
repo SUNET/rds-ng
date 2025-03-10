@@ -1,9 +1,7 @@
 from common.py.api import ProjectExternalStateRenewalEvent
-from common.py.core.messaging import Channel
 from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import ProjectExternalState
 from common.py.data.entities.user import UserToken
-from common.py.services import Service
 
 from ..osf import OSFClient, OSFProjectObject
 from ..osf.osf_callbacks import OSFGetProjectCallbacks
@@ -18,10 +16,8 @@ class OSFRequestsHandler(ConnectorRequestsHandler):
 
     def renew_external_project_state(
         self,
-        svc: Service,
         msg: ProjectExternalStateRenewalEvent,
         *,
-        auth_channel: Channel,
         external_state: ProjectExternalState,
         callbacks: ProjectExternalStateCallbacks,
     ) -> None:
@@ -36,8 +32,6 @@ class OSFRequestsHandler(ConnectorRequestsHandler):
 
         if (
             client := self._create_client(
-                svc,
-                auth_channel=auth_channel,
                 connector_instance=msg.connector_instance,
                 user_token=msg.user_token,
             )
@@ -52,16 +46,14 @@ class OSFRequestsHandler(ConnectorRequestsHandler):
 
     def _create_client(
         self,
-        svc: Service,
         *,
-        auth_channel: Channel,
         connector_instance: ConnectorInstanceID,
         user_token: UserToken,
     ) -> OSFClient:
         return OSFClient(
             self._comp,
-            svc,
+            self._service,
             connector_instance=connector_instance,
-            auth_channel=auth_channel,
+            auth_channel=self._auth_channel,
             user_token=user_token,
         )

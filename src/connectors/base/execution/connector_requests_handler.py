@@ -15,15 +15,16 @@ class ConnectorRequestsHandler(abc.ABC):
     Base class to deal with non-job related requests.
     """
 
-    def __init__(self, comp: BackendComponent):
+    def __init__(self, comp: BackendComponent, svc: Service, *, auth_channel: Channel):
         self._comp = comp
+        self._service = svc
+
+        self._auth_channel = auth_channel
 
     def renew_external_project_state(
         self,
-        service: Service,
         msg: ProjectExternalStateRenewalEvent,
         *,
-        auth_channel: Channel,
         external_state: ProjectExternalState,
         callbacks: ProjectExternalStateCallbacks,
     ) -> None:
@@ -31,9 +32,7 @@ class ConnectorRequestsHandler(abc.ABC):
         Called whenever an external project state needs to be renewed.
 
         Args:
-            service: The service to handle the request.
             msg: The originating message.
-            auth_channel: The channel for authorizations.
             external_state: The current external state.
             callbacks: Callbacks to be invoked upon completion.
         """
