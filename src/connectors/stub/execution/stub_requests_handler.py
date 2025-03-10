@@ -17,6 +17,7 @@ class StubRequestsHandler(ConnectorRequestsHandler):
         *,
         callbacks: ProjectExternalStateCallbacks,
     ) -> None:
-        # TODO: Auslagern?
-        external_state.external_state = ProjectExternalState.State.DEFAULT
-        callbacks.invoke_done_callbacks(external_state=external_state)
+        from .stub_utils import process_external_project_state
+
+        process_external_project_state(external_state)
+        callbacks.invoke_done_callbacks(external_state)
