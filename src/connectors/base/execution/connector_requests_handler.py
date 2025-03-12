@@ -1,10 +1,11 @@
 import abc
 import typing
 
-from common.py.api import ProjectExternalStateRenewalEvent
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
-from common.py.data.entities.project import ProjectExternalState
+from common.py.data.entities.connector import ConnectorInstanceID
+from common.py.data.entities.project import Project, ProjectExternalState
+from common.py.data.entities.user import UserToken
 from common.py.services import Service
 
 from ..data.types import ProjectExternalStateCallbacks
@@ -21,9 +22,11 @@ class ConnectorRequestsHandler(abc.ABC):
 
         self._auth_channel = auth_channel
 
-    def renew_external_project_state(
+    def query_external_project_state(
         self,
-        msg: ProjectExternalStateRenewalEvent,
+        project: Project,
+        connector_instance: ConnectorInstanceID,
+        user_token: UserToken,
         *,
         external_state: ProjectExternalState,
         callbacks: ProjectExternalStateCallbacks,
@@ -32,7 +35,9 @@ class ConnectorRequestsHandler(abc.ABC):
         Called whenever an external project state needs to be renewed.
 
         Args:
-            msg: The originating message.
+            project: The project.
+            connector_instance: The connector instance.
+            user_token: The user token.
             external_state: The current external state.
             callbacks: Callbacks to be invoked upon completion.
         """

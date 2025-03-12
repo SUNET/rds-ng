@@ -1,6 +1,5 @@
-from common.py.api import ProjectExternalStateRenewalEvent
 from common.py.data.entities.connector import ConnectorInstanceID
-from common.py.data.entities.project import ProjectExternalState
+from common.py.data.entities.project import Project, ProjectExternalState
 from common.py.data.entities.user import UserToken
 
 from ..osf import OSFClient, OSFProjectObject
@@ -14,17 +13,19 @@ class OSFRequestsHandler(ConnectorRequestsHandler):
     OSF-specific class to deal with non-job related requests.
     """
 
-    def renew_external_project_state(
+    def query_external_project_state(
         self,
-        msg: ProjectExternalStateRenewalEvent,
+        project: Project,
+        connector_instance: ConnectorInstanceID,
+        user_token: UserToken,
         *,
         external_state: ProjectExternalState,
         callbacks: ProjectExternalStateCallbacks,
     ) -> None:
-        def _get_project_done(project: OSFProjectObject) -> None:
+        def _get_project_done(osf_project: OSFProjectObject) -> None:
             from .osf_utils import process_external_project_state
 
-            process_external_project_state(project, external_state)
+            process_external_project_state(osf_project, external_state)
             callbacks.invoke_done_callbacks(external_state)
 
         def _get_project_failed(exc: Exception) -> None:
@@ -32,8 +33,8 @@ class OSFRequestsHandler(ConnectorRequestsHandler):
 
         if (
             client := self._create_client(
-                connector_instance=msg.connector_instance,
-                user_token=msg.user_token,
+                connector_instance=connector_instance,
+                user_token=user_token,
             )
         ) is not None:
             get_project_callbacks = OSFGetProjectCallbacks()

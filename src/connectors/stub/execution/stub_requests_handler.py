@@ -1,5 +1,6 @@
-from common.py.api import ProjectExternalStateRenewalEvent
-from common.py.data.entities.project import ProjectExternalState
+from common.py.data.entities.connector import ConnectorInstanceID
+from common.py.data.entities.project import Project, ProjectExternalState
+from common.py.data.entities.user import UserToken
 
 from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorRequestsHandler
@@ -10,9 +11,11 @@ class StubRequestsHandler(ConnectorRequestsHandler):
     Stub-specific class to deal with non-job related requests.
     """
 
-    def renew_external_project_state(
+    def query_external_project_state(
         self,
-        event: ProjectExternalStateRenewalEvent,
+        project: Project,
+        connector_instance: ConnectorInstanceID,
+        user_token: UserToken,
         *,
         external_state: ProjectExternalState,
         callbacks: ProjectExternalStateCallbacks,

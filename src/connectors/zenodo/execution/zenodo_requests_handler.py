@@ -1,6 +1,5 @@
-from common.py.api import ProjectExternalStateRenewalEvent
 from common.py.data.entities.connector import ConnectorInstanceID
-from common.py.data.entities.project import ProjectExternalState
+from common.py.data.entities.project import Project, ProjectExternalState
 from common.py.data.entities.user import UserToken
 
 from ..zenodo import ZenodoClient, ZenodoGetProjectCallbacks, ZenodoProjectObject
@@ -13,17 +12,19 @@ class ZenodoRequestsHandler(ConnectorRequestsHandler):
     Zenodo-specific class to deal with non-job related requests.
     """
 
-    def renew_external_project_state(
+    def query_external_project_state(
         self,
-        msg: ProjectExternalStateRenewalEvent,
+        project: Project,
+        connector_instance: ConnectorInstanceID,
+        user_token: UserToken,
         *,
         external_state: ProjectExternalState,
         callbacks: ProjectExternalStateCallbacks,
     ) -> None:
-        def _get_project_done(project: ZenodoProjectObject) -> None:
+        def _get_project_done(zenod_project: ZenodoProjectObject) -> None:
             from .zenodo_utils import process_external_project_state
 
-            process_external_project_state(project, external_state)
+            process_external_project_state(zenod_project, external_state)
             callbacks.invoke_done_callbacks(external_state)
 
         def _get_project_failed(exc: Exception) -> None:
@@ -31,8 +32,8 @@ class ZenodoRequestsHandler(ConnectorRequestsHandler):
 
         if (
             client := self._create_client(
-                connector_instance=msg.connector_instance,
-                user_token=msg.user_token,
+                connector_instance=connector_instance,
+                user_token=user_token,
             )
         ) is not None:
             get_project_callbacks = ZenodoGetProjectCallbacks()
