@@ -268,7 +268,9 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
             self._download_files(osf_project, osf_storage, files=files_list)
         else:
-            self.set_done(ext_data=self._get_job_ext_data(osf_project))
+            self.set_done(
+                osf_project.project_id, ext_data=self._get_job_ext_data(osf_project)
+            )
 
     def _transmitter_prepare_failed(self, exc: Exception) -> None:
         self.set_failed(f"Failed to prepare job: {str(exc)}")
@@ -296,7 +298,9 @@ class OSFJobExecutor(ConnectorJobExecutor):
         callbacks.failed(lambda _, __: self._delete_failed_project(osf_project))
         callbacks.all_done(
             lambda success: (
-                self.set_done(ext_data=self._get_job_ext_data(osf_project))
+                self.set_done(
+                    osf_project.project_id, ext_data=self._get_job_ext_data(osf_project)
+                )
                 if success
                 else None
             )

@@ -81,7 +81,7 @@ class StubJobExecutor(ConnectorJobExecutor):
 
             self._download(files_list)
         else:
-            self.set_done(ext_data=self._get_job_ext_data())
+            self.set_done("<unknown>", ext_data=self._get_job_ext_data())
 
     def _prepare_failed(self, exc: Exception) -> None:
         self.set_failed(f"Failed to prepare job: {str(exc)}")
@@ -94,7 +94,9 @@ class StubJobExecutor(ConnectorJobExecutor):
         callbacks.progress(_report_each_file)
         callbacks.done(lambda res, buffer: self._download_done(res, buffer))
         callbacks.failed(lambda res, exc: self._download_failed(res, exc))
-        callbacks.all_done(lambda _: self.set_done(ext_data=self._get_job_ext_data()))
+        callbacks.all_done(
+            lambda _: self.set_done("<unknown>", ext_data=self._get_job_ext_data())
+        )
 
         self._transmitter.download_list(files, callbacks=callbacks)
 

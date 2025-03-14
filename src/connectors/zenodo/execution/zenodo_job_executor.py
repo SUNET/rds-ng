@@ -244,7 +244,10 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
             self._download_files(zenodo_project, files=files_list)
         else:
-            self.set_done(ext_data=self._get_job_ext_data(zenodo_project))
+            self.set_done(
+                zenodo_project.project_id,
+                ext_data=self._get_job_ext_data(zenodo_project),
+            )
 
     def _transmitter_prepare_failed(self, exc: Exception) -> None:
         self.set_failed(f"Failed to prepare job: {str(exc)}")
@@ -271,7 +274,10 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
         callbacks.failed(lambda _, __: self._delete_failed_project(zenodo_project))
         callbacks.all_done(
             lambda success: (
-                self.set_done(ext_data=self._get_job_ext_data(zenodo_project))
+                self.set_done(
+                    zenodo_project.project_id,
+                    ext_data=self._get_job_ext_data(zenodo_project),
+                )
                 if success
                 else None
             )

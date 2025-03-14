@@ -293,6 +293,17 @@ def create_projects_service(comp: ServerComponent) -> Service:
                 external_state=msg.external_state,
             )
 
+            # Forward the event to the user
+            if session.user_origin:
+                ProjectExternalStateEvent.build(
+                    ctx.message_builder,
+                    project_id=msg.project_id,
+                    user_id=msg.user_id,
+                    connector_instance=msg.connector_instance,
+                    external_state=msg.external_state,
+                    chain=msg,
+                ).emit(Channel.direct(session.user_origin))
+
     @svc.message_handler(ComponentProcessEvent, is_async=True)
     def refresh_project_volatile_states(
         _: ComponentProcessEvent, ctx: ServerServiceContext

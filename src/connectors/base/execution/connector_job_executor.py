@@ -192,7 +192,10 @@ class ConnectorJobExecutor(abc.ABC):
         self.report(progress, "")
 
     def set_done(
-        self, *, ext_data: ProjectJobHistoryRecordExtData | None = None
+        self,
+        external_id: str,
+        *,
+        ext_data: ProjectJobHistoryRecordExtData | None = None,
     ) -> None:
         """
         Marks and reports the job as successfully finished.
@@ -212,7 +215,10 @@ class ConnectorJobExecutor(abc.ABC):
             ext_data=ext_data,
         ).emit(self._target_channel)
 
-        self._log_debug("Job done")
+        # Also refresh the external state after a completed job
+        self._refresh_project_external_state(external_id)
+
+        self._log_debug(f"Job done (external ID: {external_id})")
 
     def set_failed(self, reason: str) -> None:
         """
@@ -237,6 +243,18 @@ class ConnectorJobExecutor(abc.ABC):
         ).emit(self._target_channel)
 
         self._log_debug(failure_msg)
+
+    def _refresh_project_external_state(self, external_id: str) -> None:
+        callbacks = ProjectExternalStateCallbacks()
+        callbacks.done(lambda state: self._send_project_external_state_event(state))
+
+        self.query_external_project_state(
+            ProjectExternalState(
+                external_id=external_id,
+                external_state=ProjectExternalState.State.UPLOADED,
+            ),
+            state_callbacks=callbacks,
+        )
 
     def _send_project_external_state_event(
         self, external_state: ProjectExternalState
