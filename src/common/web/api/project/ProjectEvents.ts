@@ -4,7 +4,7 @@ import { EventComposer } from "../../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
-import { ConnectorInstanceID } from "../../data/entities/connector/ConnectorInstance";
+import { type ConnectorInstanceID } from "../../data/entities/connector/ConnectorInstance";
 import { ProjectLogbook } from "../../data/entities/project/logbook/ProjectLogbook";
 import { Project, type ProjectID } from "../../data/entities/project/Project";
 import { ProjectExternalState, ProjectUploadState } from "../../data/entities/project/ProjectExternalState";

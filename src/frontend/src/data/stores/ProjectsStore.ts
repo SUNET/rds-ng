@@ -3,6 +3,8 @@ import { ref } from "vue";
 
 import { Project, type ProjectID } from "@common/data/entities/project/Project";
 
+import { ProjectVolatileStates } from "@/data/entities/project/ProjectVolatileStates.ts";
+
 /**
  * The projects store for all project-specific data.
  *
@@ -12,11 +14,13 @@ export const useProjectsStore = defineStore("projectsStore", () => {
     const projects = ref<Project[]>([]);
     const activeProject = ref<ProjectID | null | undefined>(undefined);
 
-    let pendingDeletions = ref<ProjectID[]>([]);
+    const pendingDeletions = ref<ProjectID[]>([]);
+
+    const volatileStates = ref(new ProjectVolatileStates());
 
     function resolveActiveProject(): Project | undefined {
         if (activeProject) {
-            const project = projects.value.find(proj => proj.project_id === activeProject.value);
+            const project = projects.value.find((proj) => proj.project_id === activeProject.value);
             if (project) {
                 return project;
             }
@@ -35,7 +39,7 @@ export const useProjectsStore = defineStore("projectsStore", () => {
     }
 
     function unmarkForDeletion(projectID: ProjectID): void {
-        pendingDeletions.value = pendingDeletions.value.filter(elem => elem != projectID);
+        pendingDeletions.value = pendingDeletions.value.filter((elem) => elem != projectID);
     }
 
     function reset(): void {
@@ -43,6 +47,8 @@ export const useProjectsStore = defineStore("projectsStore", () => {
         activeProject.value = undefined;
 
         pendingDeletions.value = [] as ProjectID[];
+
+        volatileStates.value = new ProjectVolatileStates();
     }
 
     function resetPendingDeletions(): void {
@@ -53,6 +59,7 @@ export const useProjectsStore = defineStore("projectsStore", () => {
         projects,
         activeProject,
         pendingDeletions,
+        volatileStates,
         resolveActiveProject,
         markForDeletion,
         unmarkForDeletion,

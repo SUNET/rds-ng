@@ -1,5 +1,5 @@
 import { CreateProjectReply, DeleteProjectReply, ListProjectsReply, UpdateProjectReply } from "@common/api/project/ProjectCommands";
-import { ProjectLogbookEvent, ProjectsListEvent } from "@common/api/project/ProjectEvents";
+import { ProjectExternalStateEvent, ProjectLogbookEvent, ProjectsListEvent } from "@common/api/project/ProjectEvents";
 import { Service } from "@common/services/Service";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -77,6 +77,14 @@ export default function (comp: FrontendComponent): Service {
                 } else {
                     ctx.logger.error(`Unable to delete project ${msg.project_id}`, "projects", { reason: msg.message });
                 }
+            });
+
+            svc.messageHandler(ProjectExternalStateEvent, (msg: ProjectExternalStateEvent, ctx: FrontendServiceContext) => {
+                ctx.projectsStore.volatileStates.addState(msg.project_id, msg.connector_instance, msg.external_state);
+
+                ctx.logger.debug(`Received external state update for ${msg.project_id}/${msg.connector_instance}`, "projects", {
+                    state: JSON.stringify(msg.external_state)
+                });
             });
         },
         FrontendServiceContext
