@@ -97,8 +97,11 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
             requests_options=RequestsExecutorOptions(content_type=None),
         )
 
+        self._reuse_external_project = False
+
     def start(self, external_state: ProjectExternalState) -> None:
-        if check_reuse_external_project(external_state):
+        self._reuse_external_project = check_reuse_external_project(external_state)
+        if self._reuse_external_project:
             self._project_update(external_state)
         else:
             self._project_create()
@@ -318,7 +321,8 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
     # Miscellaneous
 
     def _delete_failed_project(self, zenodo_project: ZenodoProjectObject) -> None:
-        self._zenodo_client.delete_project(zenodo_project)
+        if not self._reuse_external_project:
+            self._zenodo_client.delete_project(zenodo_project)
 
     def _get_job_ext_data(
         self, zenodo_project: ZenodoProjectObject

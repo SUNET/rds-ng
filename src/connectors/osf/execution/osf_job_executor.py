@@ -92,8 +92,11 @@ class OSFJobExecutor(ConnectorJobExecutor):
             ),
         )
 
+        self._reuse_external_project = False
+
     def start(self, external_state: ProjectExternalState) -> None:
-        if check_reuse_external_project(external_state):
+        self._reuse_external_project = check_reuse_external_project(external_state)
+        if self._reuse_external_project:
             self._project_update(external_state)
         else:
             self._project_create()
@@ -342,7 +345,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
     # Miscellaneous
 
     def _delete_failed_project(self, osf_project: OSFProjectObject) -> None:
-        self._osf_client.delete_project(osf_project)
+        if not self._reuse_external_project:
+            self._osf_client.delete_project(osf_project)
 
     def _get_job_ext_data(
         self, osf_project: OSFProjectObject
