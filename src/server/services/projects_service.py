@@ -1,12 +1,16 @@
 import time
+import typing
 
 from common.py.api import ProjectExternalStateRenewalEvent
 from common.py.core.messaging import Channel
-from common.py.data.entities.connector import find_connector_by_instance_id
+from common.py.data.entities.connector import (
+    ConnectorInstanceID,
+    find_connector_by_instance_id,
+)
 from common.py.services import Service
 from common.py.utils import EntryGuard
 
-from .tools import send_projects_list
+from .tools import send_project_external_states, send_projects_list
 from ..component import ServerComponent
 from ..networking.session import Session
 
@@ -288,21 +292,10 @@ def create_projects_service(comp: ServerComponent) -> Service:
         if ctx.user is None:
             return
 
-        # Send all existing states of the touched project to the user
-        for [
-            _,
-            connector_instance,
-        ], state in ctx.session.user_data.volatile_project_states.get_states_by_project(
-            msg.project_id
-        ).items():
-            ProjectExternalStateEvent.build(
-                ctx.message_builder,
-                project_id=msg.project_id,
-                user_id=ctx.user.user_id,
-                connector_instance=connector_instance,
-                external_state=state.external_state,
-                chain=msg,
-            ).emit(Channel.direct(ctx.session.user_origin))
+        if (
+            project := ctx.storage_pool.project_storage.get(msg.project_id)
+        ) is not None:
+            send_project_external_states(msg, ctx, project=project)
 
     @svc.message_handler(ProjectExternalStateEvent, is_async=True)
     def project_external_state(
