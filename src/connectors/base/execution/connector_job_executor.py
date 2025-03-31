@@ -2,16 +2,23 @@ import abc
 import time
 import typing
 
+from common.py.api import ProjectExternalStateEvent
 from common.py.component import BackendComponent
 from common.py.core.logging import debug
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.data.entities.connector import Connector
+from common.py.data.entities.project import (
+    get_last_known_external_project_state,
+    ProjectExternalState,
+)
 from common.py.data.entities.project.logbook import ProjectJobHistoryRecordExtData
 from common.py.integration.resources.brokers import ResourcesBrokerTunnelType
 from common.py.integration.resources.transmitters import ResourcesTransmitter
 from common.py.services import Service
 
 from ..data.entities.connector import ConnectorJob
+from ..data.types import ProjectExternalStateCallbacks
 
 
 class ConnectorJobExecutor(abc.ABC):
@@ -39,12 +46,17 @@ class ConnectorJobExecutor(abc.ABC):
             target_channel: The target server channel.
             tunnel_type: The resources broker tunnel type to use for downloads.
         """
+        from ..component import ConnectorComponent
         from ..settings import TransmissionSettingIDs
 
         self._job = job
 
         self._mesage_builder = message_builder
         self._target_channel = target_channel
+
+        self._connector_options = typing.cast(
+            ConnectorComponent, comp
+        ).connector_info.options
 
         self._transmitter: ResourcesTransmitter = ResourcesTransmitter(
             comp,
@@ -61,11 +73,54 @@ class ConnectorJobExecutor(abc.ABC):
 
         self._is_active = True
 
-    def start(self) -> None:
+    def run(self) -> None:
+        """
+        Called to run the job execution.
+        """
+
+        # Get the last known external project state; this can only be DEFAULT or UPLOADED
+        last_external_state = get_last_known_external_project_state(
+            self._job.project, self._job.connector_instance
+        )
+
+        # If the project has already been uploaded, update its state to reflect the actual state; otherwise we can simply start the job
+        if last_external_state.external_state == ProjectExternalState.State.UPLOADED:
+            callbacks = ProjectExternalStateCallbacks()
+            callbacks.done(lambda state: self._send_project_external_state_event(state))
+            callbacks.done(lambda state: self._process_project_external_state(state))
+            callbacks.failed(lambda exc: self.set_failed(str(exc)))
+
+            self.query_external_project_state(
+                last_external_state, state_callbacks=callbacks
+            )
+        else:
+            self._send_project_external_state_event(last_external_state)
+            self.start(last_external_state)
+
+    def query_external_project_state(
+        self,
+        external_state: ProjectExternalState,
+        *,
+        state_callbacks: ProjectExternalStateCallbacks,
+    ) -> None:
+        """
+        Queries the actual external project state from the remote service.
+
+        Args:
+            external_state: The currently stored external state.
+            state_callbacks: The callbacks for asynchronous continuation.
+        """
+
+        raise NotImplementedError()
+
+    def start(self, external_state: ProjectExternalState) -> None:
         """
         Called when the job execution is started. Must always be implemented.
 
         If the job cannot start, an exception should be thrown.
+
+        Args:
+            external_state: The external project state.
         """
 
         raise NotImplementedError()
@@ -110,7 +165,13 @@ class ConnectorJobExecutor(abc.ABC):
             message=message,
         ).emit(self._target_channel)
 
-        self._log_debug(f"Job progression update: {message} ({progress*100:0.1f}%)")
+        if ProjectJobProgressEvent.Contents.MESSAGE in contents:
+            if ProjectJobProgressEvent.Contents.PROGRESS in contents:
+                self._log_debug(
+                    f"Job progression update: {message} ({progress*100:0.1f}%)"
+                )
+            else:
+                self._log_debug(f"Job progression update: {message}")
 
     def report_message(self, message: str) -> None:
         """
@@ -131,7 +192,10 @@ class ConnectorJobExecutor(abc.ABC):
         self.report(progress, "")
 
     def set_done(
-        self, *, ext_data: ProjectJobHistoryRecordExtData | None = None
+        self,
+        external_id: str,
+        *,
+        ext_data: ProjectJobHistoryRecordExtData | None = None,
     ) -> None:
         """
         Marks and reports the job as successfully finished.
@@ -151,7 +215,10 @@ class ConnectorJobExecutor(abc.ABC):
             ext_data=ext_data,
         ).emit(self._target_channel)
 
-        self._log_debug("Job done")
+        # Also refresh the external state after a completed job
+        self._refresh_project_external_state(external_id)
+
+        self._log_debug(f"Job done (external ID: {external_id})")
 
     def set_failed(self, reason: str) -> None:
         """
@@ -176,6 +243,49 @@ class ConnectorJobExecutor(abc.ABC):
         ).emit(self._target_channel)
 
         self._log_debug(failure_msg)
+
+    def _refresh_project_external_state(self, external_id: str) -> None:
+        callbacks = ProjectExternalStateCallbacks()
+        callbacks.done(lambda state: self._send_project_external_state_event(state))
+
+        self.query_external_project_state(
+            ProjectExternalState(
+                external_id=external_id,
+                external_state=ProjectExternalState.State.UPLOADED,
+            ),
+            state_callbacks=callbacks,
+        )
+
+    def _send_project_external_state_event(
+        self, external_state: ProjectExternalState
+    ) -> None:
+        # Notify the server about the new external state
+        ProjectExternalStateEvent.build(
+            self._mesage_builder,
+            project_id=self._job.project.project_id,
+            user_id=self._job.user_token.user_id,
+            connector_instance=self._job.connector_instance,
+            external_state=external_state,
+        ).emit(self._target_channel)
+
+    def _process_project_external_state(
+        self, external_state: ProjectExternalState
+    ) -> None:
+        # Check for various fail states
+        if external_state.external_state == ProjectExternalState.State.LOCKED:
+            self.set_failed("The project is locked and cannot be updated anymore")
+        elif (
+            external_state.external_state == ProjectExternalState.State.UPLOADED
+            and Connector.Options.UPLOAD_ONCE in self._connector_options
+        ):
+            self.set_failed("The project has already been uploaded")
+        elif external_state.external_state == ProjectExternalState.State.UNKNOWN:
+            self.set_failed(
+                "The project is in an unknown state and cannot be updated at the moment"
+            )
+        else:
+            # The project is in a valid state, so we can start the job
+            self.start(external_state)
 
     def _log_debug(self, message: str) -> None:
         debug(

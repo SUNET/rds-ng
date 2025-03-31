@@ -1,8 +1,6 @@
 import typing
 
-import requests
-
-from common.py.utils import RequestData
+from common.py.utils import ExtendedDictionary, RequestData
 
 
 class OSFRequestData(RequestData):
@@ -19,18 +17,32 @@ class OSFRequestData(RequestData):
             return ""
 
         errors: typing.List[str] = []
-        for error in self.value("errors", []):
-            source = self._value(error, "source.pointer", "")
-            detail = self._value(error, "detail", "Unknown error")
+        for error in self.data.value("errors", []):
+            source = self.data.value_from_data(error, "source.pointer", "")
+            detail = self.data.value_from_data(error, "detail", "Unknown error")
             errors.append(f"{source}: {detail}" if source != "" else detail)
         else:
             errors.append(self._response.reason)
         return "; ".join(errors)
 
 
-class OSFProjectData(OSFRequestData):
+class OSFObject(ExtendedDictionary):
     """
-    OSF project data.
+    Base for an OSF object.
+    """
+
+    def __init__(self, data: typing.Any, root: str = "data"):
+        super().__init__(data)
+
+        self._root = root
+
+    def _get_data_path(self, path: str) -> str:
+        return f"{self._root}.{path}" if self._root != "" else path
+
+
+class OSFProjectObject(OSFObject):
+    """
+    OSF project object.
     """
 
     @property
@@ -38,56 +50,63 @@ class OSFProjectData(OSFRequestData):
         """
         The ID  of the project.
         """
-        return self.value("data.id")
+        return self.value(self._get_data_path("id"))
 
     @property
     def project_link(self) -> str:
         """
         The external link for the project.
         """
-        return self.value("data.links.html")
+        return self.value(self._get_data_path("links.html"))
 
 
-class OSFStorageData(OSFRequestData):
+class OSFStorageObject(OSFObject):
     """
-    OSF storage data.
+    OSF storage object.
     """
 
-    def __init__(self, resp: requests.Response, *, verify_response: bool = True):
-        super().__init__(resp, verify_response=verify_response)
+    def __init__(self, data: typing.Any):
+        super().__init__(data)
 
-        self._folders: typing.List[OSFStorageData] = []
+        self._folders: typing.List[OSFStorageObject] = []
 
     @property
     def storage_id(self) -> str:
         """
         The ID of the storage.
         """
-        return self.value("data.id")
+        return self.value(self._get_data_path("id"))
 
     @property
     def name(self) -> str:
         """
         The name (path) of the storage.
         """
-        return self.value("data.attributes.name")
+        return self.value(self._get_data_path("attributes.name"))
+
+    @property
+    def is_public(self) -> bool:
+        """
+        Whether the project is public.
+        """
+        return self.value(self._get_data_path("attributes.public"))
 
     @property
     def file_link(self) -> str:
         """
         The link to upload files.
         """
-        return self.value("data.links.upload")
+        return self.value(self._get_data_path("links.upload"))
 
     @property
     def folder_link(self) -> str:
         """
         The link to create new folders.
         """
-        return self.value("data.links.new_folder")
+        return self.value(self._get_data_path("links.new_folder"))
 
     @property
-    def folders(self) -> typing.List["OSFStorageData"]:
+    def folders(self) -> typing.List["OSFStorageObject"]:
         """
         A list of all sub-folders (as OSFStorageData).
 
@@ -97,7 +116,27 @@ class OSFStorageData(OSFRequestData):
         return self._folders
 
 
-class OSFFileData(OSFRequestData):
+class OSFFileObject(OSFObject):
     """
-    OSF file data.
+    OSF file object.
     """
+
+    @property
+    def delete_link(self) -> str:
+        """
+        The link to delete a file or folder.
+        """
+        return self.value(self._get_data_path("links.delete"))
+
+
+class OSFFileListObject(OSFObject):
+    """
+    OSf file list object.
+    """
+
+    @property
+    def files(self) -> typing.List[OSFFileObject]:
+        """
+        The list of files.
+        """
+        return [OSFFileObject(file_data, "") for file_data in self.value("data")]

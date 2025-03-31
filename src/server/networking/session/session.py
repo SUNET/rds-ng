@@ -6,6 +6,8 @@ from common.py.data.entities.resource import ResourcesBrokerToken
 from common.py.data.entities.user import UserToken
 from common.py.utils import UnitID, generate_random_string
 
+from .data import UserSessionData
+
 SessionID = UnitID
 SessionData = typing.Dict[str, typing.Any]
 
@@ -37,6 +39,8 @@ class Session:
         self._fingerprint = generate_random_string(32)
 
         self._data: SessionData = {}
+        self._user_data = UserSessionData()
+
         self._lock = threading.RLock()
 
     def authenticate(self, user_token: UserToken, user_origin: UnitID) -> bool:
@@ -133,6 +137,14 @@ class Session:
         """
         with self._lock:
             return self._user_origin
+
+    @property
+    def user_data(self) -> UserSessionData:
+        """
+        User-specific session data.
+        """
+        with self._lock:
+            return self._user_data
 
     @property
     def broker_token(self) -> ResourcesBrokerToken | None:

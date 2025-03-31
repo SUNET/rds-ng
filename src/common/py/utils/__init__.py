@@ -1,4 +1,5 @@
 from .entry_guard import EntryGuard
+from .extended_dictionary import ExtendedDictionary
 from .files import get_mime_type
 from .items_catalog import ItemsCatalog
 from .paths import relativize_path

@@ -2,13 +2,29 @@ import typing
 
 from common.py.utils.func import ExecutionCallbacks
 
-from .osf_request_data import OSFFileData, OSFProjectData, OSFStorageData
+from .osf_request_data import (
+    OSFFileListObject,
+    OSFFileObject,
+    OSFProjectObject,
+    OSFStorageObject,
+)
+
+
+class OSFGetProjectCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[OSFProjectObject], None],
+        typing.Callable[[Exception], None],
+    ]
+):
+    """
+    Callbacks for the get project API call.
+    """
 
 
 class OSFCreateProjectCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[OSFProjectData], None],
-        typing.Callable[[str], None],
+        typing.Callable[[OSFProjectObject], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
@@ -16,10 +32,21 @@ class OSFCreateProjectCallbacks(
     """
 
 
+class OSFUpdateProjectCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[OSFProjectObject], None],
+        typing.Callable[[Exception], None],
+    ]
+):
+    """
+    Callbacks for the update project API call.
+    """
+
+
 class OSFDeleteProjectCallbacks(
     ExecutionCallbacks[
         typing.Callable[[], None],
-        typing.Callable[[str], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
@@ -29,8 +56,8 @@ class OSFDeleteProjectCallbacks(
 
 class OSFGetStorageCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[OSFStorageData], None],
-        typing.Callable[[str], None],
+        typing.Callable[[OSFStorageObject], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
@@ -38,12 +65,45 @@ class OSFGetStorageCallbacks(
     """
 
 
+class OSFGetFileListCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[OSFFileListObject], None],
+        typing.Callable[[Exception], None],
+    ]
+):
+    """
+    Callbacks for the get file list API call.
+    """
+
+
 class OSFUploadFileCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[OSFFileData], None],
-        typing.Callable[[str], None],
+        typing.Callable[[OSFFileObject], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
     Callbacks for the upload file API call.
+    """
+
+
+class OSFDeleteFileCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[], None],
+        typing.Callable[[Exception], None],
+    ]
+):
+    """
+    Callbacks for the delete file API call.
+    """
+
+
+class OSFDeleteAllFilesCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[], None],
+        typing.Callable[[Exception], None],
+    ]
+):
+    """
+    Callbacks for the delete all files API call.
     """

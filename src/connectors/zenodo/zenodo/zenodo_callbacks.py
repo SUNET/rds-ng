@@ -2,13 +2,28 @@ import typing
 
 from common.py.utils.func import ExecutionCallbacks
 
-from .zenodo_request_data import ZenodoFileData, ZenodoProjectData
+from .zenodo_request_data import (
+    ZenodoFileObject,
+    ZenodoFileListObject,
+    ZenodoProjectObject,
+)
+
+
+class ZenodoGetProjectCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[ZenodoProjectObject], None],
+        typing.Callable[[Exception], None],
+    ]
+):
+    """
+    Callbacks for the get project API call.
+    """
 
 
 class ZenodoCreateProjectCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[ZenodoProjectData], None],
-        typing.Callable[[str], None],
+        typing.Callable[[ZenodoProjectObject], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
@@ -16,10 +31,21 @@ class ZenodoCreateProjectCallbacks(
     """
 
 
+class ZenodoUpdateProjectCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[ZenodoProjectObject], None],
+        typing.Callable[[Exception], None],
+    ]
+):
+    """
+    Callbacks for the update project API call.
+    """
+
+
 class ZenodoDeleteProjectCallbacks(
     ExecutionCallbacks[
         typing.Callable[[], None],
-        typing.Callable[[str], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
@@ -27,12 +53,45 @@ class ZenodoDeleteProjectCallbacks(
     """
 
 
+class ZenodoGetFileListCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[ZenodoFileListObject], None],
+        typing.Callable[[Exception], None],
+    ]
+):
+    """
+    Callbacks for the get file list API call.
+    """
+
+
 class ZenodoUploadFileCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[ZenodoFileData], None],
-        typing.Callable[[str], None],
+        typing.Callable[[ZenodoFileObject], None],
+        typing.Callable[[Exception], None],
     ]
 ):
     """
     Callbacks for the upload file API call.
+    """
+
+
+class ZenodoDeleteFileCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[], None],
+        typing.Callable[[Exception], None],
+    ]
+):
+    """
+    Callbacks for the delete file API call.
+    """
+
+
+class ZenodoDeleteAllFilesCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[], None],
+        typing.Callable[[Exception], None],
+    ]
+):
+    """
+    Callbacks for the delete all files API call.
     """

@@ -10,6 +10,7 @@ import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInst
 import { connectorInstanceIsAuthorized } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { connectorRequiresAuthorization, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { Project } from "@common/data/entities/project/Project";
+import { ProjectUploadState } from "@common/data/entities/project/ProjectExternalState.ts";
 import { ProjectStatistics } from "@common/data/entities/project/ProjectStatistics";
 import { errorMessageDialog } from "@common/ui/dialogs/MessageDialog";
 import { finishSentence, formatLocaleTimestamp } from "@common/utils/Strings";
@@ -18,11 +19,13 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { findConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
 import { getActiveProjectJob } from "@/data/entities/project/ProjectJobUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { useProjectsStore } from "@/data/stores/ProjectsStore.ts";
 import { useUserStore } from "@/data/stores/UserStore";
 import { InitiateProjectJobAction } from "@/ui/actions/project/InitiateProjectJobAction";
 import { ListProjectJobsAction } from "@/ui/actions/project/ListProjectJobsAction";
 
 const comp = FrontendComponent.inject();
+const projectsStore = useProjectsStore();
 const consStore = useConnectorsStore();
 const userStore = useUserStore();
 const props = defineProps({
@@ -37,7 +40,9 @@ const props = defineProps({
 });
 
 const { project, instance } = toRefs(props);
+const { volatileStates } = storeToRefs(projectsStore);
 const { userAuthorizations } = storeToRefs(userStore);
+
 const connector = computed(() => findConnectorByID(consStore.connectors, unref(instance)!.connector_id));
 const uploadOnce = computed(() => (unref(connector)!.options & ConnectorOptions.UploadOnce) == ConnectorOptions.UploadOnce);
 const requiresAuth = computed(() => connectorRequiresAuthorization(unref(connector)!));
@@ -45,18 +50,26 @@ const isAuthorized = computed(() => connectorInstanceIsAuthorized(unref(instance
 const category = unref(connector) ? findConnectorCategory(unref(connector)!) : undefined;
 
 const activeJob = computed(() => getActiveProjectJob(unref(project)!, unref(instance)!));
+const uploadState = computed(
+    () => unref(volatileStates).findState(unref(project)!.project_id, unref(instance)!.instance_id)?.externalState.external_state || ProjectUploadState.Unknown
+);
 const jobStats = computed(() => new ProjectStatistics(unref(project)!).getJobStatistics(unref(instance)!.instance_id));
 
 const initiateUpload = ref(false);
 const disableUpload = computed(() => {
+    if (unref(uploadState) != ProjectUploadState.Default && unref(uploadState) != ProjectUploadState.Uploaded) {
+        return true;
+    }
     if (unref(connector)) {
         return (unref(uploadOnce) && unref(jobStats).totalCount.succeeded >= 1) || (unref(requiresAuth) && !unref(isAuthorized));
     }
     return true;
 });
 const disableReason = computed(() => {
-    if (unref(uploadOnce)) {
-        return "The project has already been " + category?.verbStatusDone.toLowerCase();
+    if (unref(uploadOnce) || unref(uploadState) == ProjectUploadState.Locked) {
+        return "The project has already been " + category?.verbStatusDone.toLowerCase() + " and is now locked";
+    } else if (unref(uploadState) == ProjectUploadState.Unknown) {
+        return "Retrieving current project state...";
     } else if (unref(requiresAuth)) {
         return "The connector has not been configured yet";
     }

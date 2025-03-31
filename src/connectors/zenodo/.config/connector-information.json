@@ -3,7 +3,7 @@
     "description": "Zenodo makes the sharing, curation and publication of data and software a reality for all researchers.",
     "category": "repository",
     "options": {
-        "publish_once": false
+        "upload_once": false
     },
     "logos": {
         "default": "/component/connectors/zenodo/.assets/logo.png",

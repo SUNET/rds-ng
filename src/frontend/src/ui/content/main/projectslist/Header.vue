@@ -44,10 +44,10 @@ function onEditUserSettings(): void {
 </script>
 
 <template>
-    <div class="grid grid-rows-2 grid-cols-[min-content_1fr_max-content] grid-flow-col gap-x-2 content-center items-center r-primary-bg r-primary-text">
+    <div class="grid grid-rows-2 grid-cols-[min-content_1fr_max-content] grid-flow-col gap-y-3 content-center items-center r-primary-bg r-primary-text">
         <div class="row-span-2">
             <a href="https://www.research-data-services.org" target="_blank">
-                <img id="logo" src="@assets/img/rds-octopus-wh.svg" alt="RDS Logo" class="p-1.5" title="Visit the RDS website" />
+                <img id="logo" src="@assets/img/rds-octopus-wh.svg" alt="RDS Logo" class="p-3" title="Visit the RDS website" />
             </a>
         </div>
 

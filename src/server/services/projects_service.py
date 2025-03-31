@@ -1,9 +1,18 @@
 import time
+import typing
 
+from common.py.api import ProjectExternalStateRenewalEvent
+from common.py.core.messaging import Channel
+from common.py.data.entities.connector import (
+    ConnectorInstanceID,
+    find_connector_by_instance_id,
+)
 from common.py.services import Service
+from common.py.utils import EntryGuard
 
-from .tools import send_projects_list
+from .tools import send_project_external_states, send_projects_list
 from ..component import ServerComponent
+from ..networking.session import Session
 
 
 def create_projects_service(comp: ServerComponent) -> Service:
@@ -17,7 +26,8 @@ def create_projects_service(comp: ServerComponent) -> Service:
         The newly created service.
     """
 
-    from common.py.api.project import (
+    from common.py.api import (
+        ComponentProcessEvent,
         ListProjectsCommand,
         ListProjectsReply,
         CreateProjectCommand,
@@ -28,8 +38,10 @@ def create_projects_service(comp: ServerComponent) -> Service:
         DeleteProjectReply,
         UpdateProjectFeaturesCommand,
         UpdateProjectFeaturesReply,
+        ProjectTouchEvent,
         MarkProjectLogbookSeenCommand,
         MarkProjectLogbookSeenReply,
+        ProjectExternalStateEvent,
     )
     from common.py.data.entities import clone_entity
     from common.py.data.entities.project import Project
@@ -274,5 +286,97 @@ def create_projects_service(comp: ServerComponent) -> Service:
         ).emit()
 
         send_projects_list(msg, ctx)
+
+    @svc.message_handler(ProjectTouchEvent, is_async=True)
+    def project_touched(msg: ProjectTouchEvent, ctx: ServerServiceContext) -> None:
+        if ctx.user is None:
+            return
+
+        if (
+            project := ctx.storage_pool.project_storage.get(msg.project_id)
+        ) is not None:
+            send_project_external_states(msg, ctx, project=project)
+
+    @svc.message_handler(ProjectExternalStateEvent, is_async=True)
+    def project_external_state(
+        msg: ProjectExternalStateEvent, ctx: ServerServiceContext
+    ) -> None:
+        for session in ctx.session_manager.find_user_sessions(msg.user_id):
+            session.user_data.volatile_project_states.set(
+                msg.project_id,
+                msg.connector_instance,
+                external_state=msg.external_state,
+            )
+
+            # Forward the event to the user
+            if session.user_origin:
+                ProjectExternalStateEvent.build(
+                    ctx.message_builder,
+                    project_id=msg.project_id,
+                    user_id=msg.user_id,
+                    connector_instance=msg.connector_instance,
+                    external_state=msg.external_state,
+                    chain=msg,
+                ).emit(Channel.direct(session.user_origin))
+
+    @svc.message_handler(ComponentProcessEvent, is_async=True)
+    def refresh_project_volatile_states(
+        _: ComponentProcessEvent, ctx: ServerServiceContext
+    ) -> None:
+        with EntryGuard("refresh_project_volatile_states") as guard:
+            if not guard.can_execute:
+                return
+
+            for session in ctx.session_manager.sessions:
+                # Skip sessions w/o an authenticated user
+                if session.status != Session.Status.AUTHENTICATED:
+                    continue
+
+                # Try to get the user account, skip if none could be found
+                if (
+                    user := ctx.storage_pool.user_storage.get(
+                        session.user_token.user_id
+                    )
+                ) is None:
+                    continue
+
+                for (
+                    outdated_state
+                ) in session.user_data.volatile_project_states.get_outdated_states():
+                    # Skip states for currently running jobs
+                    if (
+                        ctx.storage_pool.project_job_storage.get(
+                            (
+                                outdated_state.project_id,
+                                outdated_state.connector_instance,
+                            )
+                        )
+                        is not None
+                    ):
+                        continue
+
+                    # Get the project and connector; if any of these is None, skip over
+                    if (
+                        project := ctx.storage_pool.project_storage.get(
+                            outdated_state.project_id
+                        )
+                    ) is None:
+                        continue
+
+                    if (
+                        connector := find_connector_by_instance_id(
+                            ctx.storage_pool.connector_storage.list(),
+                            user.user_settings.connector_instances,
+                            outdated_state.connector_instance,
+                        )
+                    ) is None:
+                        continue
+
+                    ProjectExternalStateRenewalEvent.build(
+                        ctx.message_builder,
+                        project=project,
+                        connector_instance=outdated_state.connector_instance,
+                        user_token=session.user_token,
+                    ).emit(Channel.direct(connector.connector_address))
 
     return svc

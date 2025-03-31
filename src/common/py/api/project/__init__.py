@@ -10,7 +10,13 @@ from .project_commands import (
     UpdateProjectCommand,
     UpdateProjectReply,
 )
-from .project_events import ProjectLogbookEvent, ProjectsListEvent
+from .project_events import (
+    ProjectExternalStateEvent,
+    ProjectExternalStateRenewalEvent,
+    ProjectLogbookEvent,
+    ProjectsListEvent,
+    ProjectTouchEvent,
+)
 from .project_exporters_commands import (
     ExportProjectCommand,
     ExportProjectReply,

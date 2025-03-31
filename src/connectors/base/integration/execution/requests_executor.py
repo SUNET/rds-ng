@@ -1,4 +1,3 @@
-import json
 import typing
 from dataclasses import dataclass
 
@@ -157,6 +156,32 @@ class RequestsExecutor(AuthorizedExecutor):
             **kwargs,
         )
 
+    def patch(
+        self,
+        session: requests.Session,
+        path: typing.List[str] | str,
+        *args,
+        **kwargs,
+    ) -> requests.Response:
+        """
+        Performs a PATCH request.
+
+        Args:
+            session: The session to use.
+            path: The path as an array.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            The response object.
+        """
+        return session.patch(
+            self._url(path),
+            *args,
+            timeout=self._request_timeout,
+            **kwargs,
+        )
+
     def delete(
         self,
         session: requests.Session,
@@ -197,7 +222,7 @@ class RequestsExecutor(AuthorizedExecutor):
         *,
         cb_exec: typing.Callable[..., typing.Any],
         cb_done: typing.Callable[[typing.Any], None],
-        cb_failed: typing.Callable[[str], None],
+        cb_failed: typing.Callable[[Exception], None],
         cb_retry: typing.Callable[..., None] | None = None,
         **kwargs,
     ) -> None:

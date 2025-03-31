@@ -207,6 +207,16 @@ def create_project_jobs_service(comp: ServerComponent) -> Service:
                 _remove_failed_job(job, project, ctx, message=msg.message)
 
         def notify_job(job: ProjectJob, session: Session) -> None:
+            # Let the clients know about the failed start
+            if not msg.success:
+                ProjectJobCompletionEvent.build(
+                    ctx.message_builder,
+                    project_id=job.project_id,
+                    connector_instance=job.connector_instance,
+                    success=False,
+                    message=msg.message,
+                ).emit(Channel.direct(session.user_origin))
+
             if project is not None:
                 send_project_logbook(msg, ctx, project, session=session)
 

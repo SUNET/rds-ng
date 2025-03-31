@@ -69,3 +69,11 @@ class SessionManager:
                 if session.user_token and session.user_token.user_id == user_id:
                     sessions.append(session)
             return sessions
+
+    @property
+    def sessions(self) -> typing.List[Session]:
+        """
+        A list of all running sessions.
+        """
+        with SessionManager._lock:
+            return list(SessionManager._sessions.values())
