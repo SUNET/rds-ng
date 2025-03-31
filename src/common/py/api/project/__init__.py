@@ -15,6 +15,7 @@ from .project_events import (
     ProjectExternalStateRenewalEvent,
     ProjectLogbookEvent,
     ProjectsListEvent,
+    ProjectTouchEvent,
 )
 from .project_exporters_commands import (
     ExportProjectCommand,

@@ -10,6 +10,7 @@ import { Project, type ProjectID, ProjectStatus } from "@common/data/entities/pr
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
+import { TouchProjectAction } from "@/ui/actions/project/TouchProjectAction.ts";
 import { useProjectTools } from "@/ui/tools/project/ProjectTools";
 
 import ProjectsListboxItem from "@/ui/content/main/projectslist/ProjectsListboxItem.vue";
@@ -38,8 +39,15 @@ watch(
             activeProject.value = oldProj;
         }
 
-        // Update the shown URL to reflect the selected project
         if (activeProject.value !== oldProj) {
+            // Notify the server about the project being selected
+            if (!!activeProject.value) {
+                const action = new TouchProjectAction(comp, true);
+                action.prepare(activeProject.value);
+                action.execute();
+            }
+
+            // Update the shown URL to reflect the selected project
             comp.userInterface.frontendView.navigateTo(true, undefined, { project_id: activeProject.value });
         }
     },

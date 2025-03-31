@@ -34,6 +34,7 @@ def create_projects_service(comp: ServerComponent) -> Service:
         DeleteProjectReply,
         UpdateProjectFeaturesCommand,
         UpdateProjectFeaturesReply,
+        ProjectTouchEvent,
         MarkProjectLogbookSeenCommand,
         MarkProjectLogbookSeenReply,
         ProjectExternalStateEvent,
@@ -281,6 +282,12 @@ def create_projects_service(comp: ServerComponent) -> Service:
         ).emit()
 
         send_projects_list(msg, ctx)
+
+    @svc.message_handler(ProjectTouchEvent, is_async=True)
+    def project_touched(msg: ProjectTouchEvent, ctx: ServerServiceContext) -> None:
+        print("--------------------", flush=True)
+        print(msg.project_id, flush=True)
+        print("--------------------", flush=True)
 
     @svc.message_handler(ProjectExternalStateEvent, is_async=True)
     def project_external_state(

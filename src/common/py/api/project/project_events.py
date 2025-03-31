@@ -38,6 +38,34 @@ class ProjectsListEvent(Event):
         return message_builder.build_event(ProjectsListEvent, chain, projects=projects)
 
 
+@Message.define("event/project/touch")
+class ProjectTouchEvent(Event):
+    """
+    Emitted whenever a project has been "touched" (i.e., selected/activated) by the user.
+
+    Args:
+        project_id: The project ID.
+    """
+
+    project_id: ProjectID
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        project_id: ProjectID,
+        chain: Message | None = None
+    ) -> EventComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_event(
+            ProjectExternalStateRenewalEvent,
+            chain,
+            project_id=project_id,
+        )
+
+
 @Message.define("event/project/logbook")
 class ProjectLogbookEvent(Event):
     """

@@ -30,6 +30,23 @@ export class ProjectsListEvent extends Event {
 }
 
 /**
+ * Emitted whenever a project has been "touched" (i.e., selected/activated) by the user.
+ *
+ * @param project_id - The project ID.
+ */
+@Message.define("event/project/touch")
+export class ProjectTouchEvent extends Event {
+    public readonly project_id: ProjectID = 0;
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(messageBuilder: MessageBuilder, projectID: ProjectID, chain: Message | null = null): EventComposer<ProjectTouchEvent> {
+        return messageBuilder.buildEvent(ProjectTouchEvent, { project_id: projectID }, chain);
+    }
+}
+
+/**
  * Emitted whenever the project's logbook has been updated.
  *
  * @param project_id - The project ID.
