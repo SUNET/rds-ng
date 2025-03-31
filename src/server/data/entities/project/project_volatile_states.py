@@ -13,8 +13,7 @@ class ProjectVolatileStates:
     A map of all project volatile states (mapped using the project and connector instance ID).
     """
 
-    # TODO
-    STATE_LIFETIME = 10  # 60 * 60  # Keep states valid for one hour
+    STATE_LIFETIME = 60 * 60  # Keep states valid for one hour
 
     def __init__(self):
         self._states: typing.Dict[
