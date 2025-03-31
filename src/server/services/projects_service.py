@@ -285,9 +285,24 @@ def create_projects_service(comp: ServerComponent) -> Service:
 
     @svc.message_handler(ProjectTouchEvent, is_async=True)
     def project_touched(msg: ProjectTouchEvent, ctx: ServerServiceContext) -> None:
-        print("--------------------", flush=True)
-        print(msg.project_id, flush=True)
-        print("--------------------", flush=True)
+        if ctx.user is None:
+            return
+
+        # Send all existing states of the touched project to the user
+        for [
+            _,
+            connector_instance,
+        ], state in ctx.session.user_data.volatile_project_states.get_states_by_project(
+            msg.project_id
+        ).items():
+            ProjectExternalStateEvent.build(
+                ctx.message_builder,
+                project_id=msg.project_id,
+                user_id=ctx.user.user_id,
+                connector_instance=connector_instance,
+                external_state=state.external_state,
+                chain=msg,
+            ).emit(Channel.direct(ctx.session.user_origin))
 
     @svc.message_handler(ProjectExternalStateEvent, is_async=True)
     def project_external_state(

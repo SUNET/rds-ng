@@ -79,6 +79,19 @@ class ProjectVolatileStates:
         with self._lock:
             return (project_id, instance_id) in self._states
 
+    def get_states_by_project(
+        self, project_id: ProjectID
+    ) -> typing.Dict[
+        typing.Tuple[ProjectID, ConnectorInstanceID], ProjectVolatileState
+    ]:
+        """
+        Gets all states for a given project.
+
+        Args:
+            project_id: The project ID.
+        """
+        return {k: v for k, v in self._states.items() if v.project_id == project_id}
+
     def get_outdated_states(self) -> typing.List[ProjectVolatileState]:
         """
         Gets a list of all states that should be refreshed.
