@@ -53,7 +53,7 @@ const activeStep = ref(stepIndices.main);
 const form = ref();
 const validator = useValidator(form, {
     title: yup.string().trim().required().label("Title").default(dialogData.userData.title),
-    description: yup.string().label("Description").default(dialogData.userData.description),
+    description: yup.string().notRequired().label("Description").default(dialogData.userData.description),
     datapath: yup
         .string()
         .test("datapath-not-empty", "No data path selected", (_, ctx) => {

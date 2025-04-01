@@ -18,7 +18,7 @@ const { vFocus } = useDirectives();
 const form = ref();
 const validator = useValidator(form, {
     name: yup.string().trim().required().label("Name").default(dialogData.userData.name),
-    description: yup.string().label("Description").default(dialogData.userData.description)
+    description: yup.string().notRequired().label("Description").default(dialogData.userData.description)
 });
 </script>
 
