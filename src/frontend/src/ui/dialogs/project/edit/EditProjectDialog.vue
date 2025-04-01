@@ -213,7 +213,7 @@ function onNextStep() {
                                 <label>Description</label>
                                 <Textarea name="description" v-model="dialogData.userData.description" rows="3" fluid />
                             </IftaLabel>
-                            <small>An (optional) project description.</small>
+                            <small>The description of the project.</small>
                         </span>
                     </Fieldset>
                 </StepPanel>

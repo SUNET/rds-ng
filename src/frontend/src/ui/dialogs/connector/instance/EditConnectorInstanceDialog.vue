@@ -38,7 +38,7 @@ const validator = useValidator(form, {
                     <label>Description</label>
                     <Textarea name="description" v-model.trim="dialogData.userData.description" rows="3" fluid />
                 </IftaLabel>
-                <small>An (optional) connection description.</small>
+                <small>The description of the connection.</small>
             </span>
         </Fieldset>
     </Form>

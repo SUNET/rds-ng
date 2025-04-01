@@ -11,12 +11,12 @@ export class ResourcesMetadataSnapIn extends SnapIn {
             optional: {
                 label: "Data annotation",
                 feature: ResourcesMetadataFeature.FeatureID,
-                description: "Annotate individual file objects with metadata."
+                description: "Activate this feature to set up an annotation infrastructure for your research data."
             },
             tabPanel: {
                 label: "Data annotation",
                 loader: () => import("./ResourcesMetadataPanel.vue"),
-                description: "Annotate individual file objects with metadata."
+                description: "This feature allows you to set up an annotation infrastructure for your research data."
             }
         });
     }
