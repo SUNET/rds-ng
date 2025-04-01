@@ -194,6 +194,7 @@ function onNextStep() {
                     />
                 </Step>
             </StepList>
+
             <StepPanels>
                 <StepPanel :value="stepIndices.main">
                     <div class="mb-2">Set your main project settings, like its title, here. You can always change these later.</div>
@@ -243,6 +244,7 @@ function onNextStep() {
                                             v-model="dialogData.userData.datapath"
                                             :options="resourcesNodes"
                                             loading
+                                            expand-first-only
                                             class="w-full h-fit"
                                             @changed="validator.refresh()"
                                         />
