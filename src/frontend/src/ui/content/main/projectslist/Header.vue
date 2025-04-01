@@ -19,7 +19,7 @@ const comp = FrontendComponent.inject();
 const projStore = useProjectsStore();
 const projJobsStore = useProjectJobsStore();
 const userStore = useUserStore();
-const { projects } = storeToRefs(projStore);
+const { projects, activeProject } = storeToRefs(projStore);
 const { jobs } = storeToRefs(projJobsStore);
 const { userToken, userSettings } = storeToRefs(userStore);
 const { editUserSettings } = useUserTools(comp);
@@ -34,6 +34,11 @@ const jobPanelBadgeCounter = computed(() => {
     return count;
 });
 
+function onGoHome(): void {
+    activeProject.value = undefined;
+    comp.userInterface.frontendView.navigateTo(true, undefined, { project_id: undefined });
+}
+
 function onShowJobsPanel(event: Event): void {
     unref(jobsPanel).toggle(event);
 }
@@ -46,8 +51,8 @@ function onEditUserSettings(): void {
 <template>
     <div class="grid grid-rows-2 grid-cols-[min-content_1fr_max-content] grid-flow-col gap-y-3 content-center items-center r-primary-bg r-primary-text">
         <div class="row-span-2">
-            <a href="https://www.research-data-services.org" target="_blank">
-                <img id="logo" src="@assets/img/rds-octopus-wh.svg" alt="RDS Logo" class="p-3" title="Visit the RDS website" />
+            <a href="#" @click.prevent="onGoHome">
+                <img id="logo" src="@assets/img/rds-octopus-wh.svg" alt="RDS Logo" class="p-3" title="Home" />
             </a>
         </div>
 
