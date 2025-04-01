@@ -44,7 +44,7 @@ class ProjectVerifier(Verifier):
 
     def _verify_title(self) -> None:
         if self._project.title == "":
-            raise VerificationException("Missing project title")
+            raise VerificationException("Missing project name")
 
     def _verify_resource(self) -> None:
         if self._project.resources_path == "":

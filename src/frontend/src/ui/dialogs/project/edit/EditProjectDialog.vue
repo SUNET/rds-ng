@@ -52,7 +52,7 @@ const activeStep = ref(stepIndices.main);
 
 const form = ref();
 const validator = useValidator(form, {
-    title: yup.string().trim().required().label("Title").default(dialogData.userData.title),
+    title: yup.string().trim().required().label("Name").default(dialogData.userData.title),
     description: yup.string().notRequired().label("Description").default(dialogData.userData.description),
     datapath: yup
         .string()
@@ -197,15 +197,15 @@ function onNextStep() {
 
             <StepPanels>
                 <StepPanel :value="stepIndices.main">
-                    <div class="mb-2">Set your main project settings, like its title, here. You can always change these later.</div>
+                    <div class="mb-2">Set your main project settings, like its name, here. You can always change these later.</div>
 
                     <Fieldset legend="General settings" class="r-form-fieldset">
                         <span class="r-form-field">
                             <IftaLabel>
-                                <label>Title <MandatoryMark /></label>
+                                <label>Name <MandatoryMark /></label>
                                 <InputText name="title" v-model="dialogData.userData.title" fluid v-focus />
                             </IftaLabel>
-                            <small>The title of the project.</small>
+                            <small>The name of the project.</small>
                         </span>
 
                         <span class="r-form-field mt-5">
