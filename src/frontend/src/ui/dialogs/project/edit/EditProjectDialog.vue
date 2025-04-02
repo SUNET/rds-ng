@@ -104,22 +104,7 @@ const prevCallback = computed(() => {
     }
 });
 const nextCallback = computed(() => {
-    if (unref(activeStep) >= lastStepIndex) {
-        return acceptDialog;
-    } else {
-        // Verify each step to prevent advancing to the next one
-        if (unref(activeStep) == stepIndices.main) {
-            if (validator.hasError("title")) {
-                return undefined;
-            }
-        } else if (unref(activeStep) == stepIndices.datapath) {
-            if (validator.hasError("datapath")) {
-                return undefined;
-            }
-        }
-
-        return onNextStep;
-    }
+    return onNextStep;
 });
 const nextName = computed(() => {
     if (unref(activeStep) >= lastStepIndex) {
@@ -145,7 +130,29 @@ function onPrevStep() {
 }
 
 function onNextStep() {
-    activeStep.value += 1;
+    validator
+        .validate()
+        .then(() => {
+            if (unref(activeStep) >= lastStepIndex) {
+                acceptDialog();
+            } else {
+                activeStep.value += 1;
+            }
+        })
+        .catch(() => {
+            // Make sure to only catch errors from the current step
+            if (unref(activeStep) == stepIndices.main) {
+                if (validator.hasError("title")) {
+                    return;
+                }
+            } else if (unref(activeStep) == stepIndices.datapath) {
+                if (validator.hasError("datapath")) {
+                    return;
+                }
+            }
+
+            activeStep.value += 1;
+        });
 }
 </script>
 
