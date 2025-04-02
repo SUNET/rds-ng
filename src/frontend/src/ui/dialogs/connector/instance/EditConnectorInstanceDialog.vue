@@ -17,13 +17,17 @@ const { vFocus } = useDirectives();
 
 const form = ref();
 const validator = useValidator(form, {
-    name: yup.string().trim().required().label("Name").default(dialogData.userData.name),
-    description: yup.string().notRequired().label("Description").default(dialogData.userData.description)
+    name: yup.string().trim().required().label("Name"),
+    description: yup.string().notRequired().label("Description")
+});
+const initialFormValues = ref({
+    name: dialogData.userData.name,
+    description: dialogData.userData.description
 });
 </script>
 
 <template>
-    <Form ref="form" :resolver="validator.resolver" @submit="acceptDialog" class="r-form">
+    <Form ref="form" :resolver="validator.resolver" :initial-values="initialFormValues" @submit="acceptDialog" class="r-form">
         <Fieldset legend="General" class="r-form-fieldset">
             <span class="r-form-field">
                 <IftaLabel>

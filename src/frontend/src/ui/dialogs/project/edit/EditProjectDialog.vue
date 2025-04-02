@@ -53,8 +53,8 @@ const activeStep = ref(stepIndices.main);
 
 const form = ref();
 const validator = useValidator(form, {
-    title: yup.string().trim().required().label("Name").default(dialogData.userData.title),
-    description: yup.string().notRequired().label("Description").default(dialogData.userData.description),
+    title: yup.string().trim().required().label("Name"),
+    description: yup.string().notRequired().label("Description"),
     datapath: yup
         .string()
         .test("datapath-not-empty", "No data path selected", (_, ctx) => {
@@ -64,8 +64,8 @@ const validator = useValidator(form, {
             return true;
         })
         .label("Data path")
-        .default(dialogData.userData.datapath)
 });
+const initialFormValues = ref({ title: dialogData.userData.title, description: dialogData.userData.description, datapath: dialogData.userData.datapath });
 
 const resourcesNodes = ref<Object[]>([]);
 const resourcesError = ref("");
@@ -150,7 +150,13 @@ function onNextStep() {
 </script>
 
 <template>
-    <Form ref="form" :resolver="validator.resolver" @submit="!newProject ? acceptDialog : undefined" :class="[{ 'h-[calc(100%-4rem)]': newProject }, 'r-form']">
+    <Form
+        ref="form"
+        :resolver="validator.resolver"
+        :initial-values="initialFormValues"
+        @submit="!newProject ? acceptDialog : undefined"
+        :class="[{ 'h-[calc(100%-4rem)]': newProject }, 'r-form']"
+    >
         <Stepper v-model:value="activeStep" :linear="newProject" :dt="!newProject ? { 'separator.activeBackground': '{content.border.color}' } : {}">
             <StepList>
                 <Step v-slot="{ activateCallback }" :value="stepIndices.main" :pt="{ number: 'hidden' }">
