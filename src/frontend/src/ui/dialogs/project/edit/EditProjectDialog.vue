@@ -150,13 +150,7 @@ function onNextStep() {
 </script>
 
 <template>
-    <Form
-        ref="form"
-        :resolver="validator.resolver"
-        validate-on-mount
-        @submit="!newProject ? acceptDialog : undefined"
-        :class="[{ 'h-[calc(100%-4rem)]': newProject }, 'r-form']"
-    >
+    <Form ref="form" :resolver="validator.resolver" @submit="!newProject ? acceptDialog : undefined" :class="[{ 'h-[calc(100%-4rem)]': newProject }, 'r-form']">
         <Stepper v-model:value="activeStep" :linear="newProject" :dt="!newProject ? { 'separator.activeBackground': '{content.border.color}' } : {}">
             <StepList>
                 <Step v-slot="{ activateCallback }" :value="stepIndices.main" :pt="{ number: 'hidden' }">
