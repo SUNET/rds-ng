@@ -20,6 +20,7 @@ import { resourcesListToTreeNodes } from "@common/data/entities/resource/Resourc
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
 
+import LegendHeader from "@common/ui/components/misc/LegendHeader.vue";
 import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
 import ResourcesTree from "@common/ui/components/resource/ResourcesTree.vue";
 import StepIconHeader from "@common/ui/components/stepper/StepIconHeader.vue";
@@ -195,11 +196,17 @@ function onNextStep() {
                 </Step>
             </StepList>
 
-            <StepPanels>
+            <StepPanels class="pt-1">
                 <StepPanel :value="stepIndices.main">
-                    <div class="mb-2">Set your main project settings, like its name, here. You can always change these later.</div>
-
                     <Fieldset legend="General settings" class="r-form-fieldset">
+                        <template #legend>
+                            <LegendHeader
+                                title="General settings"
+                                description="Set your main project settings, like its name, here. You can always change these later."
+                                class="p-fieldset-legend-label"
+                            />
+                        </template>
+
                         <span class="r-form-field">
                             <IftaLabel>
                                 <label>Name <MandatoryMark /></label>
@@ -219,17 +226,21 @@ function onNextStep() {
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.datapath">
-                    <div class="mb-2">
-                        Select the root data path for your project here. Note that this path cannot be changed once the project has been created.
-                    </div>
-
                     <Fieldset
                         legend="Data path"
                         class="h-fit r-form-fieldset"
                         :class="{ 'border-[var(--p-inputtext-invalid-border-color)]': validator.hasError('datapath') }"
                     >
                         <template #legend>
-                            <span class="p-fieldset-legend-label">Data path <MandatoryMark /></span>
+                            <LegendHeader
+                                title="Data path"
+                                description="Select the root data path for your project here. Note that this path cannot be changed once the project has been created."
+                                class="p-fieldset-legend-label"
+                            >
+                                <template #title>
+                                    <span>Data path <MandatoryMark /></span>
+                                </template>
+                            </LegendHeader>
                         </template>
 
                         <div class="r-form-field">
@@ -267,9 +278,15 @@ function onNextStep() {
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.features">
-                    <div class="mb-2">Select additional features you want to use in this project. You can always turn these on or off later.</div>
-
                     <Fieldset legend="Additional features" class="r-form-fieldset">
+                        <template #legend>
+                            <LegendHeader
+                                title="Additional features"
+                                description="Select additional features you want to use in this project. You can always turn these on or off later."
+                                class="p-fieldset-legend-label"
+                            />
+                        </template>
+
                         <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-3">
                             <Checkbox
                                 v-model="uiOptions.optional_snapins"
@@ -289,12 +306,15 @@ function onNextStep() {
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.connections">
-                    <div class="mb-2">
-                        Here you can select which connections - all or only specific ones - to make available for uploading your project. You can always change
-                        this selection later.
-                    </div>
-
                     <Fieldset legend="Connections" class="r-form-fieldset">
+                        <template #legend>
+                            <LegendHeader
+                                title="Connections"
+                                description="Here you can select which connections - all or only specific ones - to make available for uploading your project. You can always change this selection later."
+                                class="p-fieldset-legend-label"
+                            />
+                        </template>
+
                         <div class="r-form-field">
                             <div class="grid grid-flow-row">
                                 <div class="flex align-items-center">
