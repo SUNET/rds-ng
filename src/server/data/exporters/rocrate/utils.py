@@ -1,16 +1,16 @@
 from dataclasses import asdict
+from typing import Callable, List
 from urllib.parse import quote
 
 from rocrate.model.contextentity import ContextEntity
 from rocrate.model.data_entity import DataEntity
-from rocrate.model.entity import Entity
 from rocrate.model.root_dataset import RootDataset
 from rocrate.rocrate import ROCrate
 
 from common.py.data.entities.project.project import Project
 
 
-def with_files(func):
+def with_files(func: Callable) -> Callable:
     """
     A decorator that processes files metadata associated with a project and adds them to a crate.
 
@@ -43,7 +43,7 @@ def with_files(func):
         return crate
     return wrapper
 
-def with_context_entities(func):
+def with_context_entities(func: Callable) -> Callable:
     """
     A decorator that adds context entities to the crate returned by the decorated function.
 
@@ -74,7 +74,7 @@ def with_context_entities(func):
         return crate
     return wrapper
 
-def with_project_metadata(func):
+def with_project_metadata(func: Callable) -> Callable:
     """
     A decorator that adds project metadata to the root dataset of a crate.
 
@@ -108,9 +108,9 @@ def with_project_metadata(func):
         return crate
     return wrapper
 
-def with_context(func):
+def with_context(func: Callable) -> Callable:
     """
-    A decorator that adds an extra context URL to the metadata of the crate object returned by the decorated function.
+    A decorator that adds the context URLs of all ProjectMetadataFeature profiles marked GLOBAL to the metadata of the crate object returned by the decorated function.
 
     Args:
         func (callable): The function to be decorated. It should return an object that has a 'metadata' attribute with an 'extra_contexts' list.
@@ -118,11 +118,35 @@ def with_context(func):
     Returns:
         callable: The wrapped function that appends an extra context URL to the crate's metadata.
 
-    TODO: make context dynamic
+    TODO: Add contexts for future profiles (custom, object resources etc.)
     """
+    def get_global_contexts() -> List[str]:
+        from common.py.data.entities.metadata import (MetadataProfileContainer,
+                                                      filter_containers)
+        from common.py.data.entities.project.features.project_metadata_feature import \
+            ProjectMetadataFeature
+
+        from ....component import ServerComponent
+        
+        profile_containers = ServerComponent.instance().server_data.profile_containers
+        filtered_containers = filter_containers(
+            profile_containers,
+            category=ProjectMetadataFeature.feature_id,
+            role=MetadataProfileContainer.Role.GLOBAL,
+        )
+        return [
+            i.profile.metadata.context
+            for i in filtered_containers
+            if i.profile.metadata.context is not None
+        ]
+    
     def wrapper(*args, **kwargs):
         crate = func(*args, **kwargs)
-        crate.metadata.extra_contexts.append("https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/") # HACK
+        
+        # add future contexts here
+        contexts = [*get_global_contexts()]
+        crate.metadata.extra_contexts.extend(contexts)
+
         return crate
     return wrapper
 
@@ -131,7 +155,7 @@ def with_context(func):
 @with_files
 @with_context_entities
 @with_project_metadata
-def make_ro_crate(project: Project):
+def make_ro_crate(project: Project) -> ROCrate:
     """
     Returns a Research Object Crate (RO-Crate) for the given project.
 

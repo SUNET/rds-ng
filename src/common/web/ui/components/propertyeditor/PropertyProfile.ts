@@ -34,6 +34,8 @@ class ProfileMetadata {
 
     public readonly description: string;
 
+    public readonly context?: string;
+
     public constructor(id: ProfileID, displayLabel: string, description: string) {
         this.id = id;
         this.displayLabel = displayLabel;
