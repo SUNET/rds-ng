@@ -16,7 +16,7 @@ const hasHints = computed(() => !!input.hints && !!propertyObject.getValues()[in
 </script>
 
 <template>
-    <div class="space-y-3">
+    <div>
         <span v-if="input.getLabel() !== propertyClass.getDisplayLabel()" :class="{ 'font-bold': isDialog }">
             {{ input.getLabel() }}
         </span>
