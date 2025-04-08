@@ -44,9 +44,21 @@ class ProfileMetadata {
 }
 
 /**
+ * Enum representing the types of hints that can be used for an input in the property editor.
+ *
+ * @enum {string}
+ * @property {HintType.Text} Text - Represents a textual hint.
+ * @property {HintType.Link} Link - Represents a hyperlink hint.
+ */
+export enum HintType {
+    Text = "text",
+    Link = "link"
+}
+
+/**
  * Represents an input for a profile class.
  */
-class ProfileClassInput {
+export class ProfileClassInput {
     /**
      * Creates an instance of `ProfileClassInput`.
      * @param id - The ID of the input.
@@ -56,6 +68,7 @@ class ProfileClassInput {
      * @param example - An example of the input.
      * @param options - The options of the input.
      * @param required - Whether the input is required.
+     * @param hints - Hints for certain inputs
      */
 
     public readonly id: string;
@@ -65,8 +78,18 @@ class ProfileClassInput {
     public readonly example?: string;
     public readonly options?: string[];
     public required?: boolean;
+    public hints?: { string: string };
 
-    public constructor(id: string, label: string, type: string, description?: string, example?: string, options: string[] = [], required?: boolean) {
+    public constructor(
+        id: string,
+        label: string,
+        type: string,
+        description?: string,
+        example?: string,
+        options: string[] = [],
+        required?: boolean,
+        hints?: { string: string }
+    ) {
         this.id = id;
         this.label = label;
         this.type = type;
@@ -74,6 +97,7 @@ class ProfileClassInput {
         this.example = example;
         this.options = options;
         this.required = required;
+        this.hints = hints;
     }
 
     /**
@@ -128,6 +152,27 @@ class ProfileClassInput {
      */
     public getOptions(): string[] {
         return this.options!;
+    }
+
+    /**
+     * Determines whether hints exist for the given input key.
+     *
+     * @param input - The key to check for associated hints.
+     * @returns `true` if hints exist for the specified input key; otherwise, `false`.
+     */
+    public hasHints(input: string): boolean {
+        return !!this.hints?.[input];
+    }
+
+    /**
+     * Retrieves a hint based on the provided input and hint type.
+     *
+     * @param input - The key used to look up the hint.
+     * @param hintType - The specific type of hint to retrieve.
+     * @returns An object representing the hint, or undefined if no hint is found.
+     */
+    public getHint(input: string, hintType: HintType): {} {
+        return this.hints?.[input]?.[hintType];
     }
 }
 
