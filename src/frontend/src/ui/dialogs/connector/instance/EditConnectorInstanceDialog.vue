@@ -27,7 +27,16 @@ const initialFormValues = ref({
 </script>
 
 <template>
-    <Form ref="form" :resolver="validator.resolver" :initial-values="initialFormValues" @submit="acceptDialog" class="r-form">
+    <Form
+        ref="form"
+        :resolver="validator.resolver"
+        :initial-values="initialFormValues"
+        :validate-on-mount="false"
+        :validate-on-blur="false"
+        :validate-on-value-update="true"
+        @submit="acceptDialog"
+        class="r-form"
+    >
         <Fieldset legend="General" class="r-form-fieldset">
             <span class="r-form-field">
                 <IftaLabel>

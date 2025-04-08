@@ -161,6 +161,9 @@ function onNextStep() {
         ref="form"
         :resolver="validator.resolver"
         :initial-values="initialFormValues"
+        :validate-on-mount="false"
+        :validate-on-blur="false"
+        :validate-on-value-update="!newProject"
         @submit="!newProject ? acceptDialog : undefined"
         :class="[{ 'h-[calc(100%-4rem)]': newProject }, 'r-form']"
     >
