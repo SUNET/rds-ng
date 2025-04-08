@@ -12,7 +12,7 @@ const { propertyClass, propertyObject, propertyObjects, isDialog, input } = defi
 ]);
 
 // checks if there are hints available for the current input
-const hasHints = computed(() => !!input.hints && !!propertyObject.getValues()[input.getId()] && !!input.hasHints(propertyObject.getValues()[input.getId()]));
+const hasHints = computed(() => input.hasHints(propertyObject.getValues()[input.getId()]));
 </script>
 
 <template>
