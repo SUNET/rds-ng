@@ -78,7 +78,7 @@ export class ProfileClassInput {
     public readonly example?: string;
     public readonly options?: string[];
     public required?: boolean;
-    public hints?: { string: string };
+    public hints?: { [key: string]: { [key: string]: any } };
 
     public constructor(
         id: string,
@@ -88,7 +88,7 @@ export class ProfileClassInput {
         example?: string,
         options: string[] = [],
         required?: boolean,
-        hints?: { string: string }
+        hints?: { [key: string]: { [key: string]: string } }
     ) {
         this.id = id;
         this.label = label;
@@ -171,7 +171,7 @@ export class ProfileClassInput {
      * @param hintType - The specific type of hint to retrieve.
      * @returns An object representing the hint, or undefined if no hint is found.
      */
-    public getHint(input: string, hintType: HintType): {} {
+    public getHint(input: string, hintType: HintType): any {
         return this.hints?.[input]?.[hintType];
     }
 }
