@@ -277,7 +277,14 @@
                     "label": "",
                     "type": "radiobuttons",
                     "options": ["ORCID", "GND", "other"],
-                    "description": ""
+                    "description": "",
+                    "hints": {
+                        "ORCID": {
+                            "text": "Open Researcher and Contributor ID.",
+                            "link": { "label": "ORCID Search", "url": "https://orcid.org/orcid-search/search" }
+                        },
+                        "GND": { "text": "Gemeinsame Normdatei Identifier.", "link": { "label": "GND Search", "url": "https://explore.gnd.network/" } }
+                    }
                 },
                 {
                     "id": "nameIdentifier",
@@ -295,8 +302,19 @@
                     "id": "affiliationIdentifierScheme",
                     "label": "",
                     "type": "radiobuttons",
-                    "options": ["ORCID", "GND", "other"],
-                    "description": ""
+                    "options": ["ORCID", "GND", "ROR", "other"],
+                    "description": "",
+                    "hints": {
+                        "ORCID": {
+                            "text": "Open Researcher and Contributor ID.",
+                            "link": { "label": "ORCID Search", "url": "https://orcid.org/orcid-search/search" }
+                        },
+                        "GND": { "text": "Gemeinsame Normdatei Identifier.", "link": { "label": "GND Search", "url": "https://explore.gnd.network/" } },
+                        "ROR": {
+                            "text": "Research Organization Registry Identifier.",
+                            "link": { "label": "ROR Search", "url": "https://ror.org/search" }
+                        }
+                    }
                 },
                 {
                     "id": "affiliation",
@@ -806,7 +824,13 @@
                     "label": "Funder Identifier Type",
                     "type": "dropdown",
                     "description": "The type of the funderIdentifier.",
-                    "options": ["Crossref Funder ID", "GRID", "ISNI", "ROR", "Other"]
+                    "options": ["Crossref Funder ID", "GRID", "ISNI", "ROR", "Other"],
+                    "hints": {
+                        "ROR": {
+                            "text": "Research Organization Registry Identifier.",
+                            "link": { "label": "ROR Search", "url": "https://ror.org/search" }
+                        }
+                    }
                 },
                 {
                     "id": "schemeURI",

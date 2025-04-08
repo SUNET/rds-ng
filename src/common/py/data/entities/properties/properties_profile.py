@@ -23,6 +23,7 @@ class ProfileClassInput(DataClassJsonMixin):
     description: Optional[str] = None
     example: Optional[str] = None
     options: Optional[List[str]] = field(default_factory=list)
+    hints: Optional[Dict] = None
     required: Optional[bool] = None
 
 
