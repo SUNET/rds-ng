@@ -11,12 +11,12 @@ export class DataManagementPlanSnapIn extends SnapIn {
             optional: {
                 label: "Data Management Plan",
                 feature: DataManagementPlanFeature.FeatureID,
-                description: "Write a data management plan (DMP) about your project."
+                description: "Activate this feature to implement all the steps needed for your project or grant application process."
             },
             tabPanel: {
                 label: "Data Management Plan",
                 loader: () => import("./DataManagementPlanPanel.vue"),
-                description: "Write a data management plan (DMP) about your project."
+                description: "This feature allows you to implement all the steps needed for your project or grant application process."
             }
         });
     }

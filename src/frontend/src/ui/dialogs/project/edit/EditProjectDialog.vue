@@ -20,6 +20,7 @@ import { resourcesListToTreeNodes } from "@common/data/entities/resource/Resourc
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
 
+import LegendHeader from "@common/ui/components/misc/LegendHeader.vue";
 import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
 import ResourcesTree from "@common/ui/components/resource/ResourcesTree.vue";
 import StepIconHeader from "@common/ui/components/stepper/StepIconHeader.vue";
@@ -52,8 +53,8 @@ const activeStep = ref(stepIndices.main);
 
 const form = ref();
 const validator = useValidator(form, {
-    title: yup.string().trim().required().label("Title").default(dialogData.userData.title),
-    description: yup.string().label("Description").default(dialogData.userData.description),
+    title: yup.string().trim().required().label("Name"),
+    description: yup.string().notRequired().label("Description"),
     datapath: yup
         .string()
         .test("datapath-not-empty", "No data path selected", (_, ctx) => {
@@ -63,8 +64,8 @@ const validator = useValidator(form, {
             return true;
         })
         .label("Data path")
-        .default(dialogData.userData.datapath)
 });
+const initialFormValues = ref({ title: dialogData.userData.title, description: dialogData.userData.description, datapath: dialogData.userData.datapath });
 
 const resourcesNodes = ref<Object[]>([]);
 const resourcesError = ref("");
@@ -103,22 +104,7 @@ const prevCallback = computed(() => {
     }
 });
 const nextCallback = computed(() => {
-    if (unref(activeStep) >= lastStepIndex) {
-        return acceptDialog;
-    } else {
-        // Verify each step to prevent advancing to the next one
-        if (unref(activeStep) == stepIndices.main) {
-            if (validator.hasError("title")) {
-                return undefined;
-            }
-        } else if (unref(activeStep) == stepIndices.datapath) {
-            if (validator.hasError("datapath")) {
-                return undefined;
-            }
-        }
-
-        return onNextStep;
-    }
+    return onNextStep;
 });
 const nextName = computed(() => {
     if (unref(activeStep) >= lastStepIndex) {
@@ -144,7 +130,29 @@ function onPrevStep() {
 }
 
 function onNextStep() {
-    activeStep.value += 1;
+    validator
+        .validate()
+        .then(() => {
+            if (unref(activeStep) >= lastStepIndex) {
+                acceptDialog();
+            } else {
+                activeStep.value += 1;
+            }
+        })
+        .catch(() => {
+            // Make sure to only catch errors from the current step
+            if (unref(activeStep) == stepIndices.main) {
+                if (validator.hasError("title")) {
+                    return;
+                }
+            } else if (unref(activeStep) == stepIndices.datapath) {
+                if (validator.hasError("datapath")) {
+                    return;
+                }
+            }
+
+            activeStep.value += 1;
+        });
 }
 </script>
 
@@ -152,7 +160,10 @@ function onNextStep() {
     <Form
         ref="form"
         :resolver="validator.resolver"
-        validate-on-mount
+        :initial-values="initialFormValues"
+        :validate-on-mount="false"
+        :validate-on-blur="false"
+        :validate-on-value-update="!newProject"
         @submit="!newProject ? acceptDialog : undefined"
         :class="[{ 'h-[calc(100%-4rem)]': newProject }, 'r-form']"
     >
@@ -194,17 +205,24 @@ function onNextStep() {
                     />
                 </Step>
             </StepList>
-            <StepPanels>
-                <StepPanel :value="stepIndices.main">
-                    <div class="mb-2">Set your main project settings, like its title, here. You can always change these later.</div>
 
+            <StepPanels class="pt-1">
+                <StepPanel :value="stepIndices.main">
                     <Fieldset legend="General settings" class="r-form-fieldset">
+                        <template #legend>
+                            <LegendHeader
+                                title="General settings"
+                                description="Set your main project settings, like its name, here. You can always change these later."
+                                class="p-fieldset-legend-label"
+                            />
+                        </template>
+
                         <span class="r-form-field">
                             <IftaLabel>
-                                <label>Title <MandatoryMark /></label>
+                                <label>Name <MandatoryMark /></label>
                                 <InputText name="title" v-model="dialogData.userData.title" fluid v-focus />
                             </IftaLabel>
-                            <small>The title of the project.</small>
+                            <small>The name of the project.</small>
                         </span>
 
                         <span class="r-form-field mt-5">
@@ -212,23 +230,27 @@ function onNextStep() {
                                 <label>Description</label>
                                 <Textarea name="description" v-model="dialogData.userData.description" rows="3" fluid />
                             </IftaLabel>
-                            <small>An (optional) project description.</small>
+                            <small>The description of the project.</small>
                         </span>
                     </Fieldset>
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.datapath">
-                    <div class="mb-2">
-                        Select the root data path for your project here. Note that this path cannot be changed once the project has been created.
-                    </div>
-
                     <Fieldset
                         legend="Data path"
                         class="h-fit r-form-fieldset"
                         :class="{ 'border-[var(--p-inputtext-invalid-border-color)]': validator.hasError('datapath') }"
                     >
                         <template #legend>
-                            <span class="p-fieldset-legend-label">Data path <MandatoryMark /></span>
+                            <LegendHeader
+                                title="Data path"
+                                description="Select the root data path for your project here. Note that this path cannot be changed once the project has been created."
+                                class="p-fieldset-legend-label"
+                            >
+                                <template #title>
+                                    <span>Data path <MandatoryMark /></span>
+                                </template>
+                            </LegendHeader>
                         </template>
 
                         <div class="r-form-field">
@@ -243,6 +265,7 @@ function onNextStep() {
                                             v-model="dialogData.userData.datapath"
                                             :options="resourcesNodes"
                                             loading
+                                            expand-first-only
                                             class="w-full h-fit"
                                             @changed="validator.refresh()"
                                         />
@@ -265,9 +288,15 @@ function onNextStep() {
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.features">
-                    <div class="mb-2">Select additional features you want to use in this project. You can always turn these on or off later.</div>
-
                     <Fieldset legend="Additional features" class="r-form-fieldset">
+                        <template #legend>
+                            <LegendHeader
+                                title="Additional features"
+                                description="Select additional features you want to use in this project. You can always turn these on or off later."
+                                class="p-fieldset-legend-label"
+                            />
+                        </template>
+
                         <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-3">
                             <Checkbox
                                 v-model="uiOptions.optional_snapins"
@@ -287,12 +316,15 @@ function onNextStep() {
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.connections">
-                    <div class="mb-2">
-                        Here you can select which connections - all or only specific ones - to make available for uploading your project. You can always change
-                        this selection later.
-                    </div>
-
                     <Fieldset legend="Connections" class="r-form-fieldset">
+                        <template #legend>
+                            <LegendHeader
+                                title="Connections"
+                                description="Here you can select which connections - all or only specific ones - to make available for uploading your project. You can always change this selection later."
+                                class="p-fieldset-legend-label"
+                            />
+                        </template>
+
                         <div class="r-form-field">
                             <div class="grid grid-flow-row">
                                 <div class="flex align-items-center">

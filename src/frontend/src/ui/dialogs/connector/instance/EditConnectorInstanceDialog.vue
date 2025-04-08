@@ -17,13 +17,26 @@ const { vFocus } = useDirectives();
 
 const form = ref();
 const validator = useValidator(form, {
-    name: yup.string().trim().required().label("Name").default(dialogData.userData.name),
-    description: yup.string().label("Description").default(dialogData.userData.description)
+    name: yup.string().trim().required().label("Name"),
+    description: yup.string().notRequired().label("Description")
+});
+const initialFormValues = ref({
+    name: dialogData.userData.name,
+    description: dialogData.userData.description
 });
 </script>
 
 <template>
-    <Form ref="form" :resolver="validator.resolver" validate-on-mount @submit="acceptDialog" class="r-form">
+    <Form
+        ref="form"
+        :resolver="validator.resolver"
+        :initial-values="initialFormValues"
+        :validate-on-mount="false"
+        :validate-on-blur="false"
+        :validate-on-value-update="true"
+        @submit="acceptDialog"
+        class="r-form"
+    >
         <Fieldset legend="General" class="r-form-fieldset">
             <span class="r-form-field">
                 <IftaLabel>
@@ -38,7 +51,7 @@ const validator = useValidator(form, {
                     <label>Description</label>
                     <Textarea name="description" v-model.trim="dialogData.userData.description" rows="3" fluid />
                 </IftaLabel>
-                <small>An (optional) connection description.</small>
+                <small>The description of the connection.</small>
             </span>
         </Fieldset>
     </Form>

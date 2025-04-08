@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ContentsTabHeader from "@/ui/content/main/projectdetails/ContentsTabHeader.vue";
 import ScrollPanel from "primevue/scrollpanel";
 import Tab from "primevue/tab";
 import TabList from "primevue/tablist";
@@ -11,6 +10,8 @@ import { computed, defineAsyncComponent, type PropType, reactive, ref, toRefs, u
 import { Project } from "@common/data/entities/project/Project";
 import { PropertyObjectStore } from "@common/ui/components/propertyeditor/PropertyObjectStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
+
+import LegendHeader from "@common/ui/components/misc/LegendHeader.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/ui/UIOptions";
@@ -67,7 +68,7 @@ watch(
         <Tabs :value="panels[0].title" class="h-full">
             <TabList :pt="{ tabList: 'tab-list', activeBar: 'tab-list-active-bar' }">
                 <Tab v-for="panel in panels" :value="panel.title" class="tab" :title="panel.description">
-                    <ContentsTabHeader :title="panel.title" :description="panel.description" />
+                    <LegendHeader :title="panel.title" :description="panel.description" />
                 </Tab>
             </TabList>
             <TabPanels class="overflow-y-hidden max-h-[calc(100vh-8.0rem)] p-0 h-full">

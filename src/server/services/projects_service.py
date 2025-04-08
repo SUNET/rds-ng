@@ -125,6 +125,7 @@ def create_projects_service(comp: ServerComponent) -> Service:
                 ProjectVerifier(project_upd, ctx.user).verify_update()
 
                 _apply_update(project)
+
                 success = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 message = str(exc)

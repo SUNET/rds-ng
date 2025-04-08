@@ -19,20 +19,29 @@ const props = defineProps({
     loading: {
         type: Boolean,
         default: false
+    },
+    expandFirstOnly: {
+        type: Boolean,
+        default: false
     }
 });
-const { options, loading } = toRefs(props);
+const { options, loading, expandFirstOnly } = toRefs(props);
 const model = defineModel<string>({ default: "" });
 const emits = defineEmits<{
     (e: "changed", path: string): void;
 }>();
-const { expandAllNodes } = useResourceTreeTools();
+const { expandRootNodes, expandAllNodes } = useResourceTreeTools();
 
 const isLoading = ref(loading.value);
 if (isLoading.value) {
     watch(options, () => {
         isLoading.value = false;
-        expandAll();
+
+        if (unref(expandFirstOnly)) {
+            expandFirst();
+        } else {
+            expandAll();
+        }
     });
 }
 
@@ -48,6 +57,12 @@ watch(model, (newPath) => {
 });
 
 const expandedNodes = ref<Record<string, boolean>>({});
+
+function expandFirst(): void {
+    if (options!.value) {
+        expandRootNodes(unref(options) as TreeNode[], expandedNodes);
+    }
+}
 
 function expandAll(): void {
     if (options!.value) {

@@ -8,20 +8,29 @@ const props = defineProps({
         required: true
     },
     description: {
-        type: String
+        type: String,
+        default: ""
+    },
+    iconClass: {
+        type: String,
+        default: "pi pi-question-circle ml-2 text-lg"
     }
 });
-const { title, description } = toRefs(props);
+const { title, description, iconClass } = toRefs(props);
 
 const descriptionPopover = ref();
 </script>
 
 <template>
-    {{ title }}
+    <span class="p-fieldset-legend-label">
+        <slot name="title">
+            {{ title }}
+        </slot>
+    </span>
     <span
         v-if="description"
         :title="description"
-        class="opacity-65"
+        class="opacity-65 cursor-pointer"
         @click="
             (e) => {
                 descriptionPopover.toggle(e);
@@ -29,7 +38,7 @@ const descriptionPopover = ref();
             }
         "
     >
-        <i class="pi pi-question-circle ml-2 text-lg" />
+        <i :class="iconClass" />
         <Popover ref="descriptionPopover">{{ description }}</Popover>
     </span>
 </template>
