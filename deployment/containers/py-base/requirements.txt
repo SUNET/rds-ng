@@ -20,3 +20,4 @@ semantic-version >= 2.10, < 3.0
 deepmerge >= 1.1
 dataclasses-json >= 0.5
 mako >= 1.3
+rocrate >= 0.13.0

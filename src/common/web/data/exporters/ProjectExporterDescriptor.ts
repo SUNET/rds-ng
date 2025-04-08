@@ -22,12 +22,13 @@ export class ProjectExporterDescriptor {
     public readonly name: string;
     public readonly description: string;
     public readonly extension: string;
+    public readonly filename?: string;
 
     // @ts-ignore
     @Type(() => String)
     public readonly scope: ProjectFeatureID[];
 
-    public constructor(exporterID: ProjectExporterID, name: string, description: string, extension: string, scope: ProjectFeatureID[]) {
+    public constructor(exporterID: ProjectExporterID, name: string, description: string, extension: string, scope: ProjectFeatureID[], filename: string) {
         this.exporter_id = exporterID;
 
         this.name = name;
@@ -35,5 +36,6 @@ export class ProjectExporterDescriptor {
         this.extension = extension;
 
         this.scope = scope;
+        this.filename = filename;
     }
 }

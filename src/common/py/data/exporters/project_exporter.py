@@ -1,9 +1,11 @@
 import abc
 
-from .project_exporter_descriptor import ProjectExporterDescriptor, ProjectExporterID, ProjectExporterScope
-from .project_exporter_result import ProjectExporterResult
 from ..entities.project import Project
 from ..entities.project.features import ProjectFeatureID
+from .project_exporter_descriptor import (ProjectExporterDescriptor,
+                                          ProjectExporterID,
+                                          ProjectExporterScope)
+from .project_exporter_result import ProjectExporterResult
 
 
 class ProjectExporter(abc.ABC):
@@ -19,6 +21,7 @@ class ProjectExporter(abc.ABC):
         description: str,
         extension: str,
         scope: ProjectExporterScope,
+        filename: str | None = None
     ):
         """
         Args:
@@ -33,7 +36,8 @@ class ProjectExporter(abc.ABC):
             name=name,
             description=description,
             extension=extension,
-            scope=scope
+            scope=scope,
+            filename=filename
         )
 
     @abc.abstractmethod
@@ -82,3 +86,10 @@ class ProjectExporter(abc.ABC):
         The exporter's scope.
         """
         return self._descriptor.scope
+
+    @property
+    def filename(self) -> str:
+        """
+        The filename of the exported file.
+        """
+        return self._descriptor.filename

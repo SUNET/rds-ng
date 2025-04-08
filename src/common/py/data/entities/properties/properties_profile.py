@@ -13,6 +13,7 @@ class ProfileMetadata(DataClassJsonMixin):
     id: ProfileID
     displayLabel: str
     description: str
+    context: Optional[str] = None
 
 @dataclass
 class ProfileClassInput(DataClassJsonMixin):
