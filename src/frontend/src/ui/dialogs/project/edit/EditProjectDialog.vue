@@ -5,11 +5,11 @@ import Fieldset from "primevue/fieldset";
 import IftaLabel from "primevue/iftalabel";
 import InputText from "primevue/inputtext";
 import ScrollPanel from "primevue/scrollpanel";
-import Stepper from "primevue/stepper";
-import StepList from "primevue/steplist";
-import StepPanels from "primevue/steppanels";
 import Step from "primevue/step";
+import StepList from "primevue/steplist";
 import StepPanel from "primevue/steppanel";
+import StepPanels from "primevue/steppanels";
+import Stepper from "primevue/stepper";
 import Textarea from "primevue/textarea";
 import ToggleSwitch from "primevue/toggleswitch";
 import { computed, onMounted, ref, unref, watch } from "vue";
@@ -236,11 +236,7 @@ function onNextStep() {
                 </StepPanel>
 
                 <StepPanel :value="stepIndices.datapath">
-                    <Fieldset
-                        legend="Data path"
-                        class="h-fit r-form-fieldset"
-                        :class="{ 'border-[var(--p-inputtext-invalid-border-color)]': validator.hasError('datapath') }"
-                    >
+                    <Fieldset legend="Data path" class="h-fit r-form-fieldset">
                         <template #legend>
                             <LegendHeader
                                 title="Data path"
@@ -320,7 +316,7 @@ function onNextStep() {
                         <template #legend>
                             <LegendHeader
                                 title="Connections"
-                                description="Here you can select which connections - all or only specific ones - to make available for uploading your project. You can always change this selection later."
+                                description="Here you can select which repository connections - all or only specific ones - to make available for uploading your project. You can always change this selection later.<p class='pt-2'>Each connection comes with its own set of required metadata fields.<p>"
                                 class="p-fieldset-legend-label"
                             />
                         </template>
@@ -336,7 +332,7 @@ function onNextStep() {
                                         @change="validator.refresh()"
                                         class="self-center"
                                     />
-                                    <label for="useSelectConnectorInstances" class="pl-1.5">Use only the following connections:</label>
+                                    <label for="useSelectConnectorInstances" class="pl-1.5">Use only the following repository connections:</label>
                                 </div>
 
                                 <div class="!h-full border border-solid rounded p-1 ml-3.5 mr-3.5 mt-1.5">
