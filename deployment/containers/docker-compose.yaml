@@ -35,7 +35,7 @@ services:
         ports:
             - "4200:6969"
         env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX}server.env
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}server.env
 
     # Connector: OSF
     connector-psf:
@@ -50,7 +50,7 @@ services:
         ports:
             - "4300:6969"
         env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX}connector-osf.env
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-osf.env
 
     # Connector: Zenodo
     connector-zenodo:
@@ -65,7 +65,7 @@ services:
         ports:
             - "4400:6969"
         env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX}connector-zenodo.env
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-zenodo.env
 
     # Connector: Stub
     connector-stub:
@@ -80,7 +80,7 @@ services:
         ports:
             - "4900:6969"
         env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX}connector-stub.env
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-stub.env
 
     # Web frontend
     frontend:
@@ -95,4 +95,4 @@ services:
         ports:
             - "8000:80"
         env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX}frontend.env
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}frontend.env
