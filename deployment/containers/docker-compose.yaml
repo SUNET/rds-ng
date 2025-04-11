@@ -85,6 +85,10 @@ services:
     # Web frontend
     frontend:
         image: rds-ng/frontend:latest
+        volumes:
+            -   type: bind
+                source: ../config/frontend
+                target: /app/config
         build:
             context: ../../
             dockerfile: deployment/containers/web-component/Dockerfile

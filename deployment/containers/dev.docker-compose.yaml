@@ -121,6 +121,9 @@ services:
             -   type: bind
                 source: ../../src/common
                 target: /app/common
+            -   type: bind
+                source: ../config/frontend
+                target: /app/config
             - /app/common/node_modules
         build:
             context: ../../
