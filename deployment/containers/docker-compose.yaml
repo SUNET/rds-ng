@@ -50,7 +50,7 @@ services:
         ports:
             - "4300:6969"
         env_file:
-            - ../env/examples/connector-osf.env
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX}connector-osf.env
 
     # Connector: Zenodo
     connector-zenodo:
