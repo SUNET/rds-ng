@@ -8,8 +8,8 @@
     "layout": [
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
-            "displayLabel": "Title",
-            "description": "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
+            "displayLabel": "Title of your dataset",
+            "description": "A name or title by which a resource is known. This may be the title of your dataset, the name of a piece of software or an instrument.",
             "input": [
                 {
                     "id": "title",
