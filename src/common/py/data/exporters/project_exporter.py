@@ -2,9 +2,11 @@ import abc
 
 from ..entities.project import Project
 from ..entities.project.features import ProjectFeatureID
-from .project_exporter_descriptor import (ProjectExporterDescriptor,
-                                          ProjectExporterID,
-                                          ProjectExporterScope)
+from .project_exporter_descriptor import (
+    ProjectExporterDescriptor,
+    ProjectExporterID,
+    ProjectExporterScope,
+)
 from .project_exporter_result import ProjectExporterResult
 
 
@@ -21,7 +23,7 @@ class ProjectExporter(abc.ABC):
         description: str,
         extension: str,
         scope: ProjectExporterScope,
-        filename: str | None = None
+        default_filename: str = ""
     ):
         """
         Args:
@@ -30,6 +32,7 @@ class ProjectExporter(abc.ABC):
             description: The description.
             extension: The extension of exported files.
             scope: The scope the exporter applies to.
+            default_filename: A default filename used when none is given.
         """
         self._descriptor = ProjectExporterDescriptor(
             exporter_id=exporter_id,
@@ -37,14 +40,14 @@ class ProjectExporter(abc.ABC):
             description=description,
             extension=extension,
             scope=scope,
-            filename=filename
+            default_filename=default_filename,
         )
 
     @abc.abstractmethod
     def export(
         self, project: Project, scope: ProjectFeatureID | None = None
     ) -> ProjectExporterResult: ...
-    
+
     @property
     def descriptor(self) -> ProjectExporterDescriptor:
         """
@@ -88,8 +91,8 @@ class ProjectExporter(abc.ABC):
         return self._descriptor.scope
 
     @property
-    def filename(self) -> str:
+    def default_filename(self) -> str:
         """
-        The filename of the exported file.
+        The default filename used when none is given.
         """
-        return self._descriptor.filename
+        return self._descriptor.default_filename

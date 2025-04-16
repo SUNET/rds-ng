@@ -15,6 +15,7 @@ export type ProjectExporterID = string;
  * @param description - The exporter's description.
  * @param extension - The extension of exported files.
  * @param scope - The scope where the exporter applies; if empty, it applies to the overall project.
+ * @param defaultFilename - A default filename used when none is given.
  */
 export class ProjectExporterDescriptor {
     public readonly exporter_id: ProjectExporterID;
@@ -22,13 +23,21 @@ export class ProjectExporterDescriptor {
     public readonly name: string;
     public readonly description: string;
     public readonly extension: string;
-    public readonly filename?: string;
 
     // @ts-ignore
     @Type(() => String)
     public readonly scope: ProjectFeatureID[];
 
-    public constructor(exporterID: ProjectExporterID, name: string, description: string, extension: string, scope: ProjectFeatureID[], filename: string) {
+    public readonly default_filename: string;
+
+    public constructor(
+        exporterID: ProjectExporterID,
+        name: string,
+        description: string,
+        extension: string,
+        scope: ProjectFeatureID[],
+        defaultFilename: string
+    ) {
         this.exporter_id = exporterID;
 
         this.name = name;
@@ -36,6 +45,7 @@ export class ProjectExporterDescriptor {
         this.extension = extension;
 
         this.scope = scope;
-        this.filename = filename;
+
+        this.default_filename = defaultFilename;
     }
 }

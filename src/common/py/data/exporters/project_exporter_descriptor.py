@@ -21,6 +21,7 @@ class ProjectExporterDescriptor:
         description: The exporter's description.
         extension: The extension of exported files.
         scope: The scope where the exporter applies; if empty, it applies to the overall project.
+        default_filename: A default filename used when none is given.
     """
 
     exporter_id: ProjectExporterID
@@ -31,4 +32,4 @@ class ProjectExporterDescriptor:
 
     scope: typing.List[ProjectFeatureID] = field(default_factory=list)
 
-    filename: str | None
+    default_filename: str
