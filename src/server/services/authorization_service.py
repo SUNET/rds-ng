@@ -170,7 +170,10 @@ def create_authorization_service(comp: ServerComponent) -> Service:
             (msg.user_id, msg.auth_id)
         )
 
-        if auth_token.state != AuthorizationToken.TokenState.VALID:
+        if (
+            auth_token is None
+            or auth_token.state != AuthorizationToken.TokenState.VALID
+        ):
             auth_token = None
 
         GetAuthorizationTokenReply.build(

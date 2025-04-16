@@ -1,5 +1,6 @@
 import dataclasses
 import typing
+from dataclasses import field
 
 from ...core.messaging import (
     Command,
@@ -11,11 +12,11 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ...data.entities.authorization import AuthorizationToken
 from ...data.entities.connector import ConnectorInstanceID
 from ...data.entities.project import ProjectID, ProjectJob, Project
 from ...data.entities.resource import ResourcesBrokerToken
 from ...data.entities.user import UserToken
+from ...data.exporters import ProjectExporterID
 
 
 @Message.define("command/project-job/list")
@@ -73,6 +74,7 @@ class InitiateProjectJobCommand(Command):
     Args:
         project_id: The project ID.
         connector_instance: The connector instance ID.
+        auto_exports: List of enabled exporters for automatic file generation.
 
     Notes:
         Requires a ``InitiateJobReply`` reply.
@@ -81,12 +83,15 @@ class InitiateProjectJobCommand(Command):
     project_id: ProjectID
     connector_instance: ConnectorInstanceID
 
+    auto_exports: typing.List[ProjectExporterID] = field(default_factory=list)
+
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
         project_id: ProjectID,
         connector_instance: ConnectorInstanceID,
+        auto_exports: typing.List[ProjectExporterID] | None = None,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -97,6 +102,7 @@ class InitiateProjectJobCommand(Command):
             chain,
             project_id=project_id,
             connector_instance=connector_instance,
+            auto_exports=auto_exports if auto_exports is not None else [],
         )
 
 
