@@ -8,6 +8,14 @@ import { type ProjectFeatureID } from "../entities/project/features/ProjectFeatu
 export type ProjectExporterID = string;
 
 /**
+ * Flags specifying extended capabilities of the exporter.
+ */
+export const enum ProjectExporterCapabilities {
+    None = 0,
+    AutoExport = 0x0001
+}
+
+/**
  * Describes a project exporter. This class is used to easily transfer information about an exporter.
  *
  * @param exporter_id - The global exporter ID.
@@ -28,6 +36,8 @@ export class ProjectExporterDescriptor {
     @Type(() => String)
     public readonly scope: ProjectFeatureID[];
 
+    public readonly capabilities: ProjectExporterCapabilities;
+
     public readonly default_filename: string;
 
     public constructor(
@@ -36,7 +46,8 @@ export class ProjectExporterDescriptor {
         description: string,
         extension: string,
         scope: ProjectFeatureID[],
-        defaultFilename: string
+        capabilities: ProjectExporterCapabilities = ProjectExporterCapabilities.None,
+        defaultFilename: string = ""
     ) {
         this.exporter_id = exporterID;
 
@@ -45,6 +56,8 @@ export class ProjectExporterDescriptor {
         this.extension = extension;
 
         this.scope = scope;
+
+        this.capabilities = capabilities;
 
         this.default_filename = defaultFilename;
     }

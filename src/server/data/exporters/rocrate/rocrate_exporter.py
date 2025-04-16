@@ -7,6 +7,7 @@ from common.py.data.entities.project.features import (
 )
 from common.py.data.exporters import (
     ProjectExporter,
+    ProjectExporterDescriptor,
     ProjectExporterException,
     ProjectExporterID,
     ProjectExporterResult,
@@ -30,6 +31,7 @@ class ROCrateExporter(ProjectExporter):
             description="Exports to an RO-Crate (Research Object) file",
             extension="json",
             scope=[ProjectMetadataFeature.feature_id],
+            capabilities=ProjectExporterDescriptor.Capabilities.AUTO_EXPORT,
             default_filename="ro-crate-metadata.json",
         )
 

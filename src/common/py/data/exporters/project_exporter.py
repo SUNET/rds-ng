@@ -23,6 +23,7 @@ class ProjectExporter(abc.ABC):
         description: str,
         extension: str,
         scope: ProjectExporterScope,
+        capabilities: ProjectExporterDescriptor.Capabilities = ProjectExporterDescriptor.Capabilities.NONE,
         default_filename: str = ""
     ):
         """
@@ -40,6 +41,7 @@ class ProjectExporter(abc.ABC):
             description=description,
             extension=extension,
             scope=scope,
+            capabilities=capabilities,
             default_filename=default_filename,
         )
 
@@ -89,6 +91,13 @@ class ProjectExporter(abc.ABC):
         The exporter's scope.
         """
         return self._descriptor.scope
+
+    @property
+    def capabilities(self) -> ProjectExporterDescriptor.Capabilities:
+        """
+        The exporter's capabilities.
+        """
+        return self._descriptor.capabilities
 
     @property
     def default_filename(self) -> str:
