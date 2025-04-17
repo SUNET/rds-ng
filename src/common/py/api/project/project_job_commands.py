@@ -149,6 +149,30 @@ class StartProjectJobCommand(Command):
     user_token: UserToken
     broker_token: ResourcesBrokerToken
 
+    @property
+    def additional_files(self) -> typing.Dict[str, bytes]:
+        """
+        Any additional (auto-generated) files to be uploaded.
+
+        Returns:
+            A dictionary mapping file names to their data.
+        """
+        return (
+            self.payload.get("additional_files")
+            if "additional_files" in self.payload
+            else {}
+        )
+
+    @additional_files.setter
+    def additional_files(self, files: typing.Dict[str, bytes]) -> None:
+        """
+        Sets additional files to upload alongside the project files.
+
+        Args:
+            files: A filename->data map containing the additional files.
+        """
+        self.payload.set("additional_files", files)
+
     @staticmethod
     def build(
         message_builder: MessageBuilder,
@@ -157,12 +181,13 @@ class StartProjectJobCommand(Command):
         connector_instance: ConnectorInstanceID,
         user_token: UserToken,
         broker_token: ResourcesBrokerToken,
+        additional_files: typing.Dict[str, bytes] | None = None,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
         Helper function to easily build this message.
         """
-        return message_builder.build_command(
+        composer = message_builder.build_command(
             StartProjectJobCommand,
             chain,
             project=project,
@@ -170,6 +195,9 @@ class StartProjectJobCommand(Command):
             user_token=user_token,
             broker_token=broker_token,
         )
+        if additional_files is not None:
+            composer.add_payload("additional_files", additional_files)
+        return composer
 
 
 @Message.define("command/project-job/start/reply")
