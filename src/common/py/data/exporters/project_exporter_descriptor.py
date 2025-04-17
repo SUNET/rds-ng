@@ -23,6 +23,7 @@ class ProjectExporterDescriptor:
         extension: The extension of exported files.
         scope: The scope where the exporter applies; if empty, it applies to the overall project.
         capabilities: Extended exporter capabilities.
+        default_scope: A default scope when exporting if none is given.
         default_filename: A default filename used when none is given.
     """
 
@@ -44,4 +45,5 @@ class ProjectExporterDescriptor:
 
     capabilities: Capabilities
 
-    default_filename: str
+    default_scope: ProjectFeatureID | None = None
+    default_filename: str = ""

@@ -23,6 +23,7 @@ export const enum ProjectExporterCapabilities {
  * @param description - The exporter's description.
  * @param extension - The extension of exported files.
  * @param scope - The scope where the exporter applies; if empty, it applies to the overall project.
+ * @param defaultScope - A default scope when exporting if none is given.
  * @param defaultFilename - A default filename used when none is given.
  */
 export class ProjectExporterDescriptor {
@@ -38,6 +39,7 @@ export class ProjectExporterDescriptor {
 
     public readonly capabilities: ProjectExporterCapabilities;
 
+    public readonly default_scope: ProjectFeatureID | undefined;
     public readonly default_filename: string;
 
     public constructor(
@@ -47,6 +49,7 @@ export class ProjectExporterDescriptor {
         extension: string,
         scope: ProjectFeatureID[],
         capabilities: ProjectExporterCapabilities = ProjectExporterCapabilities.None,
+        defaultScope: ProjectFeatureID | undefined = undefined,
         defaultFilename: string = ""
     ) {
         this.exporter_id = exporterID;
@@ -59,6 +62,7 @@ export class ProjectExporterDescriptor {
 
         this.capabilities = capabilities;
 
+        this.default_scope = defaultScope;
         this.default_filename = defaultFilename;
     }
 }

@@ -32,6 +32,7 @@ class ROCrateExporter(ProjectExporter):
             extension="json",
             scope=[ProjectMetadataFeature.feature_id],
             capabilities=ProjectExporterDescriptor.Capabilities.AUTO_EXPORT,
+            default_scope=ProjectMetadataFeature.feature_id,
             default_filename="ro-crate-metadata.json",
         )
 

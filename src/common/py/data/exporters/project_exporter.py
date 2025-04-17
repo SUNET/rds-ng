@@ -24,6 +24,7 @@ class ProjectExporter(abc.ABC):
         extension: str,
         scope: ProjectExporterScope,
         capabilities: ProjectExporterDescriptor.Capabilities = ProjectExporterDescriptor.Capabilities.NONE,
+        default_scope: ProjectFeatureID | None = None,
         default_filename: str = ""
     ):
         """
@@ -33,8 +34,12 @@ class ProjectExporter(abc.ABC):
             description: The description.
             extension: The extension of exported files.
             scope: The scope the exporter applies to.
+            default_scope: A default scope when exporting if none is given.
             default_filename: A default filename used when none is given.
         """
+        if default_scope is not None and default_scope not in scope:
+            raise RuntimeError("Invalid default scope")
+
         self._descriptor = ProjectExporterDescriptor(
             exporter_id=exporter_id,
             name=name,
@@ -42,6 +47,7 @@ class ProjectExporter(abc.ABC):
             extension=extension,
             scope=scope,
             capabilities=capabilities,
+            default_scope=default_scope,
             default_filename=default_filename,
         )
 
@@ -98,6 +104,13 @@ class ProjectExporter(abc.ABC):
         The exporter's capabilities.
         """
         return self._descriptor.capabilities
+
+    @property
+    def default_scope(self) -> ProjectFeatureID | None:
+        """
+        The default scope when exporting if none is given.
+        """
+        return self._descriptor.default_scope
 
     @property
     def default_filename(self) -> str:
