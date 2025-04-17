@@ -8,6 +8,7 @@ from common.py.data.entities.project.logbook import (
 from common.py.services import Service
 
 from .tools import (
+    create_auto_export_files,
     send_project_jobs_list,
     handle_project_job_message,
     send_project_logbook,
@@ -170,12 +171,18 @@ def create_project_jobs_service(comp: ServerComponent) -> Service:
 
             _initiate(True, "", job)
 
+            # Gather any additional files to be uploaded
+            auto_exports = create_auto_export_files(
+                project, exporter_ids=msg.auto_exports
+            )
+
             StartProjectJobCommand.build(
                 ctx.message_builder,
                 project=project,
                 connector_instance=msg.connector_instance,
                 user_token=ctx.session.user_token,
                 broker_token=broker_token,
+                additional_files=auto_exports,
                 chain=msg,
             ).failed(
                 lambda _, message: _remove_failed_job(

@@ -40,6 +40,12 @@ class ProjectExporter(abc.ABC):
         if default_scope is not None and default_scope not in scope:
             raise RuntimeError("Invalid default scope")
 
+        if ProjectExporterDescriptor.Capabilities.AUTO_EXPORT in capabilities:
+            if default_scope is None:
+                raise RuntimeError("Missing default scope for auto-export support")
+            if default_filename == "":
+                raise RuntimeError("Missing default filename for auto-export support")
+
         self._descriptor = ProjectExporterDescriptor(
             exporter_id=exporter_id,
             name=name,
