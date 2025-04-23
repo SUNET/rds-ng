@@ -1,0 +1,18 @@
+appName: "rds"
+nameSpace: "default"
+
+tag: "develop"
+
+server:
+  image:
+    name: "docker.io/rds-ng/server"
+    pullPolicy: "Never"
+  allowedOrigins: '"*"'
+  databaseEngine: "sqlite"  # sqlite | mariadb
+  sqliteFile: "/data/rds.db"
+  secrets:
+    host: 
+    osf:  
+    zenodo: 
+    stub: 
+    networkApiKey: 

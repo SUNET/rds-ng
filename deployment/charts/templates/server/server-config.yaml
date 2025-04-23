@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-config
+  namespace: {{ .Values.nameSpace }}
+data:
+  RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{ .Values.server.allowedOrigins }}
+  RDS_STORAGE_DATABASE_ENGINE: {{ .Values.server.databaseEngine }}
+  RDS_STORAGE_DATABASE_SQLITE_FILE: {{ .Values.server.sqliteFile }}
