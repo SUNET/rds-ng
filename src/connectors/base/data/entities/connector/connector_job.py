@@ -1,4 +1,5 @@
 import time
+import typing
 from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
@@ -20,6 +21,7 @@ class ConnectorJob:
         connector_instance: The connector instance ID.
         user_token: The user token.
         broker_token: Token to create the resources broker.
+        additional_files: Files that should be uploaded alongside the regular project files.
         timestamp: The starting timestamp.
     """
 
@@ -28,5 +30,7 @@ class ConnectorJob:
 
     user_token: UserToken
     broker_token: ResourcesBrokerToken
+
+    additional_files: typing.Dict[str, bytes]
 
     timestamp: float = field(default_factory=lambda: time.time())

@@ -37,6 +37,10 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                 connector_instance=msg.connector_instance,
                 user_token=msg.user_token,
                 broker_token=msg.broker_token,
+                additional_files={
+                    (path if path.startswith("/") else f"/{path}"): data
+                    for path, data in msg.additional_files.items()
+                },
             )
             ctx.jobs_engine.spawn(comp, svc, job, ctx)
 
