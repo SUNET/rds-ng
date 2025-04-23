@@ -1,4 +1,5 @@
 import io
+import pathlib
 
 from typing_extensions import Buffer
 
@@ -11,11 +12,11 @@ class MemoryBrokerTunnel(ResourcesBrokerTunnel):
     Tunnel based on simple in-memory buffering.
     """
 
-    def __init__(self, resource: Resource):
+    def __init__(self, resource: Resource, *, initial_data: bytes = b""):
         super().__init__(resource)
 
-        self._buffer = io.BytesIO()
-        self._data_ready = False
+        self._buffer = io.BytesIO(initial_data)
+        self._data_ready = initial_data != b""
 
     def fileno(self) -> int:
         return self._buffer.fileno()
@@ -64,3 +65,15 @@ class MemoryBrokerTunnel(ResourcesBrokerTunnel):
         self._data_ready = True
 
         super()._done()
+
+
+def memory_broker_tunnel_from_data(path: str, data: bytes) -> MemoryBrokerTunnel:
+    return MemoryBrokerTunnel(
+        Resource(
+            filename=path,
+            basename=pathlib.PurePosixPath(path).name,
+            type=Resource.Type.FILE,
+            size=len(data),
+        ),
+        initial_data=data,
+    )

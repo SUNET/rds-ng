@@ -3,6 +3,7 @@ import { CommandComposer } from "@common/core/messaging/composers/CommandCompose
 import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
 import { Project } from "@common/data/entities/project/Project";
+import { ProjectExporterCapabilities, ProjectExporterDescriptor, type ProjectExporterID } from "@common/data/exporters/ProjectExporterDescriptor.ts";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
@@ -10,6 +11,7 @@ import { StatusNotifier } from "@common/ui/actions/notifiers/StatusNotifier";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
 import { findConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
+import { useProjectExportersStore } from "@/data/stores/ProjectExportersStore.ts";
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 
 /**
@@ -19,7 +21,7 @@ export class InitiateProjectJobAction extends FrontendCommandAction<InitiateProj
     public prepare(project: Project, connector: Connector, connectorInstance: ConnectorInstance): CommandComposer<InitiateProjectJobCommand> {
         super.prepareNotifiers(project, connector, connectorInstance);
 
-        this._composer = InitiateProjectJobCommand.build(this.messageBuilder, project.project_id, connectorInstance.instance_id);
+        this._composer = InitiateProjectJobCommand.build(this.messageBuilder, project.project_id, connectorInstance.instance_id, this.getAutoExports());
         return this._composer;
     }
 
@@ -51,5 +53,17 @@ export class InitiateProjectJobAction extends FrontendCommandAction<InitiateProj
                 true
             )
         );
+    }
+
+    private getAutoExports(): ProjectExporterID[] {
+        // TODO: Right now, all auto exports are enforced; this should become optional later
+        const { exporters } = useProjectExportersStore();
+
+        return exporters
+            .filter(
+                (exporter: ProjectExporterDescriptor) =>
+                    (exporter.capabilities & ProjectExporterCapabilities.AutoExport) == ProjectExporterCapabilities.AutoExport
+            )
+            .map((exporter: ProjectExporterDescriptor) => exporter.exporter_id);
     }
 }

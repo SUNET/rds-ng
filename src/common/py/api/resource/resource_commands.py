@@ -1,7 +1,5 @@
-import base64
 import dataclasses
 import typing
-from fileinput import filename
 
 from ...core.messaging import (
     Command,

@@ -7,8 +7,9 @@ import { CommandReplyComposer } from "../../core/messaging/composers/CommandRepl
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
 import { type ConnectorInstanceID } from "../../data/entities/connector/ConnectorInstance";
-import { Project, type ProjectID } from "../../data/entities/project/Project";
+import { type ProjectID } from "../../data/entities/project/Project";
 import { ProjectJob } from "../../data/entities/project/ProjectJob";
+import { type ProjectExporterID } from "../../data/exporters/ProjectExporterDescriptor";
 
 /**
  * Command to fetch all project jobs of the current user. Requires a ``ListJobsReply`` reply.
@@ -53,11 +54,16 @@ export class ListProjectJobsReply extends CommandReply {
  *
  * @param project_id - The project ID.
  * @param connector_instance - The connector instance ID.
+ * @param auto_exports - List of enabled exporters for automatic file generation.
  */
 @Message.define("command/project-job/initiate")
 export class InitiateProjectJobCommand extends Command {
     public readonly project_id: ProjectID = 0;
     public readonly connector_instance: ConnectorInstanceID = "";
+
+    // @ts-ignore
+    @Type(() => ProjectExporterID)
+    public readonly auto_exports: ProjectExporterID[] = [];
 
     /**
      * Helper function to easily build this message.
@@ -66,9 +72,14 @@ export class InitiateProjectJobCommand extends Command {
         messageBuilder: MessageBuilder,
         projectID: ProjectID,
         connectorInstance: ConnectorInstanceID,
+        autoExports: ProjectExporterID[] = [],
         chain: Message | null = null
     ): CommandComposer<InitiateProjectJobCommand> {
-        return messageBuilder.buildCommand(InitiateProjectJobCommand, { project_id: projectID, connector_instance: connectorInstance }, chain);
+        return messageBuilder.buildCommand(
+            InitiateProjectJobCommand,
+            { project_id: projectID, connector_instance: connectorInstance, auto_exports: autoExports },
+            chain
+        );
     }
 }
 

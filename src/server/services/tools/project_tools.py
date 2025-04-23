@@ -1,12 +1,14 @@
 import typing
 
 from common.py.api import ProjectExternalStateEvent, ProjectExternalStateRenewalEvent
+from common.py.core.logging import warning
 from common.py.core.messaging import Message, Channel
 from common.py.data.entities.connector import (
     ConnectorInstanceID,
     find_connector_by_instance_id,
 )
 from common.py.data.entities.project import Project
+from common.py.data.exporters import ProjectExporterDescriptor, ProjectExporterID
 
 from .. import ServerServiceContext
 from ...networking.session import Session
@@ -96,3 +98,42 @@ def send_project_external_states(
                     connector_instance=connector_instance.instance_id,
                     user_token=ctx.session.user_token,
                 ).emit(Channel.direct(connector.connector_address))
+
+
+def create_auto_export_files(
+    project: Project, *, exporter_ids: typing.List[ProjectExporterID]
+) -> typing.Dict[str, bytes]:
+    """
+    Generates all auto-exported files for a project.
+
+    Args:
+        project: The project.
+        exporter_ids: The IDs of the exporters to generate files with.
+
+    Returns:
+        The list of auto-generated files.
+    """
+    from ...data.exporters import ProjectExportersCatalog
+
+    files: typing.Dict[str, bytes] = {}
+    for _, exporter in ProjectExportersCatalog.items():
+        if (
+            exporter.exporter_id not in exporter_ids
+            or ProjectExporterDescriptor.Capabilities.AUTO_EXPORT
+            not in exporter.capabilities
+        ):
+            continue
+
+        try:
+            # For auto-export enabled exporters, the default_scope and default_filename are guaranteed to be set
+            exporter_result = exporter.export(project, exporter.default_scope)
+            files[exporter.default_filename] = exporter_result.data
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            warning(
+                "An error occurred while auto-generating an export file",
+                scope="job",
+                exporter=exporter.exporter_id,
+                error=str(exc),
+            )
+
+    return files

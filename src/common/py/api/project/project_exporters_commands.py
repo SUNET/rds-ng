@@ -12,7 +12,6 @@ from ...data.entities.project.features import ProjectFeatureID
 from ...data.exporters import (
     ProjectExporterDescriptor,
     ProjectExporterID,
-    ProjectExporterResult,
 )
 
 

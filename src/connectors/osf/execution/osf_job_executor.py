@@ -19,7 +19,10 @@ from common.py.data.entities.resource import (
     Resource,
     ResourcesList,
 )
-from common.py.integration.resources.brokers.tunnels import MemoryBrokerTunnel
+from common.py.integration.resources.brokers.tunnels import (
+    memory_broker_tunnel_from_data,
+    MemoryBrokerTunnel,
+)
 from common.py.integration.resources.transmitters import (
     ResourceBuffer,
     ResourcesTransmitterDownloadCallbacks,
@@ -301,9 +304,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
         callbacks.failed(lambda _, __: self._delete_failed_project(osf_project))
         callbacks.all_done(
             lambda success: (
-                self.set_done(
-                    osf_project.project_id, ext_data=self._get_job_ext_data(osf_project)
-                )
+                self._upload_additional_files(osf_project, osf_storage)
                 if success
                 else None
             )
@@ -329,7 +330,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
         self._osf_client.upload_file(
             osf_storage,
             path=relativize_path(resource.filename, self._job.project.resources_path),
-            file=buffer,
+            file_data=buffer,
             callbacks=callbacks,
         )
 
@@ -341,6 +342,34 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
     def _upload_file_failed(self, res: Resource, exc: Exception) -> None:
         self.set_failed(f"Failed to upload {res.filename}: {str(exc)}")
+
+    def _upload_additional_files(
+        self, osf_project: OSFProjectObject, osf_storage: OSFStorageObject
+    ) -> None:
+        for path, file_data in self._job.additional_files.items():
+            self.report_message(f"Uploading {path}...")
+
+            callbacks = OSFUploadFileCallbacks()
+            callbacks.done(lambda data: self._upload_additional_file_done(path, data))
+            callbacks.failed(lambda exc: self._upload_additional_file_failed(path, exc))
+
+            self._osf_client.upload_file(
+                osf_storage,
+                path=relativize_path(path, self._job.project.resources_path),
+                file_data=memory_broker_tunnel_from_data(path, file_data),
+                callbacks=callbacks,
+            )
+        else:
+            self.set_done(
+                osf_project.project_id,
+                ext_data=self._get_job_ext_data(osf_project),
+            )
+
+    def _upload_additional_file_done(self, path: str, _: OSFFileObject) -> None:
+        self.report_message(f"Uploaded {path}")
+
+    def _upload_additional_file_failed(self, path: str, exc: Exception) -> None:
+        self.set_failed(f"Failed to upload {path}: {str(exc)}")
 
     # Miscellaneous
 
