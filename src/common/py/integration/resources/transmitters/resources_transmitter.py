@@ -160,7 +160,7 @@ class ResourcesTransmitter(AuthorizedExecutor):
             with self._lock:
                 self._context.begin_downloads(resources)
 
-            return self._download_list_next(
+            self._download_list_next(
                 resources,
                 callbacks=callbacks,
             )

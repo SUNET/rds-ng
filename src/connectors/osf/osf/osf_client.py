@@ -1,6 +1,7 @@
 import pathlib
 import typing
 from http import HTTPStatus
+from io import BytesIO
 
 import requests
 
@@ -246,7 +247,7 @@ class OSFClient(RequestsExecutor):
         osf_storage: OSFStorageObject,
         *,
         path: str,
-        file: ResourceBuffer,
+        file_data: ResourceBuffer | bytes,
         callbacks: OSFUploadFileCallbacks = OSFUploadFileCallbacks(),
     ) -> None:
         """
@@ -255,9 +256,11 @@ class OSFClient(RequestsExecutor):
         Args:
             osf_storage: The OSF storage.
             path: The remote path of the file.
-            file: The file data.
+            file_data: The file data.
             callbacks: Optional request callbacks.
         """
+
+        is_buffer = isinstance(file_data, ResourceBuffer)
 
         def _execute(session: requests.Session) -> OSFFileObject:
             file_path = pathlib.PurePosixPath(path)
@@ -266,24 +269,28 @@ class OSFClient(RequestsExecutor):
             )
 
             # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
-            if file.seekable():
-                file.seek(0)
+            if is_buffer and file_data.seekable():
+                file_data.seek(0)
 
             resp = self.put(
                 session,
                 target_storage.file_link,
-                data=file,
+                data=(BytesIO(file_data.readall()) if is_buffer else file_data),
                 params={"name": file_path.name},
             )
             return OSFRequestData.data_from_response(OSFFileObject, resp)
 
         def _upload_done(data: OSFFileObject) -> None:
             callbacks.invoke_done_callbacks(data)
-            file.close()  # Free up the buffer to save memory
+
+            if is_buffer:
+                file_data.close()  # Free up the buffer to save memory
 
         def _upload_failed(exc: Exception) -> None:
             callbacks.invoke_fail_callbacks(exc)
-            file.close()  # Free up the buffer to save memory
+
+            if is_buffer:
+                file_data.close()  # Free up the buffer to save memory
 
         self._execute(
             cb_exec=_execute,

@@ -1,3 +1,4 @@
+import io
 import typing
 from http import HTTPStatus
 
@@ -277,12 +278,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
         callbacks.failed(lambda _, __: self._delete_failed_project(zenodo_project))
         callbacks.all_done(
             lambda success: (
-                self.set_done(
-                    zenodo_project.project_id,
-                    ext_data=self._get_job_ext_data(zenodo_project),
-                )
-                if success
-                else None
+                self._upload_additional_files(zenodo_project) if success else None
             )
         )
 
@@ -305,7 +301,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
         self._zenodo_upload_client.upload_file(
             zenodo_project,
             path=relativize_path(resource.filename, self._job.project.resources_path),
-            file=buffer,
+            file_data=buffer,
             callbacks=callbacks,
         )
 
@@ -317,6 +313,32 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
     def _upload_file_failed(self, res: Resource, exc: Exception) -> None:
         self.set_failed(f"Failed to upload {res.filename}: {str(exc)}")
+
+    def _upload_additional_files(self, zenodo_project: ZenodoProjectObject) -> None:
+        for path, file_data in self._job.additional_files.items():
+            self.report_message(f"Uploading {path}...")
+
+            callbacks = ZenodoUploadFileCallbacks()
+            callbacks.done(lambda data: self._upload_additional_file_done(path, data))
+            callbacks.failed(lambda exc: self._upload_additional_file_failed(path, exc))
+
+            self._zenodo_upload_client.upload_file(
+                zenodo_project,
+                path=relativize_path(path, self._job.project.resources_path),
+                file_data=file_data,
+                callbacks=callbacks,
+            )
+        else:
+            self.set_done(
+                zenodo_project.project_id,
+                ext_data=self._get_job_ext_data(zenodo_project),
+            )
+
+    def _upload_additional_file_done(self, path: str, _: ZenodoFileObject) -> None:
+        self.report_message(f"Uploaded {path}")
+
+    def _upload_additional_file_failed(self, path: str, exc: Exception) -> None:
+        self.set_failed(f"Failed to upload {path}: {str(exc)}")
 
     # Miscellaneous
 
