@@ -247,7 +247,7 @@ class OSFClient(RequestsExecutor):
         osf_storage: OSFStorageObject,
         *,
         path: str,
-        file_data: ResourceBuffer | bytes,
+        file_data: ResourceBuffer,
         callbacks: OSFUploadFileCallbacks = OSFUploadFileCallbacks(),
     ) -> None:
         """
@@ -260,8 +260,6 @@ class OSFClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        is_buffer = isinstance(file_data, ResourceBuffer)
-
         def _execute(session: requests.Session) -> OSFFileObject:
             file_path = pathlib.PurePosixPath(path)
             target_storage = self._create_directory_tree(
@@ -269,28 +267,24 @@ class OSFClient(RequestsExecutor):
             )
 
             # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
-            if is_buffer and file_data.seekable():
+            if file_data.seekable():
                 file_data.seek(0)
 
             resp = self.put(
                 session,
                 target_storage.file_link,
-                data=(BytesIO(file_data.readall()) if is_buffer else file_data),
+                data=BytesIO(file_data.readall()),
                 params={"name": file_path.name},
             )
             return OSFRequestData.data_from_response(OSFFileObject, resp)
 
         def _upload_done(data: OSFFileObject) -> None:
             callbacks.invoke_done_callbacks(data)
-
-            if is_buffer:
-                file_data.close()  # Free up the buffer to save memory
+            file_data.close()  # Free up the buffer to save memory
 
         def _upload_failed(exc: Exception) -> None:
             callbacks.invoke_fail_callbacks(exc)
-
-            if is_buffer:
-                file_data.close()  # Free up the buffer to save memory
+            file_data.close()  # Free up the buffer to save memory
 
         self._execute(
             cb_exec=_execute,

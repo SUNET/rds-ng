@@ -219,7 +219,7 @@ class ZenodoClient(RequestsExecutor):
         zenodo_project: ZenodoProjectObject,
         *,
         path: str,
-        file_data: ResourceBuffer | bytes,
+        file_data: ResourceBuffer,
         callbacks: ZenodoUploadFileCallbacks = ZenodoUploadFileCallbacks(),
     ) -> None:
         """
@@ -232,33 +232,27 @@ class ZenodoClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        is_buffer = isinstance(file_data, ResourceBuffer)
-
         def _execute(session: requests.Session) -> ZenodoFileObject:
             file_path = pathlib.PurePosixPath(path)
 
             # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
-            if is_buffer and file_data.seekable():
+            if file_data.seekable():
                 file_data.seek(0)
 
             resp = self.put(
                 session,
                 f"{zenodo_project.bucket_link}/{file_path.name}",
-                data=(BytesIO(file_data.readall()) if is_buffer else file_data),
+                data=BytesIO(file_data.readall()),
             )
             return ZenodoRequestData.data_from_response(ZenodoFileObject, resp)
 
         def _upload_done(data: ZenodoFileObject) -> None:
             callbacks.invoke_done_callbacks(data)
-
-            if is_buffer:
-                file_data.close()  # Free up the buffer to save memory
+            file_data.close()  # Free up the buffer to save memory
 
         def _upload_failed(exc: Exception) -> None:
             callbacks.invoke_fail_callbacks(exc)
-
-            if is_buffer:
-                file_data.close()  # Free up the buffer to save memory
+            file_data.close()  # Free up the buffer to save memory
 
         self._execute(
             cb_exec=_execute,

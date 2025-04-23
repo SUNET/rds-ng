@@ -1,4 +1,3 @@
-import io
 import typing
 from http import HTTPStatus
 
@@ -20,7 +19,10 @@ from common.py.data.entities.resource import (
     Resource,
     ResourcesList,
 )
-from common.py.integration.resources.brokers.tunnels import MemoryBrokerTunnel
+from common.py.integration.resources.brokers.tunnels import (
+    memory_broker_tunnel_from_data,
+    MemoryBrokerTunnel,
+)
 from common.py.integration.resources.transmitters import (
     ResourceBuffer,
     ResourcesTransmitterDownloadCallbacks,
@@ -325,7 +327,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
             self._zenodo_upload_client.upload_file(
                 zenodo_project,
                 path=relativize_path(path, self._job.project.resources_path),
-                file_data=file_data,
+                file_data=memory_broker_tunnel_from_data(path, file_data),
                 callbacks=callbacks,
             )
         else:
