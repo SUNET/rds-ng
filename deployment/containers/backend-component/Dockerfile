@@ -18,6 +18,7 @@ COPY    /deployment/testing_data/ .
 WORKDIR /component
 
 COPY    /src/common ./common
+COPY    /src/connectors/base ./connectors/base
 COPY    /src/${COMPONENT_NAME} ./${COMPONENT_NAME}
 
 ENV     PYTHONPATH="/component"

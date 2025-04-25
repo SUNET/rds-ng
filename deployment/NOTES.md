@@ -1,5 +1,9 @@
 # Deployment notes
 
+## Configuration files
+
+Some configuration files are found under `/deployment/config/`. We do not supply any defaults here, but examples are always provided. Copy the example files, removing the `example` from their filenames (e.g., `config.example.toml` becomes `config.toml`), then adjust the settings to your needs.
+
 ## Environment files
 
 Variables are passed to the containers via environment files found under `/deployment/env/`. We do not supply any defaults here, but examples can be found under `/deployment/env/examples`. Copy these to `/deployment/env` and adjust them to match your own deployment environment.

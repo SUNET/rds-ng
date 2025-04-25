@@ -1,5 +1,7 @@
 # Simple makefile to easily work with a local deployment via Docker compose
 
+.DEFAULT_GOAL := run
+
 # Regular targets
 # --
 build:

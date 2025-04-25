@@ -3,9 +3,6 @@ import { parse } from "toml";
 import { SettingID } from "./SettingID";
 import { deepMerge } from "../ObjectUtils";
 
-// @ts-ignore
-import configData from "/config/config.toml?url&raw";
-
 /**
  * A general record-like object.
  */
@@ -57,7 +54,15 @@ export class Configuration {
      * @throws Error - If the configuration data couldn't be parsed.
      */
     public load(): void {
-        this._settings = parse(configData);
+        const request = new XMLHttpRequest();
+        request.open("GET", "/config/config.toml", false);
+        request.send(null);
+
+        if (request.status === 200) {
+            this._settings = parse(request.responseText);
+        } else {
+            throw new Error(`Unable to load configuration: ${request.responseText}`);
+        }
     }
 
     /**
