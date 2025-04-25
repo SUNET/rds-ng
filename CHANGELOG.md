@@ -1,31 +1,13 @@
 # RDS-NG - Changelog
 
-## v0.9.0 -- 2025-04-11
+## v0.10.0 - 2025-05-xx
 
-### New
+First public beta release, now under the product name **BridgIT**.
 
-- Beta release
+## v0.7.0 - 2024-10-07
 
-### Improved
+First minimal viable product release
 
-### Fixed
+## v0.0.0 - 2023-05-04
 
-## v0.7.0 -- 2024-10-07
-
-### New
-
-- First minimal viable product release
-
-### Improved
-
-### Fixed
-
-## v0.0.0 -- 2023-05-04
-
-### New
-
-- Project kickoff
-
-### Improved
-
-### Fixed
+Project kickoff

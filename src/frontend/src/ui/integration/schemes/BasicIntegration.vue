@@ -14,8 +14,8 @@ import { IntegrationScheme } from "@/integration/IntegrationScheme";
 const props = defineProps({
     scheme: {
         type: Object as PropType<IntegrationScheme>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { scheme } = toRefs(props);
 const { vFocus } = useDirectives();
@@ -48,7 +48,7 @@ function performLogin(): void {
     <div class="r-centered-grid grid-cols-[auto_32rem_auto] grid-flow-row mt-2">
         <div></div>
         <BlockUI class="r-centered-grid grid-cols-1 grid-flow-row w-full p-10" :blocked="blockInput">
-            <img src="@assets/img/rds_ng-octopus-blue.png" alt="RDS-NG Logo" class="logo" />
+            <img src="@assets/img/rds_ng-octopus-blue.png" alt="Logo" class="logo" />
             <form @submit.prevent="performLogin" class="r-form w-full">
                 <span>
                     <label>Enter your username:</label>
@@ -73,8 +73,8 @@ function performLogin(): void {
             <div v-if="errorMessage" class="r-text-error mt-2"><b>Unable to login:</b> {{ errorMessage }}</div>
 
             <div class="r-text-light mt-10">
-                The RDS-NG system usually does not provide user accounts on its own. For testing purposes, however, a simple account mechanism has been added.
-                Simply enter a username of your choice; the data you're working with will then be tied to this name.
+                This system usually does not provide user accounts on its own. For testing purposes, however, a simple account mechanism has been added. Simply
+                enter a username of your choice; the data you're working with will then be tied to this name.
             </div>
         </BlockUI>
         <div></div>
