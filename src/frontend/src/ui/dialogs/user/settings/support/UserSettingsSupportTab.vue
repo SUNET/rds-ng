@@ -32,7 +32,8 @@ const propRefs = toRefs(props);
         </div>
         <Message severity="warn" icon="material-icons-outlined mi-warning-amber mr-1 mb-0.5" :closable="false" class="text-sm my-4">
             This is an <em>early preview version</em> of the final application. If you encounter any issues or have some feedback, feel free to
-            <a href="mailto:sciebo.rds@uni-muenster.de" class="underline">send us an email</a>.
+            <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" internal />
+            !
         </Message>
 
         <div class="r-text-caption mt-1">Links</div>
