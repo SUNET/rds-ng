@@ -121,7 +121,8 @@ const editMenuShown = ref(false);
 
 <template>
     <div
-        class="grid grid-rows-[auto_auto_1fr] grid-cols-[1fr_min-content] grid-flow-row w-full gap-0 min-h-24 content-start items-start place-content-start group"
+        class="p-2 pl-3 grid grid-rows-[auto_auto_1fr] grid-cols-[1fr_min-content] grid-flow-row w-full gap-0 min-h-24 content-start items-start place-content-start group r-text border-l-4"
+        :class="{ 'border-orange-500': isSelected, 'border-transparent': !isSelected }"
     >
         <div class="r-text-caption-big h-7 truncate" :title="project!.title">{{ project!.title }}</div>
 
@@ -136,7 +137,7 @@ const editMenuShown = ref(false);
                 @click.stop="(event) => editMenu.toggle(event)"
             >
                 <template #icon>
-                    <span class="material-icons-outlined mi-more-vert" :class="[isSelected ? 'r-highlight-text' : 'r-text']" style="font-size: 32px" />
+                    <span class="material-icons-outlined mi-more-vert r-text" style="font-size: 32px" />
                 </template>
             </Button>
             <Menu ref="editMenu" :model="editMenuItems" popup @focus="editMenuShown = true" @blur="editMenuShown = false" />
