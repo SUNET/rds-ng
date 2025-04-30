@@ -10,13 +10,15 @@ const appVersion = comp.data.version;
 
 <template>
     <div>
-        <img src="../../../../../assets/img/rds_ng-octopus-blue.png" alt="RDS-NG Logo" class="logo">
+        <img src="../../../../../assets/img/rds_ng-octopus-blue.png" alt="Logo" class="logo" />
     </div>
     <div>
         <h2 class="text-2xl font-extrabold">{{ appTitle }}</h2>
     </div>
     <div>
-        <h3 class="text-1xl italic"><span class="font-bold">{{ appName }}</span> - <span class="r-text-light">v{{ appVersion }}</span></h3>
+        <h3 class="text-1xl italic">
+            <span class="font-bold">{{ appName }}</span> - <span class="r-text-light">v{{ appVersion }}</span>
+        </h3>
     </div>
     <div>&nbsp;</div>
 </template>

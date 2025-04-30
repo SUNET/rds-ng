@@ -4,20 +4,24 @@ import { toRefs } from "vue";
 const props = defineProps({
     link: {
         type: String,
-        required: true,
+        required: true
     },
     text: {
-        type: String,
+        type: String
     },
+    internal: {
+        type: Boolean,
+        default: false
+    }
 });
-const { link, text } = toRefs(props);
+const { link, text, internal } = toRefs(props);
 </script>
 
 <template>
     <span class="r-text-link inline-block">
-        <a :href="link" class="grid grid-cols-[max-content_min-content] items-center" target="_blank">
+        <a :href="link" class="grid grid-cols-[max-content_min-content] items-center" :target="internal ? '_blank' : ''">
             {{ text || link }}
-            <span class="material-icons-outlined mi-open-in-new ml-1 !text-lg" />
+            <span v-if="!internal" class="material-icons-outlined mi-open-in-new ml-1 !text-lg" />
         </a>
     </span>
 </template>

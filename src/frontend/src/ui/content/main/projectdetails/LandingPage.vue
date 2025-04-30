@@ -2,6 +2,10 @@
 import Card from "primevue/card";
 
 import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
+
+import { FrontendComponent } from "@/component/FrontendComponent.ts";
+
+const comp = FrontendComponent.inject();
 </script>
 
 <template>
@@ -10,7 +14,7 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
             <div class="grid grid-cols-2 min-w-full min-h-full place-content-start gap-24 pb-0">
                 <div class="space-y-4 !pb-0">
                     <div>
-                        <div class="text font-light uppercase">Sciebo Research Data Services</div>
+                        <div class="text font-light uppercase">{{ comp.data.title }}</div>
                         <div class="text-4xl font-black uppercase leading-none">
                             Research data <span class="font-thin text-nowrap text-3xl">made easy</span>
                         </div>
@@ -34,6 +38,20 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
 
                 <div class="grid place-items-center max-w-fit space-y-4">
                     <img src="@assets/img/landing_image.png" class="w-[25rem]" alt="Image" />
+                    <Card class="w-[30rem] bg-amber-50 text-amber-600">
+                        <template #title>
+                            <div class="flex items-center gap-1">
+                                <span class="material-icons-outlined mi-construction" />
+                                <span class="">This is a beta version!</span>
+                            </div>
+                        </template>
+                        <template #content>
+                            This version of {{ comp.data.title }} is still under construction. If you encounter any issues or have other kinds of feedback, feel
+                            free to
+                            <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" internal />
+                            !
+                        </template>
+                    </Card>
                     <Card class="w-[30rem]">
                         <template #title>
                             <div class="">Here's how we support you:</div>

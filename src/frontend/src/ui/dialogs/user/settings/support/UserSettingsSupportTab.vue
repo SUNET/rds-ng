@@ -15,7 +15,6 @@ const props = defineProps({
     }
 });
 const propRefs = toRefs(props);
-const userSettings = propRefs.tabData!;
 </script>
 
 <template>
@@ -26,11 +25,15 @@ const userSettings = propRefs.tabData!;
             <a href="https://www.research-data-services.org" target="_blank">
                 <img id="logo" src="@assets/img/rds-octopus-bl.svg" alt="RDS Logo" class="p-1.5" width="75rem" title="Visit the RDS website" />
             </a>
-            <div>RDS NG allows researchers to export research data directly from their cloud storage systems to data repositories and external storages.</div>
+            <div>
+                {{ comp.data.title }} allows researchers to export research data directly from their cloud storage systems to data repositories and external
+                storages.
+            </div>
         </div>
         <Message severity="warn" icon="material-icons-outlined mi-warning-amber mr-1 mb-0.5" :closable="false" class="text-sm my-4">
-            This is an <em>early preview version</em> of the final application. Even its current name - {{ comp.data.title }} - is only temporary and will
-            change in the future.
+            This is an <em>early preview version</em> of the final application. If you encounter any issues or have some feedback, feel free to
+            <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" internal />
+            !
         </Message>
 
         <div class="r-text-caption mt-1">Links</div>
