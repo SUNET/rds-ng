@@ -37,7 +37,7 @@ const resetFilters = () => {
                 v-model="searchString"
                 id="searchString"
                 class="w-full"
-                placeholder="Search..."
+                placeholder="Search metadata fields..."
                 autocomplete="off"
                 @keydown.esc="resetSearch()"
             />

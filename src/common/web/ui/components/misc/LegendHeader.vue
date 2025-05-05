@@ -39,7 +39,11 @@ const descriptionPopover = ref();
         "
     >
         <i :class="iconClass" />
-        <Popover ref="descriptionPopover">{{ description }}</Popover>
+        <Popover ref="descriptionPopover" class="w-fit max-w-[35%] p-2">
+            <template #container>
+                <div v-html="description" />
+            </template>
+        </Popover>
     </span>
 </template>
 
