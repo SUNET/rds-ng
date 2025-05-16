@@ -328,7 +328,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
             self._zenodo_upload_client.upload_file(
                 zenodo_project,
-                path=relativize_path(path, self._job.project.resources_path),
+                path=path,
                 file_data=memory_broker_tunnel_from_data(path, file_data),
                 callbacks=callbacks,
             )

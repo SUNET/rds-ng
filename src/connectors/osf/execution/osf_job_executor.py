@@ -357,7 +357,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
             self._osf_client.upload_file(
                 osf_storage,
-                path=relativize_path(path, self._job.project.resources_path),
+                path=path,
                 file_data=memory_broker_tunnel_from_data(path, file_data),
                 callbacks=callbacks,
             )
