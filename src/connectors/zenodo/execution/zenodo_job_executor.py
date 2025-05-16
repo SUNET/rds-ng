@@ -317,6 +317,8 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
         self.set_failed(f"Failed to upload {res.filename}: {str(exc)}")
 
     def _upload_additional_files(self, zenodo_project: ZenodoProjectObject) -> None:
+        self.report_message(f"Uploading additional files...")
+
         for path, file_data in self._job.additional_files.items():
             self.report_message(f"Uploading {path}...")
 

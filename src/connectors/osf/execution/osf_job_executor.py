@@ -346,6 +346,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
     def _upload_additional_files(
         self, osf_project: OSFProjectObject, osf_storage: OSFStorageObject
     ) -> None:
+        self.report_message(f"Uploading additional files...")
+
         for path, file_data in self._job.additional_files.items():
             self.report_message(f"Uploading {path}...")
 
