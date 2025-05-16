@@ -1,0 +1,37 @@
+appName: "rds"
+nameSpace: "default"
+
+tag: "develop"
+
+ingress:
+  enabled: true
+  hostname: "minikube.rds"
+  path: /
+  tls: {}
+  annotations: {}
+
+serverAdress: http://api.minikube.rds
+integrationScheme: "host"
+integrationHostApiUrl: "http://{{HOST}}:8080/apps/rdsng/api/v1" # replace HOST
+clientRedirectUrl: "http://{{HOST}}:8080/apps/rdsng/main" # replace HOST
+clientId: ""
+
+server:
+  image:
+    name: "ghcr.io/sciebo-rds/rds-ng-server"
+    pullPolicy: "Always"
+  allowedOrigins: '"*"'
+  databaseEngine: "sqlite"  # sqlite | mariadb
+  sqliteFile: "/data/rds.db"
+  secrets:
+    host: ""
+    osf:  
+    zenodo: 
+    stub: 
+    networkApiKey: ""
+
+frontend:
+  image:
+    name: "ghcr.io/sciebo-rds/rds-ng-frontend"
+    pullPolicy: "Always"
+
