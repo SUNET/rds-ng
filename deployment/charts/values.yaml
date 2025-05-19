@@ -10,28 +10,67 @@ ingress:
   tls: {}
   annotations: {}
 
-serverAdress: http://api.minikube.rds
-integrationScheme: "host"
-integrationHostApiUrl: "http://{{HOST}}:8080/apps/rdsng/api/v1" # replace HOST
-clientRedirectUrl: "http://{{HOST}}:8080/apps/rdsng/main" # replace HOST
-clientId: ""
-
+### Server
 server:
+  componentName: "server"
+  address: 
   image:
     name: "ghcr.io/sciebo-rds/rds-ng-server"
     pullPolicy: "Always"
   allowedOrigins: '"*"'
   databaseEngine: "sqlite"  # sqlite | mariadb
   sqliteFile: "/data/rds.db"
-  secrets:
-    host: ""
-    osf:  
-    zenodo: 
-    stub: 
-    networkApiKey: ""
+  oauth2:
+    clientId: ""
+    clientRedirectUrl: "http://[HOST]:8080/apps/rdsng/main"
+    hostSecret: 
+  networkApiKey: 
 
+
+### Frontend
 frontend:
+  componentName: "frontend"
+  integration:
+    scheme: "host"
+    hostApiUrl: "http://[Host]:8080/apps/rdsng/api/v1"
   image:
     name: "ghcr.io/sciebo-rds/rds-ng-frontend"
     pullPolicy: "Always"
 
+###
+### Connectors
+###
+connectors:
+
+  ### OSF
+  osf:
+    enabled: true
+    componentName: "connector-osf"
+    image:
+      name: "ghcr.io/sciebo-rds/rds-ng-connector-osf"
+      pullPolicy: "Always"
+    oauth2:
+      clientId:
+      clientSecret:
+  
+  ### Zenodo
+  zenodo:
+    enabled: true
+    componentName: "connector-zenodo"
+    image:
+      name: "ghcr.io/sciebo-rds/rds-ng-connector-zenodo"
+      pullPolicy: "Always"
+    oauth2:
+      clientId:
+      clientSecret:
+
+  ### Stub
+  stub:
+    enabled: true
+    componentName: "connector-stub"
+    image:
+      name: "ghcr.io/sciebo-rds/rds-ng-connector-stub"
+      pullPolicy: "Always"
+    oauth2:
+      clientId:
+      clientSecret:
