@@ -88,7 +88,7 @@ function isProjectDeleted(project: Project): boolean {
                 list: 'projects-listbox-list',
                 option: 'projects-listbox-option'
             }"
-            :dt="{ 'option.selected.background': 'var(--r-shade-gray)', 'option.selected.focus.background': 'var(--r-shade-gray)' }"
+            :dt="{ 'option.selected.background': 'var(--p-primary-color)', 'option.selected.focus.background': 'var(--p-primary-color)' }"
         >
             <template #option="projectEntry">
                 <ProjectsListboxItem

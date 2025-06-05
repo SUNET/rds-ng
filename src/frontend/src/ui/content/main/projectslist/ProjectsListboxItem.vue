@@ -121,8 +121,8 @@ const editMenuShown = ref(false);
 
 <template>
     <div
-        class="p-2 pl-3 grid grid-rows-[auto_auto_1fr] grid-cols-[1fr_min-content] grid-flow-row w-full gap-0 min-h-24 content-start items-start place-content-start group r-text border-l-4"
-        :class="{ 'border-[var(--p-rds-highlight-500)]': isSelected, 'border-transparent': !isSelected }"
+        class="p-2 pl-3 grid grid-rows-[auto_auto_1fr] grid-cols-[1fr_min-content] grid-flow-row w-full gap-0 min-h-24 content-start items-start place-content-start group border-l-4"
+        :class="{ 'border-[var(--p-primary-700)] r-primary-text': isSelected, 'border-transparent r-text': !isSelected }"
     >
         <div class="r-text-caption-big h-7 truncate" :title="project!.title">{{ project!.title }}</div>
 
