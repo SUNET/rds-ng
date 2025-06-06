@@ -43,31 +43,28 @@ function onShowJobsPanel(event: Event): void {
     unref(jobsPanel).toggle(event);
 }
 
+function onHelp(): void {
+    alert("There is no hope for mankind.");
+}
+
 function onEditUserSettings(): void {
     editUserSettings(userSettings.value);
 }
 </script>
 
 <template>
-    <div class="grid grid-rows-2 grid-cols-[min-content_1fr_max-content] grid-flow-col gap-y-3 content-center items-center r-primary-bg r-primary-text">
-        <div class="row-span-2">
+    <div class="grid grid-cols-[min-content_1fr_max-content] grid-flow-col gap-y-3 content-center items-center r-primary-bg r-primary-text">
+        <div>
             <a href="#" @click.prevent="onGoHome">
-                <img id="logo" src="@assets/img/rds-octopus-wh.svg" alt="RDS Logo" class="p-3" title="Home" />
+                <!--<img id="logo" src="@assets/img/rds-bridgit.png" alt="RDS Logo" class="p-3" title="Home" />-->
+                <div class="pl-4 pr-2 grid grid-flow-row">
+                    <span class="font-bold text-2xl">bridgit</span>
+                    <span class="text-xs text-nowrap">Research Data Assistant</span>
+                </div>
             </a>
         </div>
 
-        <div class="font-bold self-center pt-3">
-            <div v-if="userToken" :title="userToken.user_id">{{ userToken.user_name }}</div>
-            <div v-else>(No user logged in)</div>
-        </div>
-
-        <div class="italic self-center pb-3">
-            <div v-if="projects.length > 1">{{ projects.length }} projects</div>
-            <div v-else-if="projects.length == 1">{{ projects.length }} project</div>
-            <div v-else>No projects</div>
-        </div>
-
-        <div class="row-span-2 flex gap-x-1 pr-2">
+        <div class="flex gap-x-1 pr-2 ml-auto">
             <div>
                 <Button
                     plain
@@ -99,6 +96,17 @@ function onEditUserSettings(): void {
                 icon-class="r-primary-text !text-4xl"
                 class="size-12"
                 @click="onEditUserSettings"
+            />
+
+            <Button
+                plain
+                rounded
+                aria-label="Help"
+                title="Help"
+                icon="material-icons-outlined mi-help-outline"
+                icon-class="r-primary-text !text-4xl"
+                class="size-12"
+                @click="onHelp"
             />
         </div>
 

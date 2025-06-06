@@ -99,7 +99,7 @@ const editMenuItems = ref([
             },
             {
                 label: "Project settings",
-                icon: "material-icons-outlined mi-settings",
+                icon: "material-icons-outlined mi-edit-note",
                 command: () => {
                     emits("edit-project", project!.value);
                 }
