@@ -21,13 +21,36 @@ server:
     name: "ghcr.io/sciebo-rds/rds-ng-server"
     pullPolicy: "Always"
   allowedOrigins: '"*"'
-  databaseEngine: "sqlite"                              # sqlite | mariadb
-  sqliteFile: "/data/rds.db"
+  networkApiKey: ""                                     # An arbitrary API key to access protected resources; this must be the same value on all components.
   oauth2:                                               # oauth2 credentials configured within the hostsystem
     clientId: ""
     clientRedirectUrl: ""
-    hostSecret: ""                                      
-  networkApiKey: ""                                     # An arbitrary API key to access protected resources; this must be the same value on all components.
+    hostSecret: ""
+  storage:
+    driver: ""                                          # The driver to use for the storage; possible values are memory or database. Default: memory
+    databaseEngine: "sqlite"                            # The database backend to use; can be sqlite, postgresql, mysql or mariadb. Default: sqlite
+    sqlite:
+      sqliteFile: "/data/rds.db"                        # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
+    postgresql:
+      host: ""                                          # The host of the database system.
+      port:                                             # The port of the database system; if omitted, the default port will be used.
+      database: ""                                      # The name of the database to use. Default: "rds_ng"
+      user: ""                                          # The database username.
+      password: ""                                      # The password for the database user.
+    mysql:
+      host: ""                                          # The host of the database system.
+      port:                                             # The port of the database system; if omitted, the default port will be used.
+      database: ""                                      # The name of the database to use. Default: "rds_ng"
+      user: ""                                          # The database username.
+      password: ""                                      # The password for the database user.
+    mariadb:
+      host: ""                                          # The host of the database system.
+      port:                                             # The port of the database system; if omitted, the default port will be used.
+      database: ""                                      # The name of the database to use. Default: "rds_ng"
+      user: ""                                          # The database username.
+      password: ""                                      # The password for the database user.
+    
+    
 
 
 ### Frontend
@@ -63,6 +86,7 @@ connectors:
     image:
       name: "ghcr.io/sciebo-rds/rds-ng-connector-osf"
       pullPolicy: "Always"
+    connectorTarget: ""                                 # The URL of the connector target (i.e., its external service). Default: (the service's test instance URL)
     oauth2:
       clientId: ""                                      # The ClientID of your OSF oauth2 application
       clientSecret: ""                                  # The clientSecret of your OSF oauth2 application
@@ -74,6 +98,7 @@ connectors:
     image:
       name: "ghcr.io/sciebo-rds/rds-ng-connector-zenodo"
       pullPolicy: "Always"
+    connectorTarget: ""                                 # The URL of the connector target (i.e., its external service). Default: (the service's test instance URL)
     oauth2:
       clientId: ""                                      # The ClientID of your Zenodo oauth2 application
       clientSecret: ""                                  # The clientSecret of your Zenodo oauth2 application
@@ -85,6 +110,7 @@ connectors:
     image:
       name: "ghcr.io/sciebo-rds/rds-ng-connector-stub"
       pullPolicy: "Always"
+    connectorTarget: ""                                 # The URL of the connector target (i.e., its external service). Default: (the service's test instance URL)
     oauth2:
       clientId: ""                                      # A dummy ClientID
       clientSecret: ""                                  # A dummy clientSecret
