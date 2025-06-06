@@ -123,8 +123,8 @@ const editMenuShown = ref(false);
     <div
         class="m-0 p-2 grid grid-rows-[auto_auto_1fr] grid-cols-[1fr_min-content] grid-flow-row w-full gap-0 min-h-24 content-start items-start place-content-start group border-l-4"
         :class="{
-            'bg-primary r-primary-text border-[var(--p-primary-700)]': isSelected,
-            'bg-primary-100 border-transparent text-[var(--p-primary-700)]': !isSelected
+            'bg-primary r-primary-text border-[var(--p-rds-highlight-500)]': isSelected,
+            'bg-primary-100 border-transparent text-[var(--p-primary-800)]': !isSelected
         }"
     >
         <div class="r-text-caption-big h-7 truncate" :title="project!.title">{{ project!.title }}</div>
@@ -140,7 +140,7 @@ const editMenuShown = ref(false);
                     invisible: !editMenuShown,
                     'group-hover:visible': true,
                     'hover:bg-primary-100': isSelected,
-                    'hover:bg-primary-700': !isSelected
+                    'hover:bg-primary-800': !isSelected
                 }"
                 @click.stop="(event) => editMenu.toggle(event)"
             >
@@ -148,8 +148,8 @@ const editMenuShown = ref(false);
                     <span
                         class="material-icons-outlined mi-more-vert"
                         :class="{
-                            'text-[var(--p-primary-100)] hover:text-[var(--p-primary-700)]': isSelected,
-                            'text-[var(--p-primary-700)] hover:text-[var(--p-primary-100)]': !isSelected
+                            'text-[var(--p-primary-100)] hover:text-[var(--p-primary-800)]': isSelected,
+                            'text-[var(--p-primary-800)] hover:text-[var(--p-primary-100)]': !isSelected
                         }"
                         style="font-size: 32px"
                     />
