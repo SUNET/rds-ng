@@ -5,7 +5,7 @@ export const ThemeSettings = {
     primaryColor: "#175A6D",
     light: {
         surfaceColor: "{slate}",
-        highlightColor: "#175A6D"
+        highlightColor: "{amber}"
     },
     dark: {
         surfaceColor: "{white}",
