@@ -53,7 +53,9 @@ function onEditUserSettings(): void {
 </script>
 
 <template>
-    <div class="grid grid-cols-[min-content_1fr_max-content] grid-flow-col gap-y-3 content-center items-center r-primary-bg r-primary-text">
+    <div
+        class="grid grid-cols-[min-content_1fr_max-content] grid-flow-col gap-y-3 content-center items-center r-primary-bg r-primary-text border-r-2 border-[var(--p-primary-200)]"
+    >
         <div>
             <a href="#" @click.prevent="onGoHome">
                 <!--<img id="logo" src="@assets/img/rds-bridgit.png" alt="RDS Logo" class="p-3" title="Home" />-->
