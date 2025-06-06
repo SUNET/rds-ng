@@ -58,7 +58,7 @@ function onEditUserSettings(): void {
             <a href="#" @click.prevent="onGoHome">
                 <!--<img id="logo" src="@assets/img/rds-bridgit.png" alt="RDS Logo" class="p-3" title="Home" />-->
                 <div class="pl-4 pr-2 grid grid-flow-row">
-                    <span class="font-bold text-2xl">bridgit</span>
+                    <span class="font-bold text-2xl italic">bridgit</span>
                     <span class="text-xs text-nowrap">Research Data Assistant</span>
                 </div>
             </a>
