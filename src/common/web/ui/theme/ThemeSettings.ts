@@ -2,10 +2,10 @@
  * The default theme settings.
  */
 export const ThemeSettings = {
-    primaryColor: "#167F36",
+    primaryColor: "#175A6D",
     light: {
         surfaceColor: "{slate}",
-        highlightColor: "#167F36"
+        highlightColor: "#175A6D"
     },
     dark: {
         surfaceColor: "{white}",

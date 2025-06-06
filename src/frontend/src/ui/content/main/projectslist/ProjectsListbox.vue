@@ -88,7 +88,7 @@ function isProjectDeleted(project: Project): boolean {
                 list: 'projects-listbox-list',
                 option: 'projects-listbox-option'
             }"
-            :dt="{ 'option.selected.background': 'var(--p-primary-color)', 'option.selected.focus.background': 'var(--p-primary-color)' }"
+            :dt="{ 'option.selected.background': 'var(--p-surface-50)', 'option.selected.focus.background': 'var(--p-surface-50)' }"
         >
             <template #option="projectEntry">
                 <ProjectsListboxItem
@@ -112,7 +112,7 @@ function isProjectDeleted(project: Project): boolean {
 :deep(.projects-listbox) {
     // Max height is 100% - header height (5rem) - footer height (6rem)
     // did not work out, need 1 less rem because of wonky behaviour when overlay panel is active
-    @apply border-0 rounded-none bg-inherit max-h-[calc(100vh-5rem-7rem)] #{!important};
+    @apply border-0 rounded-none bg-surface-50 max-h-[calc(100vh-5rem-7rem)] #{!important};
 }
 
 :deep(.projects-listbox-container) {
@@ -124,6 +124,6 @@ function isProjectDeleted(project: Project): boolean {
 }
 
 :deep(.projects-listbox-option) {
-    @apply p-0 border-solid rounded-none border-b border-[--r-border-color] #{!important};
+    @apply m-0.5 mb-0 p-0 border-0 rounded-none #{!important};
 }
 </style>
