@@ -6,8 +6,8 @@ metadata:
   annotations:
 spec:
   rules:
-  - {{- if .Values.ingress.hostname }}
-    host: {{ .Values.ingress.hostname }}
+  - {{- if .Values.frontend.ingress.hostname }}
+    host: {{ .Values.frontend.ingress.hostname }}
     {{- end }}
     http:
       paths: 
@@ -18,8 +18,8 @@ spec:
             name: frontend-service
             port:
               number: 8000
-  {{- if .Values.ingress.tls }}
+  {{- if .Values.frontend.ingress.tls }}
   tls:
-    {{ toYaml .Values.ingress.tls | nindent 4 }}
+    {{ toYaml .Values.frontend.ingress.tls | nindent 4 }}
   {{- end }}
 {{- end -}}

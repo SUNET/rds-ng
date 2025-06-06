@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rds-frontend
-  namespace: {{ .Values.nameSpace }}
   labels:
     app: {{ .Values.appName }}
     component: frontend
@@ -19,9 +18,6 @@ spec:
         component: frontend
     spec:
       volumes:
-        - name: frontend-volume
-          persistentVolumeClaim:
-            claimName: frontend-pvc
         - name: frontend-config-volume
           configMap:
             name: frontend-config-file

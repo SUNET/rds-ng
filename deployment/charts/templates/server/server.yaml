@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rds-server
-  namespace: {{ .Values.nameSpace }}
   labels:
     app: {{ .Values.appName }}
     component: server
@@ -21,7 +20,7 @@ spec:
       volumes:
         - name: server-volume
           persistentVolumeClaim:
-            claimName: server-pvc
+            claimName: "{{ .Values.appName }}-rds-server-pvc"
       containers:
         - name: rds-server
           image: "{{ .Values.server.image.name }}:{{ .Values.tag }}"
@@ -52,3 +51,4 @@ spec:
     - protocol: TCP
       port: 4200
       targetPort: 6969
+

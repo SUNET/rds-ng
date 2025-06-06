@@ -1,30 +1,33 @@
 appName: "rds"
-nameSpace: "default"
 
-tag: "develop"
+tag: "latest"
 
 ingress:
   enabled: true
-  hostname: "minikube.rds"
+  hostname: "" # The server adress
   path: /
-  tls: {}
+  tls:
+  - hosts:
+    - # The tls host adresses
+    secretName:                                         # Holds  the certificate for the server, e.g. sciebords-server-tls
+     
   annotations: {}
 
 ### Server
 server:
   componentName: "server"
-  address: 
+  address: ""                                           # The server adress
   image:
     name: "ghcr.io/sciebo-rds/rds-ng-server"
     pullPolicy: "Always"
   allowedOrigins: '"*"'
-  databaseEngine: "sqlite"  # sqlite | mariadb
+  databaseEngine: "sqlite"                              # sqlite | mariadb
   sqliteFile: "/data/rds.db"
-  oauth2:
+  oauth2:                                               # oauth2 credentials configured within the hostsystem
     clientId: ""
-    clientRedirectUrl: "http://[HOST]:8080/apps/rdsng/main"
-    hostSecret: 
-  networkApiKey: 
+    clientRedirectUrl: ""
+    hostSecret: ""                                      
+  networkApiKey: ""                                     # An arbitrary API key to access protected resources; this must be the same value on all components.
 
 
 ### Frontend
@@ -32,10 +35,21 @@ frontend:
   componentName: "frontend"
   integration:
     scheme: "host"
-    hostApiUrl: "http://[Host]:8080/apps/rdsng/api/v1"
+    hostApiUrl: ""                                      # The full URL where the host integration exposes its API; this needs to be in the form of <APP_URL>/api/v1 (e.g., http://localhost:8080/apps/rdsng/api/v1 for a local Nextcloud setup).
+    clientId: ""                                        # The OAUTH2 client ID of the frontend.
   image:
     name: "ghcr.io/sciebo-rds/rds-ng-frontend"
     pullPolicy: "Always"
+  ingress:
+    enabled: true
+    hostname: ""                                        # The frontend hostname           
+    path: /
+    tls:
+    - hosts:
+      - 
+      secretName:                                       # Holds  the certificate for the server, e.g. sciebords-server-tls
+       
+    annotations: {}
 
 ###
 ### Connectors
@@ -50,8 +64,8 @@ connectors:
       name: "ghcr.io/sciebo-rds/rds-ng-connector-osf"
       pullPolicy: "Always"
     oauth2:
-      clientId:
-      clientSecret:
+      clientId: ""                                      # The ClientID of your OSF oauth2 application
+      clientSecret: ""                                  # The clientSecret of your OSF oauth2 application
   
   ### Zenodo
   zenodo:
@@ -61,8 +75,8 @@ connectors:
       name: "ghcr.io/sciebo-rds/rds-ng-connector-zenodo"
       pullPolicy: "Always"
     oauth2:
-      clientId:
-      clientSecret:
+      clientId: ""                                      # The ClientID of your Zenodo oauth2 application
+      clientSecret: ""                                  # The clientSecret of your Zenodo oauth2 application
 
   ### Stub
   stub:
@@ -72,5 +86,6 @@ connectors:
       name: "ghcr.io/sciebo-rds/rds-ng-connector-stub"
       pullPolicy: "Always"
     oauth2:
-      clientId:
-      clientSecret:
+      clientId: ""                                      # A dummy ClientID
+      clientSecret: ""                                  # A dummy clientSecret
+

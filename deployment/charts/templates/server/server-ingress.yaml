@@ -7,7 +7,7 @@ metadata:
 spec:
   rules:
   - {{- if .Values.ingress.hostname }}
-    host: api.{{ .Values.ingress.hostname }}
+    host: {{ .Values.ingress.hostname }}
     {{- end }}
     http:
         paths:
