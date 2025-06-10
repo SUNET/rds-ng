@@ -21,11 +21,11 @@ const projJobsStore = useProjectJobsStore();
 const userStore = useUserStore();
 const { projects, activeProject } = storeToRefs(projStore);
 const { jobs } = storeToRefs(projJobsStore);
-const { userToken, userSettings } = storeToRefs(userStore);
+const { userSettings } = storeToRefs(userStore);
 const { editUserSettings } = useUserTools(comp);
 
 const jobsPanel = ref();
-const jobsPanelIcon = computed(() => (unref(jobs).length ? "material-icons-outlined mi-rocket-launch -rotate-45" : "material-icons-outlined mi-rocket"));
+const jobsPanelIcon = computed(() => (unref(jobs).length ? "material-icons-outlined mi-notifications-active" : "material-icons-outlined mi-notifications"));
 const jobPanelBadgeCounter = computed(() => {
     let count: number = unref(jobs).length;
     count += unref(projects)
@@ -80,7 +80,7 @@ function onEditUserSettings(): void {
                 />
                 <OverlayBadge
                     severity="danger"
-                    class="inset-[-0.3rem] pt-px"
+                    class="inset-[-0.5rem] pt-px"
                     :class="{ hidden: jobPanelBadgeCounter <= 0 }"
                     size="small"
                     :value="jobPanelBadgeCounter < 9 ? jobPanelBadgeCounter : '9+'"
