@@ -175,7 +175,7 @@ const editMenuShown = ref(false);
             </span>
             <span v-else />
 
-            <span class="hidden">
+            <span>
                 <span v-for="category in finishedJobCategories" class="pl-1.5">
                     <ProjectJobsCounterTag :value="category.count" :category="category.category" :instance-names="[...category.instances]" />
                 </span>
