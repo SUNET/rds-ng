@@ -7,6 +7,7 @@ import { computed, ref, unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { getUnseenProjectJobHistoryRecords } from "@/data/entities/project/ProjectUtils";
+import { DisplayState, useFrontendStore } from "@/data/stores/FrontendStore.ts";
 import { useProjectJobsStore } from "@/data/stores/ProjectJobsStore";
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -16,9 +17,12 @@ import { useUserTools } from "@/ui/tools/user/UserTools";
 import ProjectJobsPanel from "@/ui/content/main/jobspanel/ProjectJobsPanel.vue";
 
 const comp = FrontendComponent.inject();
+const frontendStore = useFrontendStore();
 const projStore = useProjectsStore();
 const projJobsStore = useProjectJobsStore();
 const userStore = useUserStore();
+
+const { displayState } = storeToRefs(frontendStore);
 const { projects, activeProject } = storeToRefs(projStore);
 const { jobs } = storeToRefs(projJobsStore);
 const { userSettings } = storeToRefs(userStore);
@@ -35,6 +39,7 @@ const jobPanelBadgeCounter = computed(() => {
 });
 
 function onGoHome(): void {
+    displayState.value = DisplayState.Landing;
     activeProject.value = undefined;
     comp.userInterface.frontendView.navigateTo(true, undefined, { project_id: undefined });
 }
@@ -44,7 +49,9 @@ function onShowJobsPanel(event: Event): void {
 }
 
 function onHelp(): void {
-    alert("There is no hope for mankind.");
+    displayState.value = DisplayState.Help;
+    activeProject.value = undefined;
+    comp.userInterface.frontendView.navigateTo(true, undefined, { project_id: undefined });
 }
 
 function onEditUserSettings(): void {

@@ -9,6 +9,7 @@ import { useRoute } from "vue-router";
 import { Project, type ProjectID, ProjectStatus } from "@common/data/entities/project/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { DisplayState, useFrontendStore } from "@/data/stores/FrontendStore.ts";
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { TouchProjectAction } from "@/ui/actions/project/TouchProjectAction.ts";
 import { useProjectTools } from "@/ui/tools/project/ProjectTools";
@@ -17,7 +18,10 @@ import ProjectsListboxItem from "@/ui/content/main/projectslist/ProjectsListboxI
 
 const comp = FrontendComponent.inject();
 const route = useRoute();
+const frontendStore = useFrontendStore();
 const projStore = useProjectsStore();
+
+const { displayState } = storeToRefs(frontendStore);
 const { projects, activeProject } = storeToRefs(projStore);
 const { uploadProject, editProject, deleteProject } = useProjectTools(comp);
 
@@ -47,6 +51,11 @@ watch(
                 action.execute();
             }
 
+            // Switch the display mode only if a project is selected
+            if (activeProject.value) {
+                displayState.value = DisplayState.Project;
+            }
+
             // Update the shown URL to reflect the selected project
             comp.userInterface.frontendView.navigateTo(true, undefined, { project_id: activeProject.value });
         }
@@ -59,6 +68,7 @@ function selectProject(projectID: ProjectID | undefined, autoNavigateOnMissing: 
         projectID = undefined;
 
         if (autoNavigateOnMissing) {
+            displayState.value = DisplayState.Landing;
             comp.userInterface.frontendView.navigateTo(true);
         }
     }
