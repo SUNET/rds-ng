@@ -48,7 +48,7 @@ const comp = FrontendComponent.inject();
                         <template #content>
                             This version of {{ comp.data.title }} is still under construction. If you encounter any issues or have other kinds of feedback, feel
                             free to
-                            <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" internal />
+                            <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
                             !
                         </template>
                     </Card>
