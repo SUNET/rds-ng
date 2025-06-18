@@ -65,11 +65,7 @@ function onEditUserSettings(): void {
     >
         <div>
             <a href="#" @click.prevent="onGoHome">
-                <!--<img id="logo" src="@assets/img/rds-bridgit.png" alt="RDS Logo" class="p-3" title="Home" />-->
-                <div class="pl-4 pr-2 grid grid-flow-row">
-                    <span class="font-bold text-2xl italic">bridgit</span>
-                    <span class="text-xs text-nowrap">Research Data Assistant</span>
-                </div>
+                <img id="logo" src="@assets/img/logo-bridgit-inv.svg" alt="RDS Logo" class="p-4 pl-1 min-w-56" title="Home" />
             </a>
         </div>
 
@@ -125,8 +121,4 @@ function onEditUserSettings(): void {
     </div>
 </template>
 
-<style scoped lang="scss">
-#logo {
-    min-width: 5rem;
-}
-</style>
+<style scoped lang="scss"></style>
