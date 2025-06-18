@@ -9,16 +9,15 @@ const { newProject } = useProjectTools(comp);
 </script>
 
 <template>
-    <div class="border-t-2 border-orange-500">
+    <div class="p-2">
         <Button
-            class="w-full h-full text-xl bg-orange-50 hover:bg-orange-100 active:bg-orange-200 grid grid-flow-col place-content-center"
-            label="New Project"
+            severity=""
+            class="w-full h-full text-xl grid grid-flow-col place-content-center text-[var(--p-primary-100)]"
+            label="New project"
             icon="material-icons-outlined mi-add-circle-outline"
             icon-class="!text-4xl mr-2"
-            severity="warn"
             @click="newProject"
             :pt="{ label: 'mr-auto' }"
-            text
         />
     </div>
 </template>

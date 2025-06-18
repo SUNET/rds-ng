@@ -27,7 +27,7 @@ const comp = FrontendComponent.inject();
                             <ExternalLink link="https://github.com/Sciebo-RDS" text="GitHub repository" />
                         </div>
                     </div>
-                    <Card class="p-2 h-fit" :pt="{ body: '!pb-0' }">
+                    <Card class="bg-surface-50 p-2 h-fit" :pt="{ body: '!pb-0' }">
                         <template #content>
                             <div class="grid justify-items-center">
                                 <img src="@assets/img/rds-steps-web.png" class="h-full max-h-[calc(100vh-30rem)]" alt="Steps" />
@@ -48,11 +48,11 @@ const comp = FrontendComponent.inject();
                         <template #content>
                             This version of {{ comp.data.title }} is still under construction. If you encounter any issues or have other kinds of feedback, feel
                             free to
-                            <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" internal />
+                            <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
                             !
                         </template>
                     </Card>
-                    <Card class="w-[30rem]">
+                    <Card class="w-[30rem] bg-surface-50">
                         <template #title>
                             <div class="">Here's how we support you:</div>
                         </template>

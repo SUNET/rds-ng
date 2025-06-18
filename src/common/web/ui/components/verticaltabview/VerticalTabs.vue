@@ -24,7 +24,11 @@ const activeTab = defineModel<number>("activeTab", { default: 0 });
         <TabList :pt="{ tabList: 'tab-list', activeBar: 'tab-list-active-bar' }">
             <Tab v-for="[index, tab] of tabs.entries()" :value="index" class="tab">
                 <div class="flex items-center gap-1.5">
-                    <span v-if="tab.icon" :class="'material-icons-outlined ' + tab.icon" style="font-size: 1rem" />
+                    <span
+                        v-if="tab.icon"
+                        :class="'material-icons-outlined ' + tab.icon + (activeTab == index ? ' text-[var(--p-rds-highlight-500)]' : '')"
+                        style="font-size: 1rem"
+                    />
                     <span>{{ tab.title }}</span>
                 </div>
             </Tab>
