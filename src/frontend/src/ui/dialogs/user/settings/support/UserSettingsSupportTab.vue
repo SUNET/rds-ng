@@ -29,9 +29,9 @@ const propRefs = toRefs(props);
                 <AccordionHeader class="header">About {{ comp.data.title }}</AccordionHeader>
                 <AccordionContent class="content" :pt="{ content: 'pl-0' }">
                     <p>
-                        BridgIT is designed to facilitate efficient and secure research data management by offering a user-friendly platform that enables
-                        researchers to prepare, annotate, and share datasets in line with FAIR principles. This beta portal serves as your central hub for
-                        guidance, technical support, and feedback to help us continuously improve the app.
+                        {{ comp.data.title }} is designed to facilitate efficient and secure research data management by offering a user-friendly platform that
+                        enables researchers to prepare, annotate, and share datasets in line with FAIR principles. This beta portal serves as your central hub
+                        for guidance, technical support, and feedback to help us continuously improve the app.
                     </p>
                     <p>
                         Whether you are a researcher managing your data, a developer enhancing the platform, or an administrator overseeing research data
@@ -39,8 +39,9 @@ const propRefs = toRefs(props);
                         role.
                     </p>
                     <p>
-                        Your feedback is crucial in shaping BridgIT’s future. Please feel free to ask questions, report issues, or suggest improvements.
-                        Together, we aim to build a robust, transparent, and accessible research data ecosystem that meets the needs of the academic community.
+                        Your feedback is crucial in shaping {{ comp.data.title }}’s future. Please feel free to ask questions, report issues, or suggest
+                        improvements. Together, we aim to build a robust, transparent, and accessible research data ecosystem that meets the needs of the
+                        academic community.
                     </p>
                     <p>
                         What works well? What’s missing? What surprised you? - Please share your feedback directly via
@@ -201,7 +202,7 @@ const propRefs = toRefs(props);
                         <ul class="link-list">
                             <li>
                                 <strong>{{ comp.data.title }} GitHub Repository</strong><br />
-                                Discover the source code, contribute to development, or follow updates on BridgIT’s open-source project.<br />
+                                Discover the source code, contribute to development, or follow updates on {{ comp.data.title }}’s open-source project.<br />
                                 <ExternalLink link="https://github.com/Sciebo-RDS/Sciebo-RDS" text="https://github.com/Sciebo-RDS/Sciebo-RDS" />
                             </li>
                             <li>
