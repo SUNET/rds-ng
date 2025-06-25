@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import OverlayBadge from "primevue/overlaybadge";
 import Button from "primevue/button";
+import OverlayBadge from "primevue/overlaybadge";
 import Popover from "primevue/popover";
 import { computed, ref, unref } from "vue";
 
@@ -12,9 +12,9 @@ import { useProjectJobsStore } from "@/data/stores/ProjectJobsStore";
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { useUserStore } from "@/data/stores/UserStore";
 
-import { useUserTools } from "@/ui/tools/user/UserTools";
-
 import ProjectJobsPanel from "@/ui/content/main/jobspanel/ProjectJobsPanel.vue";
+import { UserSettingsPage } from "@/ui/dialogs/user/settings/UserSettingsDialog.ts";
+import { useUserTools } from "@/ui/tools/user/UserTools";
 
 const comp = FrontendComponent.inject();
 const frontendStore = useFrontendStore();
@@ -49,9 +49,7 @@ function onShowJobsPanel(event: Event): void {
 }
 
 function onHelp(): void {
-    displayState.value = DisplayState.Help;
-    activeProject.value = undefined;
-    comp.userInterface.frontendView.navigateTo(true, undefined, { project_id: undefined });
+    editUserSettings(userSettings.value, UserSettingsPage.Support);
 }
 
 function onEditUserSettings(): void {

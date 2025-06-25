@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { FrontendComponent } from "@/component/FrontendComponent";
-import Message from "primevue/message";
+import Accordion from "primevue/accordion";
+import AccordionPanel from "primevue/accordionpanel";
+import AccordionHeader from "primevue/accordionheader";
+import AccordionContent from "primevue/accordioncontent";
 import { type PropType, toRefs } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
-import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
+import { FrontendComponent } from "@/component/FrontendComponent";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -18,42 +20,43 @@ const propRefs = toRefs(props);
 </script>
 
 <template>
-    <div class="grid grid-rows-[auto_auto_1fr_auto] grid-cols-1 gap-1.5 w-full h-full">
-        <div class="r-text-title">About</div>
-        <div class="r-text-caption">Welcome to {{ comp.data.title }}!</div>
-        <div class="grid grid-cols-[max-content_1fr] gap-1.5 items-center w-full">
-            <a href="https://www.research-data-services.org" target="_blank">
-                <img id="logo" src="@assets/img/rds-octopus-bl.svg" alt="RDS Logo" class="p-1.5" width="75rem" title="Visit the RDS website" />
-            </a>
-            <div>
-                {{ comp.data.title }} allows researchers to export research data directly from their cloud storage systems to data repositories and external
-                storages.
-            </div>
-        </div>
-        <Message severity="warn" icon="material-icons-outlined mi-warning-amber mr-1 mb-0.5" :closable="false" class="text-sm my-4">
-            This is an <em>early preview version</em> of the final application. If you encounter any issues or have some feedback, feel free to
-            <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
-            !
-        </Message>
-
-        <div class="r-text-caption mt-1">Links</div>
-        <div class="grid grid-flow-rows">
-            <ExternalLink link="https://www.research-data-services.org" text="Official website" />
-            <ExternalLink link="https://github.com/Sciebo-RDS" text="GitHub repository" />
-        </div>
-
-        <div class="r-text-caption mt-1">Bug reporting &amp; Suggestions</div>
-        If you're running into any issues or have further suggestions, use the following link to create an issue on our GitHub repository:
-        <ExternalLink link="https://github.com/Sciebo-RDS/rds-ng/issues" />
-
-        <div class="r-text-caption mt-3">Version</div>
-        <div>{{ comp.data.title }} - Version {{ comp.data.version }}</div>
-
-        <div class="r-text-caption mt-3">About</div>
-        <div class="grid grid-cols-[max-content_max-content_max-content] items-center">
-            {{ comp.data.title }} Copyright &copy;&nbsp;
-            <ExternalLink link="https://www.uni-muenster.de" text="University of Muenster" />
-        </div>
+    <div class="grid grid-flow-dense grid-cols-1 gap-1.5 w-full h-full">
+        <div class="r-text-title">Help &amp; Support</div>
+        <Accordion value="0">
+            <AccordionPanel value="0">
+                <AccordionHeader>Header I</AccordionHeader>
+                <AccordionContent>
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+                        minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
+                        in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                        officia deserunt mollit anim id est laborum.
+                    </p>
+                </AccordionContent>
+            </AccordionPanel>
+            <AccordionPanel value="1">
+                <AccordionHeader>Header II</AccordionHeader>
+                <AccordionContent>
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
+                        illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur
+                        aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia
+                        non numquam eius modi.
+                    </p>
+                </AccordionContent>
+            </AccordionPanel>
+            <AccordionPanel value="2">
+                <AccordionHeader>Header III</AccordionHeader>
+                <AccordionContent>
+                    <p class="m-0">
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et
+                        quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est
+                        laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi
+                        optio cumque nihil impedit quo minus.
+                    </p>
+                </AccordionContent>
+            </AccordionPanel>
+        </Accordion>
     </div>
 </template>
 
