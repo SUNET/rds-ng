@@ -43,7 +43,7 @@ export async function userSettingsDialog(
             header: "Settings",
             modal: true,
             dismissableMask: true,
-            contentClass: "w-[70rem] h-[40rem]"
+            contentClass: "w-[75rem] h-[45rem]"
         },
         {
             userSettings: deepClone<UserSettings>(userSettings),
