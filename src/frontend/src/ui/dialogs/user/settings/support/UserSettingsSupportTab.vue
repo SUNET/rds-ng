@@ -262,11 +262,11 @@ const propRefs = toRefs(props);
     @apply text-sm;
 }
 
-.content p:not(:last-child) {
+.content p:not(:last-of-type) {
     @apply mb-4;
 }
 
-.link-list li:not(:last-child) {
+.link-list li:not(:last-of-type) {
     @apply pb-4;
 }
 </style>
