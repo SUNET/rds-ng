@@ -3,6 +3,7 @@ import Button from "primevue/button";
 import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest.ts";
 import Header from "@common/ui/views/main/states/Header.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -38,7 +39,7 @@ function performAuthentication(): void {
 function performAuthorization(authState: AuthorizationState, fingerprint: string): void {
     statusMessage.value = "2/3: Authorizing";
 
-    if (authState == AuthorizationState.NotAuthorized) {
+    if (authState == AuthorizationState.NotAuthorized && !AuthorizationRequest.requestIssued()) {
         requiresAuth.value = true;
         authFingerprint.value = fingerprint;
     } else {
