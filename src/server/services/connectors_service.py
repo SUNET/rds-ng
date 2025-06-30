@@ -26,9 +26,11 @@ def create_connectors_service(comp: ServerComponent) -> Service:
     """
 
     from common.py.api.component import ComponentProcessEvent
-    from common.py.api.connector import (ConnectorAnnounceEvent,
-                                         ListConnectorsCommand,
-                                         ListConnectorsReply)
+    from common.py.api.connector import (
+        ConnectorAnnounceEvent,
+        ListConnectorsCommand,
+        ListConnectorsReply,
+    )
 
     from .server_service_context import ServerServiceContext
 
@@ -51,7 +53,8 @@ def create_connectors_service(comp: ServerComponent) -> Service:
             name=msg.display_name,
             description=msg.description,
             category=msg.category,
-            authorization=msg.authorization,
+            authorization=msg.authorization_public,
+            authorization_private=msg.authorization_private,
             options=msg.options,
             logos=msg.logos,
             metadata_profile=PropertyProfile.from_dict(msg.metadata_profile),
@@ -62,8 +65,7 @@ def create_connectors_service(comp: ServerComponent) -> Service:
             if (
                 ex_connector := ctx.storage_pool.connector_storage.get(msg.connector_id)
             ) is not None:
-                from common.py.data.entities.connector import \
-                    apply_connector_update
+                from common.py.data.entities.connector import apply_connector_update
 
                 ConnectorVerifier(connector).verify_update()
 

@@ -45,11 +45,17 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
         # Authorization
         Column("auth__strategy", Text),
         Column("auth__config", JSONEncodedDataType),
+        # Authorization (private)
+        Column("auth__priv_strategy", Text),
+        Column("auth__priv_config", JSONEncodedDataType),
         # Logos
         Column("logos__default", Text),
         Column("logos__horizontal", Text),
         # Metadata
-        Column("metadata_profile", DataclassDataType[PropertyProfile](dataclass_type=PropertyProfile)),
+        Column(
+            "metadata_profile",
+            DataclassDataType[PropertyProfile](dataclass_type=PropertyProfile),
+        ),
         # Miscellaneous
         Column("announce_timestamp", Numeric(32, 8, asdecimal=False)),
     )
@@ -62,6 +68,11 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
                 AuthorizationSettings,
                 table_connectors.c.auth__strategy,
                 table_connectors.c.auth__config,
+            ),
+            "authorization_private": composite(
+                AuthorizationSettings,
+                table_connectors.c.auth__priv_strategy,
+                table_connectors.c.auth__priv_config,
             ),
             "logos": composite(
                 Connector.Logos,

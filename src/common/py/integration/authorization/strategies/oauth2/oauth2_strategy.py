@@ -6,7 +6,6 @@ from http import HTTPStatus
 
 import requests
 from dataclasses_json import dataclass_json
-from marshmallow.utils import timestamp
 
 from .oauth2_types import OAuth2Token, OAuth2AuthorizationRequestData, OAuth2TokenData
 from .oauth2_utils import format_oauth2_error_response
@@ -21,9 +20,9 @@ from .....services import Service
 
 @dataclass_json
 @dataclass(frozen=True, kw_only=True)
-class OAuth2StrategyConfiguration:
+class OAuth2StrategyPublicConfiguration:
     """
-    The OAuth2 strategy configuration.
+    The OAuth2 strategy public configuration.
     """
 
     @dataclass_json
@@ -41,6 +40,21 @@ class OAuth2StrategyConfiguration:
         redirect_url: str = ""
 
     server: Server = field(default_factory=Server)
+    client: Client = field(default_factory=Client)
+
+
+@dataclass_json
+@dataclass(frozen=True, kw_only=True)
+class OAuth2StrategyPrivateConfiguration:
+    """
+    The OAuth2 strategy private configuration.
+    """
+
+    @dataclass_json
+    @dataclass(frozen=True, kw_only=True)
+    class Client:
+        client_secret: str = ""
+
     client: Client = field(default_factory=Client)
 
 
@@ -112,12 +126,17 @@ class OAuth2Strategy(AuthorizationStrategy):
                     expiration_timestamp=self._get_expiration_timestamp(resp_data),
                     refresh_attempts=0,
                     strategy=self.strategy,
-                    token=self._create_oauth2_token(resp_data),
-                    data=OAuth2TokenData(
-                        token_host=oauth2_data.token_host,
-                        token_endpoint=oauth2_data.token_endpoint,
-                        client_id=oauth2_data.client_id,
-                        scope=oauth2_data.scope,
+                    token=typing.cast(
+                        typing.Dict[any, str], self._create_oauth2_token(resp_data)
+                    ),
+                    data=typing.cast(
+                        typing.Dict[any, str],
+                        OAuth2TokenData(
+                            token_host=oauth2_data.token_host,
+                            token_endpoint=oauth2_data.token_endpoint,
+                            client_id=oauth2_data.client_id,
+                            scope=oauth2_data.scope,
+                        ),
                     ),
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
