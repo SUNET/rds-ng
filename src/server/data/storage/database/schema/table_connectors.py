@@ -45,9 +45,6 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
         # Authorization
         Column("auth__strategy", Text),
         Column("auth__config", JSONEncodedDataType),
-        # Authorization (private)
-        Column("auth__priv_strategy", Text),
-        Column("auth__priv_config", JSONEncodedDataType),
         # Logos
         Column("logos__default", Text),
         Column("logos__horizontal", Text),
@@ -68,11 +65,6 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
                 AuthorizationSettings,
                 table_connectors.c.auth__strategy,
                 table_connectors.c.auth__config,
-            ),
-            "authorization_private": composite(
-                AuthorizationSettings,
-                table_connectors.c.auth__priv_strategy,
-                table_connectors.c.auth__priv_config,
             ),
             "logos": composite(
                 Connector.Logos,

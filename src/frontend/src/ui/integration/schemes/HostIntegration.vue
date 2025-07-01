@@ -77,7 +77,7 @@ onMounted(async () => performAuthentication());
         <Header />
 
         <div v-if="requiresAuth">
-            <div class="r-centered-grid content max-w-[60rem]">
+            <div class="r-centered-grid content max-w-[55rem]">
                 <div>
                     <h2 class="text-3xl font-extrabold">Welcome to {{ comp.data.title }}!</h2>
                 </div>

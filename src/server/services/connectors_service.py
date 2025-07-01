@@ -47,6 +47,11 @@ def create_connectors_service(comp: ServerComponent) -> Service:
             name=msg.display_name,
         )
 
+        # Private authorization data is stored in the context
+        ctx.private_auth_settings.store_settings(
+            msg.connector_id, msg.authorization_private
+        )
+
         connector = Connector(
             connector_id=msg.connector_id,
             connector_address=msg.origin,
@@ -54,7 +59,6 @@ def create_connectors_service(comp: ServerComponent) -> Service:
             description=msg.description,
             category=msg.category,
             authorization=msg.authorization_public,
-            authorization_private=msg.authorization_private,
             options=msg.options,
             logos=msg.logos,
             metadata_profile=PropertyProfile.from_dict(msg.metadata_profile),

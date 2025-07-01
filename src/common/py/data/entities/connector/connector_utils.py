@@ -40,7 +40,6 @@ def apply_connector_update(
     connector.description = updated_connector.description
     connector.category = updated_connector.category
     connector.authorization = updated_connector.authorization
-    connector.authorization_private = updated_connector.authorization_private
     connector.options = updated_connector.options
     connector.logos = clone_entity(updated_connector.logos)
     connector.metadata_profile = PropertyProfile(
