@@ -81,17 +81,15 @@ onMounted(async () => performAuthentication());
                 <div>
                     <h2 class="text-3xl font-extrabold">Welcome to {{ comp.data.title }}!</h2>
                 </div>
+                <div>I'm your helpful assistant for secure FAIR-aligned research data sharing – and I help you to prepare, annotate, and share your data.</div>
                 <div>
-                    {{ comp.data.title }} is designed to facilitate efficient and secure research data management by offering a user-friendly platform that
-                    enables researchers to prepare, annotate, and share datasets in line with FAIR principles.
-                </div>
-                <div>
-                    {{ comp.data.title }} needs to access your files stored in your cloud account. This is necessary in order for bridgit to be able to display
-                    your files and upload them to the target services. Don't worry - your files won't be altered in any way and handled securely!
+                    <strong>Secure cloud access</strong><br />
+                    To get started, I need access to your files stored in your cloud account. This is necessary in order for me to be able to display your files
+                    and upload them to the target services. But no worries, your files stay safe, unchanged, and private.
                 </div>
                 <div class="font-semibold">
-                    To grant {{ comp.data.title }} access to your files and start using the app, please click the button below and follow the on-screen
-                    instructions. Once granted, you'll be redirected to the {{ comp.data.title }} application and are ready to start.
+                    Click below to authorize access and start your data sharing project! Once granted, you’ll be redirected to the
+                    {{ comp.data.title }} application and are ready to start.
                 </div>
                 <div>&nbsp;</div>
                 <Button
