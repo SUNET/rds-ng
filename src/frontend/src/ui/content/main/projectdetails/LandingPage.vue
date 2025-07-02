@@ -36,7 +36,7 @@ const comp = FrontendComponent.inject();
             <div>My goal: making your data handling easier and safe, so you can stay focused on your research.</div>
             <div>&nbsp;</div>
             <div class="grid justify-items-center">
-                <img src="@assets/img/rds-steps-web.png" class="h-full max-h-[calc(100vh-30rem)]" alt="Steps" />
+                <img src="@assets/img/landing-steps.svg" class="h-full max-h-[calc(100vh-30rem)]" alt="Steps" />
             </div>
         </div>
     </div>
