@@ -9,15 +9,15 @@ const comp = FrontendComponent.inject();
 </script>
 
 <template>
-    <div class="grid grid-rows-2 r-shade-text mx-14 max-w-[85rem]">
-        <div class="flex flex-row">
-            <div class="flex flex-col ml-auto">
+    <div class="grid grid-rows-2 r-shade-text mx-14 max-w-[80rem]">
+        <div class="flex flex-row !pb-0">
+            <div class="flex flex-col">
                 <div class="text-3xl font-bold mt-12">Hello, I'm {{ comp.data.title }}!</div>
                 <div class="text-lg font-bold">Your assistent for easy and secure research data sharing.</div>
                 <div>&nbsp;</div>
                 <div>I'm here to help you manage, prepare, and share your research data - flexibly, securely, and in line with your workflows.</div>
                 <div>My goal: making your data handling easier and safe, so you can stay focused on your research.</div>
-                <Card class="bg-amber-100 text-amber-700 !p-0 mt-4" :pt="{ title: '!text-base', caption: 'h-5', body: 'p-3 px-5' }">
+                <Card class="bg-amber-100 text-amber-700 !p-0 mt-4 w-fit" :pt="{ title: '!text-base', caption: 'h-5', body: 'p-3 px-5' }">
                     <template #title>
                         <div class="flex items-center gap-1">
                             <span class="material-icons-outlined mi-construction !text-xl" />
@@ -33,13 +33,17 @@ const comp = FrontendComponent.inject();
                     </template>
                 </Card>
             </div>
-            <div class="mr-auto">
+            <div class="ml-auto !pb-0">
                 <img src="@assets/img/rds_ng-octopus-blue.png" alt="logo" class="w-[28rem]" />
             </div>
         </div>
 
-        <div class="mr-6">
-            <img src="@assets/img/landing-steps.svg" class="w-[92%] justify-self-center self-center" alt="First steps" />
+        <div class="mr-6 justify-self-center">
+            <Card class="bg-primary-50 justify-self-center" :pt="{ body: 'pt-4 pb-0 px-0', content: 'justify-self-center mx-[-2rem]' }">
+                <template #content>
+                    <img src="@assets/img/landing-steps.svg" class="w-[92%] justify-self-center self-center" alt="First steps" />
+                </template>
+            </Card>
         </div>
     </div>
 </template>
