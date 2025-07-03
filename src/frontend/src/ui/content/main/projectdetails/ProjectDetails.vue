@@ -7,7 +7,6 @@ import { useProjectsStore } from "@/data/stores/ProjectsStore";
 
 import Contents from "@/ui/content/main/projectdetails/Contents.vue";
 import ContentsLanding from "@/ui/content/main/projectdetails/ContentsLanding.vue";
-import ContentsHelp from "@/ui/content/main/projectdetails/ContentsHelp.vue";
 import Header from "@/ui/content/main/projectdetails/Header.vue";
 import HeaderEmpty from "@/ui/content/main/projectdetails/HeaderEmpty.vue";
 
@@ -22,10 +21,6 @@ const currentProject = computed(() => projStore.resolveActiveProject());
     <div v-if="displayState == DisplayState.Project && !!currentProject" class="contents">
         <Header :project="currentProject" />
         <Contents :project="currentProject" />
-    </div>
-    <div v-else-if="displayState == DisplayState.Help" class="contents">
-        <HeaderEmpty />
-        <ContentsHelp />
     </div>
     <div v-else class="contents">
         <HeaderEmpty />

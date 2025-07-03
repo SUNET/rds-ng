@@ -9,7 +9,7 @@ const compStore = useComponentStore();
 <template>
     <div class="r-centered-grid r-text">
         <Header></Header>
-        <div>Oh no, I was unable to connect to the server!</div>
+        <div>Unable to connect to server!</div>
         <div class="r-text-gray italic">
             {{ compStore.componentStateMessage }}
         </div>

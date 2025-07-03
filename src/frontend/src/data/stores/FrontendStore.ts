@@ -3,8 +3,7 @@ import { ref } from "vue";
 
 export const enum DisplayState {
     Landing,
-    Project,
-    Help
+    Project
 }
 
 /**
