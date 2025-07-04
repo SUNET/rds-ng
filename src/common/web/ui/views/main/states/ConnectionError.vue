@@ -13,7 +13,7 @@ const compStore = useComponentStore();
         <div class="r-text-gray italic">
             {{ compStore.componentStateMessage }}
         </div>
-        <div>Pretty-please refresh your browser to try again.</div>
+        <div>Please refresh your browser to try again.</div>
     </div>
 </template>
 
