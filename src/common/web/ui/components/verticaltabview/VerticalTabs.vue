@@ -23,11 +23,11 @@ const activeTab = defineModel<number>("activeTab", { default: 0 });
     <Tabs v-model:value="activeTab" class="h-full" :pt="{ root: 'grid grid-cols-[auto_1fr]' }">
         <TabList :pt="{ tabList: 'tab-list', activeBar: 'tab-list-active-bar' }">
             <Tab v-for="[index, tab] of tabs.entries()" :value="index" class="tab">
-                <div class="flex items-center gap-1.5">
+                <div class="flex items-center gap-2">
                     <span
                         v-if="tab.icon"
                         :class="'material-icons-outlined ' + tab.icon + (activeTab == index ? ' text-[var(--p-rds-highlight-500)]' : '')"
-                        style="font-size: 1rem"
+                        style="font-size: 1.25rem"
                     />
                     <span>{{ tab.title }}</span>
                 </div>

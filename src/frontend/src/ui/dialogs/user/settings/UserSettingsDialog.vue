@@ -22,7 +22,7 @@ const { dialogData } = useExtendedDialogTools();
 const userSettings = ref<UserSettings>(dialogData.userData.userSettings);
 
 const tabs = ref([
-    { title: "Connections", component: markRaw(ConnectionsTab), icon: "mi-hub" },
+    { title: "Connections", component: markRaw(ConnectionsTab), icon: "mi-add-link" },
     { title: "Help & Support", component: markRaw(SupportTab), icon: "mi-help-outline" },
     { title: "About", component: markRaw(AboutTab), icon: "mi-feedback" }
 ]);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Message from "primevue/message";
+import Card from "primevue/card";
 import { type PropType, toRefs } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
@@ -24,18 +24,28 @@ const propRefs = toRefs(props);
         <div class="r-text-caption">Welcome to {{ comp.data.title }}!</div>
         <div class="grid grid-cols-[max-content_1fr] gap-1.5 items-center w-full">
             <a href="https://www.research-data-services.org" target="_blank">
-                <img id="logo" src="@assets/img/rds-octopus-bl.svg" alt="RDS Logo" class="p-1.5" width="75rem" title="Visit the RDS website" />
+                <img id="logo" src="@assets/img/logo-bridgit.png" alt="bridgit logo" class="p-1.5 w-52 brightness-0" title="Visit the RDS website" />
             </a>
             <div>
                 {{ comp.data.title }} allows researchers to export research data directly from their cloud storage systems to data repositories and external
                 storages.
             </div>
         </div>
-        <Message severity="warn" icon="material-icons-outlined mi-warning-amber mr-1 mb-0.5" :closable="false" class="text-sm my-4">
-            This is an <em>early preview version</em> of the final application. If you encounter any issues or have some feedback, feel free to
-            <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
-            !
-        </Message>
+        <Card class="bg-amber-100 text-amber-700 !p-0 mt-4 mb-4 w-fit" :pt="{ title: '!text-base', caption: 'h-5', body: 'p-3 px-5' }">
+            <template #title>
+                <div class="flex items-center gap-1">
+                    <span class="material-icons-outlined mi-construction !text-xl" />
+                    <span class="">This is a beta version!</span>
+                </div>
+            </template>
+            <template #content>
+                <span class="text-sm">
+                    If you encounter any issues or have other kinds of feedback, feel free to
+                    <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
+                    !
+                </span>
+            </template>
+        </Card>
 
         <div class="r-text-caption mt-1">Links</div>
         <div class="grid grid-flow-rows">

@@ -103,7 +103,7 @@ watch(userAuthorizations, () => {
                 :title="isAuthorized || !requiresAuthorization ? 'Connected' : 'Not connected'"
                 class="w-10 h-10 rounded-full"
             >
-                <span class="material-icons-outlined" :class="isAuthorized ? 'mi-power' : 'mi-power-off'" />
+                <span class="material-icons-outlined" :class="isAuthorized ? 'mi-link' : 'mi-link-off'" />
             </Tag>
         </div>
 
