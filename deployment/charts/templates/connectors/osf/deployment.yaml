@@ -19,6 +19,11 @@ spec:
         app: {{ .Values.appName }}
         component: {{ .Values.connectors.osf.componentName }}
     spec:
+      volumes:
+        - name: osf-logo-volume
+          configMap:
+            name: connector-osf-logos-config
+
       containers:
         - name: "{{ .Values.appName }}-{{ .Values.connectors.osf.componentName }}"
           image: "{{ .Values.connectors.osf.image.name }}:{{ .Values.tag }}"
@@ -28,7 +33,18 @@ spec:
           envFrom:
             - configMapRef:
                 name: "{{ .Values.connectors.osf.componentName }}-config"
-          
+          volumeMounts:
+            {{ if and (hasKey .Values.connectors.osf "logos") (hasKey .Values.connectors.osf.logos "default") (.Files.Get .Values.connectors.osf.logos.default) }}
+            - name: osf-logo-volume
+              mountPath: /component/connectors/osf/.assets/logo.png
+              subPath: logo.png 
+            {{ end }}
+            {{ if and (hasKey .Values.connectors.osf "logos") (hasKey .Values.connectors.osf.logos "horizontal") (.Files.Get .Values.connectors.osf.logos.horizontal) }}
+            - name: osf-logo-volume
+              mountPath: /component/connectors/osf/.assets/horizontal.png
+              subPath: horizontal.png 
+            {{ end }}
+
 
 ---
 apiVersion: v1

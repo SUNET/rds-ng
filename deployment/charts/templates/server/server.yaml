@@ -20,7 +20,7 @@ spec:
       volumes:
         - name: server-volume
           persistentVolumeClaim:
-            claimName: "{{ .Values.appName }}-rds-server-pvc"
+            claimName: rds-server-pvc
       containers:
         - name: rds-server
           image: "{{ .Values.server.image.name }}:{{ .Values.tag }}"
