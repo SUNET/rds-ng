@@ -80,7 +80,7 @@ onMounted(() => {
                 }
             })
             .failed((_, msg) => {
-                resourcesError.value = "Unable to load resources";
+                resourcesError.value = `Unable to load resources: ${msg}`;
             });
         action.execute();
     }
