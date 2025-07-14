@@ -245,10 +245,6 @@ class WebdavBroker(ResourcesBroker):
             )
             _add_option(AuthorizationStrategy.ContentType.AUTH_TOKEN, "webdav_token")
 
-        print("-------------------------", flush=True)
-        print(options, flush=True)
-        print("-------------------------", flush=True)
-
         return webdav3.client.Client(options)
 
 

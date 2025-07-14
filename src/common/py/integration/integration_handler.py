@@ -46,5 +46,5 @@ class IntegrationHandler(abc.ABC):
         s = s.replace("{USER_ID}", self._user_token.user_id)
         s = s.replace("{USER_NAME}", self._user_token.user_name)
         s = s.replace("{SYSTEM_ID}", self._user_token.system_id)
-        s = s.replace("{ACCESS_ID}", self._user_token.access_id)
+        s = s.replace("{ACCESS_ID}", self._user_token.access_id.replace("@", "%40"))
         return s
