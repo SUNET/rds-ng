@@ -73,10 +73,10 @@ onMounted(() => {
     if (showDataPathSelector) {
         const action = new ListResourcesAction(comp, true);
         action
-            .prepare("", true, false)
+            .prepare("", true, true)
             .done((reply: ListResourcesReply, success, msg) => {
                 if (success) {
-                    resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true);
+                    resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true, false);
                 }
             })
             .failed((_, msg) => {

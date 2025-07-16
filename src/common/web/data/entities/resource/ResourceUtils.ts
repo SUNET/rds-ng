@@ -10,24 +10,26 @@ import { ResourcesList } from "./ResourcesList";
  *
  * @returns - The tree nodes list.
  */
-export function resourcesListToTreeNodes(resources: ResourcesList, simpleData: boolean = false): TreeNode[] {
+export function resourcesListToTreeNodes(resources: ResourcesList, simpleData: boolean = false, includeFiles: boolean = true): TreeNode[] {
     const sortNodes = (nodes: TreeNode[]): TreeNode[] => {
         return nodes.sort((node1, node2) => (node1.label && node2.label ? node1.label.localeCompare(node2.label) : 0));
     };
 
     const folderNodes: TreeNode[] = [];
     for (const [_, folderResources] of Object.entries(resources.folders)) {
-        folderNodes.push(...resourcesListToTreeNodes(folderResources, simpleData));
+        folderNodes.push(...resourcesListToTreeNodes(folderResources, simpleData, includeFiles));
     }
 
     const fileNodes: TreeNode[] = [];
-    for (const fileResource of resources.files) {
-        fileNodes.push({
-            key: fileResource.filename,
-            label: fileResource.basename,
-            data: simpleData ? fileResource.filename : fileResource,
-            icon: "material-icons-outlined mi-description"
-        } as TreeNode);
+    if (includeFiles) {
+        for (const fileResource of resources.files) {
+            fileNodes.push({
+                key: fileResource.filename,
+                label: fileResource.basename,
+                data: simpleData ? fileResource.filename : fileResource,
+                icon: "material-icons-outlined mi-description"
+            } as TreeNode);
+        }
     }
 
     return [
