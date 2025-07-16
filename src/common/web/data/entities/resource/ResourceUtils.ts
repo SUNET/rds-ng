@@ -7,6 +7,7 @@ import { ResourcesList } from "./ResourcesList";
  *
  * @param resources - The resources list to transform.
  * @param simpleData - Whether to use simple data.
+ * @param includeFiles - Whether to also include files.
  *
  * @returns - The tree nodes list.
  */
@@ -89,4 +90,24 @@ export function filterResourcesTreeNodes(nodes: TreeNode[], keys: string[]): Tre
 
     _filter(nodes);
     return filteredNodes;
+}
+
+/**
+ * Checks if a given path exists in the resources list.
+ *
+ * @param resources - The resources list to check.
+ * @param path - The path to search for.
+ */
+export function resourcesListContainsPath(resources: ResourcesList, path: string): boolean {
+    if (resources.resource.filename == path) {
+        return true;
+    }
+
+    for (const folder of resources.folders) {
+        if (resourcesListContainsPath(folder, path)) {
+            return true;
+        }
+    }
+
+    return false;
 }

@@ -17,21 +17,21 @@ import * as yup from "yup";
 
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
-import { useDirectives } from "@common/ui/Directives";
 
 import LegendHeader from "@common/ui/components/misc/LegendHeader.vue";
 import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
 import ResourcesTree from "@common/ui/components/resource/ResourcesTree.vue";
 import StepIconHeader from "@common/ui/components/stepper/StepIconHeader.vue";
+import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
+import { useDirectives } from "@common/ui/Directives";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/ui/UIOptions";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
-import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
 import ConnectorInstancesSelect from "@/ui/dialogs/project/edit/ConnectorInstancesSelect.vue";
 import EditProjectDialogFooter from "@/ui/dialogs/project/edit/EditProjectDialogFooter.vue";
+import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
 const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
 const { vFocus } = useDirectives();
@@ -73,7 +73,7 @@ onMounted(() => {
     if (showDataPathSelector) {
         const action = new ListResourcesAction(comp, true);
         action
-            .prepare("", true, true)
+            .prepare("", true, true, false) // TODO
             .done((reply: ListResourcesReply, success, msg) => {
                 if (success) {
                     resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true, false);
