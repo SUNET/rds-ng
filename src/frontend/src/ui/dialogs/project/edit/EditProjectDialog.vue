@@ -255,7 +255,7 @@ function onNextStep() {
                                     <small class="px-2 py-1.5 r-shade-gray rounded-lg truncated inline-block w-full">
                                         <b class="pr-1">Selected path:</b> {{ dialogData.userData.datapath || "(None)" }}
                                     </small>
-                                    <ScrollPanel class="h-48">
+                                    <ScrollPanel class="h-72">
                                         <ResourcesTree
                                             name="datapath"
                                             v-model="dialogData.userData.datapath"
