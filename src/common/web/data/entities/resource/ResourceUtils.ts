@@ -93,21 +93,34 @@ export function filterResourcesTreeNodes(nodes: TreeNode[], keys: string[]): Tre
 }
 
 /**
+ * Search for a path within a resources list.
+ *
+ * @param resources - The resources list to search in.
+ * @param path - The path to search for.
+ *
+ * @returns - The found list or **undefined** otherwise.
+ */
+export function resourcesListFindPath(resources: ResourcesList, path: string): ResourcesList | undefined {
+    if (resources.resource.filename == path) {
+        return resources;
+    }
+
+    for (const folder of resources.folders) {
+        const res = resourcesListFindPath(folder, path);
+        if (!!res) {
+            return res;
+        }
+    }
+
+    return undefined;
+}
+
+/**
  * Checks if a given path exists in the resources list.
  *
  * @param resources - The resources list to check.
  * @param path - The path to search for.
  */
 export function resourcesListContainsPath(resources: ResourcesList, path: string): boolean {
-    if (resources.resource.filename == path) {
-        return true;
-    }
-
-    for (const folder of resources.folders) {
-        if (resourcesListContainsPath(folder, path)) {
-            return true;
-        }
-    }
-
-    return false;
+    return !!resourcesListFindPath(resources, path);
 }

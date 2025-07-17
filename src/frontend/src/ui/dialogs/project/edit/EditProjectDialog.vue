@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useResourceTools } from "@/ui/tools/resource/ResourceTools.ts";
 import { Form } from "@primevue/forms";
 import Checkbox from "primevue/checkbox";
 import Fieldset from "primevue/fieldset";
@@ -33,10 +34,12 @@ import ConnectorInstancesSelect from "@/ui/dialogs/project/edit/ConnectorInstanc
 import EditProjectDialogFooter from "@/ui/dialogs/project/edit/EditProjectDialogFooter.vue";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
+const comp = FrontendComponent.inject();
+
 const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
+const { retrieveResourcesList } = useResourceTools(comp);
 const { vFocus } = useDirectives();
 
-const comp = FrontendComponent.inject();
 const optSnapIns = SnapInsCatalog.allOptionals();
 const uiOptions = ref<UIOptions>(dialogData.userData.options.ui);
 const showDataPathSelector = dialogData.options["showDataPathSelector"];
@@ -154,6 +157,13 @@ function onNextStep() {
             activeStep.value += 1;
         });
 }
+
+function onDataPathSelected(path: string) {
+    if (!!path) {
+        retrieveResourcesList(path); // TODO
+    }
+    validator.refresh();
+}
 </script>
 
 <template>
@@ -263,7 +273,7 @@ function onNextStep() {
                                             loading
                                             expand-first-only
                                             class="w-full h-fit"
-                                            @changed="validator.refresh()"
+                                            @changed="onDataPathSelected"
                                         />
                                     </ScrollPanel>
                                 </div>

@@ -1,5 +1,6 @@
 import { Resource, ResourceType } from "@common/data/entities/resource/Resource.ts";
 import { ResourcesList } from "@common/data/entities/resource/ResourcesList.ts";
+import { resourcesListFindPath } from "@common/data/entities/resource/ResourceUtils.ts";
 
 /**
  * Cache to store a resources list.
@@ -42,12 +43,23 @@ export class ResourcesListCache {
     }
 
     /**
+     * Gets the resources list of a specific path.
+     *
+     * @param path - The path to get.
+     *
+     * @returns - The found resources list or **undefined** otherwise.
+     */
+    public getPath(path: string): ResourcesList | undefined {
+        return this.contains(path) ? resourcesListFindPath(this._resourcesList!, path) : undefined;
+    }
+
+    /**
      * Checks whether a given path is contained in the cache.
      *
      * @param path - The path to check.
      */
     public contains(path: string): boolean {
-        return this._knownPaths.includes(path);
+        return !!this._resourcesList ? this._knownPaths.includes(path) : false;
     }
 
     /**
