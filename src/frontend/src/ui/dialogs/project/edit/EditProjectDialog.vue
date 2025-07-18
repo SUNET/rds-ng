@@ -118,7 +118,6 @@ function retrieveDataPath(path: string): void {
     // TODO: Notification muss enthalten, ob selektiert oder deselektiert
     retrieveResourcesList(path, false)
         .then(() => {
-            // TODO: Expanded-State beibehalten
             const resources = unref(resourcesListCache).resources;
             resourcesNodes.value = !!resources ? (resourcesNodes.value = resourcesListToTreeNodes(resources, true, false)) : [];
         })

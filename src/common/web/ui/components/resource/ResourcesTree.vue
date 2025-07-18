@@ -34,15 +34,19 @@ const { expandRootNodes, expandAllNodes } = useResourceTreeTools();
 
 const isLoading = ref(loading.value);
 if (isLoading.value) {
-    watch(options, () => {
-        isLoading.value = false;
+    watch(
+        options,
+        () => {
+            isLoading.value = false;
 
-        if (unref(expandFirstOnly)) {
-            expandFirst();
-        } else {
-            expandAll();
-        }
-    });
+            if (unref(expandFirstOnly)) {
+                expandFirst();
+            } else {
+                expandAll();
+            }
+        },
+        { once: true }
+    );
 }
 
 const selectedResources = ref<Object>(pathToSelectedResources(model.value));
