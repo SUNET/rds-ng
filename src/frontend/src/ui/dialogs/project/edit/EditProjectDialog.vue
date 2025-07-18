@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useResourceTools } from "@/ui/tools/resource/ResourceTools.ts";
 import { Form } from "@primevue/forms";
+import { storeToRefs } from "pinia";
 import Checkbox from "primevue/checkbox";
 import Fieldset from "primevue/fieldset";
 import IftaLabel from "primevue/iftalabel";
@@ -16,7 +16,6 @@ import ToggleSwitch from "primevue/toggleswitch";
 import { computed, onMounted, ref, unref, watch } from "vue";
 import * as yup from "yup";
 
-import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 
 import LegendHeader from "@common/ui/components/misc/LegendHeader.vue";
@@ -28,17 +27,21 @@ import { useDirectives } from "@common/ui/Directives";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/ui/UIOptions";
-import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
+import { useResourcesStore } from "@/data/stores/ResourcesStore.ts";
 
 import ConnectorInstancesSelect from "@/ui/dialogs/project/edit/ConnectorInstancesSelect.vue";
 import EditProjectDialogFooter from "@/ui/dialogs/project/edit/EditProjectDialogFooter.vue";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
+import { useResourceTools } from "@/ui/tools/resource/ResourceTools.ts";
 
 const comp = FrontendComponent.inject();
+const resourcesStore = useResourcesStore();
 
 const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
 const { retrieveResourcesList } = useResourceTools(comp);
 const { vFocus } = useDirectives();
+
+const { resourcesListCache } = storeToRefs(resourcesStore);
 
 const optSnapIns = SnapInsCatalog.allOptionals();
 const uiOptions = ref<UIOptions>(dialogData.userData.options.ui);
@@ -72,20 +75,11 @@ const initialFormValues = ref({ title: dialogData.userData.title, description: d
 
 const resourcesNodes = ref<Object[]>([]);
 const resourcesError = ref("");
+
+// Initiate the retrieval of the root directory; if this has been done before, it will be fetched from the cache automatically
 onMounted(() => {
     if (showDataPathSelector) {
-        const action = new ListResourcesAction(comp, true);
-        action
-            .prepare("", true, true, false) // TODO
-            .done((reply: ListResourcesReply, success, msg) => {
-                if (success) {
-                    resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true, false);
-                }
-            })
-            .failed((_, msg) => {
-                resourcesError.value = `Unable to load resources: ${msg}`;
-            });
-        action.execute();
+        retrieveDataPath("");
     }
 });
 
@@ -117,7 +111,23 @@ const nextName = computed(() => {
     }
 });
 
-function onClickStep(event: Event, callback: (event: Event) => void) {
+function retrieveDataPath(path: string): void {
+    resourcesError.value = "";
+
+    // TODO: Loading-state, default erstmal ausklappbar
+    // TODO: Notification muss enthalten, ob selektiert oder deselektiert
+    retrieveResourcesList(path, false)
+        .then(() => {
+            // TODO: Expanded-State beibehalten
+            const resources = unref(resourcesListCache).resources;
+            resourcesNodes.value = !!resources ? (resourcesNodes.value = resourcesListToTreeNodes(resources, true, false)) : [];
+        })
+        .catch((reason: string) => {
+            resourcesError.value = `Unable to load resources: ${reason}`;
+        });
+}
+
+function onClickStep(event: Event, callback: (event: Event) => void): void {
     validator
         .validate()
         .then(() => {
@@ -128,11 +138,11 @@ function onClickStep(event: Event, callback: (event: Event) => void) {
         .catch(() => {});
 }
 
-function onPrevStep() {
+function onPrevStep(): void {
     activeStep.value -= 1;
 }
 
-function onNextStep() {
+function onNextStep(): void {
     validator
         .validate()
         .then(() => {
@@ -159,10 +169,11 @@ function onNextStep() {
 }
 
 function onDataPathSelected(path: string) {
-    if (!!path) {
-        retrieveResourcesList(path); // TODO
-    }
     validator.refresh();
+
+    if (!!path) {
+        retrieveDataPath(path);
+    }
 }
 </script>
 

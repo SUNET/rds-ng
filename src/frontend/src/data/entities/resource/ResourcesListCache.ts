@@ -77,6 +77,13 @@ export class ResourcesListCache {
         this._knownPaths = [];
     }
 
+    /**
+     * The cached resources list.
+     */
+    public get resources(): ResourcesList | null {
+        return this._resourcesList;
+    }
+
     private isRoot(res: Resource): boolean {
         return res.type == ResourceType.Folder && (res.filename == "" || res.filename == "/");
     }

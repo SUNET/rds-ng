@@ -9,22 +9,19 @@ import { GetResourceAction } from "@/ui/actions/resource/GetResourceAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction.ts";
 
 export function useResourceTools(comp: FrontendComponent) {
-    async function retrieveResourcesList(path: string): Promise<ResourcesList> {
+    async function retrieveResourcesList(path: string, recursive: boolean = true): Promise<ResourcesList> {
         const resourcesStore = useResourcesStore();
 
         return new Promise<ResourcesList>(async (resolve, reject) => {
             const resources = resourcesStore.resourcesListCache.getPath(path);
             if (!!resources) {
-                console.log(`${path} IN CACHE`);
                 resolve(resources);
             } else {
                 const action = new ListResourcesAction(comp, true);
                 action
-                    .prepare(path, true, true, false)
+                    .prepare(path, true, true, recursive)
                     .done((reply: ListResourcesReply, success, msg) => {
                         if (success) {
-                            console.log(`${path} ADD TO CACHE`);
-                            console.log(reply.resources);
                             resourcesStore.resourcesListCache.push(reply.resources);
                             resolve(reply.resources);
                         } else {
