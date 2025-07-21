@@ -221,6 +221,7 @@ function onDataPathNodeExpand(path: string): void {
                             v-model:shared-property-objects="project!.features.shared_objects"
                             :projectProfiles="projectProfiles as PropertyProfileStore"
                             class="w-full"
+                            :show-profile-tags="false"
                         />
                     </div>
                     <div v-else class="r-centered-grid italic p-8">Select one or more file objects on the left to edit their metadata.</div>

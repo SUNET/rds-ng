@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
+import { boolean } from "yup";
 import PropertySet from "./PropertySet.vue";
 
 import { PropertyObject, PropertyObjectStore, SharedPropertyObject } from "./PropertyObjectStore";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
-const { projectProfiles } = defineProps({
+const { projectProfiles, showProfileTags } = defineProps({
     projectProfiles: {
         type: PropertyProfileStore,
         required: true
+    },
+    showProfileTags: {
+        type: boolean,
+        default: true
     }
 });
 
@@ -44,6 +49,7 @@ watch(
             :propertyObjects="propertyObjects as PropertyObjectStore"
             :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
             :projectProfiles="projectProfiles"
+            :show-profile-tags="showProfileTags"
         />
     </div>
 </template>
