@@ -76,9 +76,9 @@ const initialFormValues = ref({ title: dialogData.userData.title, description: d
 const resourcesNodes = ref<Object[]>([]);
 const resourcesError = ref("");
 
-// Initiate the retrieval of the root directory; if this has been done before, it will be fetched from the cache automatically
 onMounted(() => {
     if (showDataPathSelector) {
+        // Initiate the retrieval of the root directory; if this has been done before, it will be fetched from the cache automatically
         retrieveDataPath("");
     }
 });

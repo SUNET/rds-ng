@@ -140,10 +140,10 @@ function onNodeCollapse(node: TreeNode): void {
             </div>
         </template>
 
-        <Column field="basename" header="Name" class="p-0 pl-2 truncate w-full" expander header-class="r-shade-gray" :pt="{ rowToggleButton: 'mb-1' }">
+        <Column field="basename" header="Name" class="p-0 pl-2 truncate w-full" expander header-class="r-shade-gray">
             <template #body="entry">
                 <div class="flex gap-1 items-center">
-                    <span :class="entry.node.icon" class="opacity-75" /><span class="pt-0.5">{{ entry.node.data.basename }}</span>
+                    <span :class="entry.node.icon" class="opacity-65" /><span class="pt-0.5">{{ entry.node.data.basename }}</span>
                 </div>
             </template>
         </Column>
