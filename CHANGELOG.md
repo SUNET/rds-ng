@@ -1,8 +1,15 @@
 # RDS-NG - Changelog
 
+## v1.0.3 - 2025-07-xx
+
+### Fixes
+
+- Authorization site doesn't display correctly on smaller resolutions
+- Minor UI fixes
+
 ## v1.0.2 - 2025-07-14
 
-#### Improvements
+### Improvements
 
 - More helpful error pages
 - Other small UI improvements

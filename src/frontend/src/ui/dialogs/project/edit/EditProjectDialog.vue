@@ -16,7 +16,7 @@ import ToggleSwitch from "primevue/toggleswitch";
 import { computed, onMounted, ref, unref, watch } from "vue";
 import * as yup from "yup";
 
-import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
+import { adjustResourcesTreeNodesLeafStates, resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 
 import LegendHeader from "@common/ui/components/misc/LegendHeader.vue";
 import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
@@ -114,12 +114,15 @@ const nextName = computed(() => {
 function retrieveDataPath(path: string): void {
     resourcesError.value = "";
 
-    // TODO: Loading-state, default erstmal ausklappbar
-    // TODO: Notification muss enthalten, ob selektiert oder deselektiert
     retrieveResourcesList(path, false)
         .then(() => {
             const resources = unref(resourcesListCache).resources;
-            resourcesNodes.value = !!resources ? (resourcesNodes.value = resourcesListToTreeNodes(resources, true, false)) : [];
+            if (!!resources) {
+                const nodes = resourcesListToTreeNodes(resources, true, false);
+                resourcesNodes.value = adjustResourcesTreeNodesLeafStates(nodes, resources, (path: string) => unref(resourcesListCache).contains(path), false);
+            } else {
+                resourcesNodes.value = [];
+            }
         })
         .catch((reason: string) => {
             resourcesError.value = `Unable to load resources: ${reason}`;
@@ -167,9 +170,11 @@ function onNextStep(): void {
         });
 }
 
-function onDataPathSelected(path: string) {
+function onDataPathSelected(path: string): void {
     validator.refresh();
+}
 
+function onDataPathNodeExpand(path: string): void {
     if (!!path) {
         retrieveDataPath(path);
     }
@@ -281,9 +286,11 @@ function onDataPathSelected(path: string) {
                                             v-model="dialogData.userData.datapath"
                                             :options="resourcesNodes"
                                             loading
+                                            dynamic
                                             expand-first-only
                                             class="w-full h-fit"
                                             @changed="onDataPathSelected"
+                                            @node-expand="onDataPathNodeExpand"
                                         />
                                     </ScrollPanel>
                                 </div>

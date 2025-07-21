@@ -82,7 +82,7 @@ export function filterResourcesTreeNodes(nodes: TreeNode[], keys: string[]): Tre
                 filteredNodes.push(node);
             }
 
-            if (node.children) {
+            if (!!node.children) {
                 _filter(node.children);
             }
         }
@@ -90,6 +90,39 @@ export function filterResourcesTreeNodes(nodes: TreeNode[], keys: string[]): Tre
 
     _filter(nodes);
     return filteredNodes;
+}
+
+/**
+ * Adjust the `leaf` states of all children in the tree nodes, depending on their presence in the resources list and a predicate.
+ *
+ * @param nodes - The tree nodes to adjust.
+ * @param resources - The underlying resources list.
+ * @param predicate - A decider function whether to include a path.
+ * @param includeFiles - Whether to also take files into account.
+ */
+export function adjustResourcesTreeNodesLeafStates(
+    nodes: TreeNode[],
+    resources: ResourcesList,
+    predicate: (path: string) => boolean,
+    includeFiles: boolean = true
+): TreeNode[] {
+    function _adjust(nodes: TreeNode[]): void {
+        for (const node of nodes) {
+            const res = resourcesListFindPath(resources, node.key);
+            if (!!res && predicate(node.key)) {
+                node.leaf = res.folders.length == 0 && (includeFiles ? res.files.length == 0 : true);
+            } else {
+                node.leaf = false;
+            }
+
+            if (!!node.children) {
+                _adjust(node.children);
+            }
+        }
+    }
+
+    _adjust(nodes);
+    return nodes;
 }
 
 /**

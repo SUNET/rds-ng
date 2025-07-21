@@ -50,6 +50,10 @@ export class ResourcesListCache {
      * @returns - The found resources list or **undefined** otherwise.
      */
     public getPath(path: string): ResourcesList | undefined {
+        if (path == "") {
+            return this._resourcesList || undefined;
+        }
+
         return this.contains(path) ? resourcesListFindPath(this._resourcesList!, path) : undefined;
     }
 
