@@ -73,13 +73,13 @@ watch(model, (newPath) => {
 const expandedNodes = ref<Record<string, boolean>>({});
 
 function expandFirst(): void {
-    if (options!.value) {
+    if (unref(options)) {
         expandRootNodes(unref(options) as TreeNode[], expandedNodes);
     }
 }
 
 function expandAll(): void {
-    if (options!.value) {
+    if (unref(options)) {
         expandAllNodes(unref(options) as TreeNode[], expandedNodes);
     }
 }

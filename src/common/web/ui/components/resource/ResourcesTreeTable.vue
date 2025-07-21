@@ -21,15 +21,19 @@ const props = defineProps({
     refreshable: {
         type: Boolean,
         default: false
+    },
+    expandFirstOnly: {
+        type: Boolean,
+        default: false
     }
 });
-const { data, refreshable } = toRefs(props);
+const { data, refreshable, expandFirstOnly } = toRefs(props);
 const selectedNodes = defineModel<Object>("selectedNodes", { default: {} });
 const selectedData = defineModel<Resource[]>("selectedData", { default: [] });
 const emits = defineEmits<{
     (e: "refresh"): void;
 }>();
-const { expandAllNodes, collapseAllNodes } = useResourceTreeTools();
+const { expandAllNodes, expandRootNodes, collapseAllNodes } = useResourceTreeTools();
 
 const filters = ref({} as Record<string, string>);
 const expandedNodes = ref({} as Record<string, boolean>);
@@ -37,7 +41,12 @@ const expandedNodes = ref({} as Record<string, boolean>);
 const isLoading = ref(true);
 watch(data, () => {
     isLoading.value = false;
-    expandAll();
+
+    if (unref(expandFirstOnly)) {
+        expandFirst();
+    } else {
+        expandAll();
+    }
 });
 onMounted(() => {
     refresh();
@@ -48,8 +57,14 @@ function refresh(): void {
     emits("refresh");
 }
 
+function expandFirst(): void {
+    if (unref(data)) {
+        expandRootNodes(unref(data) as TreeNode[], expandedNodes);
+    }
+}
+
 function expandAll(): void {
-    if (data!.value) {
+    if (unref(data)) {
         expandAllNodes(unref(data) as TreeNode[], expandedNodes);
     }
 }

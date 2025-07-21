@@ -102,7 +102,7 @@ watch(
             action.prepare(project!.value, [new ResourcesMetadataFeature(updatedData)]);
             action.execute();
 
-            // TODO: A hack to update the local data; nedds to be changed later
+            // TODO: A hack to update the local data; needs to be changed later
             // @ts-ignore
             project!.value.features.resources_metadata.metadata = updatedData;
         });
@@ -142,7 +142,7 @@ for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadata
                         v-model:selected-nodes="selectedNodes"
                         v-model:selected-data="selectedData"
                         class="p-treetable-sm text-sm border border-b-0 h-full"
-                        refreshable
+                        expand-first-only
                         @refresh="refreshResources"
                     />
                 </SplitterPanel>
