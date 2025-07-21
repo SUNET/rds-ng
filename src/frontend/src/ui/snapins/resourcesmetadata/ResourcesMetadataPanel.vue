@@ -6,7 +6,7 @@ import ScrollPanel from "primevue/scrollpanel";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import ToggleSwitch from "primevue/toggleswitch";
-import { computed, nextTick, type PropType, reactive, ref, toRefs, unref, watch } from "vue";
+import { computed, nextTick, onMounted, type PropType, reactive, ref, toRefs, unref, watch } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useMetadataStore } from "@/data/stores/MetadataStore";
@@ -81,6 +81,10 @@ function refreshResources(): void {
     });
     action.execute();
 }
+
+onMounted(() => {
+    refreshResources();
+});
 
 watch(
     () => resourcesData,

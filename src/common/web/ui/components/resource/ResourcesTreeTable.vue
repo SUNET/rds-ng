@@ -6,7 +6,7 @@ import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
 import type { TreeNode } from "primevue/treenode";
 import TreeTable from "primevue/treetable";
-import { onMounted, type PropType, ref, toRefs, unref, watch } from "vue";
+import { type PropType, ref, toRefs, unref, watch } from "vue";
 
 import { Resource, ResourceType } from "../../../data/entities/resource/Resource";
 import { filterResourcesTreeNodes } from "../../../data/entities/resource/ResourceUtils";
@@ -18,6 +18,10 @@ const props = defineProps({
         type: Object as PropType<Object[]>,
         required: true
     },
+    dynamic: {
+        type: Boolean,
+        default: false
+    },
     refreshable: {
         type: Boolean,
         default: false
@@ -27,11 +31,14 @@ const props = defineProps({
         default: false
     }
 });
-const { data, refreshable, expandFirstOnly } = toRefs(props);
+const { data, dynamic, refreshable, expandFirstOnly } = toRefs(props);
 const selectedNodes = defineModel<Object>("selectedNodes", { default: {} });
 const selectedData = defineModel<Resource[]>("selectedData", { default: [] });
 const emits = defineEmits<{
     (e: "refresh"): void;
+    (e: "changed", selected: Resource[]): void;
+    (e: "nodeExpand", path: string): void;
+    (e: "nodeCollapse", path: string): void;
 }>();
 const { expandAllNodes, expandRootNodes, collapseAllNodes } = useResourceTreeTools();
 
@@ -39,21 +46,37 @@ const filters = ref({} as Record<string, string>);
 const expandedNodes = ref({} as Record<string, boolean>);
 
 const isLoading = ref(true);
-watch(data, () => {
-    isLoading.value = false;
+const loadingMode = ref("mask");
+if (isLoading.value) {
+    watch(
+        data,
+        () => {
+            isLoading.value = false;
+            if (dynamic.value) {
+                loadingMode.value = "icon";
+            }
 
-    if (unref(expandFirstOnly)) {
-        expandFirst();
-    } else {
-        expandAll();
-    }
-});
-onMounted(() => {
-    refresh();
+            if (unref(expandFirstOnly)) {
+                expandFirst();
+            } else {
+                expandAll();
+            }
+        },
+        { once: true }
+    );
+}
+
+watch(selectedNodes, () => {
+    const selectedPaths = Object.keys(unref(selectedNodes));
+    const selectedTreeNodes = filterResourcesTreeNodes(unref(data) as TreeNode[], selectedPaths);
+    selectedData.value = selectedTreeNodes.map((node) => node.data);
+
+    emits("changed", selectedData.value);
 });
 
 function refresh(): void {
     isLoading.value = true;
+    loadingMode.value = "mask";
     emits("refresh");
 }
 
@@ -73,11 +96,17 @@ function collapseAll(): void {
     collapseAllNodes(expandedNodes);
 }
 
-watch(selectedNodes, () => {
-    const selectedPaths = Object.keys(unref(selectedNodes));
-    const selectedTreeNodes = filterResourcesTreeNodes(unref(data) as TreeNode[], selectedPaths);
-    selectedData.value = selectedTreeNodes.map((node) => node.data);
-});
+function onNodeExpand(node: TreeNode): void {
+    if (dynamic.value) {
+        node.loading = true;
+    }
+
+    emits("nodeExpand", node.key);
+}
+
+function onNodeCollapse(node: TreeNode): void {
+    emits("nodeCollapse", node.key);
+}
 </script>
 
 <template>
@@ -89,6 +118,7 @@ watch(selectedNodes, () => {
         v-model:expanded-keys="expandedNodes"
         :filters="filters"
         :loading="isLoading"
+        :loading-mode="loadingMode"
         auto-layout
         class="grid content-start border-0 border-t-2 border-slate-50"
         :pt="{
@@ -96,6 +126,8 @@ watch(selectedNodes, () => {
             footer: 'r-shade-dark-gray sticky top-[100vh] border-0',
             tableContainer: '!overflow-auto'
         }"
+        @node-expand="onNodeExpand"
+        @node-collapse="onNodeCollapse"
     >
         <template #header>
             <div class="text-right">
@@ -108,7 +140,7 @@ watch(selectedNodes, () => {
             </div>
         </template>
 
-        <Column field="basename" header="Name" class="p-0 pl-2 truncate" expander header-class="r-shade-gray" :pt="{ rowToggleButton: 'mb-1' }">
+        <Column field="basename" header="Name" class="p-0 pl-2 truncate w-full" expander header-class="r-shade-gray" :pt="{ rowToggleButton: 'mb-1' }">
             <template #body="entry">
                 <div class="flex gap-1 items-center">
                     <span :class="entry.node.icon" class="opacity-75" /><span class="pt-0.5">{{ entry.node.data.basename }}</span>
@@ -118,7 +150,7 @@ watch(selectedNodes, () => {
 
         <Column
             header="Size"
-            class="w-48"
+            class="w-0"
             header-class="r-shade-gray"
             :pt="{ columnHeaderContent: 'place-self-end truncate', bodyCellContent: 'place-self-end truncate' }"
         >
@@ -128,8 +160,8 @@ watch(selectedNodes, () => {
         </Column>
 
         <Column
-            header="Elements in folder"
-            class="w-32"
+            header="Items in folder"
+            class="w-0"
             header-class="r-shade-gray"
             :pt="{ columnHeaderContent: 'place-self-end truncate', bodyCellContent: 'place-self-end truncate' }"
         >
