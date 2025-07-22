@@ -155,7 +155,8 @@ function onNodeCollapse(node: TreeNode): void {
             :pt="{ columnHeaderContent: 'place-self-end truncate', bodyCellContent: 'place-self-end truncate' }"
         >
             <template #body="entry">
-                {{ humanReadableFileSize(entry.node.data.size) }}
+                <span v-if="entry.node.data.size >= 0">{{ humanReadableFileSize(entry.node.data.size) }}</span>
+                <span v-else class="italic r-text-light-gray">Unknown</span>
             </template>
         </Column>
 
@@ -166,7 +167,10 @@ function onNodeCollapse(node: TreeNode): void {
             :pt="{ columnHeaderContent: 'place-self-end truncate', bodyCellContent: 'place-self-end truncate' }"
         >
             <template #body="entry">
-                <span v-if="entry.node.data.type === ResourceType.Folder">{{ entry.node.children.length }}</span>
+                <div v-if="entry.node.data.type === ResourceType.Folder">
+                    <span v-if="entry.node.data.size >= 0">{{ entry.node.children.length }}</span>
+                    <span v-else class="italic r-text-light-gray">Unknown</span>
+                </div>
             </template>
         </Column>
 
