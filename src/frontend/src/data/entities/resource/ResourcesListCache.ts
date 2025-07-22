@@ -98,6 +98,7 @@ export class ResourcesListCache {
             const folder = resources.folders[i];
             if (folder.resource.filename == child.resource.filename) {
                 resources.folders[i] = child;
+                this.updateResourceSizes();
                 return true;
             }
 
@@ -108,5 +109,28 @@ export class ResourcesListCache {
         }
 
         return false;
+    }
+
+    private updateResourceSizes(): void {
+        function _update(resources: ResourcesList): void {
+            for (const folder of resources.folders) {
+                _update(folder);
+            }
+
+            if (resources.resource.type == ResourceType.Folder) {
+                resources.resource.size = 0;
+
+                for (const folder of resources.folders) {
+                    resources.resource.size += folder.resource.size;
+                }
+                for (const file of resources.files) {
+                    resources.resource.size += file.size;
+                }
+            }
+        }
+
+        if (!!this._resourcesList) {
+            _update(this._resourcesList);
+        }
     }
 }
