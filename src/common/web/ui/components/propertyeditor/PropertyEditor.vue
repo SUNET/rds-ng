@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
-import { boolean } from "yup";
 import PropertySet from "./PropertySet.vue";
 
 import { PropertyObject, PropertyObjectStore, SharedPropertyObject } from "./PropertyObjectStore";
@@ -12,7 +11,7 @@ const { projectProfiles, showProfileTags } = defineProps({
         required: true
     },
     showProfileTags: {
-        type: boolean,
+        type: Boolean,
         default: true
     }
 });
