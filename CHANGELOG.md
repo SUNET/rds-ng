@@ -1,6 +1,10 @@
 # RDS-NG - Changelog
 
-## v1.0.3 - 2025-07-xx
+## v1.0.3 - 2025-07-22
+
+### Improvements
+
+- Load file trees dynamically to avoid performance issues
 
 ### Fixes
 
