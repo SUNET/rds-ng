@@ -22,6 +22,7 @@ export class ResourcesListCache {
      * @throws Error - When a push operation would result in a corrupted cache.
      */
     public push(resources: ResourcesList): void {
+        // TODO: Support gaps in tree
         // Adding a new root replaces everything else
         if (this.isRoot(resources.resource)) {
             this.clear();

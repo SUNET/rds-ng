@@ -13,7 +13,7 @@ const comp = FrontendComponent.inject();
         <div class="flex flex-row !pb-0">
             <div class="flex flex-col">
                 <div class="text-3xl font-bold mt-12">Hello, I'm {{ comp.data.title }}!</div>
-                <div class="text-lg font-bold">Your assistent for easy and secure research data sharing.</div>
+                <div class="text-lg font-bold">Your assistant for easy and secure research data sharing.</div>
                 <div>&nbsp;</div>
                 <div>I'm here to help you manage, prepare, and share your research data - flexibly, securely, and in line with your workflows.</div>
                 <div>My goal: making your data handling easier and safe, so you can stay focused on your research.</div>
