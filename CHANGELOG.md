@@ -1,5 +1,11 @@
 # RDS-NG - Changelog
 
+## v1.0.4 - 2025-07-xx
+
+### Fixes
+
+- The wrong root directory is used for data annotation
+
 ## v1.0.3 - 2025-07-22
 
 ### Improvements

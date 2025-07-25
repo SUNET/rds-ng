@@ -124,12 +124,15 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
 function retrieveDataPath(path: string): void {
     resourcesError.value = "";
 
-    retrieveResourcesList(path, false)
+    const root = unref(project)!.resources_path;
+    retrieveResourcesList(root, path, false)
         .then(() => {
-            const resources = unref(resourcesListCache).getPath(unref(project)!.resources_path);
+            const resources = unref(resourcesListCache).root(root).resources;
             if (!!resources) {
                 const nodes = resourcesListToTreeNodes(resources);
-                resourcesNodes.value = adjustResourcesTreeNodesLeafStates(nodes, resources, (path: string) => unref(resourcesListCache).contains(path));
+                resourcesNodes.value = adjustResourcesTreeNodesLeafStates(nodes, resources, (path: string) =>
+                    unref(resourcesListCache).root(root).contains(path)
+                );
             } else {
                 resourcesNodes.value = [];
             }
