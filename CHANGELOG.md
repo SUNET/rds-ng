@@ -1,6 +1,6 @@
 # RDS-NG - Changelog
 
-## v1.0.4 - 2025-07-xx
+## v1.0.4 - 2025-07-25
 
 ### Improvements
 
