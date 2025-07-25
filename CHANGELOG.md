@@ -2,6 +2,10 @@
 
 ## v1.0.4 - 2025-07-xx
 
+### Improvements
+
+- Show a hint if no connections have been added in the projects list
+
 ### Fixes
 
 - The wrong root directory is used for data annotation
