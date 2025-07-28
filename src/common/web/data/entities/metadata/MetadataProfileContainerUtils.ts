@@ -21,7 +21,7 @@ export function filterContainersByCategory(containers: MetadataProfileContainerL
  * @returns - List of all matching containers.
  */
 export function filterContainersByRoles(containers: MetadataProfileContainerList, roles: MetadataProfileContainerRole[]): MetadataProfileContainerList {
-    return containers.filter((container) => container.role in roles);
+    return containers.filter((container) => roles.includes(container.role));
 }
 
 /**
@@ -29,10 +29,14 @@ export function filterContainersByRoles(containers: MetadataProfileContainerList
  *
  * @param containers - The list of containers.
  * @param category - The category to match.
- * @param role - The role to match.
+ * @param roles - The roles to match.
  *
  * @returns - List of all matching containers.
  */
-export function filterContainers(containers: MetadataProfileContainerList, category: string, role: MetadataProfileContainerRole): MetadataProfileContainerList {
-    return containers.filter((container) => container.category == category && container.role == role);
+export function filterContainers(
+    containers: MetadataProfileContainerList,
+    category: string,
+    roles: MetadataProfileContainerRole[]
+): MetadataProfileContainerList {
+    return containers.filter((container) => container.category == category && roles.includes(container.role));
 }

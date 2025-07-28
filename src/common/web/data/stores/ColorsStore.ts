@@ -31,8 +31,10 @@ export const useColorsStore = defineStore("colorsStore", () => {
             .sort((con1, con2) => con1.name.localeCompare(con2.name))
             .forEach((connector) => {
                 try {
-                    const profileID = connector.metadata_profile.metadata.id[0];
-                    color(profileID);
+                    connector.metadata_profiles.forEach((profile) => {
+                        const profileID = profile.profile.metadata.id[0];
+                        color(profileID);
+                    });
                 } catch (e) {
                     // Just ignore any exceptions
                 }

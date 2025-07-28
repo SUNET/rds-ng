@@ -69,7 +69,9 @@ def filter_containers(
     ]
 
 
-def containers_from_folder(folder: pathlib.PosixPath) -> MetadataProfileContainerList:
+def containers_from_folder(
+    folder: pathlib.PosixPath, *, skip_categories: bool = False
+) -> MetadataProfileContainerList:
     """
     Loads all profiles from the specified folder. The files are separated into distinct folders that
     represent the various profile categories. Within each category folder, subfolders represent the
@@ -77,6 +79,7 @@ def containers_from_folder(folder: pathlib.PosixPath) -> MetadataProfileContaine
 
     Args:
         folder: The folder to load.
+        skip_categories: Whether to skip category parsing.
 
     Returns:
         A list of all loaded profiles.
@@ -84,43 +87,44 @@ def containers_from_folder(folder: pathlib.PosixPath) -> MetadataProfileContaine
 
     containers: MetadataProfileContainerList = []
 
-    # All subfolders in the given folder are treated as categories
-    for category_item in folder.iterdir():
-        category_item = typing.cast(pathlib.PosixPath, category_item)
-        if category_item.is_dir():
-            category = category_item.name
+    def _read_role_folder(category: str, path: PosixPath) -> None:
+        for role_item in path.iterdir():
+            if role_item.is_dir():
+                role = role_item.name
 
-            # All subfolders in a category are treated as roles
-            for role_item in category_item.iterdir():
-                role_item = typing.cast(PosixPath, role_item)
+                if role not in MetadataProfileContainer.Role:
+                    return
 
-                if role_item.is_dir():
-                    role = role_item.name
+                # All .json files are loaded as profiles
+                for profile_file in role_item.iterdir():
+                    profile_file = typing.cast(PosixPath, profile_file)
 
-                    if role not in MetadataProfileContainer.Role:
-                        continue
-
-                    # All .json files are loaded as profiles
-                    for profile_file in role_item.iterdir():
-                        profile_file = typing.cast(PosixPath, profile_file)
-
-                        if (
-                            profile_file.is_file()
-                            and profile_file.suffix.lower() == ".json"
-                        ):
-                            try:
-                                with open(profile_file, "r") as file:
-                                    profile = PropertyProfile.from_dict(json.load(file))
-                                    containers.append(
-                                        MetadataProfileContainer(
-                                            category=category,
-                                            role=typing.cast(
-                                                MetadataProfileContainer.Role, role
-                                            ),
-                                            profile=profile,
-                                        )
+                    if (
+                        profile_file.is_file()
+                        and profile_file.suffix.lower() == ".json"
+                    ):
+                        try:
+                            with open(profile_file, "r") as file:
+                                profile = PropertyProfile.from_dict(json.load(file))
+                                containers.append(
+                                    MetadataProfileContainer(
+                                        category=category,
+                                        role=typing.cast(
+                                            MetadataProfileContainer.Role, role
+                                        ),
+                                        profile=profile,
                                     )
-                            except:  # pylint: disable=bare-except
-                                pass
+                                )
+                        except:  # pylint: disable=bare-except
+                            pass
+
+    if not skip_categories:
+        # All subfolders in the given folder are treated as categories
+        for category_item in folder.iterdir():
+            category_item = typing.cast(pathlib.PosixPath, category_item)
+            if category_item.is_dir():
+                _read_role_folder(category_item.name, category_item)
+    else:
+        _read_role_folder("default", folder)
 
     return containers

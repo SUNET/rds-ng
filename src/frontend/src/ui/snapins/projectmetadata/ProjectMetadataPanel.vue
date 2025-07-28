@@ -5,11 +5,10 @@ import { type PropType, reactive, toRefs, watch } from "vue";
 
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
-import { filterContainers } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
+import { filterContainers, filterContainersByRoles } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
 import { type ProjectMetadata, ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
-import { type PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
@@ -35,12 +34,11 @@ const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
 const projectProfiles = reactive(new PropertyProfileStore());
 
-for (const profile of filterContainers(metadataStore.profiles, ProjectMetadataFeature.FeatureID, MetadataProfileContainerRole.Default)) {
-    projectProfiles.mountProfile(profile.profile);
-}
-
 // TODO: Really make optional
-for (const profile of filterContainers(metadataStore.profiles, ProjectMetadataFeature.FeatureID, MetadataProfileContainerRole.Optional)) {
+for (const profile of filterContainers(metadataStore.profiles, ProjectMetadataFeature.FeatureID, [
+    MetadataProfileContainerRole.Default,
+    MetadataProfileContainerRole.Optional
+])) {
     projectProfiles.mountProfile(profile.profile);
 }
 
@@ -61,13 +59,16 @@ connectors.value.forEach((connector) => {
         return;
     }
 
-    const metadataProfile = connector.metadata_profile;
-    if (metadataProfile.hasOwnProperty("metadata")) {
-        try {
-            projectProfiles.mountProfile(connector.metadata_profile as PropertyProfile);
-        } catch (e) {
-            console.error(e);
+    try {
+        // TODO: Really make optional
+        for (const profile of filterContainersByRoles(connector.metadata_profiles, [
+            MetadataProfileContainerRole.Default,
+            MetadataProfileContainerRole.Optional
+        ])) {
+            projectProfiles.mountProfile(profile.profile);
         }
+    } catch (e) {
+        console.error(e);
     }
 });
 

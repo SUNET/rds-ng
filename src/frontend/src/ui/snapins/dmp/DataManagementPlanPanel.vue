@@ -28,12 +28,11 @@ const debounce = makeDebounce();
 
 const projectProfiles = reactive(new PropertyProfileStore());
 
-for (const profile of filterContainers(metadataStore.profiles, DataManagementPlanFeature.FeatureID, MetadataProfileContainerRole.Default)) {
-    projectProfiles.mountProfile(profile.profile);
-}
-
 // TODO: Really make optional
-for (const profile of filterContainers(metadataStore.profiles, DataManagementPlanFeature.FeatureID, MetadataProfileContainerRole.Optional)) {
+for (const profile of filterContainers(metadataStore.profiles, DataManagementPlanFeature.FeatureID, [
+    MetadataProfileContainerRole.Default,
+    MetadataProfileContainerRole.Optional
+])) {
     projectProfiles.mountProfile(profile.profile);
 }
 

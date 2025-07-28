@@ -70,18 +70,17 @@ const resourcesData = ref();
 let blockResourcesUpdate = false;
 
 onMounted(() => {
-    for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, MetadataProfileContainerRole.Default)) {
-        projectProfiles.mountProfile(profile.profile);
-    }
-
-    // TODO: Really make optional
-    for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, MetadataProfileContainerRole.Optional)) {
-        projectProfiles.mountProfile(profile.profile);
-    }
-
     // Initiate the retrieval of the project directory; if this has been done before, it will be fetched from the cache automatically
     retrieveDataPath(unref(project)!.resources_path);
 });
+
+// TODO: Really make optional
+for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, [
+    MetadataProfileContainerRole.Default,
+    MetadataProfileContainerRole.Optional
+])) {
+    projectProfiles.mountProfile(profile.profile);
+}
 
 watch(
     () => resourcesData,
