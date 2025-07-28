@@ -65,7 +65,11 @@ ${value_line}
         profiles = filter_containers(
             ServerComponent.instance().server_data.profile_containers,
             category=DataManagementPlanFeature.feature_id,
-            role=MetadataProfileContainer.Role.GLOBAL,
+            roles=[
+                MetadataProfileContainer.Role.DEFAULT,
+                # TODO: Really make optional
+                MetadataProfileContainer.Role.OPTIONAL,
+            ],
         )
 
         output = render_exporter_template(project, template_header)
@@ -75,7 +79,7 @@ ${value_line}
                 template_body,
                 profile_data={
                     "dmp_metadata": ExporterTemplateProfileData(
-                        profile=profile.profile,
+                        profile=profile.profile.profile,
                         metadata=project.features.dmp.plan,
                     )
                 },

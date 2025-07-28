@@ -65,7 +65,11 @@ class PDFExporter(ProjectExporter):
         profiles = filter_containers(
             ServerComponent.instance().server_data.profile_containers,
             category=DataManagementPlanFeature.feature_id,
-            role=MetadataProfileContainer.Role.GLOBAL,
+            roles=[
+                MetadataProfileContainer.Role.DEFAULT,
+                # TODO: Really make optional
+                MetadataProfileContainer.Role.OPTIONAL,
+            ],
         )
 
         output = render_exporter_template(project, template_header)

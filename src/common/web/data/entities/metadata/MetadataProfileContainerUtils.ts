@@ -16,12 +16,12 @@ export function filterContainersByCategory(containers: MetadataProfileContainerL
  * Gets all containers from a list matching the specified role.
  *
  * @param containers - The list of containers.
- * @param role - The role to match.
+ * @param roles - The roles to match.
  *
  * @returns - List of all matching containers.
  */
-export function filterContainersByRole(containers: MetadataProfileContainerList, role: MetadataProfileContainerRole): MetadataProfileContainerList {
-    return containers.filter((container) => container.role == role);
+export function filterContainersByRoles(containers: MetadataProfileContainerList, roles: MetadataProfileContainerRole[]): MetadataProfileContainerList {
+    return containers.filter((container) => container.role in roles);
 }
 
 /**

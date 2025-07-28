@@ -70,7 +70,12 @@ const resourcesData = ref();
 let blockResourcesUpdate = false;
 
 onMounted(() => {
-    for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, MetadataProfileContainerRole.Global)) {
+    for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, MetadataProfileContainerRole.Default)) {
+        projectProfiles.mountProfile(profile.profile);
+    }
+
+    // TODO: Really make optional
+    for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, MetadataProfileContainerRole.Optional)) {
         projectProfiles.mountProfile(profile.profile);
     }
 

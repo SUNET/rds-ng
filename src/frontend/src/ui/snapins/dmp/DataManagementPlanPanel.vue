@@ -28,6 +28,15 @@ const debounce = makeDebounce();
 
 const projectProfiles = reactive(new PropertyProfileStore());
 
+for (const profile of filterContainers(metadataStore.profiles, DataManagementPlanFeature.FeatureID, MetadataProfileContainerRole.Default)) {
+    projectProfiles.mountProfile(profile.profile);
+}
+
+// TODO: Really make optional
+for (const profile of filterContainers(metadataStore.profiles, DataManagementPlanFeature.FeatureID, MetadataProfileContainerRole.Optional)) {
+    projectProfiles.mountProfile(profile.profile);
+}
+
 watch(
     () => project!.value.features.dmp.plan,
     (dmpSet) => {
@@ -39,10 +48,6 @@ watch(
     },
     { deep: true }
 );
-
-for (const profile of filterContainers(metadataStore.profiles, DataManagementPlanFeature.FeatureID, MetadataProfileContainerRole.Global)) {
-    projectProfiles.mountProfile(profile.profile);
-}
 </script>
 
 <template>

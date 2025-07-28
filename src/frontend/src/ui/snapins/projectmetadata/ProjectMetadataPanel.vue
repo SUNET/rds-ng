@@ -35,7 +35,12 @@ const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
 const projectProfiles = reactive(new PropertyProfileStore());
 
-for (const profile of filterContainers(metadataStore.profiles, ProjectMetadataFeature.FeatureID, MetadataProfileContainerRole.Global)) {
+for (const profile of filterContainers(metadataStore.profiles, ProjectMetadataFeature.FeatureID, MetadataProfileContainerRole.Default)) {
+    projectProfiles.mountProfile(profile.profile);
+}
+
+// TODO: Really make optional
+for (const profile of filterContainers(metadataStore.profiles, ProjectMetadataFeature.FeatureID, MetadataProfileContainerRole.Optional)) {
     projectProfiles.mountProfile(profile.profile);
 }
 
