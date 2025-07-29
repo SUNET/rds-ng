@@ -1,4 +1,3 @@
-import json
 import pathlib
 import typing
 
@@ -114,7 +113,8 @@ class ConnectorInformation:
         from common.py.data.entities.metadata import containers_from_folder
 
         return containers_from_folder(
-            pathlib.PosixPath(data["metadata_profiles"]), skip_categories=True
+            pathlib.PosixPath(data["metadata_profiles"]),
+            default_category=self._connector_id,
         )
 
     @property

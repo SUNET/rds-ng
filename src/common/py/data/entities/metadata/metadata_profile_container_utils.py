@@ -70,7 +70,7 @@ def filter_containers(
 
 
 def containers_from_folder(
-    folder: pathlib.PosixPath, *, skip_categories: bool = False
+    folder: pathlib.PosixPath, *, default_category: str | None = None
 ) -> MetadataProfileContainerList:
     """
     Loads all profiles from the specified folder. The files are separated into distinct folders that
@@ -79,7 +79,7 @@ def containers_from_folder(
 
     Args:
         folder: The folder to load.
-        skip_categories: Whether to skip category parsing.
+        default_category: A default category for all profiles, skipping category directory parsing.
 
     Returns:
         A list of all loaded profiles.
@@ -118,13 +118,13 @@ def containers_from_folder(
                         except:  # pylint: disable=bare-except
                             pass
 
-    if not skip_categories:
+    if default_category is not None:
+        _read_role_folder(default_category, folder)
+    else:
         # All subfolders in the given folder are treated as categories
         for category_item in folder.iterdir():
             category_item = typing.cast(pathlib.PosixPath, category_item)
             if category_item.is_dir():
                 _read_role_folder(category_item.name, category_item)
-    else:
-        _read_role_folder("default", folder)
 
     return containers
