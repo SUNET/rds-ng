@@ -114,7 +114,7 @@ class ConnectorInformation:
 
         return containers_from_folder(
             pathlib.PosixPath(data["metadata_profiles"]),
-            default_category=self._connector_id,
+            default_category=f"connector:{self._connector_id}",
         )
 
     @property
