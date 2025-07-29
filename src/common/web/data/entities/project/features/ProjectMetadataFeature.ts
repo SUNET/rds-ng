@@ -15,6 +15,7 @@ export type ProjectMetadata = LayoutPropertyObject[];
  */
 export class ProjectMetadataFeature extends ProjectFeature {
     public static readonly FeatureID: ProjectFeatureID = "project_metadata";
+
     // @ts-ignore
     @Type(() => LayoutPropertyObject)
     public readonly metadata: ProjectMetadata;

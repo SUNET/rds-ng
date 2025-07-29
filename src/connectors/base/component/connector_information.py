@@ -27,7 +27,7 @@ class ConnectorInformation:
                 "default": "/some/file.png",
                 "horizontal": "/some/other/file.png"
             },
-            "metadata_profile": "/the/profile_file.json"
+            "metadata_profiles": "/the/profiles_dir"
         }
 
     Notes:

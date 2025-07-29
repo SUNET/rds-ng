@@ -58,9 +58,10 @@ class ProjectJobVerifier(Verifier):
                 self._project.features.shared_objects,
             )
 
-        # Verify the connector profile
-        MetadataParser.validate_metadata(
-            self._connector.metadata_profile,
-            self._project.features.project_metadata.metadata,
-            self._project.features.shared_objects,
-        )
+        # Verify the connector profiles
+        for profile in self._connector.metadata_profiles:
+            MetadataParser.validate_metadata(
+                profile.profile,
+                self._project.features.project_metadata.metadata,
+                self._project.features.shared_objects,
+            )

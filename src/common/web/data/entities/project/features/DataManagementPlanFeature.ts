@@ -1,5 +1,7 @@
-import { LayoutPropertyObject } from "@common/ui/components/propertyeditor/PropertyObjectStore";
 import { Type } from "class-transformer";
+
+import { LayoutPropertyObject } from "../../../../ui/components/propertyeditor/PropertyObjectStore";
+
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
