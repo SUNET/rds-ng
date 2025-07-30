@@ -19,7 +19,7 @@ import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue
 import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
 
 import { type MetadataProfileContainerList, MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
-import { filterContainers } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
+import { filterContainers, isContainerSelected } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
 import { ResourcesMetadata, ResourcesMetadataFeature, type ResourcesMetadataKey } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
 import { Resource } from "@common/data/entities/resource/Resource";
@@ -80,12 +80,13 @@ onMounted(() => {
     retrieveDataPath(unref(project)!.resources_path);
 });
 
-// TODO: Really make optional
 for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, [
     MetadataProfileContainerRole.Default,
     MetadataProfileContainerRole.Optional
 ])) {
-    projectProfiles.mountProfile(profile.profile);
+    if (isContainerSelected(profile, unref(enabledProfiles))) {
+        projectProfiles.mountProfile(profile.profile);
+    }
 
     if (profile.role == MetadataProfileContainerRole.Optional) {
         optionalProfiles.value.push(profile);

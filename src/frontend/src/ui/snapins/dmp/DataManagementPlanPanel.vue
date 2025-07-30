@@ -2,7 +2,7 @@
 import { type PropType, reactive, ref, toRefs, unref, watch } from "vue";
 
 import { type MetadataProfileContainerList, MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
-import { filterContainers } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
+import { filterContainers, isContainerSelected } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
 import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { Project } from "@common/data/entities/project/Project";
 import { type ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
@@ -34,12 +34,13 @@ const enabledProfiles = ref<ProfileID[]>(unref(project)!.features.dmp.enabled_me
 
 const debounce = makeDebounce();
 
-// TODO: Really make optional
 for (const profile of filterContainers(metadataStore.profiles, DataManagementPlanFeature.FeatureID, [
     MetadataProfileContainerRole.Default,
     MetadataProfileContainerRole.Optional
 ])) {
-    projectProfiles.mountProfile(profile.profile);
+    if (isContainerSelected(profile, unref(enabledProfiles))) {
+        projectProfiles.mountProfile(profile.profile);
+    }
 
     if (profile.role == MetadataProfileContainerRole.Optional) {
         optionalProfiles.value.push(profile);

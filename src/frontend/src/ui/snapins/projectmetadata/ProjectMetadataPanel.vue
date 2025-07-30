@@ -5,7 +5,7 @@ import { type PropType, reactive, ref, toRefs, unref, watch } from "vue";
 
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { type MetadataProfileContainerList, MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
-import { filterContainers, filterContainersByRoles } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
+import { filterContainers, filterContainersByRoles, isContainerSelected } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
 import { ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
 import { type ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
@@ -43,12 +43,13 @@ const enabledProfiles = ref<ProfileID[]>(unref(project)!.features.project_metada
 
 const debounce = makeDebounce();
 
-// TODO: Really make optional
 for (const profile of filterContainers(metadataStore.profiles, ProjectMetadataFeature.FeatureID, [
     MetadataProfileContainerRole.Default,
     MetadataProfileContainerRole.Optional
 ])) {
-    projectProfiles.mountProfile(profile.profile);
+    if (isContainerSelected(profile, unref(enabledProfiles))) {
+        projectProfiles.mountProfile(profile.profile);
+    }
 
     if (profile.role == MetadataProfileContainerRole.Optional) {
         optionalProfiles.value.push(profile);
@@ -73,12 +74,13 @@ connectors.value.forEach((connector) => {
     }
 
     try {
-        // TODO: Really make optional
         for (const profile of filterContainersByRoles(connector.metadata_profiles, [
             MetadataProfileContainerRole.Default,
             MetadataProfileContainerRole.Optional
         ])) {
-            projectProfiles.mountProfile(profile.profile);
+            if (isContainerSelected(profile, unref(enabledProfiles))) {
+                projectProfiles.mountProfile(profile.profile);
+            }
 
             if (profile.role == MetadataProfileContainerRole.Optional) {
                 optionalProfiles.value.push(profile);
