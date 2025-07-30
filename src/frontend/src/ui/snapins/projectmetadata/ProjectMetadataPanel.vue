@@ -115,7 +115,14 @@ watch(enabledProfiles, saveProject);
     </div>
     <div v-else>
         <div class="grid grid-cols-[1fr_max-content] gap-10 px-1 pt-1 h-min">
-            <MetadataProfilesSelector :profiles="optionalProfiles" v-model:selected-profiles="enabledProfiles" class="h-min" />
+            <MetadataProfilesSelector
+                v-if="optionalProfiles.length > 0"
+                :profiles="optionalProfiles"
+                v-model:selected-profiles="enabledProfiles"
+                class="h-min"
+            />
+            <div v-else>&nbsp;</div>
+
             <ProjectExportersBar :project="project" :scope="ProjectMetadataFeature.FeatureID" class="p-2 justify-self-end" />
         </div>
         <PropertyEditor

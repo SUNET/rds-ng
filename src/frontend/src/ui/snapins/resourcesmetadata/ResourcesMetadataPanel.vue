@@ -202,7 +202,7 @@ watch(enabledProfiles, saveProject);
                         </span>
                     </div>
                     <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
-                        <div class="pt-2 pl-2 pr-4 w-full">
+                        <div v-if="optionalProfiles.length > 0" class="pt-2 pl-2 pr-4 w-full">
                             <MetadataProfilesSelector :profiles="optionalProfiles" v-model:selected-profiles="enabledProfiles" class="h-min" />
                         </div>
                         <div v-if="Object.keys(selectedNodes).length > 1" class="w-full">
