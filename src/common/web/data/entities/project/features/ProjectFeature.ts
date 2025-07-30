@@ -19,4 +19,8 @@ export abstract class ProjectFeature {
      * The ID of this feature.
      */
     public abstract get featureID(): ProjectFeatureID;
+
+    public constructor(enabledProfiles: ProfileID[] = []) {
+        this.enabled_metadata_profiles = enabledProfiles;
+    }
 }

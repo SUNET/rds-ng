@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
 
 import { LayoutPropertyObject } from "../../../../ui/components/propertyeditor/PropertyObjectStore";
+import { type ProfileID } from "../../../../ui/components/propertyeditor/PropertyProfile";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
@@ -20,8 +21,8 @@ export class ProjectMetadataFeature extends ProjectFeature {
     @Type(() => LayoutPropertyObject)
     public readonly metadata: ProjectMetadata;
 
-    public constructor(metadata: ProjectMetadata = []) {
-        super();
+    public constructor(metadata: ProjectMetadata = [], enabledProfiles: ProfileID[] = []) {
+        super(enabledProfiles);
 
         this.metadata = metadata;
     }

@@ -12,13 +12,10 @@ const props = defineProps({
     profiles: {
         type: Object as PropType<MetadataProfileContainerList>,
         required: true
-    },
-    selectedProfiles: {
-        type: Object as PropType<ProfileID[]>,
-        default: []
     }
 });
-const { profiles, selectedProfiles } = toRefs(props);
+const { profiles } = toRefs(props);
+const selectedProfiles = defineModel<ProfileID[]>("selectedProfiles", { default: [] });
 
 const colorsStore = useColorsStore();
 </script>

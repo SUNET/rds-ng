@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import type { ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
 import { storeToRefs } from "pinia";
 import Message from "primevue/message";
-import { type PropType, reactive, ref, toRefs, watch } from "vue";
+import { type PropType, reactive, ref, toRefs, unref, watch } from "vue";
 
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { type MetadataProfileContainerList, MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
 import { filterContainers, filterContainersByRoles } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
-import { type ProjectMetadata, ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
+import { ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
@@ -36,6 +37,9 @@ const { userSettings } = storeToRefs(userStore);
 const projectProfiles = reactive(new PropertyProfileStore());
 
 const optionalProfiles = ref<MetadataProfileContainerList>([]);
+const enabledProfiles = ref<ProfileID[]>(unref(project)!.features.project_metadata.enabled_metadata_profiles);
+
+const debounce = makeDebounce();
 
 // TODO: Really make optional
 for (const profile of filterContainers(metadataStore.profiles, ProjectMetadataFeature.FeatureID, [
@@ -83,18 +87,16 @@ connectors.value.forEach((connector) => {
     }
 });
 
-const debounce = makeDebounce();
-watch(
-    () => project!.value.features.project_metadata.metadata,
-    (metadata) => {
-        debounce(() => {
-            const action = new UpdateProjectFeaturesAction(comp);
-            action.prepare(project!.value, [new ProjectMetadataFeature(metadata as ProjectMetadata)]);
-            action.execute();
-        });
-    },
-    { deep: true }
-);
+function saveProject(): void {
+    debounce(() => {
+        const action = new UpdateProjectFeaturesAction(comp);
+        action.prepare(project!.value, [new ProjectMetadataFeature(unref(project)!.features.project_metadata.metadata, unref(enabledProfiles))]);
+        action.execute();
+    });
+}
+
+watch(() => project!.value.features.project_metadata.metadata, saveProject, { deep: true });
+watch(enabledProfiles, saveProject);
 </script>
 
 <template>
@@ -109,7 +111,7 @@ watch(
     </div>
     <div v-else>
         <div class="grid grid-cols-[1fr_max-content] gap-10 px-1 pt-1 h-min">
-            <MetadataProfilesSelector :profiles="optionalProfiles" class="h-min" />
+            <MetadataProfilesSelector :profiles="optionalProfiles" v-model:selected-profiles="enabledProfiles" class="h-min" />
             <ProjectExportersBar :project="project" :scope="ProjectMetadataFeature.FeatureID" class="p-2 justify-self-end" />
         </div>
         <PropertyEditor

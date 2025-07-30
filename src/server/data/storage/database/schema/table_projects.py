@@ -111,8 +111,8 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         Column(
             "enabled_metadata_profiles",
             ArrayType[ProfileID](
-                value_read=lambda val: tuple(val.split("/")),
-                value_write=lambda val: f"{val[0]}/{val[1]}",
+                value_read=lambda val: tuple(val.split("//")),
+                value_write=lambda val: f"{val[0]}//{val[1]}",
             ),
         ),
         Column(

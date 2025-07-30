@@ -1,6 +1,7 @@
 import { Transform, Type, plainToInstance } from "class-transformer";
 
 import { LayoutPropertyObject } from "../../../../ui/components/propertyeditor/PropertyObjectStore";
+import { type ProfileID } from "../../../../ui/components/propertyeditor/PropertyProfile";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
@@ -37,8 +38,8 @@ export class ResourcesMetadataFeature extends ProjectFeature {
     @Transform((value) => new ResourcesMetadata(value), { toClassOnly: false })
     public readonly metadata: ResourcesMetadata;
 
-    public constructor(resourcesMetadata: ResourcesMetadata = {}) {
-        super();
+    public constructor(resourcesMetadata: ResourcesMetadata = {}, enabledProfiles: ProfileID[] = []) {
+        super(enabledProfiles);
 
         this.metadata = resourcesMetadata;
     }

@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
 
 import { LayoutPropertyObject } from "../../../../ui/components/propertyeditor/PropertyObjectStore";
+import { type ProfileID } from "../../../../ui/components/propertyeditor/PropertyProfile";
 
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
@@ -21,8 +22,8 @@ export class DataManagementPlanFeature extends ProjectFeature {
     @Type(() => LayoutPropertyObject)
     public readonly plan: DataManagementPlan;
 
-    public constructor(plan: DataManagementPlan = []) {
-        super();
+    public constructor(plan: DataManagementPlan = [], enabledProfiles: ProfileID[] = []) {
+        super(enabledProfiles);
 
         this.plan = plan;
     }
