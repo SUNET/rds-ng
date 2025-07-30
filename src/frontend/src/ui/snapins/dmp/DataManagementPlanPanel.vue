@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { type PropType, reactive, toRefs, watch } from "vue";
+import { type PropType, reactive, ref, toRefs, unref, watch } from "vue";
 
-import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
+import { type MetadataProfileContainerList, MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
 import { filterContainers } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
-import { type DataManagementPlan, DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
+import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { Project } from "@common/data/entities/project/Project";
-import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import { type ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
+
+import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useMetadataStore } from "@/data/stores/MetadataStore";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
+
+import MetadataProfilesSelector from "@/ui/components/metadata/MetadataProfilesSelector.vue";
 import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 
 const comp = FrontendComponent.inject();
@@ -24,9 +28,11 @@ const props = defineProps({
 const { project } = toRefs(props);
 const metadataStore = useMetadataStore();
 
-const debounce = makeDebounce();
-
 const projectProfiles = reactive(new PropertyProfileStore());
+const optionalProfiles = ref<MetadataProfileContainerList>([]);
+const enabledProfiles = ref<ProfileID[]>(unref(project)!.features.dmp.enabled_metadata_profiles);
+
+const debounce = makeDebounce();
 
 // TODO: Really make optional
 for (const profile of filterContainers(metadataStore.profiles, DataManagementPlanFeature.FeatureID, [
@@ -34,24 +40,30 @@ for (const profile of filterContainers(metadataStore.profiles, DataManagementPla
     MetadataProfileContainerRole.Optional
 ])) {
     projectProfiles.mountProfile(profile.profile);
+
+    if (profile.role == MetadataProfileContainerRole.Optional) {
+        optionalProfiles.value.push(profile);
+    }
 }
 
-watch(
-    () => project!.value.features.dmp.plan,
-    (dmpSet) => {
-        debounce(() => {
-            const action = new UpdateProjectFeaturesAction(comp);
-            action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
-            action.execute();
-        });
-    },
-    { deep: true }
-);
+function saveProject(): void {
+    debounce(() => {
+        const action = new UpdateProjectFeaturesAction(comp);
+        action.prepare(project!.value, [new DataManagementPlanFeature(unref(project)!.features.dmp.plan, unref(enabledProfiles))]);
+        action.execute();
+    });
+}
+
+watch(() => project!.value.features.dmp.plan, saveProject, { deep: true });
+watch(enabledProfiles, saveProject);
 </script>
 
 <template>
     <div>
-        <ProjectExportersBar :project="project" :scope="DataManagementPlanFeature.FeatureID" class="p-2 grid justify-end" />
+        <div class="grid grid-cols-[1fr_max-content] gap-10 px-1 pt-1 h-min">
+            <MetadataProfilesSelector :profiles="optionalProfiles" v-model:selected-profiles="enabledProfiles" class="h-min" />
+            <ProjectExportersBar :project="project" :scope="DataManagementPlanFeature.FeatureID" class="p-2 grid justify-end" />
+        </div>
         <PropertyEditor
             v-model="project!.features.dmp.plan"
             v-model:shared-property-objects="project!.features.shared_objects"

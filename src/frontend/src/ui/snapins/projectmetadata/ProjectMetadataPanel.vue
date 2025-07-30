@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
 import { storeToRefs } from "pinia";
 import Message from "primevue/message";
 import { type PropType, reactive, ref, toRefs, unref, watch } from "vue";
@@ -9,15 +8,18 @@ import { type MetadataProfileContainerList, MetadataProfileContainerRole } from 
 import { filterContainers, filterContainersByRoles } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
 import { ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
-import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import { type ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
+
+import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useMetadataStore } from "@/data/stores/MetadataStore";
 import { useUserStore } from "@/data/stores/UserStore";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
+
 import MetadataProfilesSelector from "@/ui/components/metadata/MetadataProfilesSelector.vue";
 import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 
