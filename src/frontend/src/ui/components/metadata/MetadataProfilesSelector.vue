@@ -1,0 +1,59 @@
+<script setup lang="ts">
+import MultiSelect from "primevue/multiselect";
+import Tag from "primevue/tag";
+import { type PropType, toRefs } from "vue";
+
+import { MetadataProfileContainer, type MetadataProfileContainerList } from "@common/data/entities/metadata/MetadataProfileContainer.ts";
+import { useColorsStore } from "@common/data/stores/ColorsStore.ts";
+
+import { type ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
+
+const props = defineProps({
+    profiles: {
+        type: Object as PropType<MetadataProfileContainerList>,
+        required: true
+    },
+    selectedProfiles: {
+        type: Object as PropType<ProfileID[]>,
+        default: []
+    }
+});
+const { profiles, selectedProfiles } = toRefs(props);
+
+const colorsStore = useColorsStore();
+</script>
+
+<template>
+    <div class="grid grid-cols-[max-content_1fr] gap-1">
+        <span class="flex items-center gap-0.5 text-sm">
+            <span class="material-icons-outlined mi-ballot" />
+            <span class="font-bold pr-1">Metadata profiles</span>
+        </span>
+        <MultiSelect
+            v-model="selectedProfiles"
+            :options="profiles.sort((profile1, profile2) => profile1.profile.getName().localeCompare(profile2.profile.getName()))"
+            :optionLabel="(option: MetadataProfileContainer) => option.profile.getDisplayLabel()"
+            :optionValue="(option: MetadataProfileContainer) => option.profile.getId()"
+            display="chip"
+            filter
+            placeholder="No optional metadata profiles selected"
+            class="w-full"
+        >
+            <template #option="slotProps">
+                <div class="grid grid-cols-[max-content_max-content_1fr] gap-1 w-full">
+                    <div>{{ slotProps.option.profile.getName() }}</div>
+                    <div class="r-text-light-gray">{{ slotProps.option.profile.getDescription() }}</div>
+                    <Tag
+                        size="small"
+                        class="h-4 !rounded py-3 text-sm font-normal bg-opacity-40 justify-self-end"
+                        :style="`background-color: ${colorsStore.color(slotProps.option.profile.getName())}`"
+                    >
+                        {{ slotProps.option.profile.getDisplayLabel() }}
+                    </Tag>
+                </div>
+            </template>
+        </MultiSelect>
+    </div>
+</template>
+
+<style scoped lang="scss"></style>

@@ -50,7 +50,7 @@ function onExport(exporter: ProjectExporterDescriptor): void {
 </script>
 
 <template>
-    <div v-if="availableExporters.length > 0" class="grid grid-flow-col gap-1.5 items-center p-0 mr-1 text-xs">
+    <div v-if="availableExporters.length > 0" class="grid grid-flow-col gap-1.5 items-center p-0 text-xs">
         <span class="flex items-center gap-0.5 text-sm">
             <span class="material-icons-outlined" :class="exportRunning ? 'mi-hourglass-empty animate-spin' : 'mi-file-download'" />
             <span class="font-bold pr-1">Export</span>

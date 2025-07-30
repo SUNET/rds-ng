@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import Message from "primevue/message";
-import { type PropType, reactive, toRefs, watch } from "vue";
+import { type PropType, reactive, ref, toRefs, watch } from "vue";
 
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
-import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
+import { type MetadataProfileContainerList, MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
 import { filterContainers, filterContainersByRoles } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
 import { type ProjectMetadata, ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
@@ -17,6 +17,7 @@ import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useMetadataStore } from "@/data/stores/MetadataStore";
 import { useUserStore } from "@/data/stores/UserStore";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
+import MetadataProfilesSelector from "@/ui/components/metadata/MetadataProfilesSelector.vue";
 import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 
 const comp = FrontendComponent.inject();
@@ -34,12 +35,18 @@ const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
 const projectProfiles = reactive(new PropertyProfileStore());
 
+const optionalProfiles = ref<MetadataProfileContainerList>([]);
+
 // TODO: Really make optional
 for (const profile of filterContainers(metadataStore.profiles, ProjectMetadataFeature.FeatureID, [
     MetadataProfileContainerRole.Default,
     MetadataProfileContainerRole.Optional
 ])) {
     projectProfiles.mountProfile(profile.profile);
+
+    if (profile.role == MetadataProfileContainerRole.Optional) {
+        optionalProfiles.value.push(profile);
+    }
 }
 
 // TODO fix auto merging connector profiles
@@ -66,6 +73,10 @@ connectors.value.forEach((connector) => {
             MetadataProfileContainerRole.Optional
         ])) {
             projectProfiles.mountProfile(profile.profile);
+
+            if (profile.role == MetadataProfileContainerRole.Optional) {
+                optionalProfiles.value.push(profile);
+            }
         }
     } catch (e) {
         console.error(e);
@@ -73,7 +84,6 @@ connectors.value.forEach((connector) => {
 });
 
 const debounce = makeDebounce();
-
 watch(
     () => project!.value.features.project_metadata.metadata,
     (metadata) => {
@@ -98,7 +108,10 @@ watch(
         </Message>
     </div>
     <div v-else>
-        <ProjectExportersBar :project="project" :scope="ProjectMetadataFeature.FeatureID" class="p-2 grid justify-end" />
+        <div class="grid grid-cols-[1fr_max-content] gap-10 px-1 pt-1 h-min">
+            <MetadataProfilesSelector :profiles="optionalProfiles" class="h-min" />
+            <ProjectExportersBar :project="project" :scope="ProjectMetadataFeature.FeatureID" class="p-2 justify-self-end" />
+        </div>
         <PropertyEditor
             v-model="project!.features.project_metadata.metadata"
             v-model:shared-property-objects="project!.features.shared_objects"
