@@ -33,7 +33,9 @@ export class PropertyProfileStore {
     }
 
     public unmountProfile(profileId: ProfileID) {
-        this._profiles = this._profiles.filter((profile) => profile.metadata.id !== profileId);
+        this._profiles = this._profiles.filter((profile) => {
+            return !(profile.metadata.id[0] == profileId[0] && profile.metadata.id[1] == profileId[1]);
+        });
     }
 
     // HACK FIXME return actual type without class-transformer
