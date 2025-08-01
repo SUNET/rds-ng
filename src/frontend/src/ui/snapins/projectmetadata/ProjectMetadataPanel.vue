@@ -106,9 +106,11 @@ watch(enabledProfiles, saveProject);
             <ProjectExportersBar :project="project" :scope="ProjectMetadataFeature.FeatureID" class="p-2 justify-self-end" />
         </div>
         <PropertyEditor
-            v-model="project!.features.project_metadata.metadata"
-            v-model:shared-property-objects="project!.features.shared_objects"
+            v-model="project.features.project_metadata.metadata"
+            v-model:shared-property-objects="project.features.shared_objects"
             :projectProfiles="metadataProfiles"
         />
     </div>
 </template>
+
+<style scoped lang="scss"></style>
