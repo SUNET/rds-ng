@@ -33,7 +33,7 @@ const colorsStore = useColorsStore();
             :optionValue="(option: MetadataProfileContainer) => option.profile.getId()"
             display="chip"
             filter
-            placeholder="No optional metadata profiles selected"
+            placeholder="No additional metadata profiles selected"
             class="w-full"
         >
             <template #option="slotProps">
