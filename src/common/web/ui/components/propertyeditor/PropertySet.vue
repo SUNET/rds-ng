@@ -13,7 +13,7 @@ import PropertyRow from "./PropertyRow.vue";
 
 const props = defineProps(["project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore", "showProfileTags"]);
 
-var layout = computed(() => makeLayout(props.projectProfiles))
+const layout = computed(() => makeLayout(props.projectProfiles))
 
 const profileFilter = ref<ProfileID[]>([]);
 const requiredOnly = ref(false);
