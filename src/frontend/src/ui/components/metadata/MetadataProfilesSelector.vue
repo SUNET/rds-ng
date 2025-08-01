@@ -45,7 +45,7 @@ const colorsStore = useColorsStore();
                         class="h-4 !rounded py-3 text-sm font-normal bg-opacity-40 justify-self-end"
                         :style="`background-color: ${colorsStore.color(slotProps.option.profile.getName())}`"
                     >
-                        {{ slotProps.option.profile.getDisplayLabel() }}
+                        {{ slotProps.option.profile.getName() }}
                     </Tag>
                 </div>
             </template>
