@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { type PropType, reactive, ref, toRefs, unref, watch } from "vue";
+import { storeToRefs } from "pinia";
+import { computed, type PropType, ref, toRefs, unref, watch } from "vue";
 
-import { type MetadataProfileContainerList, MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
+import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
 import { filterContainers, isContainerSelected } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
 import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { Project } from "@common/data/entities/project/Project";
+import { getOptionalMetadataProfiles } from "@common/data/entities/project/ProjectUtils.ts";
 import { type ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
@@ -13,6 +15,7 @@ import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useMetadataStore } from "@/data/stores/MetadataStore";
+import { useUserStore } from "@/data/stores/UserStore.ts";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 
 import MetadataProfilesSelector from "@/ui/components/metadata/MetadataProfilesSelector.vue";
@@ -27,36 +30,40 @@ const props = defineProps({
 });
 const { project } = toRefs(props);
 const metadataStore = useMetadataStore();
+const userStore = useUserStore();
+const { userSettings } = storeToRefs(userStore);
 
-const projectProfiles = reactive(new PropertyProfileStore());
-const optionalProfiles = ref<MetadataProfileContainerList>([]);
-const enabledProfiles = ref<ProfileID[]>(unref(project)!.features.dmp.enabled_metadata_profiles);
+const enabledProfiles = ref<ProfileID[]>(unref(project).features.dmp.enabled_metadata_profiles);
+const metadataProfiles = computed(() => {
+    const profileStore = new PropertyProfileStore();
+
+    for (const profile of filterContainers(metadataStore.profiles, DataManagementPlanFeature.FeatureID, [
+        MetadataProfileContainerRole.Default,
+        MetadataProfileContainerRole.Optional
+    ])) {
+        if (isContainerSelected(profile, unref(enabledProfiles))) {
+            profileStore.mountProfile(profile.profile);
+        }
+    }
+
+    return profileStore;
+});
+const optionalProfiles = computed(() =>
+    getOptionalMetadataProfiles(unref(project), unref(userSettings), [], metadataStore.profiles, DataManagementPlanFeature.FeatureID)
+);
 
 const debounce = makeDebounce();
-
-for (const profile of filterContainers(metadataStore.profiles, DataManagementPlanFeature.FeatureID, [
-    MetadataProfileContainerRole.Default,
-    MetadataProfileContainerRole.Optional
-])) {
-    if (isContainerSelected(profile, unref(enabledProfiles))) {
-        projectProfiles.mountProfile(profile.profile);
-    }
-
-    if (profile.role == MetadataProfileContainerRole.Optional) {
-        optionalProfiles.value.push(profile);
-    }
-}
 
 function saveProject(): void {
     debounce(() => {
         const action = new UpdateProjectFeaturesAction(comp);
-        action.prepare(project!.value, [new DataManagementPlanFeature(unref(project)!.features.dmp.plan, unref(enabledProfiles))]);
+        action.prepare(unref(project), [new DataManagementPlanFeature(unref(project).features.dmp.plan, unref(enabledProfiles))]);
         action.execute();
     });
 }
 
-watch(() => project!.value.features.dmp.plan, saveProject, { deep: true });
-watch(enabledProfiles, saveProject); // TODO: Ablgeich
+watch(() => unref(project).features.dmp.plan, saveProject, { deep: true });
+watch(enabledProfiles, saveProject);
 </script>
 
 <template>
@@ -73,9 +80,9 @@ watch(enabledProfiles, saveProject); // TODO: Ablgeich
             <ProjectExportersBar :project="project" :scope="DataManagementPlanFeature.FeatureID" class="p-2 grid justify-end" />
         </div>
         <PropertyEditor
-            v-model="project!.features.dmp.plan"
-            v-model:shared-property-objects="project!.features.shared_objects"
-            :projectProfiles="projectProfiles as PropertyProfileStore"
+            v-model="project.features.dmp.plan"
+            v-model:shared-property-objects="project.features.shared_objects"
+            :projectProfiles="metadataProfiles"
         />
     </div>
 </template>

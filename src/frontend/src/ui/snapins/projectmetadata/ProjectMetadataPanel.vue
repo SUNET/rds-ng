@@ -74,12 +74,12 @@ const debounce = makeDebounce();
 function saveProject(): void {
     debounce(() => {
         const action = new UpdateProjectFeaturesAction(comp);
-        action.prepare(project!.value, [new ProjectMetadataFeature(unref(project)!.features.project_metadata.metadata, unref(enabledProfiles))]);
+        action.prepare(unref(project), [new ProjectMetadataFeature(unref(project).features.project_metadata.metadata, unref(enabledProfiles))]);
         action.execute();
     });
 }
 
-watch(() => project!.value.features.project_metadata.metadata, saveProject, { deep: true });
+watch(() => unref(project).features.project_metadata.metadata, saveProject, { deep: true });
 watch(enabledProfiles, saveProject);
 </script>
 
