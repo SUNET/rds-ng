@@ -6,11 +6,13 @@ import ScrollPanel from "primevue/scrollpanel";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import ToggleSwitch from "primevue/toggleswitch";
-import { computed, nextTick, onMounted, type PropType, reactive, ref, toRefs, unref, watch } from "vue";
+import { computed, nextTick, onMounted, type PropType, ref, toRefs, unref, watch } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { getOptionalMetadataProfiles } from "@common/data/entities/project/ProjectUtils.ts";
 import { useMetadataStore } from "@/data/stores/MetadataStore";
 import { useResourcesStore } from "@/data/stores/ResourcesStore.ts";
+import { useUserStore } from "@/data/stores/UserStore.ts";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { useResourceTools } from "@/ui/tools/resource/ResourceTools.ts";
 
@@ -18,7 +20,7 @@ import MetadataProfilesSelector from "@/ui/components/metadata/MetadataProfilesS
 import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
 
-import { type MetadataProfileContainerList, MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
+import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
 import { filterContainers, isContainerSelected } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
 import { ResourcesMetadata, ResourcesMetadataFeature, type ResourcesMetadataKey } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
@@ -35,6 +37,8 @@ import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTabl
 const comp = FrontendComponent.inject();
 const resourcesStore = useResourcesStore();
 const metadataStore = useMetadataStore();
+const userStore = useUserStore();
+const { userSettings } = storeToRefs(userStore);
 
 const { retrieveResourcesList } = useResourceTools(comp);
 const { resourcesListCache } = storeToRefs(resourcesStore);
@@ -66,9 +70,24 @@ const propertyHeader = computed(() => {
     }
 });
 
-const projectProfiles = reactive(new PropertyProfileStore());
-const optionalProfiles = ref<MetadataProfileContainerList>([]);
-const enabledProfiles = ref<ProfileID[]>(unref(project)!.features.resources_metadata.enabled_metadata_profiles);
+const enabledProfiles = ref<ProfileID[]>(unref(project).features.resources_metadata.enabled_metadata_profiles);
+const metadataProfiles = computed(() => {
+    const profileStore = new PropertyProfileStore();
+
+    for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, [
+        MetadataProfileContainerRole.Default,
+        MetadataProfileContainerRole.Optional
+    ])) {
+        if (isContainerSelected(profile, unref(enabledProfiles))) {
+            profileStore.mountProfile(profile.profile);
+        }
+    }
+
+    return profileStore;
+});
+const optionalProfiles = computed(() =>
+    getOptionalMetadataProfiles(unref(project), unref(userSettings), [], metadataStore.profiles, ResourcesMetadataFeature.FeatureID)
+);
 
 const resourcesData = ref();
 
@@ -77,26 +96,13 @@ let blockResourcesUpdate = false;
 
 onMounted(() => {
     // Initiate the retrieval of the project directory; if this has been done before, it will be fetched from the cache automatically
-    retrieveDataPath(unref(project)!.resources_path);
+    retrieveDataPath(unref(project).resources_path);
 });
-
-for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, [
-    MetadataProfileContainerRole.Default,
-    MetadataProfileContainerRole.Optional
-])) {
-    if (isContainerSelected(profile, unref(enabledProfiles))) {
-        projectProfiles.mountProfile(profile.profile);
-    }
-
-    if (profile.role == MetadataProfileContainerRole.Optional) {
-        optionalProfiles.value.push(profile);
-    }
-}
 
 function saveProject(): void {
     debounce(() => {
         const action = new UpdateProjectFeaturesAction(comp);
-        action.prepare(project!.value, [new ResourcesMetadataFeature(unref(project)!.features.resources_metadata.metadata, unref(enabledProfiles))]);
+        action.prepare(unref(project), [new ResourcesMetadataFeature(unref(project).features.resources_metadata.metadata, unref(enabledProfiles))]);
         action.execute();
     });
 }
@@ -104,7 +110,7 @@ function saveProject(): void {
 function retrieveDataPath(path: string): void {
     resourcesError.value = "";
 
-    const root = unref(project)!.resources_path;
+    const root = unref(project).resources_path;
     retrieveResourcesList(root, path, false)
         .then(() => {
             const resources = unref(resourcesListCache).root(root).resources;
@@ -137,7 +143,7 @@ watch(
 
         debounce(() => {
             const resourcesSet = unref(metadata);
-            const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.metadata);
+            const updatedData = deepClone<ResourcesMetadata>(unref(project).features.resources_metadata.metadata);
 
             const selectedPaths = Object.keys(selectedNodes.value);
             selectedPaths.forEach((path: ResourcesMetadataKey) => {
@@ -146,7 +152,7 @@ watch(
 
             // TODO: A hack to update the local data; needs to be changed later
             // @ts-ignore
-            project!.value.features.resources_metadata.metadata = updatedData;
+            project.value.features.resources_metadata.metadata = updatedData;
 
             saveProject();
         });
@@ -158,14 +164,14 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     blockResourcesUpdate = true;
 
     const selectedPaths = Object.keys(nodes);
-    const metadata = project!.value.features.resources_metadata.metadata;
+    const metadata = unref(project).features.resources_metadata.metadata;
 
     resourcesData.value = metadata[selectedPaths[0]] || [];
 
     // Unblock only after the resources watcher had a chance to fire
     nextTick(() => (blockResourcesUpdate = false));
 });
-watch(enabledProfiles, saveProject); // TODO: Ablgeich
+watch(enabledProfiles, saveProject);
 </script>
 
 <template>
@@ -242,8 +248,8 @@ watch(enabledProfiles, saveProject); // TODO: Ablgeich
                         </div>
                         <PropertyEditor
                             v-model="resourcesData"
-                            v-model:shared-property-objects="project!.features.shared_objects"
-                            :projectProfiles="projectProfiles as PropertyProfileStore"
+                            v-model:shared-property-objects="project.features.shared_objects"
+                            :projectProfiles="metadataProfiles"
                             class="w-full"
                             :show-profile-tags="false"
                         />
