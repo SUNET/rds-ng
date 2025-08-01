@@ -165,7 +165,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     // Unblock only after the resources watcher had a chance to fire
     nextTick(() => (blockResourcesUpdate = false));
 });
-watch(enabledProfiles, saveProject);
+watch(enabledProfiles, saveProject); // TODO: Ablgeich
 </script>
 
 <template>

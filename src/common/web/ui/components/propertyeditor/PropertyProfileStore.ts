@@ -23,12 +23,11 @@ export class PropertyProfileStore {
         try {
             if (isProfile(profile)) {
                 this._profiles.push(profile as PropertyProfile);
-                console.log("mounted profile: ", profile);
             } else {
                 console.log("Invalid profile: ", profile);
             }
         } catch (e) {
-            console.log("Error mounting profile");
+            console.log(`Error mounting profile ${profile.getId()}`);
         }
     }
 

@@ -56,7 +56,7 @@ function saveProject(): void {
 }
 
 watch(() => project!.value.features.dmp.plan, saveProject, { deep: true });
-watch(enabledProfiles, saveProject);
+watch(enabledProfiles, saveProject); // TODO: Ablgeich
 </script>
 
 <template>

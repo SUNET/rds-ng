@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import Message from "primevue/message";
-import { type PropType, reactive, ref, toRefs, unref, watch } from "vue";
+import { computed, type PropType, ref, toRefs, unref, watch } from "vue";
 
-import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
-import { type MetadataProfileContainerList, MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
+import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
 import { filterContainers, filterContainersByRoles, isContainerSelected } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
 import { ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
+import { getOptionalMetadataProfiles, isConnectorActivated } from "@common/data/entities/project/ProjectUtils.ts";
 import { type ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
@@ -36,60 +36,40 @@ const consStore = useConnectorsStore();
 const userStore = useUserStore();
 const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
-const projectProfiles = reactive(new PropertyProfileStore());
 
-const optionalProfiles = ref<MetadataProfileContainerList>([]);
-const enabledProfiles = ref<ProfileID[]>(unref(project)!.features.project_metadata.enabled_metadata_profiles);
+const enabledProfiles = ref<ProfileID[]>(unref(project).features.project_metadata.enabled_metadata_profiles);
+const metadataProfiles = computed(() => {
+    const profileStore = new PropertyProfileStore();
 
-const debounce = makeDebounce();
-
-for (const profile of filterContainers(metadataStore.profiles, ProjectMetadataFeature.FeatureID, [
-    MetadataProfileContainerRole.Default,
-    MetadataProfileContainerRole.Optional
-])) {
-    if (isContainerSelected(profile, unref(enabledProfiles))) {
-        projectProfiles.mountProfile(profile.profile);
+    for (const profile of filterContainers(metadataStore.profiles, ProjectMetadataFeature.FeatureID, [
+        MetadataProfileContainerRole.Default,
+        MetadataProfileContainerRole.Optional
+    ])) {
+        if (isContainerSelected(profile, unref(enabledProfiles))) {
+            profileStore.mountProfile(profile.profile);
+        }
     }
 
-    if (profile.role == MetadataProfileContainerRole.Optional) {
-        optionalProfiles.value.push(profile);
-    }
-}
-
-// TODO fix auto merging connector profiles
-connectors.value.forEach((connector) => {
-    if (
-        !userSettings.value.connector_instances.find((instance) => {
-            if (project!.value.options.use_all_connector_instances) {
-                return instance.connector_id == connector.connector_id;
-            } else {
-                return !!project!.value.options.active_connector_instances.find((instanceID) => {
-                    const resolvedConnector = findConnectorByInstanceID(connectors.value, userSettings.value.connector_instances, instanceID);
-                    return resolvedConnector && resolvedConnector.connector_id == connector.connector_id;
-                });
-            }
-        })
-    ) {
-        return;
-    }
-
-    try {
-        for (const profile of filterContainersByRoles(connector.metadata_profiles, [
-            MetadataProfileContainerRole.Default,
-            MetadataProfileContainerRole.Optional
-        ])) {
-            if (isContainerSelected(profile, unref(enabledProfiles))) {
-                projectProfiles.mountProfile(profile.profile);
-            }
-
-            if (profile.role == MetadataProfileContainerRole.Optional) {
-                optionalProfiles.value.push(profile);
+    connectors.value.forEach((connector) => {
+        if (isConnectorActivated(unref(project), unref(userSettings), connector, unref(connectors))) {
+            for (const profile of filterContainersByRoles(connector.metadata_profiles, [
+                MetadataProfileContainerRole.Default,
+                MetadataProfileContainerRole.Optional
+            ])) {
+                if (isContainerSelected(profile, unref(enabledProfiles))) {
+                    profileStore.mountProfile(profile.profile);
+                }
             }
         }
-    } catch (e) {
-        console.error(e);
-    }
+    });
+
+    return profileStore;
 });
+const optionalProfiles = computed(() =>
+    getOptionalMetadataProfiles(unref(project), unref(userSettings), unref(connectors), metadataStore.profiles, ProjectMetadataFeature.FeatureID)
+);
+
+const debounce = makeDebounce();
 
 function saveProject(): void {
     debounce(() => {
@@ -128,7 +108,7 @@ watch(enabledProfiles, saveProject);
         <PropertyEditor
             v-model="project!.features.project_metadata.metadata"
             v-model:shared-property-objects="project!.features.shared_objects"
-            :projectProfiles="projectProfiles as PropertyProfileStore"
+            :projectProfiles="metadataProfiles"
         />
     </div>
 </template>
