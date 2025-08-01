@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import MultiSelect from "primevue/multiselect";
-import Tag from "primevue/tag";
 import { type PropType, toRefs } from "vue";
 
 import { MetadataProfileContainer, type MetadataProfileContainerList } from "@common/data/entities/metadata/MetadataProfileContainer.ts";
 import { useColorsStore } from "@common/data/stores/ColorsStore.ts";
-
 import { type ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
 
 const props = defineProps({
@@ -37,16 +35,9 @@ const colorsStore = useColorsStore();
             class="w-full"
         >
             <template #option="slotProps">
-                <div class="grid grid-cols-[max-content_max-content_1fr] gap-1 w-full">
+                <div class="grid grid-cols-[max-content_1fr] gap-1 w-full">
                     <div>{{ slotProps.option.profile.getDisplayLabel() }}</div>
                     <div class="r-text-light-gray">{{ slotProps.option.profile.getDescription() }}</div>
-                    <Tag
-                        size="small"
-                        class="h-4 !rounded py-3 text-sm font-normal bg-opacity-40 justify-self-end"
-                        :style="`background-color: ${colorsStore.color(slotProps.option.profile.getName())}`"
-                    >
-                        {{ slotProps.option.profile.getName() }}
-                    </Tag>
                 </div>
             </template>
         </MultiSelect>
