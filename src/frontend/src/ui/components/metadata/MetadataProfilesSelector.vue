@@ -28,7 +28,7 @@ const colorsStore = useColorsStore();
         </span>
         <MultiSelect
             v-model="selectedProfiles"
-            :options="profiles.sort((profile1, profile2) => profile1.profile.getName().localeCompare(profile2.profile.getName()))"
+            :options="profiles.sort((profile1, profile2) => profile1.profile.getDisplayLabel().localeCompare(profile2.profile.getDisplayLabel()))"
             :optionLabel="(option: MetadataProfileContainer) => option.profile.getDisplayLabel()"
             :optionValue="(option: MetadataProfileContainer) => option.profile.getId()"
             display="chip"
@@ -38,7 +38,7 @@ const colorsStore = useColorsStore();
         >
             <template #option="slotProps">
                 <div class="grid grid-cols-[max-content_max-content_1fr] gap-1 w-full">
-                    <div>{{ slotProps.option.profile.getName() }}</div>
+                    <div>{{ slotProps.option.profile.getDisplayLabel() }}</div>
                     <div class="r-text-light-gray">{{ slotProps.option.profile.getDescription() }}</div>
                     <Tag
                         size="small"
