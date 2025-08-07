@@ -1,5 +1,11 @@
 # RDS-NG - Changelog
 
+## v1.1.0 - 2025-08-??
+
+### New
+
+- Multiple, user-selectable metadata profiles are now supported where applicable
+
 ## v1.0.4 - 2025-07-25
 
 ### Improvements

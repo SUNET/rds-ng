@@ -3,7 +3,7 @@ import pathlib
 import typing
 from pathlib import PosixPath
 
-from common.py.data.entities.properties import PropertyProfile
+from ..properties import ProfileID, PropertyProfile
 
 from .metadata_profile_container import (
     MetadataProfileContainer,
@@ -69,6 +69,34 @@ def filter_containers(
     ]
 
 
+def filter_containers_ex(
+    containers: MetadataProfileContainerList,
+    *,
+    category: str,
+    roles: typing.List[MetadataProfileContainer.Role],
+    enabled_profiles: typing.List[ProfileID],
+) -> MetadataProfileContainerList:
+    """
+    Gets all containers from a list matching the specified category and role.
+
+    Args:
+        containers: The list of containers.
+        category: The category to match.
+        roles: The roles to match.
+        enabled_profiles: A list of user-enabled optional profiles.
+
+    Returns:
+        List of all matching containers.
+    """
+
+    filtered_containers: MetadataProfileContainerList = []
+    for container in containers:
+        if container.category == category and container.role in roles:
+            if is_container_selected(container, enabled_profiles=enabled_profiles):
+                filtered_containers.append(container)
+    return filtered_containers
+
+
 def containers_from_folder(
     folder: pathlib.PosixPath, *, default_category: str | None = None
 ) -> MetadataProfileContainerList:
@@ -128,3 +156,26 @@ def containers_from_folder(
                 _read_role_folder(category_item.name, category_item)
 
     return containers
+
+
+def is_container_selected(
+    container: MetadataProfileContainer, *, enabled_profiles: typing.List[ProfileID]
+) -> bool:
+    """
+    Checks whether a profile (container) is selected - either since it is a default one or the user has enabled it.
+
+    Args:
+        container: The container to check.
+        enabled_profiles: All user-enabled profiles.
+    """
+    if container.role == MetadataProfileContainer.Role.DEFAULT:
+        return True
+    elif container.role == MetadataProfileContainer.Role.OPTIONAL:
+        for profile_id in enabled_profiles:
+            if (
+                profile_id[0] == container.profile.metadata.id[0]
+                and profile_id[1] == container.profile.metadata.id[1]
+            ):
+                return True
+
+    return False
