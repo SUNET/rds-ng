@@ -7,6 +7,7 @@ from rocrate.model.data_entity import DataEntity
 from rocrate.model.root_dataset import RootDataset
 from rocrate.rocrate import ROCrate
 
+from common.py.data.entities.metadata import filter_containers_ex
 from common.py.data.entities.project.project import Project
 
 
@@ -165,10 +166,10 @@ def with_context(func: Callable) -> Callable:
     TODO: Add contexts for future profiles (custom, object resources etc.)
     """
 
-    def get_global_contexts() -> List[str]:
+    def get_global_contexts(*args, **kwargs) -> List[str]:
         from common.py.data.entities.metadata import (
             MetadataProfileContainer,
-            filter_containers,
+            filter_containers_ex,
         )
         from common.py.data.entities.project.features.project_metadata_feature import (
             ProjectMetadataFeature,
@@ -177,14 +178,16 @@ def with_context(func: Callable) -> Callable:
         from ....component import ServerComponent
 
         profile_containers = ServerComponent.instance().server_data.profile_containers
-        filtered_containers = filter_containers(
+        filtered_containers = filter_containers_ex(
             profile_containers,
             category=ProjectMetadataFeature.feature_id,
             roles=[
                 MetadataProfileContainer.Role.DEFAULT,
-                # TODO: Really make optional
                 MetadataProfileContainer.Role.OPTIONAL,
             ],
+            enabled_profiles=kwargs[
+                "project"
+            ].features.project_metadata.enabled_metadata_profiles,
         )
         return [
             i.profile.metadata.context
@@ -196,7 +199,7 @@ def with_context(func: Callable) -> Callable:
         crate = func(*args, **kwargs)
 
         # add future contexts here
-        contexts = [*get_global_contexts()]
+        contexts = [*get_global_contexts(*args, **kwargs)]
         crate.metadata.extra_contexts.extend(contexts)
 
         return crate
