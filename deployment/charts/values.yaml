@@ -78,7 +78,7 @@ frontend:
       secretName: "sciebords-frontend-tls"                                          # The name of the secret that holds your rds frontend domain certificate
        
     annotations: {}
-
+    class: "public"
 ###
 ### Connectors
 ###
