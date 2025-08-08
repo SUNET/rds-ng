@@ -12,6 +12,7 @@ ingress:
     secretName: "sciebords-api-tls"                                                 # The name of the secret that holds your rds server domain certificate
      
   annotations: {}
+  class: "public"
 
 ### Server
 server:
