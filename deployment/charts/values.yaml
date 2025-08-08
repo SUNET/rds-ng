@@ -27,6 +27,8 @@ server:
     clientRedirectUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng/main"                   # The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host integration (e.g., http://localhost:8080/apps/rdsng/main for a local Nextcloud setup).
     hostSecret: "CHANGEME"                                                          # The host secret registered in Nexcloud for the frontend
   networkApiKey: "CHANGEME"                                                         # An arbitrary API key to access protected resources; this must be the same value on all components.
+  pvc:
+    storageClassName: "rdb"
   storage:
     driver: "database"                                                              # The driver to use for the storage; possible values are memory or database.
     engine: "sqlite"                                                                # The database backend to use; can be sqlite, postgresql, mysql or mariadb. Database settings are configured in the next couple lines. Default: sqlite
