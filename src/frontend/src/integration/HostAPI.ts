@@ -25,11 +25,11 @@ export class HostAPI {
     private readonly _apiURL: string;
 
     public constructor(comp: FrontendComponent) {
-        this._apiURL = comp.data.config.value<string>(HostIntegrationSettingIDs.APIURL);
+        this._apiURL = comp.data.config.value<string>(HostIntegrationSettingIDs.URL);
         if (this._apiURL == "") {
             throw new Error("No host API URL has been configured");
         }
-        this._apiURL = terminatePath(this._apiURL);
+        this._apiURL = terminatePath(this._apiURL) + "/api/v1/"; // Update this if the API version or path changes
     }
 
     public async getPublicKey(): Promise<JWK> {

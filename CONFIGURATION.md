@@ -160,9 +160,9 @@ _(1)_ If the host uses OAUTH2 authorization.
 
 #### Integration
 
-| Setting                               | Description                                                                                                                                                                                | Type   | Default value |
-|---------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|---------------|
-| <code>integration.host.api_url</code> | The full URL where the host integration exposes its API; this needs to be in the form of `<APP_URL>/api/v1` (e.g., `http://localhost:8080/apps/rdsng/api/v1` for a local Nextcloud setup). | String |               |
+| Setting                           | Description               | Type   | Default value |
+|-----------------------------------|---------------------------|--------|---------------|
+| <code>integration.host.url</code> | The full URL of the host. | String |               | 
 
 #### Authorization
 

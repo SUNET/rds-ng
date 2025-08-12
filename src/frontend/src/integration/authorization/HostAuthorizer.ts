@@ -9,6 +9,7 @@ import { RedirectionTarget } from "@common/utils/HTMLUtils";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authorizer } from "@/integration/authorization/Authorizer";
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
+import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 
 /**
  * Authorizer for host integration.
@@ -28,14 +29,15 @@ export class HostAuthorizer extends Authorizer {
                 this._component,
                 this._component.frontendService,
                 this._hostAuth.strategy,
-                this.getStrategyConfiguration(this._hostAuth.strategy),
+                this.getStrategyConfiguration(this._hostAuth.strategy)
             );
             const authRequest = AuthorizationRequest.fromValues(
                 AuthorizationTokenType.Host,
                 AuthorizationTokenType.Host,
                 AuthorizationTokenType.Host,
+                this._component.data.config.value<string>(HostIntegrationSettingIDs.URL),
                 AuthorizationTokenType.Host,
-                fingerprint,
+                fingerprint
             ); // (yes, we need that AuthorizationTokenType.Host 4 times)
             strategy
                 .requestAuthorization(authState, authRequest)
@@ -61,13 +63,13 @@ export class HostAuthorizer extends Authorizer {
                         host: this._hostAuth.config.host || "",
                         authorization_endpoint: this._hostAuth.config.authorization_endpoint || "",
                         token_endpoint: this._hostAuth.config.token_endpoint || "",
-                        scope: this._hostAuth.config.scope || "",
+                        scope: this._hostAuth.config.scope || ""
                     },
                     client: {
                         client_id: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),
                         redirect_url: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
-                        redirect_target: RedirectionTarget.Current,
-                    },
+                        redirect_target: RedirectionTarget.Current
+                    }
                 } as OAuth2StrategyConfiguration;
 
             default:
