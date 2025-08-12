@@ -37,6 +37,8 @@ The backend consists of the server and the various connectors; they all share a 
     - `authorization.oauth2.server.token_endpoint` (2)
     - `authorization.oauth2.client.id` (2)
     - `authorization.oauth2.client.redirect_url` (2)
+- Frontend
+    - `integration.host.url`
 
 _(1)_ By default, connectors target the test instances of the corresponding service.
 _(2)_ If the service uses OAUTH2 authorization.
