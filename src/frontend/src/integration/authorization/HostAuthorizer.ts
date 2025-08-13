@@ -5,6 +5,7 @@ import { AuthorizationRequest } from "@common/integration/authorization/Authoriz
 import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
 import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
 import { RedirectionTarget } from "@common/utils/HTMLUtils";
+import { combinePaths } from "@common/utils/Paths.ts";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authorizer } from "@/integration/authorization/Authorizer";
@@ -35,7 +36,10 @@ export class HostAuthorizer extends Authorizer {
                 AuthorizationTokenType.Host,
                 AuthorizationTokenType.Host,
                 AuthorizationTokenType.Host,
-                this._component.data.config.value<string>(HostIntegrationSettingIDs.URL),
+                combinePaths(
+                    this._component.data.config.value<string>(HostIntegrationSettingIDs.URL),
+                    this._component.data.config.value<string>(HostIntegrationSettingIDs.Entrypoint)
+                ),
                 AuthorizationTokenType.Host,
                 fingerprint
             ); // (yes, we need that AuthorizationTokenType.Host 4 times)

@@ -162,9 +162,11 @@ _(1)_ If the host uses OAUTH2 authorization.
 
 #### Integration
 
-| Setting                           | Description               | Type   | Default value |
-|-----------------------------------|---------------------------|--------|---------------|
-| <code>integration.host.url</code> | The full URL of the host. | String |               | 
+| Setting                                  | Description                                                  | Type   | Default value |
+|------------------------------------------|--------------------------------------------------------------|--------|---------------|
+| <code>integration.host.url</code>        | The full URL of the host.                                    | String |               | 
+| <code>integration.host.entrypoint</code> | The relative entrypoint of the host integration application. | String | /             | 
+| <code>integration.host.api</code>        | The relative path of the host integration API.               | String | /api/v1       | 
 
 #### Authorization
 

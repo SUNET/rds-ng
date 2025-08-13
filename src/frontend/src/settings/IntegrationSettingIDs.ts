@@ -13,7 +13,11 @@ export class IntegrationSettingIDS {
  * Identifiers for host integration settings.
  *
  * @property URL - The full URL of the host (value type: ``string``).
+ * @property Entrypoint - The relative entrypoint path of the host integration app (value type: ``string``).
+ * @property API - The relative path of the host integration API (value type: ``string``).
  */
 export class HostIntegrationSettingIDs {
     public static readonly URL = new SettingID("integration.host", "url");
+    public static readonly Entrypoint = new SettingID("integration.host", "entrypoint");
+    public static readonly API = new SettingID("integration.host", "api");
 }

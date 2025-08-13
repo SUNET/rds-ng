@@ -63,7 +63,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
             auth_code: authCode,
             scope: this._config.server.scope,
 
-            redirect_url: this._config.client.redirect_url,
+            redirect_url: this._config.client.redirect_url
         } as OAuth2AuthorizationRequestData;
     }
 

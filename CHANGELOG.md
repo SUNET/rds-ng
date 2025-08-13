@@ -5,6 +5,7 @@
 ### New
 
 - Multiple, user-selectable metadata profiles are now supported where applicable
+- Authorization is done through a new endpoint in the integration app to better support multiple frontends using the same backend
 
 ### Improvements
 

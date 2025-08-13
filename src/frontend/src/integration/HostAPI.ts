@@ -3,7 +3,7 @@ import { type JWK } from "jose";
 import { unref } from "vue";
 
 import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
-import { terminatePath } from "@common/utils/Paths";
+import { combinePaths, terminatePath } from "@common/utils/Paths";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type HostResources } from "@/integration/HostTypes";
@@ -29,7 +29,7 @@ export class HostAPI {
         if (this._apiURL == "") {
             throw new Error("No host API URL has been configured");
         }
-        this._apiURL = terminatePath(this._apiURL) + "/api/v1/"; // Update this if the API version or path changes
+        this._apiURL = terminatePath(combinePaths(this._apiURL, comp.data.config.value<string>(HostIntegrationSettingIDs.API)));
     }
 
     public async getPublicKey(): Promise<JWK> {

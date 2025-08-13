@@ -6,6 +6,7 @@ import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entiti
 import { connectorInstanceIsAuthorized, createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
+import { combinePaths } from "@common/utils/Paths.ts";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -65,7 +66,8 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
             getConnectorInstanceAuthorizationID(instance),
             AuthorizationTokenType.Connector,
             instance.instance_id,
-            comp.data.config.value<string>(HostIntegrationSettingIDs.URL),
+            combinePaths(comp.data.config.value<string>(HostIntegrationSettingIDs.URL), comp.data.config.value<string>(HostIntegrationSettingIDs.Entrypoint)),
+
             connector.connector_id,
             userFingerprint
         );
