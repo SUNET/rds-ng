@@ -66,7 +66,10 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
             getConnectorInstanceAuthorizationID(instance),
             AuthorizationTokenType.Connector,
             instance.instance_id,
-            combinePaths(comp.data.config.value<string>(HostIntegrationSettingIDs.URL), comp.data.config.value<string>(HostIntegrationSettingIDs.Entrypoint)),
+            combinePaths(
+                comp.data.config.value<string>(HostIntegrationSettingIDs.URL),
+                comp.data.config.value<string>(HostIntegrationSettingIDs.EntrypointEndpoint)
+            ),
 
             connector.connector_id,
             userFingerprint

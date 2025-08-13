@@ -29,7 +29,7 @@ export class HostAPI {
         if (this._apiURL == "") {
             throw new Error("No host API URL has been configured");
         }
-        this._apiURL = terminatePath(combinePaths(this._apiURL, comp.data.config.value<string>(HostIntegrationSettingIDs.API)));
+        this._apiURL = terminatePath(combinePaths(this._apiURL, comp.data.config.value<string>(HostIntegrationSettingIDs.APIEndpoint)));
     }
 
     public async getPublicKey(): Promise<JWK> {

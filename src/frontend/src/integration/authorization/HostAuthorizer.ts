@@ -38,7 +38,7 @@ export class HostAuthorizer extends Authorizer {
                 AuthorizationTokenType.Host,
                 combinePaths(
                     this._component.data.config.value<string>(HostIntegrationSettingIDs.URL),
-                    this._component.data.config.value<string>(HostIntegrationSettingIDs.Entrypoint)
+                    this._component.data.config.value<string>(HostIntegrationSettingIDs.EntrypointEndpoint)
                 ),
                 AuthorizationTokenType.Host,
                 fingerprint
