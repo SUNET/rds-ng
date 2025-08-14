@@ -29,8 +29,9 @@ export function terminatePath(path: string): string {
  * @returns - The joined path.
  */
 export function combinePaths(pathLeft: string, pathRight: string): string {
-    if (!pathLeft.endsWith("/") && !pathRight.startsWith("/")) {
-        return pathLeft + "/" + pathRight;
+    pathLeft = terminatePath(pathLeft);
+    if (pathRight.startsWith("/")) {
+        pathRight = pathRight.substring(1);
     }
     return pathLeft + pathRight;
 }

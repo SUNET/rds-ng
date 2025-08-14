@@ -70,7 +70,6 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
                 comp.data.config.value<string>(HostIntegrationSettingIDs.URL),
                 comp.data.config.value<string>(HostIntegrationSettingIDs.EntrypointEndpoint)
             ),
-
             connector.connector_id,
             userFingerprint
         );
