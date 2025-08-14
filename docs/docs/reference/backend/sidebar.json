@@ -1,0 +1,77 @@
+{
+  "items": [
+    {
+      "items": [
+        "reference/backend/api/authorization/authorization_commands"
+      ],
+      "label": "api.authorization",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/backend/api/component/component_events"
+      ],
+      "label": "api.component",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/backend/api/connector/connector_commands",
+        "reference/backend/api/connector/connector_events"
+      ],
+      "label": "api.connector",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/backend/api/metadata/metadata_commands"
+      ],
+      "label": "api.metadata",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/backend/api/network/network_commands",
+        "reference/backend/api/network/network_events"
+      ],
+      "label": "api.network",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/backend/api/project/project_commands",
+        "reference/backend/api/project/project_events",
+        "reference/backend/api/project/project_exporters_commands",
+        "reference/backend/api/project/project_features_commands",
+        "reference/backend/api/project/project_job_commands",
+        "reference/backend/api/project/project_job_events"
+      ],
+      "label": "api.project",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/backend/api/resource/resource_commands"
+      ],
+      "label": "api.resource",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/backend/api/session/session_commands"
+      ],
+      "label": "api.session",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/backend/api/user/user_commands",
+        "reference/backend/api/user/user_events"
+      ],
+      "label": "api.user",
+      "type": "category"
+    }
+  ],
+  "label": "api",
+  "type": "category"
+}
