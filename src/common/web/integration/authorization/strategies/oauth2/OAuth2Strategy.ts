@@ -67,12 +67,12 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         } as OAuth2AuthorizationRequestData;
     }
 
-    protected finishRequest(): void {
+    protected finishRequest(authRequest: AuthorizationRequest): void {
         if (this._redirectionTarget == RedirectionTarget.Blank) {
             // Even if there's no parent, this will work
             window.parent.close();
         } else {
-            this.redirect(this._config.client.redirect_url);
+            this.redirect(authRequest.payload.auth_issuer_url);
         }
     }
 }
