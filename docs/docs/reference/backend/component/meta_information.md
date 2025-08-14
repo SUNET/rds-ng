@@ -12,22 +12,23 @@ class MetaInformation()
 Accesses meta information about the entire project and its various component stored in a *JSON* file.
 
 The JSON file needs to be structured like this::
-
+```
     {
-        &quot;global&quot;: {
-            &quot;title&quot;: &quot;RDS-NG&quot;,
-            &quot;version&quot;: &quot;0.0.1&quot;
+        "global": {
+            "title": "RDS-NG",
+            "version": "0.0.1"
         },
 
-        &quot;components&quot;: {
-            &quot;gate&quot;: {
-                &quot;name&quot;: &quot;Gate service&quot;,
-                &quot;directory&quot;: &quot;gate&quot;,
-                &quot;tech&quot;: &quot;py&quot;
+        "components": {
+            "gate": {
+                "name": "Gate service",
+                "directory": "gate",
+                "tech": "py"
             },
             ...
         }
     }
+```
 
 #### \_\_init\_\_
 

@@ -68,24 +68,26 @@ Validates the given profile dictionary to ensure it contains the required metada
 
 - `ValueError` - If the profile is missing required metadata keys or if the layout references missing classes.
   The profile dictionary should have the following structure:
-  {
-- `'metadata'` - {
-- `'id'` - str,
-- `'displayLabel'` - str,
-- `'description'` - str,
-  ...
-  },
-- `'layout'` - [
-  {
-- `'type'` - str,
-  ...
-  },
-  ...
-  ],
-- `'classes'` - {
-  ...
-  }
-  }
+```
+{
+    'metadata': {
+        'id': str,
+        'displayLabel': str,
+        'description': str,
+        ...
+    },
+    'layout': [
+        {
+            'type': str,
+            ...
+        },
+        ...
+    ],
+    'classes': {
+        ...
+    }
+}
+```
 
 #### filter\_by\_profile
 
