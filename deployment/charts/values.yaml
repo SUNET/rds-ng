@@ -23,6 +23,7 @@ server:
     pullPolicy: "Always"
   allowedOrigins: "'*'"
   sqliteFile: "/data/rds.db"                                                        # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
+  createSecret: true                                                                # If to create server-secret. It should preferably be created with sealedsecrets or some other secure method, and all plain text ouath2 secrets should be left out of this file
   oauth2:
     clientId: "CHANGEME"                                                            # The client Id registered in Nexcloud for the frontend
     clientRedirectUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng/main"                   # The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host integration (e.g., http://localhost:8080/apps/rdsng/main for a local Nextcloud setup).
