@@ -108,11 +108,29 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                 ctx.storage_pool.authorization_token_storage.add(auth_token)
                 handle_authorization_token_changes(auth_token, msg, ctx)
 
+                logging.debug(
+                    f"Requested authorization token",
+                    scope="auth",
+                    user_id=auth_token.user_id,
+                    auth_id=auth_token.auth_id,
+                    strategy=auth_token.strategy,
+                )
+
                 success = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 message = str(exc)
         else:
             message = "The provided fingerprint doesn't match"
+
+        if not success:
+            logging.warning(
+                "Requesting authorization failed",
+                scope="auth",
+                strategy=msg.strategy,
+                payload=msg.request_payload,
+                data=msg.data,
+                error=message,
+            )
 
         RequestAuthorizationReply.build(
             ctx.message_builder,
@@ -229,7 +247,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
 
                         logging.debug(
                             "Refreshed authorization token",
-                            scope="authorization",
+                            scope="auth",
                             user_id=auth_token.user_id,
                             auth_id=auth_token.auth_id,
                             strategy=auth_token.strategy,
@@ -238,7 +256,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                         if 0 < refresh_attempts_limit <= auth_token.refresh_attempts:
                             logging.warning(
                                 "Unable to refresh authorization token - removing token",
-                                scope="authorization",
+                                scope="auth",
                                 user_id=auth_token.user_id,
                                 auth_id=auth_token.auth_id,
                                 strategy=auth_token.strategy,
