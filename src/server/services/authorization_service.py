@@ -90,35 +90,38 @@ def create_authorization_service(comp: ServerComponent) -> Service:
         message = ""
 
         if msg.request_payload.fingerprint == ctx.session.fingerprint:
-            try:
-                strategy = _create_auth_strategy(
-                    ctx,
-                    msg.strategy,
-                    auth_private=ctx.private_auth_settings.get_settings(
-                        msg.request_payload.auth_bearer
-                    ),
-                )
-                auth_token = strategy.request_authorization(
-                    ctx.user.user_id,
-                    msg.request_payload,
-                    msg.data,
-                )
-                AuthorizationTokenVerifier(auth_token).verify_create()
+            for _ in range(5):
+                try:
+                    strategy = _create_auth_strategy(
+                        ctx,
+                        msg.strategy,
+                        auth_private=ctx.private_auth_settings.get_settings(
+                            msg.request_payload.auth_bearer
+                        ),
+                    )
+                    auth_token = strategy.request_authorization(
+                        ctx.user.user_id,
+                        msg.request_payload,
+                        msg.data,
+                    )
+                    AuthorizationTokenVerifier(auth_token).verify_create()
 
-                ctx.storage_pool.authorization_token_storage.add(auth_token)
-                handle_authorization_token_changes(auth_token, msg, ctx)
+                    ctx.storage_pool.authorization_token_storage.add(auth_token)
+                    handle_authorization_token_changes(auth_token, msg, ctx)
 
-                logging.debug(
-                    f"Requested authorization token",
-                    scope="auth",
-                    user_id=auth_token.user_id,
-                    auth_id=auth_token.auth_id,
-                    strategy=auth_token.strategy,
-                )
+                    logging.debug(
+                        f"Requested authorization token",
+                        scope="auth",
+                        user_id=auth_token.user_id,
+                        auth_id=auth_token.auth_id,
+                        strategy=auth_token.strategy,
+                    )
 
-                success = True
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                message = str(exc)
+                    success = True
+                    break
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    message = str(exc)
+                    time.sleep(0.5)
         else:
             message = "The provided fingerprint doesn't match"
 
