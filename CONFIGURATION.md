@@ -69,6 +69,8 @@ Authorization is in most cases performed using OAUTH2. The server takes care of 
 
 | Setting                                           | Description                                                                         | Type   | Default value |
 |---------------------------------------------------|-------------------------------------------------------------------------------------|--------|---------------|
+| <code>authorization.request_attempts_delay</code> | The delay between token request attempts in seconds.                                | Number | 1.0           |
+| <code>authorization.request_attempts_limit</code> | The maximum number of token request attempts.                                       | Number | 5             |
 | <code>authorization.refresh_attempts_delay</code> | The delay between token refresh attempts in seconds.                                | Number | 30.0          |
 | <code>authorization.refresh_attempts_limit</code> | The maximum number of refresh attempts before removing a token; 0 disables removal. | Number | 3             |
 

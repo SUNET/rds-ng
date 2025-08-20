@@ -47,6 +47,12 @@ def create_authorization_service(comp: ServerComponent) -> Service:
         "Authorization service", context_type=ServerServiceContext
     )
 
+    request_attempts_delay = comp.data.config.value(
+        AuthorizationSettingIDs.REQUEST_ATTEMPTS_DELAY
+    )
+    request_attempts_limit = comp.data.config.value(
+        AuthorizationSettingIDs.REQUEST_ATTEMPTS_LIMIT
+    )
     refresh_attempts_delay = comp.data.config.value(
         AuthorizationSettingIDs.REFRESH_ATTEMPTS_DELAY
     )
@@ -90,7 +96,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
         message = ""
 
         if msg.request_payload.fingerprint == ctx.session.fingerprint:
-            for _ in range(5):
+            for _ in range(request_attempts_limit):
                 try:
                     strategy = _create_auth_strategy(
                         ctx,
@@ -121,7 +127,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                     break
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     message = str(exc)
-                    time.sleep(0.5)
+                    time.sleep(request_attempts_delay)
         else:
             message = "The provided fingerprint doesn't match"
 
