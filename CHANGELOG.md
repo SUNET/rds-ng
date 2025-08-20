@@ -9,6 +9,8 @@
 
 ### Improvements
 
+- When adding a new connection, the authorization process will start automatically
+- Retry authorization requests a few times before failing
 - The usual bit of small UI improvements
 
 ## v1.0.4 - 2025-07-25
