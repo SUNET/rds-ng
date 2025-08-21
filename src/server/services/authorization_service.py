@@ -14,6 +14,7 @@ from common.py.integration.authorization.strategies import (
 )
 from common.py.services import Service
 from common.py.utils import EntryGuard
+from common.py.utils.func import attempt
 
 from .tools import handle_authorization_token_changes
 from ..component import ServerComponent
@@ -96,50 +97,54 @@ def create_authorization_service(comp: ServerComponent) -> Service:
         message = ""
 
         if msg.request_payload.fingerprint == ctx.session.fingerprint:
-            for _ in range(request_attempts_limit):
-                try:
-                    strategy = _create_auth_strategy(
-                        ctx,
-                        msg.strategy,
-                        auth_private=ctx.private_auth_settings.get_settings(
-                            msg.request_payload.auth_bearer
-                        ),
-                    )
-                    auth_token = strategy.request_authorization(
-                        ctx.user.user_id,
-                        msg.request_payload,
-                        msg.data,
-                    )
-                    AuthorizationTokenVerifier(auth_token).verify_create()
 
-                    ctx.storage_pool.authorization_token_storage.add(auth_token)
-                    handle_authorization_token_changes(auth_token, msg, ctx)
+            def _perform_auth() -> None:
+                strategy = _create_auth_strategy(
+                    ctx,
+                    msg.strategy,
+                    auth_private=ctx.private_auth_settings.get_settings(
+                        msg.request_payload.auth_bearer
+                    ),
+                )
+                auth_token = strategy.request_authorization(
+                    ctx.user.user_id,
+                    msg.request_payload,
+                    msg.data,
+                )
+                AuthorizationTokenVerifier(auth_token).verify_create()
 
-                    logging.debug(
-                        f"Requested authorization token",
-                        scope="auth",
-                        user_id=auth_token.user_id,
-                        auth_id=auth_token.auth_id,
-                        strategy=auth_token.strategy,
-                    )
+                ctx.storage_pool.authorization_token_storage.add(auth_token)
+                handle_authorization_token_changes(auth_token, msg, ctx)
 
-                    success = True
-                    break
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    message = str(exc)
-                    time.sleep(request_attempts_delay)
+                logging.debug(
+                    f"Requested authorization token",
+                    scope="auth",
+                    user_id=auth_token.user_id,
+                    auth_id=auth_token.auth_id,
+                    strategy=auth_token.strategy,
+                )
+
+            def _perform_auth_failed(exc: Exception) -> None:
+                nonlocal message
+                message = str(exc)
+
+                logging.warning(
+                    "Requesting authorization failed",
+                    scope="auth",
+                    strategy=msg.strategy,
+                    payload=msg.request_payload,
+                    data=msg.data,
+                    error=message,
+                )
+
+            success, _ = attempt(
+                _perform_auth,
+                cb_failed=_perform_auth_failed,
+                attempts=request_attempts_limit,
+                delay=request_attempts_delay,
+            )
         else:
             message = "The provided fingerprint doesn't match"
-
-        if not success:
-            logging.warning(
-                "Requesting authorization failed",
-                scope="auth",
-                strategy=msg.strategy,
-                payload=msg.request_payload,
-                data=msg.data,
-                error=message,
-            )
 
         RequestAuthorizationReply.build(
             ctx.message_builder,
