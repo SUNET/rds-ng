@@ -21,9 +21,13 @@ const props = defineProps({
     userSettings: {
         type: Object as PropType<UserSettings>,
         required: true
+    },
+    newInstance: {
+        type: Object as PropType<ConnectorInstance>,
+        default: undefined
     }
 });
-const { userSettings } = toRefs(props);
+const { userSettings, newInstance } = toRefs(props);
 
 const consStore = useConnectorsStore();
 const userStore = useUserStore();
@@ -50,6 +54,7 @@ function onDeleteInstance(instance: ConnectorInstance) {
         <template #instance="slotProps">
             <ConnectionsListItem
                 :instance="slotProps.instance"
+                :is-new="!!newInstance && slotProps.instance == newInstance"
                 @authorize-instance="requestInstanceAuthorization(slotProps.instance, connectors, userAuthorizations)"
                 @unauthorize-instance="revokeInstanceAuthorization(slotProps.instance)"
                 @dblclick="onEditInstance(slotProps.instance)"

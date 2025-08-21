@@ -37,6 +37,8 @@ The backend consists of the server and the various connectors; they all share a 
     - `authorization.oauth2.server.token_endpoint` (2)
     - `authorization.oauth2.client.id` (2)
     - `authorization.oauth2.client.redirect_url` (2)
+- Frontend
+    - `integration.host.url`
 
 _(1)_ By default, connectors target the test instances of the corresponding service.
 _(2)_ If the service uses OAUTH2 authorization.
@@ -67,6 +69,8 @@ Authorization is in most cases performed using OAUTH2. The server takes care of 
 
 | Setting                                           | Description                                                                         | Type   | Default value |
 |---------------------------------------------------|-------------------------------------------------------------------------------------|--------|---------------|
+| <code>authorization.request_attempts_delay</code> | The delay between token request attempts in seconds.                                | Number | 1.0           |
+| <code>authorization.request_attempts_limit</code> | The maximum number of token request attempts.                                       | Number | 5             |
 | <code>authorization.refresh_attempts_delay</code> | The delay between token refresh attempts in seconds.                                | Number | 30.0          |
 | <code>authorization.refresh_attempts_limit</code> | The maximum number of refresh attempts before removing a token; 0 disables removal. | Number | 3             |
 
@@ -160,15 +164,17 @@ _(1)_ If the host uses OAUTH2 authorization.
 
 #### Integration
 
-| Setting                               | Description                                                                                                                                                                                | Type   | Default value |
-|---------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|---------------|
-| <code>integration.host.api_url</code> | The full URL where the host integration exposes its API; this needs to be in the form of `<APP_URL>/api/v1` (e.g., `http://localhost:8080/apps/rdsng/api/v1` for a local Nextcloud setup). | String |               |
+| Setting                                            | Description                                                  | Type   | Default value |
+|----------------------------------------------------|--------------------------------------------------------------|--------|---------------|
+| <code>integration.host.url</code>                  | The full URL of the host.                                    | String |               | 
+| <code>integration.host.endpoints.entrypoint</code> | The relative entrypoint of the host integration application. | String | /             | 
+| <code>integration.host.endpoints.api</code>        | The relative path of the host integration API.               | String | /api/v1       | 
 
 #### Authorization
 
 In order to be properly integrated into its host system, the frontend will authorize against it using OAUTH2. This means that you usually will need to generate a new OAUTH2 client ID and secret for the frontend in your host system.
 
-| Setting                                               | Description                                                                                                                                                                | Type   | Default value |
-|-------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|---------------|
-| <code>authorization.oauth2.client.id</code>           | The OAUTH2 client ID of the frontend.                                                                                                                                      | String |               |
-| <code>authorization.oauth2.client.redirect_url</code> | The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host integration (e.g., `http://localhost:8080/apps/rdsng/main` for a local Nextcloud setup). | String |               |
+| Setting                                               | Description                                                                                                                                                                                                  | Type   | Default value |
+|-------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|---------------|
+| <code>authorization.oauth2.client.id</code>           | The OAUTH2 client ID of the frontend.                                                                                                                                                                        | String |               |
+| <code>authorization.oauth2.client.redirect_url</code> | The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host authorization API endpoint (e.g., `http://localhost:8080/apps/rdsng/api/v1/authorize/oauth2` for a local Nextcloud setup). | String |               |

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useIntervalFn } from "@vueuse/core";
 import { WebComponent } from "../../../../component/WebComponent";
 import { useComponentStore } from "../../../../data/stores/ComponentStore";
 import { HostCommuncationAction, sendActionToHost } from "../../../../integration/HostCommunication";
@@ -9,6 +10,13 @@ import Header from "./Header.vue";
 const comp = WebComponent.injectComponent();
 
 const compStore = useComponentStore();
+
+const { pause } = useIntervalFn(() => {
+    if (document.visibilityState == "visible") {
+        pause();
+        reloadApp();
+    }
+}, 1000);
 
 function reloadApp() {
     sendActionToHost(HostCommuncationAction.Reload);

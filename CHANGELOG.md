@@ -5,9 +5,12 @@
 ### New
 
 - Multiple, user-selectable metadata profiles are now supported where applicable
+- Authorization is done through a new endpoint in the integration app to better support multiple frontends on a single backend
 
 ### Improvements
 
+- When adding a new connection, the authorization process will start automatically
+- Retry authorization requests a few times before failing
 - The usual bit of small UI improvements
 
 ## v1.0.4 - 2025-07-25
