@@ -46,6 +46,12 @@ _(2)_ If the service uses OAUTH2 authorization.
 > **IMPORTANT!**
 > By default, data will only be stored in memory and will thus be lost whenever the server is restarted! It is thus highly advised to configure a database for the server in order to persist data.
 
+#### All components | General
+
+| Setting                    | Description                                                                             | Type    | Default value |
+|----------------------------|-----------------------------------------------------------------------------------------|---------|---------------|
+| <code>general.debug</code> | Whether to run in `debug` mode, resulting in more textual output and less restrictions. | Boolean | false         |
+
 #### All components | Network
 
 | Setting                                        | Description                                                                                        | Type    | Default value |
@@ -143,7 +149,6 @@ _(1)_ If the host uses OAUTH2 authorization.
 | Setting                                    | Description                                                         | Type    | Default value |
 |--------------------------------------------|---------------------------------------------------------------------|---------|---------------|
 | <code>general.verbose_notifications</code> | Whether to display more verbose notifications (good for debugging). | Boolean | false         |
-| <code>general.notification_timeout</code>  | The timeout for overlay notifications in seconds.                   | Number  | 3.0           |
 | <code>general.notification_timeout</code>  | The timeout for overlay notifications in seconds.                   | Number  | 3.0           |
 
 #### Theming
