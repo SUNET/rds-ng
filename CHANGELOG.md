@@ -1,6 +1,12 @@
 # RDS-NG - Changelog
 
-## v1.1.0 - 2025-??-??
+## v1.1.1 - 2025-??-??
+
+### Fixes
+
+- User settings could go out-of-sync if the server was unable to apply the new settings
+
+## v1.1.0 - 2025-08-22
 
 ### New
 
