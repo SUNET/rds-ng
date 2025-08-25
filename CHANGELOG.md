@@ -1,6 +1,10 @@
 # RDS-NG - Changelog
 
-## v1.1.1 - 2025-??-??
+## v1.1.1 - 2025-08-25
+
+### Improvements
+
+- Connectors log the announcements they send
 
 ### Fixes
 
