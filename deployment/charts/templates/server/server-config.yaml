@@ -3,9 +3,12 @@ kind: ConfigMap
 metadata:
   name: server-config
 data:
+  RDS_GENERAL_DEBUG: "true"
   RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{  .Values.server.allowedOrigins }}
+  RDS_NETWORK_EXTERNAL_REQUESTS_TIMEOUT: {{ default "" .Values.server.externalRequestsTimeout  | quote }}
   RDS_STORAGE_DATABASE_ENGINE: {{ default "memory" .Values.server.storage.engine | quote }}
   RDS_STORAGE_DRIVER: {{ default "" .Values.server.storage.driver | quote }}
+  RDS_GENERAL_DEBUG: "true"
 
   {{- if eq .Values.server.storage.databaseEngine "sqlite" }}
   RDS_STORAGE_DATABASE_SQLITE_FILE: {{ default "" .Values.server.storage.sqlite.sqliteFile | quote }}
