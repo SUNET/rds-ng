@@ -1,15 +1,17 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: server-config
+    name: server-config
 data:
-  RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{  .Values.server.allowedOrigins }}
-  RDS_STORAGE_DATABASE_ENGINE: {{ default "memory" .Values.server.storage.engine | quote }}
-  RDS_STORAGE_DRIVER: {{ default "" .Values.server.storage.driver | quote }}
+    RDS_GENERAL_DEBUG: {{ .Values.debugLog | quote }}
+    RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{ .Values.server.allowedOrigins }}
+    RDS_NETWORK_EXTERNAL_REQUESTS_TIMEOUT: {{ default "" .Values.server.externalRequestsTimeout  | quote }}
+    RDS_STORAGE_DATABASE_ENGINE: {{ default "memory" .Values.server.storage.engine | quote }}
+    RDS_STORAGE_DRIVER: {{ default "" .Values.server.storage.driver | quote }}
 
   {{- if eq .Values.server.storage.databaseEngine "sqlite" }}
-  RDS_STORAGE_DATABASE_SQLITE_FILE: {{ default "" .Values.server.storage.sqlite.sqliteFile | quote }}
-  {{- end }}
+    RDS_STORAGE_DATABASE_SQLITE_FILE: {{ default "" .Values.server.storage.sqlite.sqliteFile | quote }}
+  {{- end}}
 
   {{- if eq .Values.server.storage.databaseEngine "postgresql" }}
   RDS_STORAGE_DATABASE_POSTGRESQL_HOST: {{ default "" .Values.server.storage.postgresql.host | quote }}

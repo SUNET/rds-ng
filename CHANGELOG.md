@@ -1,5 +1,28 @@
 # RDS-NG - Changelog
 
+## v1.1.1 - 2025-08-25
+
+### Improvements
+
+- Connectors log the announcements they send
+
+### Fixes
+
+- User settings could go out-of-sync if the server was unable to apply the new settings
+
+## v1.1.0 - 2025-08-22
+
+### New
+
+- Multiple, user-selectable metadata profiles are now supported where applicable
+- Authorization is done through a new endpoint in the integration app to better support multiple frontends on a single backend
+
+### Improvements
+
+- When adding a new connection, the authorization process will start automatically
+- Retry authorization requests a few times before failing
+- The usual bit of small UI improvements
+
 ## v1.0.4 - 2025-07-25
 
 ### Improvements

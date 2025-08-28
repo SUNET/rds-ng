@@ -1,6 +1,7 @@
 appName: "rds"
 
 tag: "latest"
+debugLog: "false" # Enable debug logging
 
 ingress:
   enabled: true
@@ -55,16 +56,18 @@ server:
       database: ""                                                                  # The name of the database to use. Default: "rds_ng"
       user: ""                                                                      # The database username.
       password: ""                                                                  # The password for the database user.
-    
-
+   
 
 ### Frontend
 frontend:
-  componentName: "frontend"
-  integration:
-    scheme: "host"
-    hostApiUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng/api/v1"                        # The full URL where the host integration exposes its API; this needs to be in the form of <APP_URL>/api/v1 (e.g., http://localhost:8080/apps/rdsng/api/v1 for a local Nextcloud setup).
-    clientId: ""                                                                    # The client Id registered in Nexcloud for the frontend
+    componentName: "frontend"
+    integration:
+        scheme: "host"
+        hostUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng" # The full URL where the host.
+        endpoints:
+            entrypoint: /main # The relative entrypoint of the host integration application.
+            api: /api/v1 # The relative path of the host integration API.
+        clientId: "" # The client Id registered in Nexcloud for the frontend
 
   image:
     name: "ghcr.io/sciebo-rds/rds-ng-frontend"
@@ -80,29 +83,29 @@ frontend:
        
     annotations: {}
     class: "public"
+
 ###
 ### Connectors
 ###
 connectors:
+    ### OSF
+    osf:
+        enabled: true
+        componentName: "connector-osf"
+        image:
+            name: "ghcr.io/sciebo-rds/rds-ng-connector-osf"
+            pullPolicy: "Always"
+        oauth2:
+            clientId: "CHANGEME" # The clientId of your osf oauth application
+            clientSecret: "CHANGEME" # The secret of your osf oauth application
 
-  ### OSF
-  osf:
-    enabled: true
-    componentName: "connector-osf"
-    image:
-      name: "ghcr.io/sciebo-rds/rds-ng-connector-osf"
-      pullPolicy: "Always"
-    oauth2:
-      clientId: "CHANGEME"                                                          # The clientId of your osf oauth application
-      clientSecret: "CHANGEME"                                                      # The secret of your osf oauth application
-  
-  ### Zenodo
-  zenodo:
-    enabled: true
-    componentName: "connector-zenodo"
-    image:
-      name: "ghcr.io/sciebo-rds/rds-ng-connector-zenodo"
-      pullPolicy: "Always"
-    oauth2:
-      clientId: "CHANGEME"                                                          # The clientid of your zenodo oauth application
-      clientSecret: "CHANGEME"                                                      # The secret of your zenodo oauth application
+    ### Zenodo
+    zenodo:
+        enabled: true
+        componentName: "connector-zenodo"
+        image:
+            name: "ghcr.io/sciebo-rds/rds-ng-connector-zenodo"
+            pullPolicy: "Always"
+        oauth2:
+            clientId: "CHANGEME" # The clientid of your zenodo oauth application
+            clientSecret: "CHANGEME" # The secret of your zenodo oauth application

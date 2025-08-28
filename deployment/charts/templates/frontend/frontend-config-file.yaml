@@ -11,9 +11,12 @@ data:
     scheme = "host"
 
     [integration.host]
-    api_url = "{{ .Values.frontend.integration.hostApiUrl }}"
+    url = "{{ .Values.frontend.integration.hostUrl }}"
+
+    [integration.host.endpoints]
+    entrypoint = "{{ .Values.frontend.integration.endpoints.entrypoint }}"
+    api = "{{ .Values.frontend.integration.endpoints.api }}"
 
     [authorization.oauth2.client]
     id = "{{ .Values.frontend.integration.clientId }}"
     redirect_url = "{{ .Values.server.oauth2.clientRedirectUrl }}"
-
