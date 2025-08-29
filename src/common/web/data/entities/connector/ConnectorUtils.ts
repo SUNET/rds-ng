@@ -2,7 +2,10 @@ import { WebComponent } from "../../../component/WebComponent";
 import { createAuthorizationStrategy } from "../../../integration/authorization/strategies/AuthorizationStrategies";
 import { AuthorizationStrategiesCatalog } from "../../../integration/authorization/strategies/AuthorizationStrategiesCatalog";
 import { AuthorizationStrategy } from "../../../integration/authorization/strategies/AuthorizationStrategy";
-import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "../../../integration/authorization/strategies/oauth2/OAuth2Strategy";
+import { BasicStrategy } from "../../../integration/authorization/strategies/basic/BasicStrategy";
+import { type BasicStrategyConfiguration } from "../../../integration/authorization/strategies/basic/BasicTypes";
+import { OAuth2Strategy } from "../../../integration/authorization/strategies/oauth2/OAuth2Strategy";
+import { type OAuth2StrategyConfiguration } from "../../../integration/authorization/strategies/oauth2/OAuth2Types";
 import { Service } from "../../../services/Service";
 import { RedirectionTarget } from "../../../utils/HTMLUtils";
 import { Connector, type ConnectorID } from "./Connector";
@@ -51,11 +54,15 @@ export function connectorRequiresAuthorization(connector: Connector): boolean {
  */
 export function getStrategyConfigurationFromConnector(connector: Connector): Record<string, any> {
     switch (connector.authorization.strategy) {
+        // New strategies must be configured here
         case OAuth2Strategy.Strategy:
             // For OAuth2, the stored configuration matches the proper structure already
-            const config = connector.authorization.config as OAuth2StrategyConfiguration;
-            config.client.redirect_target = RedirectionTarget.Blank;
-            return config;
+            const oauth2Config = connector.authorization.config as OAuth2StrategyConfiguration;
+            oauth2Config.client.redirect_target = RedirectionTarget.Blank;
+            return oauth2Config;
+
+        case BasicStrategy.Strategy:
+            return connector.authorization.config as BasicStrategyConfiguration;
 
         default:
             return {};
@@ -74,7 +81,7 @@ export function getStrategyConfigurationFromConnector(connector: Connector): Rec
 export function createAuthorizationStrategyFromConnector(
     comp: WebComponent,
     svc: Service,
-    connector: Connector | undefined,
+    connector: Connector | undefined
 ): AuthorizationStrategy | undefined {
     if (!connector || !connectorRequiresAuthorization(connector)) {
         return undefined;

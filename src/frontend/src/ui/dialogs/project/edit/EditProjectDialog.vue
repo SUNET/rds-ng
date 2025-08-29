@@ -249,16 +249,16 @@ function onDataPathNodeExpand(path: string): void {
 
                         <span class="r-form-field">
                             <IftaLabel>
-                                <label>Name <MandatoryMark /></label>
                                 <InputText name="title" v-model="dialogData.userData.title" fluid v-focus />
+                                <label>Name <MandatoryMark /></label>
                             </IftaLabel>
                             <small>The name of the project.</small>
                         </span>
 
                         <span class="r-form-field mt-5">
                             <IftaLabel class="mb-[-0.5rem]">
-                                <label>Description</label>
                                 <Textarea name="description" v-model="dialogData.userData.description" rows="3" fluid />
+                                <label>Description</label>
                             </IftaLabel>
                             <small>The description of the project.</small>
                         </span>

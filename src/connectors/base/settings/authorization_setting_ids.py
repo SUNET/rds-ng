@@ -36,3 +36,16 @@ class OAuth2AuthorizationSettingIDs:
     CLIENT_ID = SettingID("authorization.oauth2", "client.id")
     CLIENT_SECRET = SettingID("authorization.oauth2", "client.secret")
     CLIENT_REDIRECT_URL = SettingID("authorization.oauth2", "client.redirect_url")
+
+
+class BasicAuthorizationSettingIDs:
+    # pylint: disable=too-few-public-methods
+    """
+    Identifiers for Basic authorization settings.
+
+    Attributes:
+        USER_ID_LABEL: The display label of the user ID.
+        USER_PASSWORD_LABEL: The display label of the user password.
+    """
+    USER_ID_LABEL = SettingID("authorization.basic", "user_id_label")
+    USER_PASSWORD_LABEL = SettingID("authorization.basic", "user_password_label")

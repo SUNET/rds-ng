@@ -1,5 +1,11 @@
 # RDS-NG - Changelog
 
+## v1.2.0 - 2025-??-??
+
+### New
+
+- Basic authentication support for connectors
+
 ## v1.1.1 - 2025-08-25
 
 ### Improvements
