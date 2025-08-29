@@ -7,7 +7,12 @@ from http import HTTPStatus
 import requests
 from dataclasses_json import dataclass_json
 
-from .oauth2_types import OAuth2Token, OAuth2AuthorizationRequestData, OAuth2TokenData
+from .oauth2_types import (
+    OAuth2StrategyPrivateConfiguration,
+    OAuth2Token,
+    OAuth2AuthorizationRequestData,
+    OAuth2TokenData,
+)
 from .oauth2_utils import format_oauth2_error_response
 from ..authorization_strategy import AuthorizationStrategy
 from ... import AuthorizationRequestPayload
@@ -16,46 +21,6 @@ from .....data.entities import clone_entity
 from .....data.entities.authorization import AuthorizationSettings, AuthorizationToken
 from .....data.entities.user import UserID, UserToken
 from .....services import Service
-
-
-@dataclass_json
-@dataclass(frozen=True, kw_only=True)
-class OAuth2StrategyPublicConfiguration:
-    """
-    The OAuth2 strategy public configuration.
-    """
-
-    @dataclass_json
-    @dataclass(frozen=True, kw_only=True)
-    class Server:
-        host: str = ""
-        authorization_endpoint: str = ""
-        token_endpoint: str = ""
-        scope: str = ""
-
-    @dataclass_json
-    @dataclass(frozen=True, kw_only=True)
-    class Client:
-        client_id: str = ""
-        redirect_url: str = ""
-
-    server: Server = field(default_factory=Server)
-    client: Client = field(default_factory=Client)
-
-
-@dataclass_json
-@dataclass(frozen=True, kw_only=True)
-class OAuth2StrategyPrivateConfiguration:
-    """
-    The OAuth2 strategy private configuration.
-    """
-
-    @dataclass_json
-    @dataclass(frozen=True, kw_only=True)
-    class Client:
-        client_secret: str = ""
-
-    client: Client = field(default_factory=Client)
 
 
 class OAuth2Strategy(AuthorizationStrategy):
@@ -94,7 +59,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         return (
             OAuth2StrategyPrivateConfiguration.from_dict(self._auth_private.config)
             if self._auth_private is not None
-            else OAuth2StrategyPublicConfiguration()
+            else OAuth2StrategyPrivateConfiguration()
         )
 
     def request_authorization(

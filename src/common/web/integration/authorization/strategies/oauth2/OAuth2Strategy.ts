@@ -4,24 +4,7 @@ import { RedirectionTarget } from "../../../../utils/HTMLUtils";
 import { getURLQueryParam } from "../../../../utils/URLUtils";
 import { AuthorizationRequest } from "../../AuthorizationRequest";
 import { AuthorizationStrategy } from "../AuthorizationStrategy";
-import { type OAuth2AuthorizationRequestData } from "./OAuth2Types";
-
-/**
- * The OAuth2 strategy configuration.
- */
-export interface OAuth2StrategyConfiguration {
-    server: {
-        host: string;
-        authorization_endpoint: string;
-        token_endpoint: string;
-        scope: string;
-    };
-    client: {
-        client_id: string;
-        redirect_url: string;
-        redirect_target: RedirectionTarget;
-    };
-}
+import { type OAuth2AuthorizationRequestData, type OAuth2StrategyConfiguration } from "./OAuth2Types";
 
 /**
  * OAuth2 authorization strategy.
