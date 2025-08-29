@@ -3,5 +3,4 @@ from .basic_types import (
     BasicAuthorizationRequestData,
     BasicStrategyConfiguration,
     BasicToken,
-    BasicTokenData,
 )

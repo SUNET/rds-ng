@@ -1,5 +1,7 @@
+import time
 import typing
 
+from . import BasicAuthorizationRequestData, BasicToken
 from ..authorization_strategy import AuthorizationStrategy
 from ... import AuthorizationRequestPayload
 from .....component import BackendComponent
@@ -43,60 +45,23 @@ class BasicStrategy(AuthorizationStrategy):
         payload: AuthorizationRequestPayload,
         request_data: typing.Any,
     ) -> AuthorizationToken:
-        # TODO
-        pass
-        # oauth2_data = self._get_oauth2_request_data(request_data)
-        # client_secret = self._get_client_secret(payload.auth_bearer)
-        #
-        # response = requests.post(
-        #     urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
-        #     data={
-        #         "grant_type": "authorization_code",
-        #         "client_id": oauth2_data.client_id,
-        #         "client_secret": client_secret,
-        #         "scope": oauth2_data.scope,
-        #         "code": oauth2_data.auth_code,
-        #         "redirect_uri": oauth2_data.redirect_url,
-        #     },
-        #     timeout=self._request_timeout,
-        # )
-        #
-        # if response.status_code == HTTPStatus.OK:
-        #     resp_data = response.json()
-        #     try:
-        #         self._verify_oauth2_token_data(resp_data)
-        #
-        #         return AuthorizationToken(
-        #             user_id=user_id,
-        #             auth_id=payload.auth_id,
-        #             auth_type=payload.auth_type,
-        #             auth_issuer=payload.auth_issuer,
-        #             auth_issuer_url=payload.auth_issuer_url,
-        #             auth_bearer=payload.auth_bearer,
-        #             state=AuthorizationToken.TokenState.VALID,
-        #             timestamp=time.time(),
-        #             expiration_timestamp=self._get_expiration_timestamp(resp_data),
-        #             refresh_attempts=0,
-        #             strategy=self.strategy,
-        #             token=typing.cast(
-        #                 typing.Dict[any, str], self._create_oauth2_token(resp_data)
-        #             ),
-        #             data=typing.cast(
-        #                 typing.Dict[any, str],
-        #                 OAuth2TokenData(
-        #                     token_host=oauth2_data.token_host,
-        #                     token_endpoint=oauth2_data.token_endpoint,
-        #                     client_id=oauth2_data.client_id,
-        #                     scope=oauth2_data.scope,
-        #                 ),
-        #             ),
-        #         )
-        #     except Exception as exc:  # pylint: disable=broad-exception-caught
-        #         raise RuntimeError(f"Invalid OAuth2 token received: {exc}")
-        # else:
-        #     raise RuntimeError(
-        #         f"Unable to request access token: {format_oauth2_error_response(response)}"
-        #     )
+        return AuthorizationToken(
+            user_id=user_id,
+            auth_id=payload.auth_id,
+            auth_type=payload.auth_type,
+            auth_issuer=payload.auth_issuer,
+            auth_issuer_url=payload.auth_issuer_url,
+            auth_bearer=payload.auth_bearer,
+            state=AuthorizationToken.TokenState.VALID,
+            timestamp=time.time(),
+            expiration_timestamp=0,
+            refresh_attempts=0,
+            strategy=self.strategy,
+            token=typing.cast(
+                typing.Dict[any, str], self._create_basic_token(request_data)
+            ),
+            data={},
+        )
 
     def refresh_authorization(self, token: AuthorizationToken) -> None:
         # We simply reset the token so it continues to be valid
@@ -105,11 +70,31 @@ class BasicStrategy(AuthorizationStrategy):
     def _get_token_content(
         self, token: AuthorizationToken, content: AuthorizationStrategy.ContentType
     ) -> typing.Any:
-        # TODO
+        basic_token = self._get_basic_data_from_token(token)
+
+        if content == AuthorizationStrategy.ContentType.AUTH_LOGIN:
+            return basic_token.user_id
+        elif content == AuthorizationStrategy.ContentType.AUTH_PASSWORD:
+            return basic_token.user_password
+
         return None
-        # We only support a single content type, so no need to distinguish
-        # oauth2_token, _ = self._get_oauth2_data_from_token(token)
-        # return oauth2_token.access_token
+
+    def _create_basic_token(self, request_data: typing.Any) -> BasicToken:
+        basic_data: BasicAuthorizationRequestData = (
+            BasicAuthorizationRequestData.from_dict(request_data)
+        )
+
+        if basic_data.user_id == "":
+            raise RuntimeError("Missing user ID")
+        if basic_data.user_password == "":
+            raise RuntimeError("Missing user password")
+
+        return BasicToken(
+            user_id=basic_data.user_id, user_password=basic_data.user_password
+        )
+
+    def _get_basic_data_from_token(self, token: AuthorizationToken) -> BasicToken:
+        return BasicToken.from_dict(token.token)
 
 
 def create_basic_strategy(

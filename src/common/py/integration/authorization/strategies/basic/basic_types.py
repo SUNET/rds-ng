@@ -46,11 +46,3 @@ class BasicToken:
 
     user_id: str
     user_password: str
-
-
-@dataclass_json
-@dataclass(frozen=True, kw_only=True)
-class BasicTokenData:
-    """
-    Basic additional token data.
-    """

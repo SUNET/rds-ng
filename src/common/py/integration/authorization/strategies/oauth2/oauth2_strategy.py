@@ -174,7 +174,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         oauth2_token, _ = self._get_oauth2_data_from_token(token)
         return oauth2_token.access_token
 
-    def _create_oauth2_token(self, resp_data) -> OAuth2Token:
+    def _create_oauth2_token(self, resp_data: typing.Any) -> OAuth2Token:
         return OAuth2Token(
             access_token=resp_data["access_token"],
             token_type=resp_data["token_type"],
