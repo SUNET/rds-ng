@@ -75,7 +75,7 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         );
         strategy.requestCompleted(() => {
             // Once the request has completed, fetch all user authorizations
-            const action = new ListUserAuthorizationsAction(comp);
+            const action = new ListUserAuthorizationsAction(comp, true);
             action.prepare();
             action.execute();
         });

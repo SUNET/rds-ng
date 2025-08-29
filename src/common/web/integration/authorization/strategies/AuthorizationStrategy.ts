@@ -166,7 +166,7 @@ export abstract class AuthorizationStrategy {
         }
     }
 
-    private handleRequestCompletion(): void {
+    protected handleRequestCompletion(): void {
         // Give the system some time to get up again
         setTimeout(() => this._executionCallbacks.invokeDoneCallbacks(), 250);
     }

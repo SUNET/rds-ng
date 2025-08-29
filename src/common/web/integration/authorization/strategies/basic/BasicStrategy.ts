@@ -1,5 +1,6 @@
 import { WebComponent } from "../../../../component/WebComponent";
 import { Service } from "../../../../services/Service";
+import { basicCredentialsDialog } from "../../../../ui/dialogs/authorization/BasicCredentialsDialog";
 import { RedirectionTarget } from "../../../../utils/HTMLUtils";
 import { AuthorizationRequest } from "../../AuthorizationRequest";
 import { AuthorizationExecutionType, AuthorizationStrategy } from "../AuthorizationStrategy";
@@ -20,13 +21,19 @@ export class BasicStrategy extends AuthorizationStrategy {
     }
 
     protected initiateRequest(authRequest: AuthorizationRequest): void {
-        // TODO: Get credentials
-        authRequest.extendedData = { user_id: "id", user_password: "pwd" } as BasicAuthorizationRequestData;
+        basicCredentialsDialog(this._component, this._config.user_id_label, this._config.user_password_label)
+            .then((data) => {
+                authRequest.extendedData = { user_id: data.userName, user_password: data.userPassword } as BasicAuthorizationRequestData;
 
-        // We execute the request immediately
-        this.executeAuthorizationRequest(authRequest, AuthorizationExecutionType.Direct)
-            .then(() => {})
-            .catch((error) => {});
+                // We execute the request immediately
+                this.executeAuthorizationRequest(authRequest, AuthorizationExecutionType.Direct)
+                    .then(() => {})
+                    .catch((error) => {});
+            })
+            .catch((_) => {
+                // This will simply re-fetch all authorizations, just in case
+                this.handleRequestCompletion();
+            });
     }
 
     protected getRequestData(authRequest: AuthorizationRequest): any {
