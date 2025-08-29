@@ -1,7 +1,7 @@
 import time
 import typing
 
-from . import BasicAuthorizationRequestData, BasicToken
+from .basic_types import BasicAuthorizationRequestData, BasicToken
 from ..authorization_strategy import AuthorizationStrategy
 from ... import AuthorizationRequestPayload
 from .....component import BackendComponent

@@ -2,8 +2,8 @@ import { WebComponent } from "../../../../component/WebComponent";
 import { Service } from "../../../../services/Service";
 import { RedirectionTarget } from "../../../../utils/HTMLUtils";
 import { AuthorizationRequest } from "../../AuthorizationRequest";
-import { AuthorizationStrategy } from "../AuthorizationStrategy";
-import { BasicAuthorizationRequestData, type BasicStrategyConfiguration } from "./BasicTypes";
+import { AuthorizationExecutionType, AuthorizationStrategy } from "../AuthorizationStrategy";
+import { type BasicAuthorizationRequestData, type BasicStrategyConfiguration } from "./BasicTypes";
 
 /**
  * Basic authorization strategy.
@@ -20,35 +20,17 @@ export class BasicStrategy extends AuthorizationStrategy {
     }
 
     protected initiateRequest(authRequest: AuthorizationRequest): void {
-        /*const url = new URL(this._config.server.authorization_endpoint, new URL(this._config.server.host));
-        url.searchParams.set("response_type", "code");
-        url.searchParams.set("client_id", this._config.client.client_id);
-        url.searchParams.set("scope", this._config.server.scope);
-        url.searchParams.set("access_type", "offline");
-        url.searchParams.set("approval_prompt", "auto");
-        url.searchParams.set("redirect_uri", this._config.client.redirect_url);
-        url.searchParams.set("state", authRequest.encodedPayload);
-        this.redirect(url.toString());*/
-        // TODO
+        // TODO: Get credentials
+        authRequest.extendedData = { user_id: "id", user_password: "pwd" } as BasicAuthorizationRequestData;
+
+        // We execute the request immediately
+        this.executeAuthorizationRequest(authRequest, AuthorizationExecutionType.Direct)
+            .then(() => {})
+            .catch((error) => {});
     }
 
-    protected getRequestData(_: AuthorizationRequest): any {
-        // TODO
-        return {
-            user_id: "TODO",
-            user_password: "TODO"
-        } as BasicAuthorizationRequestData;
-    }
-
-    protected finishRequest(authRequest: AuthorizationRequest): void {
-        // TODO
-        /*
-        if (this._redirectionTarget == RedirectionTarget.Blank) {
-            // Even if there's no parent, this will work
-            window.parent.close();
-        } else {
-            this.redirect(authRequest.payload.auth_issuer_url);
-        }*/
+    protected getRequestData(authRequest: AuthorizationRequest): any {
+        return authRequest.extendedData as BasicAuthorizationRequestData;
     }
 }
 
