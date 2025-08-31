@@ -32,6 +32,8 @@ spec:
               name: server-config
           - secretRef:
               name: server-secret
+          - secretRef:
+              name: network-api-secret
           volumeMounts:
             - mountPath: /data
               name: server-volume

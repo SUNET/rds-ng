@@ -4,7 +4,9 @@ metadata:
   name: "{{ .Values.connectors.zenodo.componentName }}-config"
   namespace: {{ .Values.nameSpace }}
 data:
+{{- if .Values.createSecrets }}
   RDS_NETWORK_API_KEY: {{ .Values.server.networkApiKey }}
+{{- end }}
   RDS_CONNECTOR_TARGET: {{ .Values.connectors.zenodo.targetUrl }}
   RDS_NETWORK_EXTERNAL_REQUESTS_TIMEOUT: {{ default "" .Values.server.externalRequestsTimeout  | quote }}
   RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{ .Values.server.allowedOrigins }}

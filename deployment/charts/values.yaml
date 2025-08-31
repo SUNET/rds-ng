@@ -1,7 +1,8 @@
+---
 appName: "rds"
 
 tag: "latest"
-debugLog: "false" # Enable debug logging
+debugLog: "false"  # Enable debug logging
 
 ingress:
   enabled: true
@@ -15,6 +16,7 @@ ingress:
   annotations: {}
   class: "public"
 
+createSecrets: true                                                                 # If to create server-secret and network-api-secret. It should preferably be created with sealedsecrets or some other secure method, and all plain text ouath2 secrets should be left out of this file
 ### Server
 server:
   componentName: "server"
@@ -24,7 +26,6 @@ server:
     pullPolicy: "Always"
   allowedOrigins: "'*'"
   sqliteFile: "/data/rds.db"                                                        # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
-  createSecret: true                                                                # If to create server-secret. It should preferably be created with sealedsecrets or some other secure method, and all plain text ouath2 secrets should be left out of this file
   oauth2:
     clientId: "CHANGEME"                                                            # The client Id registered in Nexcloud for the frontend
     clientRedirectUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng/main"                   # The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host integration (e.g., http://localhost:8080/apps/rdsng/main for a local Nextcloud setup).
@@ -60,13 +61,13 @@ server:
 
 ### Frontend
 frontend:
-    componentName: "frontend"
-    integration:
+  componentName: "frontend"
+  integration:
         scheme: "host"
         hostUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng" # The full URL where the host.
         endpoints:
-            entrypoint: /main # The relative entrypoint of the host integration application.
-            api: /api/v1 # The relative path of the host integration API.
+          entrypoint: /main # The relative entrypoint of the host integration application.
+          api: /api/v1 # The relative path of the host integration API.
         clientId: "" # The client Id registered in Nexcloud for the frontend
 
   image:
@@ -109,3 +110,9 @@ connectors:
         oauth2:
             clientId: "CHANGEME" # The clientid of your zenodo oauth application
             clientSecret: "CHANGEME" # The secret of your zenodo oauth application
+    stub:
+      enabled: false
+      componentName: "connector-stub"
+      oauth2:
+        clientId: "CHANGEME"
+        clientSecret: "CHANGEME"
