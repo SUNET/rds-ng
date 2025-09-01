@@ -156,10 +156,11 @@ _(1)_ If the host uses OAUTH2 authorization.
 
 #### General
 
-| Setting                                    | Description                                                         | Type    | Default value |
-|--------------------------------------------|---------------------------------------------------------------------|---------|---------------|
-| <code>general.verbose_notifications</code> | Whether to display more verbose notifications (good for debugging). | Boolean | false         |
-| <code>general.notification_timeout</code>  | The timeout for overlay notifications in seconds.                   | Number  | 3.0           |
+| Setting                                    | Description                                                         | Type    | Default value              |
+|--------------------------------------------|---------------------------------------------------------------------|---------|----------------------------|
+| <code>general.support_email</code>         | The support email address.                                          | Boolean | sciebo.rds@uni-muenster.de |
+| <code>general.verbose_notifications</code> | Whether to display more verbose notifications (good for debugging). | Boolean | false                      |
+| <code>general.notification_timeout</code>  | The timeout for overlay notifications in seconds.                   | Number  | 3.0                        |
 
 #### Theming
 
