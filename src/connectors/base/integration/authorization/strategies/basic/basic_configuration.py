@@ -18,6 +18,7 @@ def get_basic_strategy_configuration(
             user_password_label=config.value(
                 BasicAuthorizationSettingIDs.USER_PASSWORD_LABEL
             ),
+            help_link=config.value(BasicAuthorizationSettingIDs.HELP_LINK),
         ).to_dict(),
         private_config={},
     )

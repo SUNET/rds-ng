@@ -1,11 +1,10 @@
-import { RedirectionTarget } from "../../../../utils/HTMLUtils";
-
 /**
  * The Basic strategy configuration.
  */
 export interface BasicStrategyConfiguration {
     user_id_label: string;
     user_password_label: string;
+    help_link: string;
 }
 
 /**

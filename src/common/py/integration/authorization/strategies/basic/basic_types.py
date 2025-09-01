@@ -11,11 +11,14 @@ class BasicStrategyConfiguration:
 
     Attributes:
         user_id_label: The display label of the user ID.
-    user_password_label: The display label of the user password.
+        user_password_label: The display label of the user password.
+        help_link: An optional link for external help.
     """
 
     user_id_label: str
     user_password_label: str
+
+    help_link: str
 
 
 @dataclass_json

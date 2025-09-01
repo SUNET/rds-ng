@@ -46,6 +46,8 @@ class BasicAuthorizationSettingIDs:
     Attributes:
         USER_ID_LABEL: The display label of the user ID.
         USER_PASSWORD_LABEL: The display label of the user password.
+        HELP_LINK: An external help link.
     """
     USER_ID_LABEL = SettingID("authorization.basic", "user_id_label")
     USER_PASSWORD_LABEL = SettingID("authorization.basic", "user_password_label")
+    HELP_LINK = SettingID("authorization.basic", "help_link")

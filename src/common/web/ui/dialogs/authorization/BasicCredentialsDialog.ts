@@ -1,6 +1,7 @@
 import { defineAsyncComponent } from "vue";
 
 import { WebComponent } from "../../../component/WebComponent";
+import { type BasicStrategyConfiguration } from "../../../integration/authorization/strategies/basic/BasicTypes";
 import { extendedDialog, type ExtendedDialogResult } from "../ExtendedDialog";
 
 /**
@@ -12,20 +13,17 @@ export interface BasicCredentialsDialogData {
 
     userPassword: string;
     userPasswordLabel: string;
+
+    helpLink: string;
 }
 
 /**
  * Shows the edit dialog for a connector instance.
  *
  * @param comp - The global component.
- * @param userNameLabel - The label of the username.
- * @param userPasswordLabel - The label of the user password.
+ * @param config - An optional basic strategy configuration.
  */
-export async function basicCredentialsDialog(
-    comp: WebComponent,
-    userNameLabel?: string,
-    userPasswordLabel?: string
-): ExtendedDialogResult<BasicCredentialsDialogData> {
+export async function basicCredentialsDialog(comp: WebComponent, config?: BasicStrategyConfiguration): ExtendedDialogResult<BasicCredentialsDialogData> {
     return extendedDialog<BasicCredentialsDialogData>(
         comp,
         defineAsyncComponent(() => import("./BasicCredentialsDialog.vue")),
@@ -36,9 +34,10 @@ export async function basicCredentialsDialog(
         },
         {
             userName: "",
-            userNameLabel: userNameLabel || "User name",
+            userNameLabel: config?.user_id_label || "User name",
             userPassword: "",
-            userPasswordLabel: userPasswordLabel || "Password"
+            userPasswordLabel: config?.user_password_label || "Password",
+            helpLink: config?.help_link || ""
         },
         {
             hasAcceptButton: true,

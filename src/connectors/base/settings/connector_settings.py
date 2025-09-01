@@ -36,6 +36,7 @@ def get_connector_settings() -> typing.Dict[SettingID, typing.Any]:
         # Basic auth settings
         BasicAuthorizationSettingIDs.USER_ID_LABEL: "User ID",
         BasicAuthorizationSettingIDs.USER_PASSWORD_LABEL: "Password",
+        BasicAuthorizationSettingIDs.HELP_LINK: "",
         # Transmission settings
         TransmissionSettingIDs.MAX_ATTEMPTS: 3,
         TransmissionSettingIDs.ATTEMPTS_DELAY: 3.0,

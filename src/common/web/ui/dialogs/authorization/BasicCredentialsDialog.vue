@@ -6,6 +6,7 @@ import InputText from "primevue/inputtext";
 import Password from "primevue/password";
 import { ref } from "vue";
 import * as yup from "yup";
+import LinkedText from "../../components/misc/LinkedText.vue";
 
 import { useDirectives } from "../../Directives";
 import { useExtendedDialogTools } from "../ExtendedDialogTools";
@@ -60,6 +61,11 @@ const initialFormValues = ref({
                 <small>The {{ dialogData.userData.userPasswordLabel.toLowerCase() }} for the external service.</small>
             </span>
         </Fieldset>
+
+        <div v-if="!!dialogData.userData.helpLink">
+            For further information about how to get credentials from the external service, you can visit
+            <LinkedText :link="dialogData.userData.helpLink" text="this link" /> which will provide additional help.
+        </div>
     </Form>
 </template>
 
