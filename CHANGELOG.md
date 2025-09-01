@@ -4,7 +4,15 @@
 
 ### New
 
-- Basic authentication support for connectors
+- Basic authentication (username/password) support for connectors
+
+### Improvements
+
+- Configurable support email address
+
+### Fixes
+
+- Minor fixes here and there
 
 ## v1.1.1 - 2025-08-25
 
