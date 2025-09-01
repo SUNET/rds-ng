@@ -40,6 +40,7 @@ def create_authorization_strategy(
     *,
     user_token: UserToken | None = None,
     auth_token: AuthorizationToken | None = None,
+    auth_public: AuthorizationSettings | None = None,
     auth_private: AuthorizationSettings | None = None,
 ) -> AuthorizationStrategy:
     """
@@ -51,6 +52,7 @@ def create_authorization_strategy(
         strategy: The strategy identifier.
         user_token: An optional user token.
         auth_token: An optional authorization token.
+        auth_public: Optional public authorization settings.
         auth_private: Optional private authorization settings.
 
     Returns:
@@ -68,5 +70,6 @@ def create_authorization_strategy(
         svc,
         user_token=user_token,
         auth_token=auth_token,
+        auth_public=auth_public,
         auth_private=auth_private,
     )

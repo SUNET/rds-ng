@@ -37,6 +37,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         *,
         user_token: UserToken | None = None,
         auth_token: AuthorizationToken | None = None,
+        auth_public: AuthorizationSettings | None = None,
         auth_private: AuthorizationSettings | None = None,
     ):
         from .....settings import NetworkSettingIDs
@@ -48,18 +49,12 @@ class OAuth2Strategy(AuthorizationStrategy):
             contents=AuthorizationStrategy.ContentType.AUTH_TOKEN,
             user_token=user_token,
             auth_token=auth_token,
+            auth_public=auth_public,
             auth_private=auth_private,
         )
 
         self._request_timeout = comp.data.config.value(
             NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
-        )
-
-    def _get_private_configuration(self) -> OAuth2StrategyPrivateConfiguration:
-        return (
-            OAuth2StrategyPrivateConfiguration.from_dict(self._auth_private.config)
-            if self._auth_private is not None
-            else OAuth2StrategyPrivateConfiguration()
         )
 
     def request_authorization(
@@ -216,7 +211,11 @@ class OAuth2Strategy(AuthorizationStrategy):
 
         # If not set directly, look it up in the private settings if possible
         if client_secret == "":
-            if (priv_config := self._get_private_configuration()) is not None:
+            if (
+                priv_config := self._get_private_configuration(
+                    OAuth2StrategyPrivateConfiguration
+                )
+            ) is not None:
                 client_secret = priv_config.client.client_secret
 
         # Verify the secret
@@ -249,6 +248,7 @@ def create_oauth2_strategy(
     *,
     user_token: UserToken | None = None,
     auth_token: AuthorizationToken | None = None,
+    auth_public: AuthorizationSettings | None = None,
     auth_private: AuthorizationSettings | None = None,
 ) -> OAuth2Strategy:
     """
@@ -259,6 +259,7 @@ def create_oauth2_strategy(
         svc: The service to use for message sending.
         user_token: An optional user token.
         auth_token: An optional authorization token.
+        auth_public: Optional public authorization settings.
         auth_private: Optional private authorization settings.
 
     Returns:
@@ -269,5 +270,6 @@ def create_oauth2_strategy(
         svc,
         user_token=user_token,
         auth_token=auth_token,
+        auth_public=auth_public,
         auth_private=auth_private,
     )

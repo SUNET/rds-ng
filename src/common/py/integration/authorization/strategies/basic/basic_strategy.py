@@ -1,7 +1,11 @@
 import time
 import typing
 
-from .basic_types import BasicAuthorizationRequestData, BasicToken
+from .basic_types import (
+    BasicAuthorizationRequestData,
+    BasicStrategyConfiguration,
+    BasicToken,
+)
 from ..authorization_strategy import AuthorizationStrategy
 from ... import AuthorizationRequestPayload
 from .....component import BackendComponent
@@ -24,6 +28,7 @@ class BasicStrategy(AuthorizationStrategy):
         *,
         user_token: UserToken | None = None,
         auth_token: AuthorizationToken | None = None,
+        auth_public: AuthorizationSettings | None = None,
         auth_private: AuthorizationSettings | None = None,
     ):
         super().__init__(
@@ -36,6 +41,7 @@ class BasicStrategy(AuthorizationStrategy):
             ),
             user_token=user_token,
             auth_token=auth_token,
+            auth_public=auth_public,
             auth_private=auth_private,
         )
 
@@ -80,13 +86,15 @@ class BasicStrategy(AuthorizationStrategy):
         return None
 
     def _create_basic_token(self, request_data: typing.Any) -> BasicToken:
+        config = self._get_public_configuration(BasicStrategyConfiguration)
+
         basic_data: BasicAuthorizationRequestData = (
             BasicAuthorizationRequestData.from_dict(request_data)
         )
 
-        if basic_data.user_id == "":
+        if not config.user_id_optional and basic_data.user_id == "":
             raise RuntimeError("Missing user ID")
-        if basic_data.user_password == "":
+        if not config.user_password_optional and basic_data.user_password == "":
             raise RuntimeError("Missing user password")
 
         return BasicToken(
@@ -103,6 +111,7 @@ def create_basic_strategy(
     *,
     user_token: UserToken | None = None,
     auth_token: AuthorizationToken | None = None,
+    auth_public: AuthorizationSettings | None = None,
     auth_private: AuthorizationSettings | None = None,
 ) -> BasicStrategy:
     """
@@ -113,6 +122,7 @@ def create_basic_strategy(
         svc: The service to use for message sending.
         user_token: An optional user token.
         auth_token: An optional authorization token.
+        auth_public: Optional public authorization settings.
         auth_private: Optional private authorization settings.
 
     Returns:
@@ -123,5 +133,6 @@ def create_basic_strategy(
         svc,
         user_token=user_token,
         auth_token=auth_token,
+        auth_public=auth_public,
         auth_private=auth_private,
     )

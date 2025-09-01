@@ -7,23 +7,30 @@ import Password from "primevue/password";
 import { ref } from "vue";
 import * as yup from "yup";
 
-import { useDirectives } from "../../Directives";
 import { useExtendedDialogTools } from "../ExtendedDialogTools";
 
+import LinkedText from "../../components/misc/LinkedText.vue";
 import MandatoryMark from "../../components/misc/MandatoryMark.vue";
 
 const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
-const { vFocus } = useDirectives();
 
 const form = ref();
-const validator = useValidator(form, {
-    name: yup.string().trim().required().label(dialogData.userData.userNameLabel),
-    password: yup.string().required().label(dialogData.userData.userPasswordLabel)
-});
+const validator = useValidator(form, getValidatorShape());
 const initialFormValues = ref({
     name: dialogData.userData.userName,
     password: dialogData.userData.userPassword
 });
+
+function getValidatorShape(): any {
+    const name = dialogData.userData.config.user_id_optional
+        ? yup.string().trim().notRequired().label(dialogData.userData.config.user_id_label)
+        : yup.string().trim().required().label(dialogData.userData.config.user_id_label);
+    const password = dialogData.userData.config.user_password_optional
+        ? yup.string().notRequired().label(dialogData.userData.config.user_password_label)
+        : yup.string().required().label(dialogData.userData.config.user_password_label);
+
+    return { name: name, password: password };
+}
 </script>
 
 <template>
@@ -37,27 +44,31 @@ const initialFormValues = ref({
         @submit="acceptDialog"
         class="r-form"
     >
-        <div>
-            The external services requires you to provide account credentials (<em>{{ dialogData.userData.userNameLabel.toLowerCase() }}</em> and
-            <em>{{ dialogData.userData.userPasswordLabel.toLowerCase() }}</em
-            >) in order to be used.
+        <div>The external services requires you to provide account credentials in order to be used.</div>
+        <div v-if="!!dialogData.userData.config.help_link">
+            For further information about how to get these credentials, you can visit
+            <LinkedText :link="dialogData.userData.config.help_link" text="this link" /> which will provide additional help.
         </div>
 
         <Fieldset legend="Credentials" class="r-form-fieldset">
-            <span class="r-form-field">
+            <span v-if="!!dialogData.userData.config.user_id_optional" class="r-form-field">
                 <IftaLabel>
-                    <InputText name="name" v-model.trim="dialogData.userData.userName" fluid v-focus />
-                    <label>{{ dialogData.userData.userNameLabel }} <MandatoryMark /></label>
+                    <InputText name="name" v-model.trim="dialogData.userData.userName" fluid autofocus />
+                    <label>{{ dialogData.userData.config.user_id_label }} <MandatoryMark /></label>
                 </IftaLabel>
-                <small>The {{ dialogData.userData.userNameLabel.toLowerCase() }} for the external service.</small>
+                <small>The {{ dialogData.userData.config.user_id_label.toLowerCase() }} for the external service.</small>
             </span>
 
-            <span class="r-form-field mt-5">
+            <span
+                v-if="!dialogData.userData.config.user_password_optional"
+                class="r-form-field"
+                :class="{ 'mt-5': !dialogData.userData.config.user_id_optional }"
+            >
                 <IftaLabel>
-                    <Password name="password" v-model="dialogData.userData.userPassword" :feedback="false" fluid />
-                    <label>{{ dialogData.userData.userPasswordLabel }} <MandatoryMark /></label>
+                    <Password name="password" v-model="dialogData.userData.userPassword" :feedback="false" fluid autofocus />
+                    <label>{{ dialogData.userData.config.user_password_label }} <MandatoryMark /></label>
                 </IftaLabel>
-                <small>The {{ dialogData.userData.userPasswordLabel.toLowerCase() }} for the external service.</small>
+                <small>The {{ dialogData.userData.config.user_password_label.toLowerCase() }} for the external service.</small>
             </span>
         </Fieldset>
     </Form>

@@ -21,7 +21,7 @@ export class BasicStrategy extends AuthorizationStrategy {
     }
 
     protected initiateRequest(authRequest: AuthorizationRequest): void {
-        basicCredentialsDialog(this._component, this._config.user_id_label, this._config.user_password_label)
+        basicCredentialsDialog(this._component, this._config)
             .then((data) => {
                 authRequest.extendedData = { user_id: data.userName, user_password: data.userPassword } as BasicAuthorizationRequestData;
 

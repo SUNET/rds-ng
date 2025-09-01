@@ -1,4 +1,3 @@
-import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
 import { getConnectorInstanceAuthorizationID } from "@common/data/entities/authorization/AuthorizationTokenUtils";
 import { Connector } from "@common/data/entities/connector/Connector";
@@ -82,14 +81,9 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         strategy.initiateAuthorizationRequest(authRequest);
     }
 
-    function revokeInstanceAuthorization(instance: ConnectorInstance, updateAuthState: boolean = true): void {
+    function revokeInstanceAuthorization(instance: ConnectorInstance): void {
         const action = new RevokeAuthorizationAction(comp);
-        action.prepare(getConnectorInstanceAuthorizationID(instance), `connector ${instance.name}`).done((_, success, msg) => {
-            if (success && updateAuthState) {
-                // @ts-ignore
-                instance.authorization_state = AuthorizationState.NotAuthorized;
-            }
-        });
+        action.prepare(getConnectorInstanceAuthorizationID(instance), `connector ${instance.name}`).done((_, success, msg) => {});
         action.execute();
     }
 
