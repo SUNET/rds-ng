@@ -1,8 +1,10 @@
 ---
 appName: "rds"
 
-tag: "latest"
+### General settings
+tag: "latest" # The release tag to be deployed
 debugLog: "false" # Enable debug logging
+supportEmail: "" # The user support email address that will be displayed in the frontend 
 
 ingress:
     enabled: true
