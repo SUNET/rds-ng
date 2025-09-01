@@ -7,14 +7,12 @@ import Password from "primevue/password";
 import { ref } from "vue";
 import * as yup from "yup";
 
-import { useDirectives } from "../../Directives";
 import { useExtendedDialogTools } from "../ExtendedDialogTools";
 
 import LinkedText from "../../components/misc/LinkedText.vue";
 import MandatoryMark from "../../components/misc/MandatoryMark.vue";
 
 const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
-const { vFocus } = useDirectives();
 
 const form = ref();
 const validator = useValidator(form, getValidatorShape());
@@ -53,9 +51,9 @@ function getValidatorShape(): any {
         </div>
 
         <Fieldset legend="Credentials" class="r-form-fieldset">
-            <span v-if="!dialogData.userData.config.user_id_optional" class="r-form-field">
+            <span v-if="!!dialogData.userData.config.user_id_optional" class="r-form-field">
                 <IftaLabel>
-                    <InputText name="name" v-model.trim="dialogData.userData.userName" fluid v-focus />
+                    <InputText name="name" v-model.trim="dialogData.userData.userName" fluid autofocus />
                     <label>{{ dialogData.userData.config.user_id_label }} <MandatoryMark /></label>
                 </IftaLabel>
                 <small>The {{ dialogData.userData.config.user_id_label.toLowerCase() }} for the external service.</small>
@@ -67,7 +65,7 @@ function getValidatorShape(): any {
                 :class="{ 'mt-5': !dialogData.userData.config.user_id_optional }"
             >
                 <IftaLabel>
-                    <Password name="password" v-model="dialogData.userData.userPassword" :feedback="false" fluid />
+                    <Password name="password" v-model="dialogData.userData.userPassword" :feedback="false" fluid autofocus />
                     <label>{{ dialogData.userData.config.user_password_label }} <MandatoryMark /></label>
                 </IftaLabel>
                 <small>The {{ dialogData.userData.config.user_password_label.toLowerCase() }} for the external service.</small>
