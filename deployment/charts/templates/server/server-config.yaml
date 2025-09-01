@@ -18,7 +18,7 @@ data:
     RDS_STORAGE_DATABASE_POSTGRESQL_PORT: {{ default "" .Values.server.storage.postgresql.port | quote }}
     RDS_STORAGE_DATABASE_POSTGRESQL_DATABASE: {{ default "" .Values.server.storage.postgresql.database | quote }}
     RDS_STORAGE_DATABASE_POSTGRESQL_USER: {{ default "" .Values.server.storage.postgresql.user | quote }}
-  {{- if .Values.server.createSecret }}
+  {{- if .Values.createSecrets }}
     RDS_STORAGE_DATABASE_POSTGRESQL_PASSWORD: {{ default "" .Values.server.storage.postgresql.password | quote }}
   {{- end }}
   {{- end }}
@@ -28,7 +28,7 @@ data:
     RDS_STORAGE_DATABASE_MYSQL_PORT: {{ default "" .Values.server.storage.mysql.port | quote }}
     RDS_STORAGE_DATABASE_MYSQL_DATABASE: {{ default "" .Values.server.storage.mysql.database | quote }}
     RDS_STORAGE_DATABASE_MYSQL_USER: {{ default "" .Values.server.storage.mysql.user | quote }}
-  {{- if .Values.server.createSecret }}
+  {{- if .Values.createSecrets }}
     RDS_STORAGE_DATABASE_MYSQL_PASSWORD: {{ default "" .Values.server.storage.mysql.password | quote }}
   {{- end }}
   {{- end }}
@@ -38,7 +38,7 @@ data:
     RDS_STORAGE_DATABASE_MARIADB_PORT: {{ default "" .Values.server.storage.mariadb.port | quote }}
     RDS_STORAGE_DATABASE_MARIADB_DATABASE: {{ default "" .Values.server.storage.mariadb.database | quote }}
     RDS_STORAGE_DATABASE_MARIADB_USER: {{ default "" .Values.server.storage.mariadb.user | quote }}
-  {{- if .Values.server.createSecret }}
+  {{- if .Values.createSecrets }}
     RDS_STORAGE_DATABASE_MARIADB_PASSWORD: {{ default "" .Values.server.storage.mariadb.password | quote }}
   {{- end }}
   {{- end }}
