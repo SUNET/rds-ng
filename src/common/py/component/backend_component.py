@@ -24,6 +24,7 @@ class BackendComponent:
     def __init__(
         self,
         comp_id: UnitID,
+        comp_name: str,
         role: ComponentRole,
         *,
         module_name: str,
@@ -32,6 +33,7 @@ class BackendComponent:
         """
         Args:
             comp_id: The identifier of this component.
+            comp_name: The display name of this component.
             role: The role of this component.
             module_name: The component module name; simply pass ``__name__`` here.
             config_file: The configuration file to load.
@@ -45,15 +47,14 @@ class BackendComponent:
 
         from .meta_information import MetaInformation
 
-        meta_info = MetaInformation(config)
-        comp_info = meta_info.get_component(comp_id.unit)
+        meta_info = MetaInformation()
 
         self._data = BackendComponentData(
             comp_id=comp_id,
             role=role,
             config=config,
             title=meta_info.title,
-            name=comp_info["name"],
+            name=comp_name,
             version=meta_info.version,
         )
 

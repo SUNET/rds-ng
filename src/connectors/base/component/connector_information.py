@@ -2,10 +2,9 @@ import pathlib
 
 from common.py.data.entities.connector import Connector, ConnectorCategoryID
 from common.py.data.entities.metadata import (
-    MetadataProfileContainer,
     MetadataProfileContainerList,
 )
-from common.py.utils.config import Configuration, InformationFile
+from common.py.utils.config import InformationFile
 
 
 class ConnectorInformation(InformationFile):
@@ -19,7 +18,6 @@ class ConnectorInformation(InformationFile):
     def __init__(
         self,
         connector_id: str,
-        config: Configuration,
         *,
         info_file: str = "./.config/connector-information.json",
         env_prefix: str = "RDS_CONNECTOR",
@@ -27,7 +25,6 @@ class ConnectorInformation(InformationFile):
         """
         Args:
             connector_id: The identifier of the connector.
-            config: The component configuration.
             info_file: The JSON file to load the connector information from.
             env_prefix: The prefix to use when generating the environment variable name of a setting.
 
@@ -37,7 +34,6 @@ class ConnectorInformation(InformationFile):
         super().__init__(info_file=info_file, env_prefix=env_prefix)
 
         self._connector_id = connector_id
-        self._config = config
 
         self._name, self._description, self._category = self._read_general_info()
         self._options = self._read_options()

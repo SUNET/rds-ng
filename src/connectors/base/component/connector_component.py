@@ -26,18 +26,21 @@ class ConnectorComponent(BackendComponent):
         handler_type: type[ConnectorRequestsHandlerType],
         module_name: str,
     ):
+        connector_info = ConnectorInformation(connector_id)
+
         super().__init__(
             UnitID(
                 ComponentType.INFRASTRUCTURE,
                 f"{ComponentUnit.CONNECTOR}:{connector_id}",
             ),
+            connector_info.name,
             LeafRole(),
             module_name=module_name,
         )
 
         self._add_connector_settings()
 
-        self._connector_info = ConnectorInformation(connector_id, self._data.config)
+        self._connector_info = connector_info
 
         self._jobs_engine = ConnectorJobsEngine(executor_type=executor_type)
         self._requests_handler_type = handler_type
