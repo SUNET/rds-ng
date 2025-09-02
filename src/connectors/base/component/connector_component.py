@@ -20,18 +20,17 @@ class ConnectorComponent(BackendComponent):
 
     def __init__(
         self,
-        connector_id: str,
         *,
         executor_type: type[ConnectorJobExecutorType],
         handler_type: type[ConnectorRequestsHandlerType],
         module_name: str,
     ):
-        connector_info = ConnectorInformation(connector_id)
+        connector_info = ConnectorInformation()
 
         super().__init__(
             UnitID(
                 ComponentType.INFRASTRUCTURE,
-                f"{ComponentUnit.CONNECTOR}:{connector_id}",
+                f"{ComponentUnit.CONNECTOR}:{connector_info.connector_id}",
             ),
             connector_info.name,
             LeafRole(),
