@@ -87,7 +87,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         WebComponent._instance = this;
 
         const config = this.createConfig(env);
-        const metaInfo = new MetaInformation();
+        const metaInfo = new MetaInformation(config);
         const compInfo = metaInfo.getComponent(compID.unit);
 
         this._session = new Session(compID);

@@ -45,7 +45,7 @@ class BackendComponent:
 
         from .meta_information import MetaInformation
 
-        meta_info = MetaInformation()
+        meta_info = MetaInformation(config)
         comp_info = meta_info.get_component(comp_id.unit)
 
         self._data = BackendComponentData(

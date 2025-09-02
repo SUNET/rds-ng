@@ -37,7 +37,7 @@ class ConnectorComponent(BackendComponent):
 
         self._add_connector_settings()
 
-        self._connector_info = ConnectorInformation(connector_id)
+        self._connector_info = ConnectorInformation(connector_id, self._data.config)
 
         self._jobs_engine = ConnectorJobsEngine(executor_type=executor_type)
         self._requests_handler_type = handler_type

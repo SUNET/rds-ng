@@ -1,6 +1,9 @@
 // @ts-ignore
 import metaData from "/config/meta-information.json";
+
 import { SemVer } from "semver";
+
+import { Configuration } from "../utils/config/Configuration";
 
 type ComponentInformationType = {
     name: string;
@@ -18,27 +21,15 @@ type MetaInformationType = {
 
 /**
  * Accesses meta information about the entire project and its various component stored in a *JSON* file.
- *
- * The JSON file needs to be structured like this:
- * ```
- * {
- *     "global": {
- *         "title": "RDS-NG",
- *         "version": "0.0.1"
- *     },
- *     "components": {
- *         "web-frontend": {
- *             "name": "Web Frontend",
- *             "directory": "frontend",
- *             "tech": "web"
- *         },
- *         ...
- *     }
- * }
- * ```
  */
 export class MetaInformation {
+    private readonly _config: Configuration;
+
     private readonly _data = metaData as MetaInformationType;
+
+    public constructor(config: Configuration) {
+        this._config = config;
+    }
 
     /**
      * The project title.

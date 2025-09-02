@@ -2,71 +2,48 @@ import typing
 
 from semantic_version import Version
 
+from ..utils.config import Configuration, InformationFile
 
-class MetaInformation:
+
+class MetaInformation(InformationFile):
     """
     Accesses meta information about the entire project and its various component stored in a *JSON* file.
-
-    The JSON file needs to be structured like this::
-    ```
-        {
-            "global": {
-                "title": "RDS-NG",
-                "version": "0.0.1"
-            },
-
-            "components": {
-                "gate": {
-                    "name": "Gate service",
-                    "directory": "gate",
-                    "tech": "py"
-                },
-                ...
-            }
-        }
-    ```
     """
 
-    def __init__(self, info_file: str = "/config/meta-information.json"):
+    def __init__(
+        self,
+        config: Configuration,
+        *,
+        info_file: str = "/config/meta-information.json",
+        env_prefix: str = "RDS_META"
+    ):
         """
         Args:
+            config: The global application configuration.
             info_file: The JSON file to load the meta information from.
+            env_prefix: The prefix to use when generating the environment variable name of a setting.
 
         Raises:
             ValueError: If the information file couldn't be loaded.
         """
-        import os.path
+        super().__init__(info_file=info_file, env_prefix=env_prefix)
 
-        if info_file == "" or not os.path.exists(info_file):
-            raise ValueError("Invalid meta information file given")
+        self._config = config
 
-        with open(info_file, encoding="utf-8") as file:
-            import json
+        self._title, self._version = self._read_global_info()
+        self._components = self._read_component_definitions()
 
-            data = json.load(file)
-            self._title, self._version = self._read_global_info(data)
-            self._components = self._read_component_definitions(data)
-
-    def _read_global_info(self, data: typing.Any) -> tuple[str, Version]:
-        try:
-            global_info = data["global"]
-            title: str = global_info["title"]
-            version = Version(global_info["version"])
-        except Exception:  # pylint: disable=broad-exception-caught
-            return "<invalid>", Version("0.0.0")
-
+    def _read_global_info(self) -> tuple[str, Version]:
+        title: str = self._value("global.title", "<invalid>")
+        version: Version = Version(self._value("global.version", "0.0.0"))
         return title, version
 
     def _read_component_definitions(
-        self, data: typing.Any
+        self,
     ) -> typing.Dict[str, typing.Dict[str, typing.Any]]:
-        try:
-            comps_info: typing.Dict[str, typing.Dict[str, typing.Any]] = data[
-                "components"
-            ]
-        except Exception:  # pylint: disable=broad-exception-caught
-            return {}
-
+        comps_info: typing.Dict[str, typing.Dict[str, typing.Any]] = self._value(
+            "components", {}
+        )
         return comps_info
 
     @property
