@@ -48,9 +48,10 @@ _(2)_ If the service uses OAUTH2 authorization.
 
 #### All components | General
 
-| Setting                    | Description                                                                             | Type    | Default value |
-|----------------------------|-----------------------------------------------------------------------------------------|---------|---------------|
-| <code>general.debug</code> | Whether to run in `debug` mode, resulting in more textual output and less restrictions. | Boolean | false         |
+| Setting                          | Description                                                                             | Type    | Default value |
+|----------------------------------|-----------------------------------------------------------------------------------------|---------|---------------|
+| <code>general.debug</code>       | Whether to run in `debug` mode, resulting in more textual output and less restrictions. | Boolean | false         |
+| <code>general.debug_trace</code> | Whether to log function calls for extensive debugging.                                  | Boolean | false         |
 
 #### All components | Network
 
@@ -158,7 +159,7 @@ _(1)_ If the host uses OAUTH2 authorization.
 
 | Setting                                    | Description                                                         | Type    | Default value              |
 |--------------------------------------------|---------------------------------------------------------------------|---------|----------------------------|
-| <code>general.support_email</code>         | The support email address.                                          | String | sciebo.rds@uni-muenster.de |
+| <code>general.support_email</code>         | The support email address.                                          | String  | sciebo.rds@uni-muenster.de |
 | <code>general.verbose_notifications</code> | Whether to display more verbose notifications (good for debugging). | Boolean | false                      |
 | <code>general.notification_timeout</code>  | The timeout for overlay notifications in seconds.                   | Number  | 3.0                        |
 

@@ -4,7 +4,8 @@ appName: "rds"
 ### General settings
 tag: "latest" # The release tag to be deployed
 debugLog: "false" # Enable debug logging
-supportEmail: "" # The user support email address that will be displayed in the frontend 
+debugTrace: "false" # Enable debug tracing
+supportEmail: "" # The user support email address that will be displayed in the frontend
 
 ingress:
     enabled: true
@@ -34,7 +35,7 @@ server:
         hostSecret: "CHANGEME" # The host secret registered in Nexcloud for the frontend
     networkApiKey: "CHANGEME" # An arbitrary API key to access protected resources; this must be the same value on all components.
     pvc:
-      storageClassName: "rdb"
+        storageClassName: "rdb"
     storage:
         driver: "database" # The driver to use for the storage; possible values are memory or database.
         engine: "sqlite" # The database backend to use; can be sqlite, postgresql, mysql or mariadb. Database settings are configured in the next couple lines. Default: sqlite
@@ -113,8 +114,8 @@ connectors:
             clientId: "CHANGEME" # The clientid of your zenodo oauth application
             clientSecret: "CHANGEME" # The secret of your zenodo oauth application
     stub:
-      enabled: false
-      componentName: "connector-stub"
-      oauth2:
-        clientId: "CHANGEME"
-        clientSecret: "CHANGEME"
+        enabled: false
+        componentName: "connector-stub"
+        oauth2:
+            clientId: "CHANGEME"
+            clientSecret: "CHANGEME"
