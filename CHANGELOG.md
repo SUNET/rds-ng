@@ -14,6 +14,7 @@
 
 ### Fixes
 
+- Project state renewals could lead to deadlocks
 - Minor fixes here and there
 
 ## v1.1.1 - 2025-08-25
