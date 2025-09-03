@@ -5,6 +5,7 @@
 ### New
 
 - Basic authentication (username/password) support for connectors
+- More debugging capabilities
 
 ### Improvements
 

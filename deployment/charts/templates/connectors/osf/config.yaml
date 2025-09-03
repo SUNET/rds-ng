@@ -16,3 +16,4 @@ data:
   RDS_AUTHORIZATION_OAUTH2_CLIENT_ID: {{ .Values.connectors.osf.oauth2.clientId }}
   RDS_NETWORK_CLIENT_SERVER_ADDRESS: {{ .Values.server.address }}
   RDS_GENERAL_DEBUG: {{ .Values.debugLog | quote }}
+  RDS_GENERAL_DEBUG_TRACE: {{ .Values.debugTrace | quote }}

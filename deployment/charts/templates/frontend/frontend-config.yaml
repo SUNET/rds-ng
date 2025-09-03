@@ -4,6 +4,7 @@ metadata:
     name: frontend-config
 data:
     RDS_GENERAL_DEBUG: {{ .Values.debugLog | quote }}
+    RDS_GENERAL_DEBUG_TRACE: {{ .Values.debugTrace | quote }}
     NODE_TLS_REJECT_UNAUTHORIZED: "0"
     RDS_NETWORK_CLIENT_SERVER_ADDRESS: {{ .Values.server.address }}
     RDS_NETWORK_EXTERNAL_REQUESTS_TIMEOUT: {{ default "" .Values.server.externalRequestsTimeout | quote }}

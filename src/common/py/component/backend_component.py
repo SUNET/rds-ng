@@ -3,6 +3,7 @@ import typing
 
 from .backend_component_data import BackendComponentData
 from .roles import ComponentRole
+from ..settings import GeneralSettingIDs
 from ..utils import UnitID
 from ..utils.config import Configuration
 
@@ -62,6 +63,11 @@ class BackendComponent:
 
         info(str(self), role=self._data.role.name)
         info("Starting component")
+
+        if config.value(GeneralSettingIDs.DEBUG_TRACE):
+            from ..utils.debug import enable_tracing
+
+            enable_tracing()
 
         from ..core import Core
 
