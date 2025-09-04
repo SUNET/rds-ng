@@ -6,6 +6,10 @@ hide_table_of_contents: true
 
 # Meet *bridgit* ! Your new data juggling assistant to share important research data. 
 
+<div style={{textAlign: 'center', width: '30%', float: 'right', margin: '2%' }}>
+  <img src="/img/octopi/hello.png" />
+</div>
+
 **Let us introduce you two.** 
 
 Think of *bridgit* as your new, multitasking research partner. The app will support you from the very first draft of your dataset to publishing it with the scientific community - *bridgit* accompanies you step by step without compromising any of your effort. And the best part? *bridgit* is fully integrated into your secure university cloud environment, making sharing easy and safe.
