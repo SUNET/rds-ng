@@ -53,3 +53,13 @@ src/server/.config/config.toml
 
 # generated docs
 docs/docs/reference
+src/package.json
+src/package-lock.json
+
+# test data
+src/common/assets/profiles/dmp/optional/optional1.json
+src/common/assets/profiles/dmp/optional/optional2.json
+src/common/assets/profiles/project_metadata/optional/optional1.json
+src/common/assets/profiles/project_metadata/optional/optional2.json
+src/common/assets/profiles/resources_metadata/optional/optional1.json
+src/common/assets/profiles/resources_metadata/optional/optional2.json
