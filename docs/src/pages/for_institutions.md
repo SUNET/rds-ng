@@ -16,10 +16,11 @@ For universities, libraries, central IT services, departments, and research data
 
 *bridgit* emerged from a <ins>DFG-funded project</ins> and is administered by the University of Münster in close collaboration with the University of Potsdam as the scientific consultant throughout the project. The pilot in the sciebo Hochschulcloud NRW has already demonstrated its practical value, and the project has attracted the interest of further institutions. The underlying philosophy is simple: just as research data should be shared openly to maximize its benefit for science, the app itself is shared openly so that any institution can adopt it and simplify research data sharing for its community. 
 
-### Get in Touch
-<div style={{textAlign: 'center', width: '15%', float: 'right'}}>
+<div style={{textAlign: 'center', width: '20%', float: 'right'}}>
   <img src="/img/octopi/phone.png" />
 </div>
+
+### Get in Touch
 
 If you have any further questions on how to install *bridgit* in your institution environment, please  don’t hesitate to contact:
 

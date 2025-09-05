@@ -50,3 +50,6 @@ src/common/py/data/entities/properties/test_properties_profile.py
 src/common/py/data/metadata/metadata_parser_test.py
 src/connectors/zenodo/metadata/zenodo_metadata_test.py
 src/server/.config/config.toml
+
+# generated docs
+docs/docs/reference

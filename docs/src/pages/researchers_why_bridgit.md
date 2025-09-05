@@ -20,7 +20,7 @@ By combining these capabilities in one platform, *bridgit* empowers researchers 
 
 
 ## What are the prerequisites to use *bridgit*?
-<div style={{textAlign: 'center', width: '35%', float: 'right' }}>
+<div style={{textAlign: 'center', width: '35%', float: 'right', margin: '2%' }}>
   <img src="/img/octopi/bridge.png" />
 </div>
 
