@@ -134,7 +134,7 @@ The data management plan allows you to assess a Data Management Plan using a sim
 
 
 
-### Step 5: Uploading a projects
+### Step 5: Uploading a project
 
 Once you have completed the editing of your project, it is time to upload it to an external repository like Zenodo or OSF. To do so, click on the **Upload project** button in the top right corner of bridgit, which will bring up the following dialog:
 
