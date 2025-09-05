@@ -5,6 +5,9 @@ hide_table_of_contents: false
 ---
 
 # *bridgit* for Technical Administrators
+<div style={{textAlign: 'center', width: '35%', float: 'right' }}>
+  <img src="/img/octopi/developer.png" />
+</div>
 
 *bridgit* is an open-access research data management app developed in an academic setting to support researchers. The app was successfully piloted at the University of Münster in the Sciebo Hochschulcloud NRW, where it was seamlessly integrated into an existing Nextcloud environment.
 
@@ -12,6 +15,7 @@ For administrators, *bridgit* offers a modular add-on that can be integrated int
 
 ## Why Nextcloud?
 *bridgit* has been designed with Nextcloud integration in mind, making it a natural fit for universities and institutions that already rely on Nextcloud for cloud storage and collaboration. By running as an add-on, *bridgit* benefits from Nextcloud’s secure, user-managed environment while adding domain-specific functionality tailored to research data.
+
 
 ## Getting Started as an Administrator
 1.	**Clone the Repository**
