@@ -147,6 +147,11 @@ Once you have completed the editing of your project, it is time to upload it to 
 To upload your project to a specific service, simply click on its corresponding **Upload** button. bridgit will now upload all data that belongs to your project, including its files and metadata, to the external repository:
 
 
+<div style={{textAlign: 'center', float: 'center', margin: '20px'}}>
+  <img src="/img/userguide/999999999.png" />
+</div>
+
+
 Don’t worry! This process runs in the background, so you are able to close this dialog while the upload is still running; you can even close bridgit, your project will still continue to upload.
 
 Unless you have published your project, it is always possible to re-upload the project again. This will simply use the same external project but replace everything that had been uploaded before.
