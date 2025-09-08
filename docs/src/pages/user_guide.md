@@ -6,7 +6,7 @@ hide_table_of_contents: false
 
 # Step by Step: Your Data Sharing Guide
 <div style={{textAlign: 'center', width: '35%', float: 'right', marginLeft: '30px' }}>
-  <img src="/img/octopi/arrow.png" />
+  <img class="bg-white"  src="/img/octopi/arrow.png" />
 </div>
 
 Follow this step-by-step guide to get started with bridgit and to see how easily you can manage, annotate, and share your research data from start to finish.   

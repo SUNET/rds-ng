@@ -7,7 +7,7 @@ hide_table_of_contents: true
 # Meet *bridgit* ! Your new data juggling assistant to share important research data. 
 
 <div style={{textAlign: 'center', width: '30%', float: 'right', margin: '2%' }}>
-  <img src="/img/octopi/hello.png" />
+  <img class="bg-white"  src="/img/octopi/hello.png" />
 </div>
 
 **Let us introduce you two.** 
