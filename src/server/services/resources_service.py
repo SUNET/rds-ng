@@ -127,10 +127,6 @@ def create_resources_service(comp: ServerComponent) -> Service:
         except Exception as exc:  # pylint: disable=broad-exception-caught
             message = str(exc)
 
-        if msg.root != "/" and msg.root != "":
-            success = False
-            message = f"NIAHAHA {msg.root}"
-
         ListResourcesReply.build(
             ctx.message_builder,
             msg,
