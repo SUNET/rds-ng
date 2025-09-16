@@ -44,16 +44,13 @@ def create_projects_service(comp: BackendComponent) -> Service:
             )
 
             def _send_external_state(external_state: ProjectExternalState) -> None:
-                if not compare_external_project_states(
-                    external_state, last_external_state
-                ):
-                    ProjectExternalStateEvent.build(
-                        ctx.message_builder,
-                        project_id=msg.project.project_id,
-                        user_id=msg.user_token.user_id,
-                        connector_instance=msg.connector_instance,
-                        external_state=external_state,
-                    ).emit(ctx.remote_channel)
+                ProjectExternalStateEvent.build(
+                    ctx.message_builder,
+                    project_id=msg.project.project_id,
+                    user_id=msg.user_token.user_id,
+                    connector_instance=msg.connector_instance,
+                    external_state=external_state,
+                ).emit(ctx.remote_channel)
 
             # If the project has already been uploaded, update its state to reflect the actual state
             if (
