@@ -33,6 +33,7 @@ def create_users_service(comp: ServerComponent) -> Service:
     )
 
     from .server_service_context import ServerServiceContext
+    from .tools import cleanup_user_host_id
 
     svc = comp.create_service("Users service", context_type=ServerServiceContext)
 
@@ -51,7 +52,7 @@ def create_users_service(comp: ServerComponent) -> Service:
             )
 
             user_id = msg.user_token.user_id
-            host_id = msg.host_id
+            host_id = cleanup_user_host_id(msg.host_id)
             user_name = msg.user_token.user_name
 
             # Update or create the authenticated user in the storage
