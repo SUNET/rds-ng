@@ -16,6 +16,7 @@ class User:
 
     Attributes:
         user_id: The user ID.
+        host_id: The user's host ID.
         name: The (display) name of the user.
         user_settings: The settings of the user.
     """
@@ -35,6 +36,7 @@ class User:
         )
 
     user_id: UserID
+    host_id: str
 
     name: str
 

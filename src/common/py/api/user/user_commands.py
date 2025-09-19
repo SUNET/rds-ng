@@ -22,25 +22,28 @@ class AuthenticateUserCommand(Command):
 
     Args:
         user_token: The user token.
+        host_id: The host ID.
 
     Notes:
         Requires a ``AuthenticateUserReply`` reply.
     """
 
     user_token: UserToken = dataclasses.field(default_factory=UserToken)
+    host_id: str = ""
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
         user_token: UserToken,
+        host_id: str,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
         Helper function to easily build this message.
         """
         return message_builder.build_command(
-            AuthenticateUserCommand, chain, user_token=user_token
+            AuthenticateUserCommand, chain, user_token=user_token, host_id=host_id
         )
 
 
