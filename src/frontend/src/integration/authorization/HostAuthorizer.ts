@@ -1,4 +1,3 @@
-import { FrontendDefaultSettings } from "@/settings/FrontendSettings.ts";
 import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
@@ -12,6 +11,7 @@ import { combinePaths } from "@common/utils/Paths.ts";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authorizer } from "@/integration/authorization/Authorizer";
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
+import { DefaultDynamicSettings } from "@/settings/DefaultDynamicSettings.ts";
 import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 
 /**
@@ -39,8 +39,11 @@ export class HostAuthorizer extends Authorizer {
                 AuthorizationTokenType.Host,
                 AuthorizationTokenType.Host,
                 combinePaths(
-                    this._component.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.URL, FrontendDefaultSettings.HostURL),
-                    this._component.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.EntrypointEndpoint, FrontendDefaultSettings.HostAPIEndpoint)
+                    this._component.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.URL, DefaultDynamicSettings.HostURL),
+                    this._component.data.config.valueWithDefault<string>(
+                        HostIntegrationSettingIDs.EntrypointEndpoint,
+                        DefaultDynamicSettings.HostEntrypointEndpoint
+                    )
                 ),
                 AuthorizationTokenType.Host,
                 fingerprint
@@ -72,8 +75,8 @@ export class HostAuthorizer extends Authorizer {
                         scope: this._hostAuth.config.scope || ""
                     },
                     client: {
-                        client_id: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),
-                        redirect_url: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
+                        client_id: this._component.data.config.valueWithDefault<string>(OAuth2AuthorizationSettingIDs.ClientID, ""),
+                        redirect_url: this._component.data.config.valueWithDefault<string>(OAuth2AuthorizationSettingIDs.RedirectURL, ""),
                         redirect_target: RedirectionTarget.Current
                     }
                 } as OAuth2StrategyConfiguration;

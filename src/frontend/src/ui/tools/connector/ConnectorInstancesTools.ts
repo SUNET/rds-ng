@@ -1,4 +1,3 @@
-import { FrontendDefaultSettings } from "@/settings/FrontendSettings.ts";
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
 import { getConnectorInstanceAuthorizationID } from "@common/data/entities/authorization/AuthorizationTokenUtils";
 import { Connector } from "@common/data/entities/connector/Connector";
@@ -10,6 +9,7 @@ import { combinePaths } from "@common/utils/Paths.ts";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
+import { DefaultDynamicSettings } from "@/settings/DefaultDynamicSettings.ts";
 import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs.ts";
 import { ListUserAuthorizationsAction } from "@/ui/actions/authorization/ListUserAuthorizationsAction";
 import { RevokeAuthorizationAction } from "@/ui/actions/authorization/RevokeAuthorizationAction";
@@ -67,8 +67,8 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
             AuthorizationTokenType.Connector,
             instance.instance_id,
             combinePaths(
-                comp.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.URL, FrontendDefaultSettings.HostURL),
-                comp.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.EntrypointEndpoint, FrontendDefaultSettings.HostAPIEndpoint)
+                comp.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.URL, DefaultDynamicSettings.HostURL),
+                comp.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.EntrypointEndpoint, DefaultDynamicSettings.HostEntrypointEndpoint)
             ),
             connector.connector_id,
             userFingerprint

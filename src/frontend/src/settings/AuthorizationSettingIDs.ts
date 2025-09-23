@@ -1,3 +1,4 @@
+import { ConfigurationPlaceholders } from "@common/utils/config/Configuration.ts";
 import { SettingID } from "@common/utils/config/SettingID";
 
 /**
@@ -12,6 +13,6 @@ export class AuthorizationSettingIDs {}
  * @property RedirectURL - The redirection URL (value type: ``string``).
  */
 export class OAuth2AuthorizationSettingIDs {
-    public static readonly ClientID = new SettingID("authorization.oauth2", "client.id");
-    public static readonly RedirectURL = new SettingID("authorization.oauth2", "client.redirect_url");
+    public static readonly ClientID = new SettingID(`${ConfigurationPlaceholders.HostID}.authorization.oauth2`, "client.id");
+    public static readonly RedirectURL = new SettingID(`${ConfigurationPlaceholders.HostID}.authorization.oauth2`, "client.redirect_url");
 }
