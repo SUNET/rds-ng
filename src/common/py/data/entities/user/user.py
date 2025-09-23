@@ -6,6 +6,7 @@ from dataclasses_json import dataclass_json
 from ..connector import ConnectorInstance
 
 UserID = str
+HostID = str
 
 
 @dataclass_json
@@ -36,7 +37,7 @@ class User:
         )
 
     user_id: UserID
-    host_id: str
+    host_id: HostID
 
     name: str
 

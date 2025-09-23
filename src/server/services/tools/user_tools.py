@@ -3,7 +3,7 @@ import typing
 
 from common.py.core.messaging import Channel, Message
 from common.py.data.entities.authorization import AuthorizationToken
-from common.py.data.entities.user import UserID
+from common.py.data.entities.user import HostID, UserID
 
 from .. import ServerServiceContext
 from ...networking.session import Session
@@ -80,5 +80,5 @@ def handle_authorization_token_changes(
         send_user_authorizations(msg, ctx, session=session)
 
 
-def cleanup_user_host_id(host_id: str) -> str:
+def cleanup_user_host_id(host_id: HostID) -> str:
     return re.sub(r"\W+", "", host_id.lower().replace("-", "_"))

@@ -7,7 +7,7 @@ from .. import AuthorizationRequestPayload
 from ... import IntegrationHandler
 from ....component import BackendComponent
 from ....data.entities.authorization import AuthorizationSettings, AuthorizationToken
-from ....data.entities.user import UserID, UserToken
+from ....data.entities.user import HostID, UserID, UserToken
 from ....services import Service
 
 ConfigType = typing.TypeVar("ConfigType")  # pylint: disable=invalid-name
@@ -68,13 +68,17 @@ class AuthorizationStrategy(IntegrationHandler):
     @abc.abstractmethod
     def request_authorization(
         self,
+        *,
         user_id: UserID,
+        host_id: HostID | None,
         payload: AuthorizationRequestPayload,
         request_data: typing.Any,
     ) -> AuthorizationToken: ...
 
     @abc.abstractmethod
-    def refresh_authorization(self, token: AuthorizationToken) -> None: ...
+    def refresh_authorization(
+        self, token: AuthorizationToken, *, host_id: HostID | None = None
+    ) -> None: ...
 
     def provides_token_content(self, content: ContentType) -> bool:
         """

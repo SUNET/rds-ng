@@ -59,7 +59,7 @@ _(2)_ If the service uses OAUTH2 authorization.
 |------------------------------------------------|----------------------------------------------------------------------------------------------------|---------|---------------|
 | <code>network.api_key</code>                   | An arbitrary API key to access protected resources; this must be the same value on all components. | String  |               |
 | <code>network.verify_sll</code>                | If enabled, SSL certificates will be verified.                                                     | Boolean | true          |
-| <code>network.transmission_chunnk_size</code>  | The size (in bytes) for network transmissions.                                                     | Number  | 1048576       |
+| <code>network.transmission_chunk_size</code>   | The size (in bytes) for network transmissions.                                                     | Number  | 1048576       |
 | <code>network.regular_command_timeout</code>   | The maximum time (in seconds) for a command-reply to arrive.                                       | Number  | 10.0          |
 | <code>network.external_requests_timeout</code> | The maximum time (in seconds) for requests to external services; set to 0 to disable.              | Number  | 60.0          |
 
@@ -74,12 +74,13 @@ _(2)_ If the service uses OAUTH2 authorization.
 
 Authorization is in most cases performed using OAUTH2. The server takes care of managing and refreshing authorization tokens of external services. Connectors also use OAUTH2 to authorizate against their respective external service.
 
-| Setting                                           | Description                                                                         | Type   | Default value |
-|---------------------------------------------------|-------------------------------------------------------------------------------------|--------|---------------|
-| <code>authorization.request_attempts_delay</code> | The delay between token request attempts in seconds.                                | Number | 1.0           |
-| <code>authorization.request_attempts_limit</code> | The maximum number of token request attempts.                                       | Number | 5             |
-| <code>authorization.refresh_attempts_delay</code> | The delay between token refresh attempts in seconds.                                | Number | 30.0          |
-| <code>authorization.refresh_attempts_limit</code> | The maximum number of refresh attempts before removing a token; 0 disables removal. | Number | 3             |
+| Setting                                                  | Description                                                                                                              | Type   | Default value |
+|----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|--------|---------------|
+| <code>authorization.request_attempts_delay</code>        | The delay between token request attempts in seconds.                                                                     | Number | 1.0           |
+| <code>authorization.request_attempts_limit</code>        | The maximum number of token request attempts.                                                                            | Number | 5             |
+| <code>authorization.refresh_attempts_delay</code>        | The delay between token refresh attempts in seconds.                                                                     | Number | 30.0          |
+| <code>authorization.refresh_attempts_limit</code>        | The maximum number of refresh attempts before removing a token; 0 disables removal.                                      | Number | 3             |
+| <code>authorization.oauth2.secrets.<host_id>.host</code> | The OAUTH2 secret for the host system; must be specified for each host (replace _<host_id>_ by the corresponding value). | String |               |
 
 #### Server | Storage
 

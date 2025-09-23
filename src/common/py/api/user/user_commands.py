@@ -12,7 +12,7 @@ from ...core.messaging.composers import (
     CommandReplyComposer,
 )
 from ...data.entities.authorization import AuthorizationState
-from ...data.entities.user import User, UserToken
+from ...data.entities.user import HostID, User, UserToken
 
 
 @Message.define("command/user/authenticate")
@@ -29,14 +29,14 @@ class AuthenticateUserCommand(Command):
     """
 
     user_token: UserToken = dataclasses.field(default_factory=UserToken)
-    host_id: str = ""
+    host_id: HostID = ""
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
         user_token: UserToken,
-        host_id: str,
+        host_id: HostID,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
