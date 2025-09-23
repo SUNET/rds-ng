@@ -9,6 +9,13 @@ import { deepMerge } from "../ObjectUtils";
 export type SettingsContainer = Record<string, any>;
 
 /**
+ * Default configuration placeholders.
+ */
+export const enum ConfigurationPlaceholders {
+    HostID = "<host_id>"
+}
+
+/**
  * Encapsulates configuration settings and their fallback default values.
  *
  * Settings can be loaded from a configuration file (in *TOML* format) or provided as environment variables (see below).
@@ -35,6 +42,8 @@ export type SettingsContainer = Record<string, any>;
 export class Configuration {
     private _settings: SettingsContainer = {};
     private _defaults: SettingsContainer = {};
+
+    private readonly _placeholders: Record<string, string> = {};
 
     private readonly _env: SettingsContainer;
     private readonly _envPrefix: string;
@@ -76,9 +85,19 @@ export class Configuration {
     public addDefaults(defaults: Map<SettingID, any>): void {
         for (const [key, value] of defaults.entries()) {
             let values = {};
-            this.unfoldSettingsItem(key.split(), values, value);
+            this.unfoldSettingsItem(this.splitSettingID(key), values, value);
             deepMerge(this._defaults, values);
         }
+    }
+
+    /**
+     * Adds a new placeholder for value keys.
+     *
+     * @param key - The placeholder key.
+     * @param value - The placeholder value.
+     */
+    public addPlaceholder(key: string, value: string): void {
+        this._placeholders[key] = value;
     }
 
     /**
@@ -94,7 +113,7 @@ export class Configuration {
      * @throws Error - The setting identifier was not found in the defaults.
      */
     public value<ValType = any>(key: SettingID): ValType {
-        let defaultValue = this.traverseSettings(key.split(), this._defaults) as ValType;
+        let defaultValue = this.traverseSettings(this.splitSettingID(key), this._defaults) as ValType;
         return this.getValue<ValType>(key, defaultValue);
     }
 
@@ -120,7 +139,7 @@ export class Configuration {
         }
 
         try {
-            return this.traverseSettings(key.split(), this._settings) as ValType;
+            return this.traverseSettings(this.splitSettingID(key), this._settings) as ValType;
         } catch {
             return defaultValue;
         }
@@ -158,5 +177,16 @@ export class Configuration {
         }
 
         return value;
+    }
+
+    private splitSettingID(key: SettingID): string[] {
+        const path: string[] = [];
+        for (let pathToken of key.split()) {
+            for (const [placeholder, value] of Object.entries(this._placeholders)) {
+                pathToken = pathToken.replace(placeholder, value);
+            }
+            path.push(pathToken);
+        }
+        return path;
     }
 }
