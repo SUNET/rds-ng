@@ -95,7 +95,25 @@ export class Configuration {
      */
     public value<ValType = any>(key: SettingID): ValType {
         let defaultValue = this.traverseSettings(key.split(), this._defaults) as ValType;
+        return this.getValue<ValType>(key, defaultValue);
+    }
 
+    /**
+     * Gets the value of a setting.
+     *
+     * The value is first looked up in the environment variables. If not found, the loaded settings are searched.
+     * If that also fails, the default value is returned.
+     *
+     * @param key - The identifier of the setting.
+     * @param defaultValue - The default value if the value couldn't be found.
+     *
+     * @returns - The value of the setting.
+     */
+    public valueWithDefault<ValType = any>(key: SettingID, defaultValue: ValType): ValType {
+        return this.getValue<ValType>(key, defaultValue);
+    }
+
+    private getValue<ValType = any>(key: SettingID, defaultValue: ValType): ValType {
         let envKey = key.envName(this._envPrefix);
         if (envKey in this._env) {
             return this.convertEnvType(this._env[envKey], typeof defaultValue) as ValType;
