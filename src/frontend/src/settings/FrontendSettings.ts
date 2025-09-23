@@ -1,7 +1,6 @@
 import { SettingID } from "@common/utils/config/SettingID";
 
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
-import { HostIntegrationSettingIDs, IntegrationSettingIDS } from "@/settings/IntegrationSettingIDs";
 
 /**
  * Gets default values for all frontend settings.
@@ -11,15 +10,20 @@ import { HostIntegrationSettingIDs, IntegrationSettingIDS } from "@/settings/Int
 export function getFrontendSettings(): Map<SettingID, any> {
     let settings = new Map<SettingID, any>();
 
-    // Integration settings
-    settings.set(IntegrationSettingIDS.Scheme, "basic");
-    settings.set(HostIntegrationSettingIDs.URL, "");
-    settings.set(HostIntegrationSettingIDs.EntrypointEndpoint, "/");
-    settings.set(HostIntegrationSettingIDs.APIEndpoint, "/api/v1");
-
     // Authorization settings
     settings.set(OAuth2AuthorizationSettingIDs.ClientID, "");
     settings.set(OAuth2AuthorizationSettingIDs.RedirectURL, "");
 
     return settings;
+}
+
+/**
+ * Default values for dynamic configuration settings.
+ */
+export const enum FrontendDefaultSettings {
+    IntegrationScheme = "basic",
+
+    HostURL = "",
+    HostEntrypointEndpoint = "/",
+    HostAPIEndpoint = "/api/v1"
 }

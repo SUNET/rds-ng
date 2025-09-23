@@ -7,6 +7,7 @@ import { combinePaths, terminatePath } from "@common/utils/Paths";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type HostResources } from "@/integration/HostTypes";
+import { FrontendDefaultSettings } from "@/settings/FrontendSettings.ts";
 import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 
 /**
@@ -25,11 +26,16 @@ export class HostAPI {
     private readonly _apiURL: string;
 
     public constructor(comp: FrontendComponent) {
-        this._apiURL = comp.data.config.value<string>(HostIntegrationSettingIDs.URL);
+        this._apiURL = comp.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.URL, FrontendDefaultSettings.HostURL);
         if (this._apiURL == "") {
             throw new Error("No host API URL has been configured");
         }
-        this._apiURL = terminatePath(combinePaths(this._apiURL, comp.data.config.value<string>(HostIntegrationSettingIDs.APIEndpoint)));
+        this._apiURL = terminatePath(
+            combinePaths(
+                this._apiURL,
+                comp.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.APIEndpoint, FrontendDefaultSettings.HostAPIEndpoint)
+            )
+        );
     }
 
     public async getPublicKey(): Promise<JWK> {

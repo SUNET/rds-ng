@@ -1,3 +1,4 @@
+import { FrontendDefaultSettings } from "@/settings/FrontendSettings.ts";
 import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
@@ -38,8 +39,8 @@ export class HostAuthorizer extends Authorizer {
                 AuthorizationTokenType.Host,
                 AuthorizationTokenType.Host,
                 combinePaths(
-                    this._component.data.config.value<string>(HostIntegrationSettingIDs.URL),
-                    this._component.data.config.value<string>(HostIntegrationSettingIDs.EntrypointEndpoint)
+                    this._component.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.URL, FrontendDefaultSettings.HostURL),
+                    this._component.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.EntrypointEndpoint, FrontendDefaultSettings.HostAPIEndpoint)
                 ),
                 AuthorizationTokenType.Host,
                 fingerprint

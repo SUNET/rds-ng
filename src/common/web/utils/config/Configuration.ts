@@ -133,7 +133,7 @@ export class Configuration {
     }
 
     private getValue<ValType = any>(key: SettingID, defaultValue: ValType): ValType {
-        let envKey = key.envName(this._envPrefix);
+        let envKey = this.replacePlaceholders(key.envName(this._envPrefix)).toUpperCase();
         if (envKey in this._env) {
             return this.convertEnvType(this._env[envKey], typeof defaultValue) as ValType;
         }
@@ -181,12 +181,16 @@ export class Configuration {
 
     private splitSettingID(key: SettingID): string[] {
         const path: string[] = [];
-        for (let pathToken of key.split()) {
-            for (const [placeholder, value] of Object.entries(this._placeholders)) {
-                pathToken = pathToken.replace(placeholder, value);
-            }
-            path.push(pathToken);
+        for (const pathToken of key.split()) {
+            path.push(this.replacePlaceholders(pathToken));
         }
         return path;
+    }
+
+    private replacePlaceholders(s: string): string {
+        for (const [placeholder, value] of Object.entries(this._placeholders)) {
+            s = s.replace(new RegExp(placeholder, "ig"), value);
+        }
+        return s;
     }
 }

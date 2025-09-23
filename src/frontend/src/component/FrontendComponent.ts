@@ -18,7 +18,7 @@ import createProjectJobsService from "@/services/ProjectJobsService";
 import createProjectExportersService from "@/services/ProjectExportersService";
 import createUserService from "@/services/UserService";
 
-import { getFrontendSettings } from "@/settings/FrontendSettings";
+import { FrontendDefaultSettings, getFrontendSettings } from "@/settings/FrontendSettings";
 import { IntegrationSettingIDS } from "@/settings/IntegrationSettingIDs";
 
 import { registerResourcePreviewers } from "@/ui/components/resource/ResourcePreviewers";
@@ -74,7 +74,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     }
 
     private mountIntegrationScheme(): void {
-        const scheme = this._data.config.value<string>(IntegrationSettingIDS.Scheme);
+        const scheme = this._data.config.valueWithDefault<string>(IntegrationSettingIDS.Scheme, FrontendDefaultSettings.IntegrationScheme);
         if (!scheme) {
             error("No integration scheme has been configured");
             return;

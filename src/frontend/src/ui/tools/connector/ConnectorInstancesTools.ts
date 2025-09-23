@@ -1,3 +1,4 @@
+import { FrontendDefaultSettings } from "@/settings/FrontendSettings.ts";
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
 import { getConnectorInstanceAuthorizationID } from "@common/data/entities/authorization/AuthorizationTokenUtils";
 import { Connector } from "@common/data/entities/connector/Connector";
@@ -66,8 +67,8 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
             AuthorizationTokenType.Connector,
             instance.instance_id,
             combinePaths(
-                comp.data.config.value<string>(HostIntegrationSettingIDs.URL),
-                comp.data.config.value<string>(HostIntegrationSettingIDs.EntrypointEndpoint)
+                comp.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.URL, FrontendDefaultSettings.HostURL),
+                comp.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.EntrypointEndpoint, FrontendDefaultSettings.HostAPIEndpoint)
             ),
             connector.connector_id,
             userFingerprint

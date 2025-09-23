@@ -207,8 +207,9 @@ class OAuth2Strategy(AuthorizationStrategy):
         return oauth2_token, oauth2_data
 
     def _get_client_secret(self, auth_bearer: str, *, host_id: HostID | None) -> str:
-        host_id = f"{host_id}." if host_id is not None else ""
-        client_secret = self._get_config_value(f"secrets.{host_id}{auth_bearer}", "")
+        client_secret = self._get_config_value(
+            f"secrets.{auth_bearer}", "", host_id=host_id
+        )
 
         # If not set directly, look it up in the private settings if possible
         if client_secret == "":
@@ -222,7 +223,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         # Verify the secret
         if client_secret == "":
             raise RuntimeError(
-                f"Missing OAuth2 client secret for {host_id}{auth_bearer}"
+                f"Missing OAuth2 client secret for {auth_bearer} (host_id={host_id})"
             )
 
         return client_secret

@@ -128,10 +128,15 @@ class AuthorizationStrategy(IntegrationHandler):
         self, token: AuthorizationToken, content: ContentType
     ) -> typing.Any: ...
 
-    def _get_config_value(self, key: str, default: typing.Any) -> typing.Any:
+    def _get_config_value(
+        self, key: str, default: typing.Any, *, host_id: HostID | None = None
+    ) -> typing.Any:
         from ....utils.config import SettingID
 
-        setting_id = SettingID(f"authorization.{self._strategy}", key)
+        setting_id = SettingID(
+            f"{host_id + '.' if host_id is not None else ''}authorization.{self._strategy}",
+            key,
+        )
         return self._component.data.config.value_with_default(setting_id, default)
 
     def _get_public_configuration(self, cls: type[ConfigType]) -> ConfigType:
