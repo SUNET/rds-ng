@@ -14,13 +14,12 @@ import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from
 
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging";
-import { useComponentStore } from "../data/stores/ComponentStore";
 import { registerAuthorizationStrategies } from "../integration/authorization/strategies/AuthorizationStrategies";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
 import { UserInterface } from "../ui/UserInterface";
-import { Configuration, ConfigurationPlaceholders, type SettingsContainer } from "../utils/config/Configuration";
+import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
@@ -103,8 +102,6 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
 
         this._userInterface = this.createUserInterface(userInterfaceType, appRoot);
         this._vueApp = this.createVueApp();
-
-        this.addConfigPlaceholders();
     }
 
     private createConfig(env: SettingsContainer): Configuration {
@@ -170,11 +167,6 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         app.provide(WebComponent._injectionKey, this);
 
         return app;
-    }
-
-    private addConfigPlaceholders(): void {
-        const compStore = useComponentStore();
-        this._data.config.addPlaceholder(ConfigurationPlaceholders.HostID, compStore.getHostInstanceID());
     }
 
     private configureDefaultRoutes(): RouteRecordRaw[] {

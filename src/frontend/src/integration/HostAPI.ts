@@ -3,6 +3,7 @@ import { type JWK } from "jose";
 import { unref } from "vue";
 
 import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
+import { makeHostSettingID } from "@common/utils/config/SettingIDUtils.ts";
 import { combinePaths, terminatePath } from "@common/utils/Paths";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -26,12 +27,15 @@ export class HostAPI {
     private readonly _apiURL: string;
 
     public constructor(comp: FrontendComponent) {
-        this._apiURL = comp.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.URL, DefaultDynamicSettings.HostURL);
+        this._apiURL = comp.data.config.valueWithDefault<string>(makeHostSettingID(HostIntegrationSettingIDs.URL), DefaultDynamicSettings.HostURL);
         if (this._apiURL == "") {
             throw new Error("No host API URL has been configured");
         }
         this._apiURL = terminatePath(
-            combinePaths(this._apiURL, comp.data.config.valueWithDefault<string>(HostIntegrationSettingIDs.APIEndpoint, DefaultDynamicSettings.HostAPIEndpoint))
+            combinePaths(
+                this._apiURL,
+                comp.data.config.valueWithDefault<string>(makeHostSettingID(HostIntegrationSettingIDs.APIEndpoint), DefaultDynamicSettings.HostAPIEndpoint)
+            )
         );
     }
 

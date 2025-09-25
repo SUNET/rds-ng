@@ -1,4 +1,3 @@
-import { ConfigurationPlaceholders } from "@common/utils/config/Configuration.ts";
 import { SettingID } from "@common/utils/config/SettingID";
 
 /**
@@ -7,7 +6,7 @@ import { SettingID } from "@common/utils/config/SettingID";
  * @property Scheme - The integration scheme to use (value type: ``string``).
  */
 export class IntegrationSettingIDS {
-    public static readonly Scheme = new SettingID(`${ConfigurationPlaceholders.HostID}.integration`, "scheme");
+    public static readonly Scheme = new SettingID("integration", "scheme");
 }
 
 /**
@@ -18,7 +17,7 @@ export class IntegrationSettingIDS {
  * @property APIEndpoint - The relative path of the host integration API (value type: ``string``).
  */
 export class HostIntegrationSettingIDs {
-    public static readonly URL = new SettingID(`${ConfigurationPlaceholders.HostID}.integration.host`, "url");
-    public static readonly EntrypointEndpoint = new SettingID(`${ConfigurationPlaceholders.HostID}.integration.host.endpoints`, "entrypoint");
-    public static readonly APIEndpoint = new SettingID(`${ConfigurationPlaceholders.HostID}.integration.host.endpoints`, "api");
+    public static readonly URL = new SettingID("integration.host", "url");
+    public static readonly EntrypointEndpoint = new SettingID("integration.host.endpoints", "entrypoint");
+    public static readonly APIEndpoint = new SettingID("integration.host.endpoints", "api");
 }

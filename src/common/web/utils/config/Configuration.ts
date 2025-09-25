@@ -9,13 +9,6 @@ import { deepMerge } from "../ObjectUtils";
 export type SettingsContainer = Record<string, any>;
 
 /**
- * Default configuration placeholders.
- */
-export const enum ConfigurationPlaceholders {
-    HostID = "<host_id>"
-}
-
-/**
  * Encapsulates configuration settings and their fallback default values.
  *
  * Settings can be loaded from a configuration file (in *TOML* format) or provided as environment variables (see below).
@@ -42,8 +35,6 @@ export const enum ConfigurationPlaceholders {
 export class Configuration {
     private _settings: SettingsContainer = {};
     private _defaults: SettingsContainer = {};
-
-    private readonly _placeholders: Record<string, string> = {};
 
     private readonly _env: SettingsContainer;
     private readonly _envPrefix: string;
@@ -91,16 +82,6 @@ export class Configuration {
     }
 
     /**
-     * Adds a new placeholder for value keys.
-     *
-     * @param key - The placeholder key.
-     * @param value - The placeholder value.
-     */
-    public addPlaceholder(key: string, value: string): void {
-        this._placeholders[key] = value;
-    }
-
-    /**
      * Gets the value of a setting.
      *
      * The value is first looked up in the environment variables. If not found, the loaded settings are searched.
@@ -133,7 +114,7 @@ export class Configuration {
     }
 
     private getValue<ValType = any>(key: SettingID, defaultValue: ValType): ValType {
-        let envKey = this.replacePlaceholders(key.envName(this._envPrefix)).toUpperCase();
+        let envKey = key.envName(this._envPrefix);
         if (envKey in this._env) {
             return this.convertEnvType(this._env[envKey], typeof defaultValue) as ValType;
         }
@@ -180,17 +161,6 @@ export class Configuration {
     }
 
     private splitSettingID(key: SettingID): string[] {
-        const path: string[] = [];
-        for (const pathToken of key.split()) {
-            path.push(this.replacePlaceholders(pathToken));
-        }
-        return path;
-    }
-
-    private replacePlaceholders(s: string): string {
-        for (const [placeholder, value] of Object.entries(this._placeholders)) {
-            s = s.replace(new RegExp(placeholder, "ig"), value);
-        }
-        return s;
+        return key.split();
     }
 }
