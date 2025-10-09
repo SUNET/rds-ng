@@ -1,6 +1,8 @@
 import json
 import typing
 
+import flask
+
 from .backend_component_data import BackendComponentData
 from .roles import ComponentRole
 from ..settings import GeneralSettingIDs
@@ -73,7 +75,8 @@ class BackendComponent:
 
         self._core = Core(module_name, self._data)
 
-        self._add_default_routes()
+        self._add_default_routes(self._core.flask)
+        self._add_custom_routes(self._core.flask)
 
     def app(self) -> typing.Any:
         """
@@ -181,10 +184,11 @@ class BackendComponent:
         """
         return self._data
 
-    def _add_default_routes(self) -> None:
+    def _add_default_routes(self, flsk: flask.Flask) -> None:
         # The main entry point (/) returns basic component info as a JSON string
-        self._core.flask.add_url_rule(
+        flsk.add_url_rule(
             "/",
+            "info",
             view_func=lambda: json.dumps(
                 {
                     "id": str(self._data.comp_id),
@@ -193,6 +197,9 @@ class BackendComponent:
                 }
             ),
         )
+
+    def _add_custom_routes(self, flsk: flask.Flask) -> None:
+        pass
 
     @staticmethod
     def instance() -> "BackendComponent":

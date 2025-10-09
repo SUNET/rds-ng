@@ -1,4 +1,7 @@
+import json
 import typing
+
+import flask
 
 from common.py.component import BackendComponent, ComponentType, ComponentUnit
 from common.py.component.roles import LeafRole
@@ -23,6 +26,13 @@ class DomoComponent(BackendComponent):
 
     def run(self) -> None:
         super().run()
+
+    def _add_custom_routes(self, flsk: flask.Flask) -> None:
+        flsk.add_url_rule(
+            "/redirect",
+            "redirect",
+            view_func=lambda: json.dumps({"test": 123}),
+        )
 
     @staticmethod
     def instance() -> "DomoComponent":
