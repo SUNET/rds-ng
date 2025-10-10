@@ -1,10 +1,8 @@
-import json
 import typing
-
-import flask
 
 from .backend_component_data import BackendComponentData
 from .roles import ComponentRole
+from ..endpoints import Endpoint
 from ..settings import GeneralSettingIDs
 from ..utils import UnitID
 from ..utils.config import Configuration
@@ -75,8 +73,8 @@ class BackendComponent:
 
         self._core = Core(module_name, self._data)
 
-        self._add_default_routes(self._core.flask)
-        self._add_custom_routes(self._core.flask)
+        self._add_default_routes()
+        self._add_custom_routes()
 
     def app(self) -> typing.Any:
         """
@@ -148,6 +146,9 @@ class BackendComponent:
         self._core.register_service(svc)
         return svc
 
+    def add_route_endpoint(self, ep: Endpoint) -> None:
+        self._core.flask.add_url_rule(ep.path, ep.name, view_func=ep.handler)
+
     def _create_config(self, config_file: str) -> Configuration:
         from ..settings import get_default_settings
 
@@ -184,21 +185,12 @@ class BackendComponent:
         """
         return self._data
 
-    def _add_default_routes(self, flsk: flask.Flask) -> None:
-        # The main entry point (/) returns basic component info as a JSON string
-        flsk.add_url_rule(
-            "/",
-            "info",
-            view_func=lambda: json.dumps(
-                {
-                    "id": str(self._data.comp_id),
-                    "name": self._data.name,
-                    "version": str(self._data.version),
-                }
-            ),
-        )
+    def _add_default_routes(self) -> None:
+        from ..endpoints import info_ep
 
-    def _add_custom_routes(self, flsk: flask.Flask) -> None:
+        self.add_route_endpoint(info_ep())
+
+    def _add_custom_routes(self) -> None:
         pass
 
     @staticmethod
