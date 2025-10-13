@@ -5,10 +5,12 @@ metadata:
   name: domo-ingress
   namespace: {{ .Values.namespace }}
   annotations:
-    ingress.kubernetes.io/rewrite-target: /
   {{- range $key, $value := .Values.ingress.annotations }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
+  {{- range $key, $value := .Values.domo.ingress.annotations}}
+  {{$key}}: {{$value | quote}}
+  {{- end}}
 spec:
   ingressClassName: {{ .Values.ingress.class }}
   rules:

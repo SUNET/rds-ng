@@ -73,6 +73,8 @@ domo:
     image:
         name: "ghcr.io/sciebo-rds/rds-ng-domo"
         pullPolicy: "Always"
+    ingress:
+        annotations: {}
 
 ###
 ### Frontend
