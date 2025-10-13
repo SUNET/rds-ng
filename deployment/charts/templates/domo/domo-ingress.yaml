@@ -5,6 +5,7 @@ metadata:
   name: domo-ingress
   namespace: {{ .Values.namespace }}
   annotations:
+    ingress.kubernetes.io/rewrite-target: /$2
   {{- range $key, $value := .Values.domo.ingress.annotations }}
   {{ $key }}: {{ $value | quote }}
   {{- end}}
@@ -16,7 +17,7 @@ spec:
       {{- end }}
       http:
         paths:
-          - path: "/domo"
+          - path: "/domo(/|$)(.*)"
             pathType: Prefix
             backend:
               service:
