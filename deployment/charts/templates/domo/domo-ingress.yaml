@@ -17,8 +17,8 @@ spec:
       {{- end }}
       http:
         paths:
-          - path: "/domo(/|$)(.*)"
-            pathType: Prefix
+            path: /domo(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: domo-service
