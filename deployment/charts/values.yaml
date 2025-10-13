@@ -36,7 +36,8 @@ server:
     allowedOrigins: "'*'"
     sqliteFile: "/data/rds.db" # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
     oauth2:
-        clientRedirectUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng/api/v1/authorize/oauth2" # The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host authorization API endpoint.
+        frontendRedirectUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng" # The URL the frontends will use for OAUTH2 redirection.
+        domoRedirectUrl: "https://NEXTCLOUD_DOMAIN/domo/authorize/oauth2" # The URL the connectors (via Domo) will use for OAUTH2 redirection.
     networkApiKey: "CHANGEME" # An arbitrary API key to access protected resources; this must be the same value on all components.
     pvc:
         storageClassName: "rdb"
