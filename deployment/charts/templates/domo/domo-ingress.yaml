@@ -17,13 +17,13 @@ spec:
       {{- end }}
       http:
         paths:
-            path: /domo(/|$)(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: domo-service
-                port:
-                  number: 5500
+          path: /domo(/|$)(.*)
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: domo-service
+              port:
+                number: 5500
   {{- if .Values.ingress.tls }}
   tls:
     {{ toYaml .Values.ingress.tls | nindent 4 }}
