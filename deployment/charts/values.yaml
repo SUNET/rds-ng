@@ -66,6 +66,15 @@ server:
             password: "" # The password for the database user.
 
 ###
+### Domo
+###
+domo:
+    componentName: "domo"
+    image:
+        name: "ghcr.io/sciebo-rds/rds-ng-domo"
+        pullPolicy: "Always"
+
+###
 ### Frontend
 ###
 frontend:

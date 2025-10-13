@@ -5,16 +5,16 @@ metadata:
   name: {{ .Values.appName }}-ingress
   namespace: {{ .Values.namespace }}
   annotations:
-{{- range $key, $value := .Values.ingress.annotations }}
-    {{ $key }}: {{ $value | quote }}
-{{- end }}
+  {{- range $key, $value := .Values.ingress.annotations }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.class }}
   rules:
-  - {{- if .Values.ingress.hostname }}
-    host: {{ .Values.ingress.hostname }}
-    {{- end }}
-    http:
+    - {{- if .Values.ingress.hostname }}
+      host: {{ .Values.ingress.hostname }}
+      {{- end }}
+      http:
         paths:
           - path: "/"
             pathType: Prefix
@@ -23,8 +23,20 @@ spec:
                 name: server-service
                 port:
                   number: 4200
+    - {{- if .Values.ingress.hostname}}
+      host: {{.Values.ingress.hostname}}
+      {{- end}}
+      http:
+        paths:
+          - path: "/domo"
+            pathType: Prefix
+            backend:
+              service:
+                name: domo-service
+                port:
+                  number: 5500
   {{- if .Values.ingress.tls }}
   tls:
     {{ toYaml .Values.ingress.tls | nindent 4 }}
   {{- end }}
-{{- end -}}
+  {{- end -}}
