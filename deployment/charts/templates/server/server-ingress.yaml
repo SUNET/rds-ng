@@ -24,7 +24,7 @@ spec:
                 name: domo-service
                 port:
                   number: 5500
-          - path: (/|$)(.*)
+          - path: /(.*)
             pathType: ImplementationSpecific
             backend:
               service:
