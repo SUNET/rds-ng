@@ -37,7 +37,7 @@
         "@rushstack/eslint-patch": "^1.13.0",
         "@tsconfig/node18": "^18.2.4",
         "@types/node": "^22.18.8",
-        "@vitejs/plugin-vue": "^4.6.2",
+        "@vitejs/plugin-vue": "^6.0.1",
         "@vue/eslint-config-typescript": "^13.0.0",
         "@vue/tsconfig": "^0.8.1",
         "eslint": "^8.57.1",
@@ -46,7 +46,7 @@
         "prettier": "^3.6.2",
         "typedoc": "^0.28.13",
         "typescript": "~5.9.3",
-        "vite": "^4.5.14",
+        "vite": "^7.1.9",
         "vue-tsc": "^2.2.12"
     }
 }
