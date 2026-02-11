@@ -16,7 +16,7 @@
         "@vueuse/core": "^12.8.2",
         "@vueuse/integrations": "^12.8.2",
         "autoprefixer": "^10.4.21",
-        "axios": "^1.12.2",
+        "axios": "^1.13.5",
         "class-transformer": "^0.5.1",
         "file-saver": "^2.0.5",
         "jose": "^5.10.0",
